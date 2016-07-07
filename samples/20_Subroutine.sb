@@ -1,0 +1,8 @@
+PrintTime() 
+TextWindow.Write("Enter your name: ") 
+name = TextWindow.Read() 
+TextWindow.Write(name + ", the time now is: ") 
+PrintTime() 
+Sub PrintTime   
+	TextWindow.WriteLine(Clock.Time) 
+EndSub

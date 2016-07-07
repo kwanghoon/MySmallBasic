@@ -1,0 +1,7 @@
+GraphicsWindow.BackgroundColor = "Black" 
+For i = 1 To 1000   
+	GraphicsWindow.BrushColor = GraphicsWindow.GetRandomColor()   
+	x = Math.GetRandomNumber(640)   
+	y = Math.GetRandomNumber(480)   
+	GraphicsWindow.FillEllipse(x, y, 10, 10) 
+EndFor 

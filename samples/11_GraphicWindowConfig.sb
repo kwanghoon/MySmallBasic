@@ -1,0 +1,5 @@
+GraphicsWindow.BackgroundColor = "SteelBlue" 
+GraphicsWindow.Title = "My Graphics Window" 
+GraphicsWindow.Width = 320 
+GraphicsWindow.Height = 200 
+GraphicsWindow.Show()

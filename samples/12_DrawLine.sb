@@ -1,0 +1,4 @@
+GraphicsWindow.Width = 200 
+GraphicsWindow.Height = 200 
+GraphicsWindow.DrawLine(10, 10, 100, 100) 
+GraphicsWindow.DrawLine(10, 100, 100, 10)  

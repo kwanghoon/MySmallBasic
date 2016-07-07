@@ -1,0 +1,6 @@
+GraphicsWindow.Width = 400 
+GraphicsWindow.Height = 300  
+GraphicsWindow.PenColor = "Red" 
+GraphicsWindow.DrawEllipse(20, 20, 100, 100)  
+GraphicsWindow.BrushColor = "Green" 
+GraphicsWindow.FillEllipse(100, 100, 100, 100)
