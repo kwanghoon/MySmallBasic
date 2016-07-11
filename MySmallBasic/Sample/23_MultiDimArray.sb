@@ -1,0 +1,14 @@
+friends["Rob"]["Name"] = "Robert" 
+friends["Rob"]["Phone"] = "555-6789"  
+
+friends["VJ"]["Name"] = "Vijaye" 
+friends["VJ"]["Phone"] = "555-4567"  
+
+friends["Ash"]["Name"] = "Ashley" 
+friends["Ash"]["Phone"] = "555-2345"  
+
+TextWindow.Write("Enter the nickname: ") 
+nickname = TextWindow.Read()  
+
+TextWindow.WriteLine("Name: " + friends[nickname]["Name"]) 
+TextWindow.WriteLine("Phone: " + friends[nickname]["Phone"]) 

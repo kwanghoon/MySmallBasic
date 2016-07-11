@@ -1,0 +1,6 @@
+GraphicsWindow.BackgroundColor = "Black" 
+GraphicsWindow.MouseDown = OnMouseDown 
+Sub OnMouseDown     
+	pic = Flickr.GetRandomPicture("mountains, river")     
+	GraphicsWindow.DrawResizedImage(pic, 0, 0, 640, 480) 
+EndSub 

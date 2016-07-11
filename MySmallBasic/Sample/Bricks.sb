@@ -1,0 +1,243 @@
+'BrickWall
+'A development of the paddle game sample.
+'Revove all the bricks to complete the game.
+' Game over if you miss the ball.
+'You are penalised -1 each time no bricks are hit.
+'The movement of the ball is influenced by where it hits the paddle.
+'Do not let the bricks reach the bottom of the screen.
+
+GameStart:
+
+'paddle = GraphicsWindow.AddRectangle(120, 12) 'v0.2
+paddle = Shapes.AddRectangle(120, 12) 'v0.3.1
+'ball = GraphicsWindow.AddEllipse(16, 16) 'v0.2
+ball = Shapes.AddEllipse(16,16) 'v0.3.1
+bricksLeft = 48
+brickStartY = 35
+hitCount = 0
+GraphicsWindow.FontSize = 14
+GraphicsWindow.MouseMove = OnMouseMove
+GraphicsWindow.Title = "Brick Wall"
+
+For idx = 0 To 15
+  Array.SetValue("GreenBricks", idx, 1)
+  Array.SetValue("YellowBricks", idx, 1)
+  Array.SetValue("RedBricks", idx, 1)
+Endfor
+DrawBricks()
+score = 0
+PrintScore()
+
+gw = GraphicsWindow.Width
+gh = GraphicsWindow.Height
+y = gh - 28
+'GraphicsWindow.MoveShape(ball, x, y) 'v0.2
+Shapes.Move(ball,x,y) 'v0.3.1
+deltaX = 1
+deltaY = -2
+Sound.PlayBellRingAndWait()
+
+RunLoop:
+  x = x + deltaX
+  y = y + deltaY
+
+  gw = GraphicsWindow.Width
+  gh = GraphicsWindow.Height
+  If (x >= gw - 16 Or x <= 0) Then
+    deltaX = -deltaX
+  EndIf
+  If (y <= 0) Then
+    deltaY = -deltaY
+  EndIf
+
+ 'padX = GraphicsWindow.GetLeftOfShape(paddle) 'v0.2
+ padX = Shapes.GetLeft(paddle) 'v0.3.1
+  If ((y >= gh - 28 + 2) And x >= padX And x <= padX + 120) Then
+    y = gh - 28 + 2
+    'Sound.PlayClick()
+    hitCount = hitCount + 1
+    If Math.Remainder(hitCount, 3) = 0 Then 'Move bricks downwards
+      For idx = 0 To 15
+        RemoveGreenBrick()
+        RemoveYellowBrick()
+        RemoveRedBrick()
+      Endfor
+      brickStartY = brickStartY + 20
+      DrawBricks()
+    EndIf
+    TestRed:
+    For idx = 0 To 15
+      If Array.GetValue("RedBricks", idx) = 1 Then
+        If brickStartY > gh - 160 Then
+          Goto EndGame
+        EndIf
+      EndIf
+    EndFor
+    TestYellow:
+    For idx = 0 To 15
+      If Array.GetValue("YellowBricks", idx) = 1 Then
+        If brickStartY > gh - 100 Then
+          Goto EndGame
+        EndIf
+      EndIf
+    EndFor
+    TestGreen:
+    For idx = 0 To 15
+      If Array.GetValue("GreenBricks", idx) = 1 Then
+        If brickStartY > gh - 40 Then
+          Goto EndGame
+        EndIf
+      EndIf
+    EndFor
+    EndTest:
+
+    deltaX = deltaX - 2 + (x - padX) / 30  ' Add some skill
+
+    If score = oldScore Then  'No bricks hit
+      score = score - 1
+    EndIf
+    oldScore = score
+    PrintScore()
+    deltaY = -deltaY  'Change the ball direction
+  EndIf
+  ' GraphicsWindow.MoveShape(ball, x, y) 'v0.2
+  Shapes.Move(ball,x,y) 'v0.3.1
+  Program.Delay(5)
+
+  ' Green Bricks
+  If y > brickStartY - 16 And y < brickStartY + 20 Then  ' y position of brick - diameter of ball
+    idx = (x+8) / 40  ' Radius of ball / length of brick
+    idx = Math.Floor(idx) ' take integer part
+    If Array.GetValue("GreenBricks", idx) = 1 Then
+      Array.SetValue("GreenBricks", idx, 0)
+      RemoveGreenBrick()
+      Sound.PlayChime()
+      bricksLeft = bricksLeft - 1
+      deltaY = -deltaY  'Change ball direction
+      score = score + 15
+      PrintScore()
+      CheckEnd()
+    EndIf
+  EndIf
+
+  ' Yellow Bricks
+  If y > brickStartY + 44 And y < brickStartY + 80 Then  ' y position of brick - diameter of ball = 19
+    idx = (x+8) / 40  ' Radius of ball / length of brick
+    idx = Math.Floor(idx) ' take integer part
+    If Array.GetValue("YellowBricks", idx) = 1 Then
+      Array.SetValue("YellowBricks", idx, 0)
+      RemoveYellowBrick()
+      Sound.PlayChime()
+      bricksLeft = bricksLeft - 1
+      deltaY = -deltaY  'Change ball direction
+      score = score + 10
+      PrintScore()
+      CheckEnd()
+    EndIf
+  EndIf
+
+  ' Red Bricks
+  If y > brickStartY + 104 And y < brickStartY + 140 Then  ' y position of brick - diameter of ball = 19
+    idx = (x+8) / 40  ' Radius of ball / length of brick
+    idx = Math.Floor(idx) ' take integer part
+    If Array.GetValue("RedBricks", idx) = 1 Then
+      Array.SetValue("RedBricks", idx, 0)
+      RemoveRedBrick()
+      Sound.PlayChime()
+      bricksLeft = bricksLeft - 1
+      deltaY = -deltaY  'Change ball direction
+      score = score + 5
+      PrintScore()
+      CheckEnd()
+    EndIf
+  EndIf
+
+
+  If (y < gh) Then  'Ball not reached bottom of window
+    Goto RunLoop
+  EndIf
+
+EndGame:
+  GraphicsWindow.ShowMessage("Your score is: " + score, "BrickWall")
+  Program.End()
+
+Sub OnMouseMove
+  paddleX = GraphicsWindow.MouseX
+  ' GraphicsWindow.MoveShape(paddle, paddleX - 60, GraphicsWindow.Height - 12) 'v0.2
+  Shapes.Move(paddle, paddleX - 60, GraphicsWindow.Height - 12) 'v0.3.1
+EndSub
+
+Sub PrintScore
+  ' Clear the score first and then draw the real score text
+  GraphicsWindow.BrushColor = "White"
+  GraphicsWindow.FillRectangle(10, 10, 200, 20)
+  GraphicsWindow.BrushColor = "Black"
+  GraphicsWindow.DrawText(10, 10, "Score: " + score)
+EndSub
+
+Sub DrawBricks
+  For idx = 0 To 15 ' Draw bricks
+    'Program.Delay(100)
+    If Array.GetValue("GreenBricks", idx) = 1 Then
+      GraphicsWindow.PenColor = "Black"
+      GraphicsWindow.BrushColor = "Green"
+    Else
+      GraphicsWindow.PenColor = "White"
+      GraphicsWindow.BrushColor = "White"
+    EndIf
+    GraphicsWindow.FillRectangle(idx * 40, brickStartY, 40, 20)
+    GraphicsWindow.DrawRectangle(idx * 40, brickStartY, 40, 20)
+
+    GraphicsWindow.BrushColor = "Yellow"
+    If Array.GetValue("YellowBricks", idx) = 1 Then
+      GraphicsWindow.PenColor = "Black"
+      GraphicsWindow.BrushColor = "Yellow"
+    Else
+      GraphicsWindow.PenColor = "White"
+      GraphicsWindow.BrushColor = "White"
+    EndIf
+    GraphicsWindow.FillRectangle(idx * 40, brickStartY + 60, 40, 20)
+    GraphicsWindow.DrawRectangle(idx * 40, brickStartY + 60, 40, 20)
+
+    GraphicsWindow.BrushColor = "Red"
+    If Array.GetValue("RedBricks", idx) = 1 Then
+      GraphicsWindow.PenColor = "Black"
+      GraphicsWindow.BrushColor = "Red"
+    Else
+      GraphicsWindow.PenColor = "White"
+      GraphicsWindow.BrushColor = "White"
+    EndIf
+    GraphicsWindow.FillRectangle(idx * 40, brickStartY + 120, 40, 20)
+    GraphicsWindow.DrawRectangle(idx * 40, brickStartY + 120, 40, 20)
+  endfor
+EndSub
+
+Sub RemoveGreenBrick
+  GraphicsWindow.PenColor = "White"
+  GraphicsWindow.BrushColor = "White"
+  GraphicsWindow.FillRectangle(idx * 40, brickStartY, 40, 20)
+  GraphicsWindow.DrawRectangle(idx * 40, brickStartY, 40, 20)
+EndSub
+
+Sub RemoveYellowBrick
+  GraphicsWindow.PenColor = "White"
+  GraphicsWindow.BrushColor = "White"
+  GraphicsWindow.FillRectangle(idx * 40, brickStartY + 60, 40, 20)
+  GraphicsWindow.DrawRectangle(idx * 40, brickStartY + 60, 40, 20)
+EndSub
+
+Sub RemoveRedBrick
+  GraphicsWindow.PenColor = "White"
+  GraphicsWindow.BrushColor = "White"
+  GraphicsWindow.FillRectangle(idx * 40, brickStartY + 120, 40, 20)
+  GraphicsWindow.DrawRectangle(idx * 40, brickStartY + 120, 40, 20)
+EndSub
+
+Sub CheckEnd
+ If bricksLeft = 0 Then
+   GraphicsWindow.ShowMessage("Well Done. Wall destroyed. Your score is: " + score, "BrickWall")
+   'Goto GameStart
+   Program.End()
+   'Goto EndGame
+ EndIf
+EndSub
