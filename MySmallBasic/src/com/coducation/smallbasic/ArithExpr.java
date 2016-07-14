@@ -13,9 +13,9 @@ public class ArithExpr extends Expr
 	private int op; // O + O, O ¡© O, O * O, O / O, ¡©O
 	private Expr oprnd1, oprnd2;
 	
-	private static final int PLUS = 1;
-	private static final int MINUS = 2;
-	private static final int MULTIFLY = 3;
-	private static final int DIVIDE = 4;
-	private static final int UNARY_MINUS = 5;
+	public static final int PLUS = 1;
+	public static final int MINUS = 2;
+	public static final int MULTIFLY = 3;
+	public static final int DIVIDE = 4;
+	public static final int UNARY_MINUS = 5;
 }

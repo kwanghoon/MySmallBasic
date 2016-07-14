@@ -13,6 +13,6 @@ public class LogicalExpr extends CondExpr
 	private int op;  // "And", "Or"
 	private Expr oprnd1, oprnd2;
 	
-	private static final int AND = 1;
-	private static final int OR = 2;
+	public static final int AND = 1;
+	public static final int OR = 2;
 }

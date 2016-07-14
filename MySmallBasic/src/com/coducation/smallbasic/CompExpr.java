@@ -13,10 +13,10 @@ public class CompExpr extends CondExpr
 	private int op;  // > < >= <= = <>
 	private Expr oprnd1, oprnd2;
 	
-	private static final int LESS = 1;
-	private static final int LESS_EQUAL = 2;
-	private static final int GREATER = 3;
-	private static final int GREATER_EQUAL = 4;
-	private static final int EQUAL = 5;
-	private static final int NOT_EQUAL = 6;
+	public static final int LESS = 1;
+	public static final int LESS_EQUAL = 2;
+	public static final int GREATER = 3;
+	public static final int GREATER_EQUAL = 4;
+	public static final int EQUAL = 5;
+	public static final int NOT_EQUAL = 6;
 }
