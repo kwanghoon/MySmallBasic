@@ -2,6 +2,7 @@ package com.coducation.smallbasic;
 
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 
 // Lexer Test
 
@@ -12,7 +13,7 @@ public class MySmallBasicMain
 		for(String f : args)
 		{
 			System.out.println(f);
-			FileReader fr = new FileReader("Sample\\" + f);
+			FileReader fr = new FileReader(f);
 			LexerAnalyzer Lexing = new LexerAnalyzer(fr);
 
 			Lexing.Lexing();
