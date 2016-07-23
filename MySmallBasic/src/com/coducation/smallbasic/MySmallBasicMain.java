@@ -9,9 +9,13 @@ public class MySmallBasicMain
 {
 	public static void main(String[] args) throws IOException
 	{
-		FileReader fr = new FileReader("Sample/Bricks.sb");
-		LexerAnalyzer Lexing = new LexerAnalyzer(fr);
-		
-		Lexing.Lexing();
+		for(String f : args)
+		{
+			System.out.println(f);
+			FileReader fr = new FileReader("Sample\\" + f);
+			LexerAnalyzer Lexing = new LexerAnalyzer(fr);
+
+			Lexing.Lexing();
+		}
 	}
 }
