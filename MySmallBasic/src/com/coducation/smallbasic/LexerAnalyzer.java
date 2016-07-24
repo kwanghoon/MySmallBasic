@@ -1,21 +1,17 @@
 package com.coducation.smallbasic;
 
 import java.io.BufferedReader;
-
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.TreeMap;
-import java.lang.*;
 
 public class LexerAnalyzer
 {
 	public LexerAnalyzer(FileReader fr)
 	{
-		this.fr = fr;
 		this.br = new BufferedReader(fr);
 		this.strarr = new ArrayList<String>();
-		this.Lexer = new ArrayList<ArrayList<String>>();
+		this.Lexer = new ArrayList<ArrayList<SyntaxPair>>();
 	}
 	
 	public void Lexing() throws IOException
@@ -25,37 +21,93 @@ public class LexerAnalyzer
 			String read_string;
 			if((read_string = br.readLine()) != null)
 			{
-					if(!read_string.equals("")) //공백 라인 무시.
-					strarr.add(read_string); 
+					if(!read_string.equals("")) // Empty line is not added.
+					strarr.add(read_string + "\n"); 	
 			}
 			else
 				break;
 		}
 		
-		for(int index = 0; index < strarr.size(); index++) // Lexing Routine.
+		for(int index = 0; index < strarr.size(); index++) // Lexing Routine, START_FILE TO END_FILE
 		{
 			String line = strarr.get(index);
 			String I = "";
-			ArrayList<String> Tokenized_word = new ArrayList<String>();
+			ArrayList<SyntaxPair> Tokenized_word = new ArrayList<SyntaxPair>();
 			int i_index = 0;
+			Token CurrToken = Token.NONE;
 			
-			while(i_index < line.length()) //한라인에서 라인 끝까지 실행 반복 부분.
+			while(i_index < line.length()) // repeat from first character to final, in one line. 
 			{
 				char ch = line.charAt(i_index);
 				
-				//개행, 주석 체크 후 패스
-				if(ch == '\n' || ch == '\'')
+				if(ch == '\n') // END_LINE => Token "CR"
 				{
+					I = "\n"; // Fixable.
+					CurrToken = Token.CR;
+					Tokenized_word.add(new SyntaxPair(I, CurrToken));
 					break;
 				}
-				//단문자 토큰 분리
+				else if(ch == '\'') // Comment => Skip..
+				{
+					break;
+				} 
+				// ( ) { } , = : + - * / [ ] 
 				else if(ch == '(' || ch == ')' || ch == '{' || ch == '}' ||  ch == ',' || ch == '=' || ch == ':' || ch == '+' || ch == '-' || ch == '*' || ch == '/' || ch == '[' || ch == ']')
 					{
 					I = I + ch;
-					Tokenized_word.add(I);
+					
+					switch(ch)
+					{
+						case '(':
+							CurrToken = Token.OPEN_PARA;
+							break;
+						case ')':
+							CurrToken = Token.CLOSE_PARA;
+							break;
+						case '{':
+							CurrToken = Token.OPEN_BRACE;
+							break;
+						case '}':
+							CurrToken = Token.CLOSE_BRACE;
+							break;
+						case ',':
+							CurrToken = Token.COMMA;
+							break;
+						case '=':
+							CurrToken = Token.ASSIGN;
+							break;
+						// HOW CAN LEXERANALYZER DISTINGUISH ASSIGN AND EQUAL???
+						case ':':
+							CurrToken = Token.COLON;
+							break;
+						case '+':
+							CurrToken = Token.PLUS;
+							break;
+						case '-':
+							CurrToken = Token.MINUS;
+							break;
+						// HOW CAN LEXERANALYZER DISTINGUISH MINUS AND UNARY_MINUS???
+						case '*':
+							CurrToken = Token.MULTIPLY;
+							break;
+						case '/':
+							CurrToken = Token.DIVIDE;
+							break;
+						case '[':
+							CurrToken = Token.OPEN_BRAKET;
+							break;
+						case ']':
+							CurrToken = Token.CLOSE_BRAKET;
+							break;
+						default:
+						{
+							System.err.println("Unexpected Token : " + I);
+							System.exit(0);
+						}
+					}
 					i_index++;
 				}
-				//다문자 토큰 분리
+				// >= > 
 				else if(ch == '>')
 				{
 					I = I + ch;
@@ -65,38 +117,39 @@ public class LexerAnalyzer
 					if(ch == '=')
 					{
 						I = I + ch;
-						Tokenized_word.add(I);
+						CurrToken = Token.GREATER_EQUAL;
 						i_index++;
 					}
 					// '>'
 					else
 					{
-						Tokenized_word.add(I);
+						CurrToken = Token.GREATER_THAN;
 					}
 				}
-				//위와 동일
+				// <= <> < 
 				else if(ch == '<')
 				{
+					I = I + ch;
 					i_index++;
 					ch = line.charAt(i_index);
 					if(ch == '=')
 					{
 						I = I + ch;
-						Tokenized_word.add(I);
+						CurrToken = Token.LESS_EQUAL;
 						i_index++;
 					}
 					else if(ch == '>')
 					{
 						I = I + ch;
-						Tokenized_word.add(I);
+						CurrToken = Token.NOT_EQUAL;
 						i_index++;
 					}
 					else
 					{
-						Tokenized_word.add(I);
+						CurrToken = Token.LESS_THAN;
 					}
 				}
-				//문자열 확인
+				//���ڿ� Ȯ��
 				else if(ch == '"')
 				{
 					I = I + ch;
@@ -108,16 +161,20 @@ public class LexerAnalyzer
 					}while(ch != '"');
 					
 					i_index++;
-					Tokenized_word.add(I);
+					
+					CurrToken = Token.STR_LIT;
 				}
-				//숫자 및 '.' 확인
+				//.<0-9> <Digit>.<Digit> . 
 				else if((ch >= '0' && ch <= '9') || ch == '.' )
 				{
+					boolean dotonce = false;
 					if(ch == '.')
 					{
+						dotonce = true;
 						i_index++;
 						I = I + ch;
 						ch = line.charAt(i_index);
+
 						
 						if(ch >= '0' && ch <= '9') // .<Digit>
 						{
@@ -125,13 +182,20 @@ public class LexerAnalyzer
 							{
 								I = I+ch;
 								ch = line.charAt(i_index);
+								
+								if(dotonce == true && ch == '.')
+								{
+									System.err.println("Overlapped dot error.");
+									System.exit(0);	
+								}
 								i_index++;
 							}while(ch >= '0' && ch <= '9');
-							Tokenized_word.add(I);
+							
+							CurrToken = Token.NUM_LIT;
 						}
-						else
+						else // Common dot operator.
 						{
-							Tokenized_word.add(I);
+							CurrToken = Token.DOT;
 						}
 					}
 					else // <Digit>
@@ -141,15 +205,29 @@ public class LexerAnalyzer
 							i_index++;
 							I = I+ch;
 							if(i_index != line.length())
+							{
 								ch = line.charAt(i_index);
+								if(ch == '.')
+								{
+									if(dotonce == false)
+									{
+										dotonce = true;
+									}
+									else
+									{
+										System.err.println("Overlapped dot error.");
+										System.exit(0);
+									}
+								}
+							}
 							else
 								break;
-						}while(ch >= '0' && ch <= '9');
-						
-						Tokenized_word.add(I);
+							
+						}while(ch >= '0' && ch <= '9' || ch == '.');	
+						CurrToken = Token.NUM_LIT;
 					}
 				}
-				// name, keyword
+				// ID, KeyWord
 				else if(ch == '_' || (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <='Z'))
 				{
 					do
@@ -160,9 +238,58 @@ public class LexerAnalyzer
 							ch = line.charAt(i_index);
 						else 
 							break;
-						
 					}while(ch == '_' || (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <='Z') || (ch >= '0' && ch <= '9'));
-					Tokenized_word.add(I);
+					
+					switch(I)
+					{
+						case "If":
+							CurrToken = Token.IF;
+							break;
+						case "Then":
+							CurrToken = Token.THEN;
+							break;
+						case "ElseIf":
+							CurrToken = Token.ELSEIF;
+							break;
+						case "Else":
+							CurrToken = Token.ELSE;
+							break;
+						case "EndIf":
+							CurrToken = Token.ENDIF;
+							break;
+						case "While":
+							CurrToken = Token.WHILE;
+							break;
+						case "EndWhile":
+							CurrToken = Token.ENDWHILE;
+							break;
+						case "For":
+							CurrToken = Token.FOR;
+							break;
+						case "To":
+							CurrToken = Token.TO;
+							break;
+						case "Step":
+							CurrToken = Token.STEP;
+							break;
+						case "EndFor":
+							CurrToken = Token.ENDFOR;
+							break;
+						case "Label":
+							CurrToken = Token.LABEL;
+							break;
+						case "Goto":
+							CurrToken = Token.GOTO;
+							break;
+						case "Sub":
+							CurrToken = Token.SUB;
+							break;
+						case "EndSub":
+							CurrToken = Token.ENDSUB;
+							break;
+						default:
+							CurrToken = Token.ID;
+					}
 				}
 				// WhiteSpace -> Skip
 				else if(ch == '\t' || ch == ' ') 
@@ -170,36 +297,52 @@ public class LexerAnalyzer
 					i_index++;
 					continue;
 				}
-				//예외 추가부분 후에 작성.
-				//TODO : 예외 처리 클래스 작성.
+
 				else
 				{
-					// Throw Error...?
+					System.err.println("Lexing Error.");
+					System.exit(0);
 				}
-
+				Tokenized_word.add(new SyntaxPair(I, CurrToken));
 				I = "";
 			}
 			Lexer.add(Tokenized_word);
 		}
 		
+		// Add EOF TokenInfo.
+		SyntaxPair EOF = new SyntaxPair("EOF", Token.END_FILE);
+		ArrayList<SyntaxPair> END_FILE = new ArrayList<SyntaxPair>();
+		END_FILE.add(EOF);
+		Lexer.add(END_FILE);	
+		// TODO : Optimizing.
 		
-		for(int i = 0; i < Lexer.size() ; i++) // Print out Test Code.
+		
+		for(int i = 0; i < Lexer.size() ; i++) // Print out Test Code. - Word
 		{
-			ArrayList<String> temp = Lexer.get(i);
+			ArrayList<SyntaxPair> temp = Lexer.get(i);
 			
 			for(int j = 0; ; j++)
 			{
 				if(j == temp.size())
 					break;
-				
-				System.out.print( temp.get(j) + " ");
+				System.out.print( temp.get(j).getSyntax() + " ");
 			}
-			System.out.println();
+		}	
+		System.out.println("\n");	
+		for(int i = 0; i < Lexer.size() ; i++) // Print out Test Code. - TokenInfo
+		{
+			ArrayList<SyntaxPair> temp = Lexer.get(i);
+			
+			for(int j = 0; ; j++)
+			{
+				if(j == temp.size())
+					break;
+				System.out.print("<" + temp.get(j).getTokenInfo() + "> " );
+			}
+			System.out.println("");
 		}	
 	}
-	private FileReader fr;
 	private BufferedReader br;
 	private ArrayList<String> strarr;
-	private ArrayList<ArrayList<String>> Lexer;
+	private ArrayList<ArrayList<SyntaxPair>> Lexer; // Test
 }
-	

@@ -13,9 +13,8 @@ public class MySmallBasicMain
 		for(String f : args)
 		{
 			System.out.println(f);
-			FileReader fr = new FileReader(f);
+			FileReader fr = new FileReader("Sample\\" + f);
 			LexerAnalyzer Lexing = new LexerAnalyzer(fr);
-
 			Lexing.Lexing();
 		}
 	}
