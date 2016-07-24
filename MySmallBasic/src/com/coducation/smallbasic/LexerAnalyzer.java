@@ -9,10 +9,9 @@ public class LexerAnalyzer
 {
 	public LexerAnalyzer(FileReader fr)
 	{
-		this.fr = fr;
 		this.br = new BufferedReader(fr);
 		this.strarr = new ArrayList<String>();
-		this.Lexer = new ArrayList<ArrayList<String>>();
+		this.Lexer = new ArrayList<ArrayList<SyntaxPair>>();
 	}
 	
 	public void Lexing() throws IOException
@@ -22,73 +21,136 @@ public class LexerAnalyzer
 			String read_string;
 			if((read_string = br.readLine()) != null)
 			{
-					if(!read_string.equals("")) // 빈 줄 무시.
-					strarr.add(read_string); 
+					if(!read_string.equals("")) // Empty line is not added.
+					strarr.add(read_string + "\n"); 	
 			}
 			else
 				break;
 		}
 		
-		for(int index = 0; index < strarr.size(); index++) // Lexing Routine.
+		for(int index = 0; index < strarr.size(); index++) // Lexing Routine, START_FILE TO END_FILE
 		{
-			String line = strarr.get(index); // 문장 하나를 가져옴.
-			String I = ""; // 토크나이즈된 문자열, 초기는 엡실론으로 설정.
-			ArrayList<String> Tokenized_word = new ArrayList<String>(); // 토크나이즈된 문자열이 저장될 어레이리스트.
-			int i_index = 0; // line 한 문자씩 탐색할 index변수, 0부터 시작한다.
+			String line = strarr.get(index);
+			String I = "";
+			ArrayList<SyntaxPair> Tokenized_word = new ArrayList<SyntaxPair>();
+			int i_index = 0;
+			Token CurrToken = Token.NONE;
 			
-			while(i_index < line.length()) // 라인의 끝까지 실행한다.
+			while(i_index < line.length()) // repeat from first character to final, in one line. 
 			{
 				char ch = line.charAt(i_index);
 				
-				if(ch == '\n')
+				if(ch == '\n') // END_LINE => Token "CR"
 				{
+					I = "\n"; // Fixable.
+					CurrToken = Token.CR;
+					Tokenized_word.add(new SyntaxPair(I, CurrToken));
 					break;
 				}
-				else if(ch == '(' || ch == ')' || ch == '{' || ch == '}' ||  ch == ',' || ch == '=' || ch == ':' || ch == '+' || ch == '-' || ch == '*' || ch == '/')
+				else if(ch == '\'') // Comment => Skip..
 				{
-					I = I + ch; // 문자 저장.
-					Tokenized_word.add(I); // 추가.
-					i_index++; // 인덱스 ++
+					break;
+				} 
+				// ( ) { } , = : + - * / [ ] 
+				else if(ch == '(' || ch == ')' || ch == '{' || ch == '}' ||  ch == ',' || ch == '=' || ch == ':' || ch == '+' || ch == '-' || ch == '*' || ch == '/' || ch == '[' || ch == ']')
+					{
+					I = I + ch;
 					
+					switch(ch)
+					{
+						case '(':
+							CurrToken = Token.OPEN_PARA;
+							break;
+						case ')':
+							CurrToken = Token.CLOSE_PARA;
+							break;
+						case '{':
+							CurrToken = Token.OPEN_BRACE;
+							break;
+						case '}':
+							CurrToken = Token.CLOSE_BRACE;
+							break;
+						case ',':
+							CurrToken = Token.COMMA;
+							break;
+						case '=':
+							CurrToken = Token.ASSIGN;
+							break;
+						// HOW CAN LEXERANALYZER DISTINGUISH ASSIGN AND EQUAL???
+						case ':':
+							CurrToken = Token.COLON;
+							break;
+						case '+':
+							CurrToken = Token.PLUS;
+							break;
+						case '-':
+							CurrToken = Token.MINUS;
+							break;
+						// HOW CAN LEXERANALYZER DISTINGUISH MINUS AND UNARY_MINUS???
+						case '*':
+							CurrToken = Token.MULTIPLY;
+							break;
+						case '/':
+							CurrToken = Token.DIVIDE;
+							break;
+						case '[':
+							CurrToken = Token.OPEN_BRAKET;
+							break;
+						case ']':
+							CurrToken = Token.CLOSE_BRAKET;
+							break;
+						default:
+						{
+							System.err.println("Unexpected Token : " + I);
+							System.exit(0);
+						}
+					}
+					i_index++;
 				}
+				// >= > 
 				else if(ch == '>')
 				{
-					I = I + ch; // 일단 I에 문자열 저장...
+					I = I + ch;
 					i_index++;
 					ch = line.charAt(i_index);
+					// '>=' 
 					if(ch == '=')
 					{
-						I = I + ch; // 또 저장, 여기까지 도달하면 I = ">="
-						Tokenized_word.add(I);
+						I = I + ch;
+						CurrToken = Token.GREATER_EQUAL;
 						i_index++;
 					}
-					else // 그 다음문자가 =가 아닌경우. => 단순토큰 ">"
+					// '>'
+					else
 					{
-						Tokenized_word.add(I);
+						CurrToken = Token.GREATER_THAN;
 					}
 				}
+				// <= <> < 
 				else if(ch == '<')
 				{
+					I = I + ch;
 					i_index++;
 					ch = line.charAt(i_index);
 					if(ch == '=')
 					{
-						I = I + ch; // 또 저장, 여기까지 도달하면 I = "<="
-						Tokenized_word.add(I);
+						I = I + ch;
+						CurrToken = Token.LESS_EQUAL;
 						i_index++;
 					}
 					else if(ch == '>')
 					{
-						I = I + ch; // 또 저장, 여기까지 도달하면 I = "<>"
-						Tokenized_word.add(I);
+						I = I + ch;
+						CurrToken = Token.NOT_EQUAL;
 						i_index++;
 					}
-					else // 여기에 도달하면, I = "<"
+					else
 					{
-						Tokenized_word.add(I);
+						CurrToken = Token.LESS_THAN;
 					}
 				}
-				else if(ch == '"') // 문자열 패턴.
+				//���ڿ� Ȯ��
+				else if(ch == '"')
 				{
 					I = I + ch;
 					do
@@ -99,15 +161,20 @@ public class LexerAnalyzer
 					}while(ch != '"');
 					
 					i_index++;
-					Tokenized_word.add(I); // "Hello World!" 식으로 저장.
+					
+					CurrToken = Token.STR_LIT;
 				}
+				//.<0-9> <Digit>.<Digit> . 
 				else if((ch >= '0' && ch <= '9') || ch == '.' )
 				{
-					if(ch == '.') // .!@#$
+					boolean dotonce = false;
+					if(ch == '.')
 					{
+						dotonce = true;
 						i_index++;
 						I = I + ch;
 						ch = line.charAt(i_index);
+
 						
 						if(ch >= '0' && ch <= '9') // .<Digit>
 						{
@@ -115,12 +182,20 @@ public class LexerAnalyzer
 							{
 								I = I+ch;
 								ch = line.charAt(i_index);
+								
+								if(dotonce == true && ch == '.')
+								{
+									System.err.println("Overlapped dot error.");
+									System.exit(0);	
+								}
+								i_index++;
 							}while(ch >= '0' && ch <= '9');
-							Tokenized_word.add(I);
+							
+							CurrToken = Token.NUM_LIT;
 						}
-						else // 일반적인 . 연산자
+						else // Common dot operator.
 						{
-							Tokenized_word.add(I); // 추가.
+							CurrToken = Token.DOT;
 						}
 					}
 					else // <Digit>
@@ -129,12 +204,30 @@ public class LexerAnalyzer
 						{
 							i_index++;
 							I = I+ch;
-							ch = line.charAt(i_index);
-						}while(ch >= '0' && ch <= '9');
-						
-						Tokenized_word.add(I);
+							if(i_index != line.length())
+							{
+								ch = line.charAt(i_index);
+								if(ch == '.')
+								{
+									if(dotonce == false)
+									{
+										dotonce = true;
+									}
+									else
+									{
+										System.err.println("Overlapped dot error.");
+										System.exit(0);
+									}
+								}
+							}
+							else
+								break;
+							
+						}while(ch >= '0' && ch <= '9' || ch == '.');	
+						CurrToken = Token.NUM_LIT;
 					}
 				}
+				// ID, KeyWord
 				else if(ch == '_' || (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <='Z'))
 				{
 					do
@@ -145,45 +238,111 @@ public class LexerAnalyzer
 							ch = line.charAt(i_index);
 						else 
 							break;
-						
 					}while(ch == '_' || (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <='Z') || (ch >= '0' && ch <= '9'));
-					Tokenized_word.add(I);
+					
+					switch(I)
+					{
+						case "If":
+							CurrToken = Token.IF;
+							break;
+						case "Then":
+							CurrToken = Token.THEN;
+							break;
+						case "ElseIf":
+							CurrToken = Token.ELSEIF;
+							break;
+						case "Else":
+							CurrToken = Token.ELSE;
+							break;
+						case "EndIf":
+							CurrToken = Token.ENDIF;
+							break;
+						case "While":
+							CurrToken = Token.WHILE;
+							break;
+						case "EndWhile":
+							CurrToken = Token.ENDWHILE;
+							break;
+						case "For":
+							CurrToken = Token.FOR;
+							break;
+						case "To":
+							CurrToken = Token.TO;
+							break;
+						case "Step":
+							CurrToken = Token.STEP;
+							break;
+						case "EndFor":
+							CurrToken = Token.ENDFOR;
+							break;
+						case "Label":
+							CurrToken = Token.LABEL;
+							break;
+						case "Goto":
+							CurrToken = Token.GOTO;
+							break;
+						case "Sub":
+							CurrToken = Token.SUB;
+							break;
+						case "EndSub":
+							CurrToken = Token.ENDSUB;
+							break;
+						default:
+							CurrToken = Token.ID;
+					}
 				}
-				else if(ch == '\t' || ch == ' ') // WhiteSpace -> Skip
+				// WhiteSpace -> Skip
+				else if(ch == '\t' || ch == ' ') 
 				{
 					i_index++;
 					continue;
 				}
-				else // 렉싱 실패.
-				{
-					// Throw Error...?
-				}
 
-				I = ""; // 입력문자열 초기화.
+				else
+				{
+					System.err.println("Lexing Error.");
+					System.exit(0);
+				}
+				Tokenized_word.add(new SyntaxPair(I, CurrToken));
+				I = "";
 			}
 			Lexer.add(Tokenized_word);
-			// TODO: 주석 생략 가능하게 추가.
 		}
 		
-		for(int i = 0; i < Lexer.size() ; i++) // Print out Test Code.
+		// Add EOF TokenInfo.
+		SyntaxPair EOF = new SyntaxPair("EOF", Token.END_FILE);
+		ArrayList<SyntaxPair> END_FILE = new ArrayList<SyntaxPair>();
+		END_FILE.add(EOF);
+		Lexer.add(END_FILE);	
+		// TODO : Optimizing.
+		
+		
+		for(int i = 0; i < Lexer.size() ; i++) // Print out Test Code. - Word
 		{
-			ArrayList<String> temp = Lexer.get(i);
+			ArrayList<SyntaxPair> temp = Lexer.get(i);
 			
 			for(int j = 0; ; j++)
 			{
 				if(j == temp.size())
 					break;
-				
-				System.out.print("'" + temp.get(j) + "' ");
+				System.out.print( temp.get(j).getSyntax() + " ");
 			}
-			System.out.println();
 		}	
-		
+		System.out.println("\n");	
+		for(int i = 0; i < Lexer.size() ; i++) // Print out Test Code. - TokenInfo
+		{
+			ArrayList<SyntaxPair> temp = Lexer.get(i);
+			
+			for(int j = 0; ; j++)
+			{
+				if(j == temp.size())
+					break;
+				System.out.print("<" + temp.get(j).getTokenInfo() + "> " );
+			}
+			System.out.println("");
+		}	
 	}
-	
-	private FileReader fr;
 	private BufferedReader br;
 	private ArrayList<String> strarr;
-	private ArrayList<ArrayList<String>> Lexer;
-
+	private ArrayList<ArrayList<SyntaxPair>> Lexer; // Test
 }
