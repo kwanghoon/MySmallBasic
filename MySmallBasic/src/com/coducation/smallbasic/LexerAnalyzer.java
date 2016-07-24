@@ -1,12 +1,9 @@
 package com.coducation.smallbasic;
 
 import java.io.BufferedReader;
-
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.TreeMap;
-import java.lang.*;
 
 public class LexerAnalyzer
 {
@@ -38,7 +35,7 @@ public class LexerAnalyzer
 			ArrayList<SyntaxPair> Tokenized_word = new ArrayList<SyntaxPair>();
 			int i_index = 0;
 			Token CurrToken = Token.NONE;
-
+			
 			while(i_index < line.length()) // repeat from first character to final, in one line. 
 			{
 				char ch = line.charAt(i_index);
@@ -311,7 +308,7 @@ public class LexerAnalyzer
 			}
 			Lexer.add(Tokenized_word);
 		}
-
+		
 		// Add EOF TokenInfo.
 		SyntaxPair EOF = new SyntaxPair("EOF", Token.END_FILE);
 		ArrayList<SyntaxPair> END_FILE = new ArrayList<SyntaxPair>();
@@ -331,7 +328,6 @@ public class LexerAnalyzer
 				System.out.print( temp.get(j).getSyntax() + " ");
 			}
 		}	
-
 		System.out.println("\n");	
 		for(int i = 0; i < Lexer.size() ; i++) // Print out Test Code. - TokenInfo
 		{
@@ -350,4 +346,3 @@ public class LexerAnalyzer
 	private ArrayList<String> strarr;
 	private ArrayList<ArrayList<SyntaxPair>> Lexer; // Test
 }
-	
