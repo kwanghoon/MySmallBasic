@@ -42,6 +42,9 @@ public class LexerAnalyzer
 				
 				if(ch == '\n') // END_LINE => Token "CR"
 				{
+					I = (index+1) + "_line";	// line_info is added at end of line.
+					Tokenized_word.add(new SyntaxPair(I, Token.LINE_INFO));
+					
 					I = "\n"; // Fixable.
 					CurrToken = Token.CR;
 					Tokenized_word.add(new SyntaxPair(I, CurrToken));
@@ -149,7 +152,7 @@ public class LexerAnalyzer
 						CurrToken = Token.LESS_THAN;
 					}
 				}
-				//���ڿ� Ȯ��
+				//¹®ÀÚ¿­ È®ÀÎ
 				else if(ch == '"')
 				{
 					I = I + ch;
@@ -309,8 +312,8 @@ public class LexerAnalyzer
 			Lexer.add(Tokenized_word);
 		}
 		
-		// Add EOF TokenInfo.
-		SyntaxPair EOF = new SyntaxPair("EOF", Token.END_FILE);
+		// fixed End of Tokens
+		SyntaxPair EOT = new SyntaxPair("EOT", Token.END_OF_TOKENS);
 		ArrayList<SyntaxPair> END_FILE = new ArrayList<SyntaxPair>();
 		END_FILE.add(EOF);
 		Lexer.add(END_FILE);	
