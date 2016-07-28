@@ -7,6 +7,8 @@ import java.util.ArrayList;
 
 public class LexerAnalyzer
 {
+	boolean Skip_CR = false; // Add, if Skip_CR is true and Next Line Token Only <CR>, then ignore it.
+     
 	public LexerAnalyzer(FileReader fr)
 	{
 		this.br = new BufferedReader(fr);
@@ -39,18 +41,15 @@ public class LexerAnalyzer
 			while(i_index < line.length()) // repeat from first character to final, in one line. 
 			{
 				char ch = line.charAt(i_index);
+				int front_index = i_index+1;
 				
-				if(ch == '\n') // END_LINE => Token "CR"
-				{
-					I = "\n"; // Fixable.
-					CurrToken = Token.CR;
-					Tokenized_word.add(new SyntaxPair(I, CurrToken));
-					break;
-				}
-				else if(ch == '\'') // Comment => Skip..
-				{
-					break;
-				} 
+				if(ch == '\n' || ch == '\'') // END_LINE or Comment => Token "CR"
+			        {
+			               I = "\n";
+			               CurrToken = Token.CR;
+			               Tokenized_word.add(new SyntaxPair(I, CurrToken, front_index, index+1));
+			               break;
+			        }
 				// ( ) { } , = : + - * / [ ] 
 				else if(ch == '(' || ch == ')' || ch == '{' || ch == '}' ||  ch == ',' || ch == '=' || ch == ':' || ch == '+' || ch == '-' || ch == '*' || ch == '/' || ch == '[' || ch == ']')
 					{
@@ -149,7 +148,7 @@ public class LexerAnalyzer
 						CurrToken = Token.LESS_THAN;
 					}
 				}
-				//���ڿ� Ȯ��
+				//¹®ÀÚ¿­ È®ÀÎ
 				else if(ch == '"')
 				{
 					I = I + ch;
@@ -303,45 +302,57 @@ public class LexerAnalyzer
 					System.err.println("Lexing Error.");
 					System.exit(0);
 				}
-				Tokenized_word.add(new SyntaxPair(I, CurrToken));
-				I = "";
+            			Skip_CR = false; // Added.
+            			Tokenized_word.add(new SyntaxPair(I, CurrToken, front_index, index+1));
+            			I = "";
 			}
-			Lexer.add(Tokenized_word);
+			// Condition Statement Added.
+         		if(!Skip_CR) Lexer.add(Tokenized_word);
+		        Skip_CR = true; // Because, Every statements have <CR> at last.
 		}
 		
 		// Add EOF TokenInfo.
-		SyntaxPair EOF = new SyntaxPair("EOF", Token.END_FILE);
-		ArrayList<SyntaxPair> END_FILE = new ArrayList<SyntaxPair>();
-		END_FILE.add(EOF);
-		Lexer.add(END_FILE);	
+		  SyntaxPair EOT = new SyntaxPair("END_OF_FILE", Token.END_OF_TOKENS,-1, -1);
+		  ArrayList<SyntaxPair> END_FILE = new ArrayList<SyntaxPair>();
+		  END_FILE.add(EOT);
+		  Lexer.add(END_FILE);  
 		// TODO : Optimizing.
 		
 		
 		for(int i = 0; i < Lexer.size() ; i++) // Print out Test Code. - Word
-		{
-			ArrayList<SyntaxPair> temp = Lexer.get(i);
-			
-			for(int j = 0; ; j++)
-			{
-				if(j == temp.size())
-					break;
-				System.out.print( temp.get(j).getSyntax() + " ");
-			}
-		}	
-		System.out.println("\n");	
-		for(int i = 0; i < Lexer.size() ; i++) // Print out Test Code. - TokenInfo
-		{
-			ArrayList<SyntaxPair> temp = Lexer.get(i);
-			
-			for(int j = 0; ; j++)
-			{
-				if(j == temp.size())
-					break;
-				System.out.print("<" + temp.get(j).getTokenInfo() + "> " );
-			}
-			System.out.println("");
-		}	
-	}
+	      {
+	         int count = 0;
+	         ArrayList<SyntaxPair> temp = Lexer.get(i);
+	         System.out.print("[Line :" + temp.get(count).getLine_index() + "] ");
+	         
+	         for(int j = 0; ; j++)
+	         {
+	            if(j == temp.size())
+	               break;
+	            if(temp.get(j).getSyntax() != "\n") System.out.print( temp.get(j).getSyntax() + " ");
+	            else System.out.print( temp.get(j).getSyntax() );
+	         }
+	         count++;
+	      }
+	      
+	      System.out.println("\n---");
+	      
+	      for(int i = 0; i < Lexer.size() ; i++) // Print out Test Code. - TokenInfo
+	      {
+	         int count = 0;
+	         ArrayList<SyntaxPair> temp = Lexer.get(i);
+	         System.out.print("[Line :" + temp.get(count).getLine_index() + "] ");
+	         
+	         for(int j = 0; ; j++)
+	         {
+	            if(j == temp.size())
+	               break;
+	            System.out.print("<" + temp.get(j).getTokenInfo() + "> " );
+	         }
+	         System.out.println("");
+	         count++;
+	      }   
+	   }
 	private BufferedReader br;
 	private ArrayList<String> strarr;
 	private ArrayList<ArrayList<SyntaxPair>> Lexer; // Test
