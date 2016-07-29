@@ -2,6 +2,11 @@ package com.coducation.smallbasic;
 
 public enum Token
 {
+	// Test Token
+
+	T,
+	F,
+	
 	NONE,
 	
 	// '\n'
