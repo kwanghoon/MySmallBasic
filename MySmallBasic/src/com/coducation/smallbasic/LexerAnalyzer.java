@@ -14,19 +14,22 @@ public class LexerAnalyzer
 		this.Lexer = new ArrayList<ArrayList<SyntaxPair>>();
 	}
 	
-	public void Lexing() throws IOException
+	public ArrayList<ArrayList<SyntaxPair>> Lexing() throws IOException
 	{
+		boolean Skip_CR = false; // Add, if Skip_CR is true and Next Line Token Only <CR>, then ignore it.
+		
 		while(true)
 		{
 			String read_string;
 			if((read_string = br.readLine()) != null)
 			{
-					if(!read_string.equals("")) // Empty line is not added.
-					strarr.add(read_string + "\n"); 	
+					// delete Condition Statement.
+					strarr.add(read_string + "\n");  
 			}
 			else
 				break;
 		}
+		
 		
 		for(int index = 0; index < strarr.size(); index++) // Lexing Routine, START_FILE TO END_FILE
 		{
@@ -39,21 +42,18 @@ public class LexerAnalyzer
 			while(i_index < line.length()) // repeat from first character to final, in one line. 
 			{
 				char ch = line.charAt(i_index);
+				int front_index = i_index+1;
 				
-				if(ch == '\n') // END_LINE => Token "CR"
+				if(ch == '\n' || ch == '\'') // END_LINE or Comment => Token "CR"
 				{
-					I = "\n"; // Fixable.
+					I = "\n";
 					CurrToken = Token.CR;
-					Tokenized_word.add(new SyntaxPair(I, CurrToken));
+					Tokenized_word.add(new SyntaxPair(I, CurrToken, front_index, index+1));
 					break;
 				}
-				else if(ch == '\'') // Comment => Skip..
-				{
-					break;
-				} 
 				// ( ) { } , = : + - * / [ ] 
 				else if(ch == '(' || ch == ')' || ch == '{' || ch == '}' ||  ch == ',' || ch == '=' || ch == ':' || ch == '+' || ch == '-' || ch == '*' || ch == '/' || ch == '[' || ch == ']')
-					{
+				{
 					I = I + ch;
 					
 					switch(ch)
@@ -76,7 +76,6 @@ public class LexerAnalyzer
 						case '=':
 							CurrToken = Token.ASSIGN;
 							break;
-						// HOW CAN LEXERANALYZER DISTINGUISH ASSIGN AND EQUAL???
 						case ':':
 							CurrToken = Token.COLON;
 							break;
@@ -86,7 +85,6 @@ public class LexerAnalyzer
 						case '-':
 							CurrToken = Token.MINUS;
 							break;
-						// HOW CAN LEXERANALYZER DISTINGUISH MINUS AND UNARY_MINUS???
 						case '*':
 							CurrToken = Token.MULTIPLY;
 							break;
@@ -149,7 +147,7 @@ public class LexerAnalyzer
 						CurrToken = Token.LESS_THAN;
 					}
 				}
-				//¹®ÀÚ¿­ È®ÀÎ
+				//è‡¾ëª„ì˜„ï¿½ë¿´ ï¿½ì†—ï¿½ì”¤
 				else if(ch == '"')
 				{
 					I = I + ch;
@@ -303,35 +301,48 @@ public class LexerAnalyzer
 					System.err.println("Lexing Error.");
 					System.exit(0);
 				}
-				Tokenized_word.add(new SyntaxPair(I, CurrToken));
+				Skip_CR = false; // Added.
+				Tokenized_word.add(new SyntaxPair(I, CurrToken, front_index, index+1));
 				I = "";
 			}
-			Lexer.add(Tokenized_word);
+			
+			// Condition Statement Added.
+			if(!Skip_CR) Lexer.add(Tokenized_word);
+			Skip_CR = true; // Because, Every statements have <CR> at last.
 		}
 		
-		// Add EOF TokenInfo.
-		SyntaxPair EOF = new SyntaxPair("EOF", Token.END_FILE);
+		// Add End of Tokens
+		SyntaxPair EOT = new SyntaxPair("END_OF_FILE", Token.END_OF_TOKENS,-1, -1);
 		ArrayList<SyntaxPair> END_FILE = new ArrayList<SyntaxPair>();
-		END_FILE.add(EOF);
+		END_FILE.add(EOT);
 		Lexer.add(END_FILE);	
-		// TODO : Optimizing.
 		
 		
 		for(int i = 0; i < Lexer.size() ; i++) // Print out Test Code. - Word
 		{
+			int count = 0;
 			ArrayList<SyntaxPair> temp = Lexer.get(i);
+			System.out.print("[Line :" + temp.get(count).getLine_index() + "] ");
 			
 			for(int j = 0; ; j++)
 			{
 				if(j == temp.size())
 					break;
-				System.out.print( temp.get(j).getSyntax() + " ");
+				if(temp.get(j).getSyntax() != "\n") System.out.print( temp.get(j).getSyntax() + " ");
+				else System.out.print( temp.get(j).getSyntax() );
 			}
-		}	
-		System.out.println("\n");	
+			
+			System.out.println();
+			count++;
+		}
+		
+		System.out.println("\n---");
+		
 		for(int i = 0; i < Lexer.size() ; i++) // Print out Test Code. - TokenInfo
 		{
+			int count = 0;
 			ArrayList<SyntaxPair> temp = Lexer.get(i);
+			System.out.print("[Line :" + temp.get(count).getLine_index() + "] ");
 			
 			for(int j = 0; ; j++)
 			{
@@ -340,8 +351,16 @@ public class LexerAnalyzer
 				System.out.print("<" + temp.get(j).getTokenInfo() + "> " );
 			}
 			System.out.println("");
-		}	
+			count++;
+		}
+		return Lexer;	
 	}
+
+	public int get_size() // Added, return Lexer.size, that means ammount of lines.
+	{
+		return Lexer.size();
+	}
+	
 	private BufferedReader br;
 	private ArrayList<String> strarr;
 	private ArrayList<ArrayList<SyntaxPair>> Lexer; // Test
