@@ -49,8 +49,13 @@ public class LexerTest
 			System.out.println(f);
 			FileReader fr = new FileReader("Sample\\" + f);
 			LexerAnalyzer Lexing = new LexerAnalyzer(fr);
-
-			Lexing.Lexing();
+			Parser Parsing = new Parser(Lexing);
+		
+			// Line_Parser Test Routine.
+			for(int line_index = 0; line_index < Lexing.get_size(); line_index++)
+			{
+				Parsing.Parsing(line_index);
+			}
 		}
 	}
 }
