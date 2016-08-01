@@ -12,7 +12,8 @@ public class LexerTest
 	{
 		String[] args = 
 		{
-				"01_HelloWorld.sb",
+				"ParsingTest.sb"
+				/*"01_HelloWorld.sb",
 				"02_FontYellowColor.sb",
 				"03_Variables.sb",
 				"04_Temperature.sb",
@@ -39,7 +40,7 @@ public class LexerTest
 				"25_Events.sb",
 				"26_Flickr.sb",
 				"Bricks.sb",
-				"Testris.sb"
+				"Testris.sb"*/
 		};
 		
 		for(String f : args)
@@ -48,8 +49,13 @@ public class LexerTest
 			System.out.println(f);
 			FileReader fr = new FileReader("Sample\\" + f);
 			LexerAnalyzer Lexing = new LexerAnalyzer(fr);
-
-			Lexing.Lexing();
+			Parser Parsing = new Parser(Lexing);
+		
+			// Line_Parser Test Routine.
+			for(int line_index = 0; line_index < Lexing.get_size(); line_index++)
+			{
+				Parsing.Parsing(line_index);
+			}
 		}
 	}
 }
