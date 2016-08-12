@@ -2,7 +2,9 @@ package com.coducation.smallbasic;
 
 class Stmt
 {
-	public Stmt(){} // Builder
+	public Stmt()
+	{
+	} // Builder
     public void prettyprint()
 	{
 //		if(this instanceof ExprStmt)
@@ -95,4 +97,5 @@ class Stmt
 //			System.err.printf("Something Error....");
 //		}
 	}
+
 }

@@ -11,49 +11,52 @@ public class LexerAnalyzer
 	{
 		this.br = new BufferedReader(fr);
 		this.strarr = new ArrayList<String>();
-		this.Lexer = new ArrayList<ArrayList<SyntaxPair>>();
+		this.Lexer = new ArrayList<ArrayList<Terminal>>();
 	}
 	
-	public void Lexing() throws IOException
+	public ArrayList<ArrayList<Terminal>> Lexing() throws IOException
 	{
+		boolean Skip_CR = true; // Add, if Skip_CR is true and Next Line Token Only <CR>, then ignore it.
+		String read_string = br.readLine();		
 		while(true)
 		{
-			String read_string;
-			if((read_string = br.readLine()) != null)
+			String next_read_string = br.readLine();
+			if(next_read_string != null)
 			{
-					if(!read_string.equals("")) // Empty line is not added.
-					strarr.add(read_string + "\n"); 	
+				strarr.add(read_string + "\n"); 
+				read_string = next_read_string;
 			}
 			else
+			{
+				strarr.add(read_string);
 				break;
+			}
 		}
+		
 		
 		for(int index = 0; index < strarr.size(); index++) // Lexing Routine, START_FILE TO END_FILE
 		{
 			String line = strarr.get(index);
 			String I = "";
-			ArrayList<SyntaxPair> Tokenized_word = new ArrayList<SyntaxPair>();
+			ArrayList<Terminal> Tokenized_word = new ArrayList<Terminal>();
 			int i_index = 0;
 			Token CurrToken = Token.NONE;
 			
 			while(i_index < line.length()) // repeat from first character to final, in one line. 
 			{
 				char ch = line.charAt(i_index);
+				int front_index = i_index+1;
 				
-				if(ch == '\n') // END_LINE => Token "CR"
+				if(ch == '\n' || ch == '\'') // END_LINE or Comment => Token "CR"
 				{
-					I = "\n"; // Fixable.
+					I = "\n";
 					CurrToken = Token.CR;
-					Tokenized_word.add(new SyntaxPair(I, CurrToken));
+					Tokenized_word.add(new Terminal(I, CurrToken, front_index, index+1));
 					break;
 				}
-				else if(ch == '\'') // Comment => Skip..
-				{
-					break;
-				} 
 				// ( ) { } , = : + - * / [ ] 
 				else if(ch == '(' || ch == ')' || ch == '{' || ch == '}' ||  ch == ',' || ch == '=' || ch == ':' || ch == '+' || ch == '-' || ch == '*' || ch == '/' || ch == '[' || ch == ']')
-					{
+				{
 					I = I + ch;
 					
 					switch(ch)
@@ -76,7 +79,6 @@ public class LexerAnalyzer
 						case '=':
 							CurrToken = Token.ASSIGN;
 							break;
-						// HOW CAN LEXERANALYZER DISTINGUISH ASSIGN AND EQUAL???
 						case ':':
 							CurrToken = Token.COLON;
 							break;
@@ -86,7 +88,6 @@ public class LexerAnalyzer
 						case '-':
 							CurrToken = Token.MINUS;
 							break;
-						// HOW CAN LEXERANALYZER DISTINGUISH MINUS AND UNARY_MINUS???
 						case '*':
 							CurrToken = Token.MULTIPLY;
 							break;
@@ -149,7 +150,7 @@ public class LexerAnalyzer
 						CurrToken = Token.LESS_THAN;
 					}
 				}
-				//¹®ÀÚ¿­ È®ÀÎ
+				//è‡¾ëª„ì˜„ï¿½ë¿´ ï¿½ì†—ï¿½ì”¤
 				else if(ch == '"')
 				{
 					I = I + ch;
@@ -162,7 +163,7 @@ public class LexerAnalyzer
 					
 					i_index++;
 					
-					CurrToken = Token.STR_LIT;
+					CurrToken = Token.STR;
 				}
 				//.<0-9> <Digit>.<Digit> . 
 				else if((ch >= '0' && ch <= '9') || ch == '.' )
@@ -191,7 +192,7 @@ public class LexerAnalyzer
 								i_index++;
 							}while(ch >= '0' && ch <= '9');
 							
-							CurrToken = Token.NUM_LIT;
+							CurrToken = Token.NUM;
 						}
 						else // Common dot operator.
 						{
@@ -224,7 +225,7 @@ public class LexerAnalyzer
 								break;
 							
 						}while(ch >= '0' && ch <= '9' || ch == '.');	
-						CurrToken = Token.NUM_LIT;
+						CurrToken = Token.NUM;
 					}
 				}
 				// ID, KeyWord
@@ -240,52 +241,75 @@ public class LexerAnalyzer
 							break;
 					}while(ch == '_' || (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <='Z') || (ch >= '0' && ch <= '9'));
 					
-					switch(I)
+					switch(I.toUpperCase()) // Keyword -> Convert UpperCase => Upper/Lower difference problem clear.
 					{
-						case "If":
+						case "IF":
+							I = "If";
 							CurrToken = Token.IF;
 							break;
-						case "Then":
+						case "THEN":
+							I = "Then";
 							CurrToken = Token.THEN;
 							break;
-						case "ElseIf":
+						case "ELSEIF":
+							I = "ElseIf";
 							CurrToken = Token.ELSEIF;
 							break;
-						case "Else":
+						case "ELSE":
+							I = "Else";
 							CurrToken = Token.ELSE;
 							break;
-						case "EndIf":
+						case "ENDIF":
+							I = "EndIf";
 							CurrToken = Token.ENDIF;
 							break;
-						case "While":
+						case "WHILE":
+							I = "While";
 							CurrToken = Token.WHILE;
 							break;
-						case "EndWhile":
+						case "ENDWHILE":
+							I = "EndWhile";
 							CurrToken = Token.ENDWHILE;
 							break;
-						case "For":
+						case "FOR":
+							I = "For";
 							CurrToken = Token.FOR;
 							break;
-						case "To":
+						case "TO":
+							I = "To";
 							CurrToken = Token.TO;
 							break;
-						case "Step":
+						case "STEP":
+							I = "Step";
 							CurrToken = Token.STEP;
 							break;
-						case "EndFor":
+						case "ENDFOR":
+							I = "EndFor";
 							CurrToken = Token.ENDFOR;
 							break;
-						case "Label":
+						case "LABEL": // i think this 3 line do not need.
+							I = "Label";
 							CurrToken = Token.LABEL;
 							break;
-						case "Goto":
+						case "GOTO":
+							I = "Goto";
 							CurrToken = Token.GOTO;
 							break;
-						case "Sub":
+						case "SUB":
+							I = "Sub";
 							CurrToken = Token.SUB;
 							break;
-						case "EndSub":
+						case "ENDSUB":
+							I = "EndSub";
 							CurrToken = Token.ENDSUB;
+							break;
+						case "AND":
+							I = "And";
+							CurrToken = Token.AND;
+							break;
+						case "OR":
+							I = "Or";
+							CurrToken = Token.OR;
 							break;
 						default:
 							CurrToken = Token.ID;
@@ -303,35 +327,52 @@ public class LexerAnalyzer
 					System.err.println("Lexing Error.");
 					System.exit(0);
 				}
-				Tokenized_word.add(new SyntaxPair(I, CurrToken));
+				Skip_CR = false; // Added.
+				Tokenized_word.add(new Terminal(I, CurrToken, front_index, index+1));
 				I = "";
 			}
-			Lexer.add(Tokenized_word);
+			
+			// Condition Statement Added.
+			if(!Skip_CR) Lexer.add(Tokenized_word);
+			Skip_CR = true; // Because, Every statements have <CR> at last.
 		}
+		// Add Epsilon, End of Tokens
+		Terminal Epsilon = new Terminal("$", Token.NONE, -1, -1);
+		Terminal EOT = new Terminal("END_OF_FILE", Token.END_OF_TOKENS,-1, -1);
 		
-		// Add EOF TokenInfo.
-		SyntaxPair EOF = new SyntaxPair("EOF", Token.END_FILE);
-		ArrayList<SyntaxPair> END_FILE = new ArrayList<SyntaxPair>();
-		END_FILE.add(EOF);
+		ArrayList<Terminal> END_FILE = new ArrayList<Terminal>();
+
+		END_FILE.add(Epsilon);
+		END_FILE.add(EOT);
 		Lexer.add(END_FILE);	
-		// TODO : Optimizing.
 		
 		
 		for(int i = 0; i < Lexer.size() ; i++) // Print out Test Code. - Word
 		{
-			ArrayList<SyntaxPair> temp = Lexer.get(i);
+			int count = 0;
+			ArrayList<Terminal> temp = Lexer.get(i);
+			if(temp.get(count).getLine_index() == -1)
+				System.out.println();
+			System.out.print("[Line :" + temp.get(count).getLine_index() + "] ");
+			
 			
 			for(int j = 0; ; j++)
 			{
 				if(j == temp.size())
 					break;
-				System.out.print( temp.get(j).getSyntax() + " ");
+				if(temp.get(j).getSyntax() != "\n") System.out.print( temp.get(j).getSyntax() + " ");
+				else System.out.print( temp.get(j).getSyntax() );
 			}
-		}	
-		System.out.println("\n");	
+			count++;
+		}
+		
+		System.out.println("\n---");
+		
 		for(int i = 0; i < Lexer.size() ; i++) // Print out Test Code. - TokenInfo
 		{
-			ArrayList<SyntaxPair> temp = Lexer.get(i);
+			int count = 0;
+			ArrayList<Terminal> temp = Lexer.get(i);
+			System.out.print("[Line :" + temp.get(count).getLine_index() + "] ");
 			
 			for(int j = 0; ; j++)
 			{
@@ -340,9 +381,17 @@ public class LexerAnalyzer
 				System.out.print("<" + temp.get(j).getTokenInfo() + "> " );
 			}
 			System.out.println("");
-		}	
+			count++;
+		}
+		return Lexer;	
 	}
+
+	public int get_size() // Added, return Lexer.size, that means ammount of lines.
+	{
+		return Lexer.size();
+	}
+	
 	private BufferedReader br;
 	private ArrayList<String> strarr;
-	private ArrayList<ArrayList<SyntaxPair>> Lexer; // Test
+	private ArrayList<ArrayList<Terminal>> Lexer; // Test
 }

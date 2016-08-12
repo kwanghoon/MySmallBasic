@@ -2,20 +2,22 @@ package com.coducation.smallbasic;
 
 public enum Token
 {
+	
+	// MAIN TOKEN
 	NONE,
 	
-	// '\n'
+	// '\n', '\''
 	CR, 
 	
-	// EOF
+	// EOT
 	
-	END_FILE,
+	END_OF_TOKENS,
 	
 	// Literal 
 	
-	STR_LIT,
-	NUM_LIT,
-	
+	STR,
+	NUM,
+
 	// Keyword 
 	
 	IF,
@@ -71,6 +73,11 @@ public enum Token
 	GREATER_EQUAL, // O >= O
 	EQUAL, // O = O
 	NOT_EQUAL, // O <> O
+	
+	// AND, OR
+	
+	AND,
+	OR,
 	
 	// 할당연산자 =
 	ASSIGN // Var or Property = expr

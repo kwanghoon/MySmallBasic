@@ -2,11 +2,11 @@ package com.coducation.smallbasic;
 
 public class LogicalExpr extends CondExpr
 {
-	public LogicalExpr(int op, Expr oprnd1, Expr oprnd2)
+	public LogicalExpr(Expr oprnd1, int op, Expr oprnd2)
 	{
 		super();
-		this.op = op;
 		this.oprnd1 = oprnd1;
+		this.op = op;
 		this.oprnd2 = oprnd2;
 	} // Builder
 	
