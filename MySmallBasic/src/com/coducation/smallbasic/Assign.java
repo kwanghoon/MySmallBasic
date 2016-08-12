@@ -6,7 +6,7 @@ public class Assign extends Stmt
 		{
 			super();
 			
-			if(lhs instanceof Var || lhs instanceof PropertyExpr)
+			if(lhs instanceof Var || lhs instanceof PropertyExpr || lhs instanceof Array)
 			{
 				this.lhs = lhs;
 			}
