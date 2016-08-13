@@ -57,16 +57,16 @@ public enum Token
 	COMMA, // Mathod1(Param1, Param2, ... , Paramn)
 	COLON,// Label
 	
-	// ´ÜÇ× -
-	// °ö¼À, ³ª´°¼À
-	// µ¡¼À »¬¼À	
+	// ?¨í•­ -
+	// ê³±ì…ˆ, ?˜ëˆ—??
+	// ?§ì…ˆ ëº„ì…ˆ	
 	PLUS, // O + O
 	MINUS, // O - O
 	MULTIPLY, // O * O
 	DIVIDE, // O / O
 	UNARY_MINUS, // -O
 	
-	// ³í¸®¿¬»êÀÚ > < >= <= = <>
+	// ?¼ë¦¬?°ì‚°??> < >= <= = <>
 	LESS_THAN, // O < O
 	LESS_EQUAL, // O <= O
 	GREATER_THAN, // O > O
