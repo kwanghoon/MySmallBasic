@@ -1,4 +1,4 @@
-package com.coducation.smallbasic;
+﻿package com.coducation.smallbasic;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -51,7 +51,9 @@ public class LexerAnalyzer
 				{
 					I = "\n";
 					CurrToken = Token.CR;
+
 					Tokenized_word.add(new Terminal(I, CurrToken, front_index, index+1));
+
 					break;
 				}
 				// ( ) { } , = : + - * / [ ] 
@@ -328,6 +330,7 @@ public class LexerAnalyzer
 					System.exit(0);
 				}
 				Skip_CR = false; // Added.
+
 				Tokenized_word.add(new Terminal(I, CurrToken, front_index, index+1));
 				I = "";
 			}
@@ -354,8 +357,7 @@ public class LexerAnalyzer
 			if(temp.get(count).getLine_index() == -1)
 				System.out.println();
 			System.out.print("[Line :" + temp.get(count).getLine_index() + "] ");
-			
-			
+
 			for(int j = 0; ; j++)
 			{
 				if(j == temp.size())
@@ -372,6 +374,7 @@ public class LexerAnalyzer
 		{
 			int count = 0;
 			ArrayList<Terminal> temp = Lexer.get(i);
+
 			System.out.print("[Line :" + temp.get(count).getLine_index() + "] ");
 			
 			for(int j = 0; ; j++)

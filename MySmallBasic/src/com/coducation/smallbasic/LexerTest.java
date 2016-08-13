@@ -13,7 +13,8 @@ public class LexerTest
 		int Success_Count = 0;
 		String[] args = 
 		{
-				"01_HelloWorld.sb",
+				"ParsingTest.sb"
+				/*"01_HelloWorld.sb",
 				"02_FontYellowColor.sb",
 				"03_Variables.sb",
 				"04_Temperature.sb",
@@ -23,7 +24,7 @@ public class LexerTest
 				"08_ForStep.sb",
 				"09_While.sb",
 				"10_GraphicWindow.sb",
-			    "11_GraphicWindowConfig.sb",
+			        "11_GraphicWindowConfig.sb",
 				"12_DrawLine.sb",
 				"13_LineColor.sb",
 				"14_LineThickness.sb",
@@ -33,14 +34,14 @@ public class LexerTest
 				"18_Random.sb",
 				"19_Fractal.sb",
 				"20_Subroutine.sb",
-//				"21_Array.sb",
-//				"22_ArrayIndex.sb",
-//				"23_MultiDimArray.sb",
+				"21_Array.sb",
+				"22_ArrayIndex.sb",
+				"23_MultiDimArray.sb",
 				"24_Event.sb",
 				"25_Events.sb",
 				"26_Flickr.sb",
 				"Bricks.sb",
-				"Testris.sb"
+				"Testris.sb"*/
 		};
 		
 		for(String f : args)
@@ -50,7 +51,7 @@ public class LexerTest
 			FileReader fr = new FileReader("Sample\\" + f);
 			LexerAnalyzer Lexing = new LexerAnalyzer(fr);
 			Parser Parsing = new Parser(Lexing);
-			
+
 			// Parser Test Routine.
 				Parsing.Parsing();
 				Success_Count++;
