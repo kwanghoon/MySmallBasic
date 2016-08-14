@@ -553,7 +553,6 @@ public class Parser
 						count--;
 					}
 					
-					
 					current_state = (ParseState) stack.lastElement();
 					
 					stack.push(new Nonterminal(tree));
@@ -567,7 +566,6 @@ public class Parser
 			}
 		}
 	}
-	
 	
 	private ParseState get_st(ParseState current_state, String index) throws FileNotFoundException
 	{	
@@ -789,7 +787,6 @@ public class Parser
 		}
 		return result;	
 	}
-	
 	private Stack<Stkelem> stack;
 	private ArrayList<ArrayList<Terminal>> Lexing_result;
 	private ArrayList<Terminal> Tokens;

@@ -1,4 +1,4 @@
-package com.coducation.smallbasic;
+﻿package com.coducation.smallbasic;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -13,7 +13,7 @@ public class LexerAnalyzer
 		this.strarr = new ArrayList<String>();
 		this.Lexer = new ArrayList<ArrayList<Terminal>>();
 	}
-	
+
 	public ArrayList<ArrayList<Terminal>> Lexing() throws IOException
 	{
 		boolean Skip_CR = true; // Add, if Skip_CR is true and Next Line Token Only <CR>, then ignore it.
@@ -354,8 +354,7 @@ public class LexerAnalyzer
 			if(temp.get(count).getLine_index() == -1)
 				System.out.println();
 			System.out.print("[Line :" + temp.get(count).getLine_index() + "] ");
-			
-			
+				
 			for(int j = 0; ; j++)
 			{
 				if(j == temp.size())
