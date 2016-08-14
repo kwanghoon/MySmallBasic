@@ -2,9 +2,11 @@ package com.coducation.smallbasic;
 
 public enum Token
 {
+	
+	// MAIN TOKEN
 	NONE,
 	
-	// '\n'
+	// '\n', '\''
 	CR, 
 	
 	// EOT
@@ -13,9 +15,9 @@ public enum Token
 	
 	// Literal 
 	
-	STR_LIT,
-	NUM_LIT,
-	
+	STR,
+	NUM,
+
 	// Keyword 
 	
 	IF,
@@ -55,16 +57,16 @@ public enum Token
 	COMMA, // Mathod1(Param1, Param2, ... , Paramn)
 	COLON,// Label
 	
-	// ë‹¨í•­ -
-	// ê³±ì…ˆ, ë‚˜ëˆ—ì…ˆ
-	// ë§ì…ˆ ëº„ì…ˆ	
+	// ´ÜÇ× -
+	// °ö¼À, ³ª´°¼À
+	// µ¡¼À »¬¼À	
 	PLUS, // O + O
 	MINUS, // O - O
 	MULTIPLY, // O * O
 	DIVIDE, // O / O
 	UNARY_MINUS, // -O
 	
-	// ë…¼ë¦¬ì—°ì‚°ì > < >= <= = <>
+	// ³í¸®¿¬»êÀÚ > < >= <= = <>
 	LESS_THAN, // O < O
 	LESS_EQUAL, // O <= O
 	GREATER_THAN, // O > O
@@ -72,6 +74,11 @@ public enum Token
 	EQUAL, // O = O
 	NOT_EQUAL, // O <> O
 	
-	// í• ë‹¹ì—°ì‚°ì =
+	// AND, OR
+	
+	AND,
+	OR,
+	
+	// ÇÒ´ç¿¬»êÀÚ =
 	ASSIGN // Var or Property = expr
 }

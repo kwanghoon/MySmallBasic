@@ -1,7 +1,7 @@
 package com.coducation.smallbasic;
 
-public class Lit extends Expr
-{
+public class Lit extends CondExpr // extends Expr -> extends CondExpr
+{								  // Because, Lit := "true", "false" <= String, num...
 	public Lit(String lit)
 	{
 		super();
@@ -15,5 +15,9 @@ public class Lit extends Expr
 	 * Unicode.
 	 */
 	
+	public String gets()
+	{
+		return lit;
+	}
 	private String lit;
 }

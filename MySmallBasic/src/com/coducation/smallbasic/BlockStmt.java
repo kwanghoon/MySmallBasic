@@ -1,12 +1,16 @@
 package com.coducation.smallbasic;
 
+import java.util.ArrayList;
+
 public class BlockStmt extends Stmt
 {
-		public BlockStmt(Stmt[] stmts)
+		public BlockStmt(ArrayList<Stmt> stmts)
 		{
 			super();
 			this.stmts = stmts;
 		} // Builder
 		
-		private Stmt[] stmts;
+		
+		public ArrayList<Stmt> getAL(){return stmts;} // Getter added.
+		private ArrayList<Stmt> stmts; // private Stmt[] -> private ArrayList<Stmt>
 }
