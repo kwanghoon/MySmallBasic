@@ -10,6 +10,7 @@ public class LexerTest
 	@Test
 	public void main() throws IOException
 	{
+		int Success_Count = 0;
 		String[] args = 
 		{
 				"ParsingTest.sb"
@@ -23,7 +24,7 @@ public class LexerTest
 				"08_ForStep.sb",
 				"09_While.sb",
 				"10_GraphicWindow.sb",
-				"11_GraphicWindowConfig.sb",
+			    "11_GraphicWindowConfig.sb",
 				"12_DrawLine.sb",
 				"13_LineColor.sb",
 				"14_LineThickness.sb",
@@ -33,9 +34,9 @@ public class LexerTest
 				"18_Random.sb",
 				"19_Fractal.sb",
 				"20_Subroutine.sb",
-				"21_Array.sb",
-				"22_ArrayIndex.sb",
-				"23_MultiDimArray.sb",
+//				"21_Array.sb",
+//				"22_ArrayIndex.sb",
+//				"23_MultiDimArray.sb",
 				"24_Event.sb",
 				"25_Events.sb",
 				"26_Flickr.sb",
@@ -50,12 +51,12 @@ public class LexerTest
 			FileReader fr = new FileReader("Sample\\" + f);
 			LexerAnalyzer Lexing = new LexerAnalyzer(fr);
 			Parser Parsing = new Parser(Lexing);
-		
-			// Line_Parser Test Routine.
-			for(int line_index = 0; line_index < Lexing.get_size(); line_index++)
-			{
-				Parsing.Parsing(line_index);
-			}
+			
+			// Parser Test Routine.
+				Parsing.Parsing();
+				Success_Count++;
 		}
+		System.out.println("----------------------------------------------");
+		System.out.println("Test Complelte, " + Success_Count + " Files ParsingSuccessful.");
 	}
 }

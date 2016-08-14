@@ -1,4 +1,4 @@
-package com.coducation.smallbasic;
+﻿package com.coducation.smallbasic;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -11,23 +11,26 @@ public class LexerAnalyzer
 	{
 		this.br = new BufferedReader(fr);
 		this.strarr = new ArrayList<String>();
-		this.Lexer = new ArrayList<ArrayList<SyntaxPair>>();
+		this.Lexer = new ArrayList<ArrayList<Terminal>>();
 	}
-	
-	public ArrayList<ArrayList<SyntaxPair>> Lexing() throws IOException
+
+	public ArrayList<ArrayList<Terminal>> Lexing() throws IOException
 	{
-		boolean Skip_CR = false; // Add, if Skip_CR is true and Next Line Token Only <CR>, then ignore it.
-		
+		boolean Skip_CR = true; // Add, if Skip_CR is true and Next Line Token Only <CR>, then ignore it.
+		String read_string = br.readLine();		
 		while(true)
 		{
-			String read_string;
-			if((read_string = br.readLine()) != null)
+			String next_read_string = br.readLine();
+			if(next_read_string != null)
 			{
-					// delete Condition Statement.
-					strarr.add(read_string + "\n");  
+				strarr.add(read_string + "\n"); 
+				read_string = next_read_string;
 			}
 			else
+			{
+				strarr.add(read_string);
 				break;
+			}
 		}
 		
 		
@@ -35,7 +38,7 @@ public class LexerAnalyzer
 		{
 			String line = strarr.get(index);
 			String I = "";
-			ArrayList<SyntaxPair> Tokenized_word = new ArrayList<SyntaxPair>();
+			ArrayList<Terminal> Tokenized_word = new ArrayList<Terminal>();
 			int i_index = 0;
 			Token CurrToken = Token.NONE;
 			
@@ -48,7 +51,7 @@ public class LexerAnalyzer
 				{
 					I = "\n";
 					CurrToken = Token.CR;
-					Tokenized_word.add(new SyntaxPair(I, CurrToken, front_index, index+1));
+					Tokenized_word.add(new Terminal(I, CurrToken, front_index, index+1));
 					break;
 				}
 				// ( ) { } , = : + - * / [ ] 
@@ -160,7 +163,7 @@ public class LexerAnalyzer
 					
 					i_index++;
 					
-					CurrToken = Token.STR_LIT;
+					CurrToken = Token.STR;
 				}
 				//.<0-9> <Digit>.<Digit> . 
 				else if((ch >= '0' && ch <= '9') || ch == '.' )
@@ -189,7 +192,7 @@ public class LexerAnalyzer
 								i_index++;
 							}while(ch >= '0' && ch <= '9');
 							
-							CurrToken = Token.NUM_LIT;
+							CurrToken = Token.NUM;
 						}
 						else // Common dot operator.
 						{
@@ -222,7 +225,7 @@ public class LexerAnalyzer
 								break;
 							
 						}while(ch >= '0' && ch <= '9' || ch == '.');	
-						CurrToken = Token.NUM_LIT;
+						CurrToken = Token.NUM;
 					}
 				}
 				// ID, KeyWord
@@ -238,52 +241,75 @@ public class LexerAnalyzer
 							break;
 					}while(ch == '_' || (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <='Z') || (ch >= '0' && ch <= '9'));
 					
-					switch(I)
+					switch(I.toUpperCase()) // Keyword -> Convert UpperCase => Upper/Lower difference problem clear.
 					{
-						case "If":
+						case "IF":
+							I = "If";
 							CurrToken = Token.IF;
 							break;
-						case "Then":
+						case "THEN":
+							I = "Then";
 							CurrToken = Token.THEN;
 							break;
-						case "ElseIf":
+						case "ELSEIF":
+							I = "ElseIf";
 							CurrToken = Token.ELSEIF;
 							break;
-						case "Else":
+						case "ELSE":
+							I = "Else";
 							CurrToken = Token.ELSE;
 							break;
-						case "EndIf":
+						case "ENDIF":
+							I = "EndIf";
 							CurrToken = Token.ENDIF;
 							break;
-						case "While":
+						case "WHILE":
+							I = "While";
 							CurrToken = Token.WHILE;
 							break;
-						case "EndWhile":
+						case "ENDWHILE":
+							I = "EndWhile";
 							CurrToken = Token.ENDWHILE;
 							break;
-						case "For":
+						case "FOR":
+							I = "For";
 							CurrToken = Token.FOR;
 							break;
-						case "To":
+						case "TO":
+							I = "To";
 							CurrToken = Token.TO;
 							break;
-						case "Step":
+						case "STEP":
+							I = "Step";
 							CurrToken = Token.STEP;
 							break;
-						case "EndFor":
+						case "ENDFOR":
+							I = "EndFor";
 							CurrToken = Token.ENDFOR;
 							break;
-						case "Label":
+						case "LABEL": // i think this 3 line do not need.
+							I = "Label";
 							CurrToken = Token.LABEL;
 							break;
-						case "Goto":
+						case "GOTO":
+							I = "Goto";
 							CurrToken = Token.GOTO;
 							break;
-						case "Sub":
+						case "SUB":
+							I = "Sub";
 							CurrToken = Token.SUB;
 							break;
-						case "EndSub":
+						case "ENDSUB":
+							I = "EndSub";
 							CurrToken = Token.ENDSUB;
+							break;
+						case "AND":
+							I = "And";
+							CurrToken = Token.AND;
+							break;
+						case "OR":
+							I = "Or";
+							CurrToken = Token.OR;
 							break;
 						default:
 							CurrToken = Token.ID;
@@ -302,7 +328,7 @@ public class LexerAnalyzer
 					System.exit(0);
 				}
 				Skip_CR = false; // Added.
-				Tokenized_word.add(new SyntaxPair(I, CurrToken, front_index, index+1));
+				Tokenized_word.add(new Terminal(I, CurrToken, front_index, index+1));
 				I = "";
 			}
 			
@@ -310,10 +336,13 @@ public class LexerAnalyzer
 			if(!Skip_CR) Lexer.add(Tokenized_word);
 			Skip_CR = true; // Because, Every statements have <CR> at last.
 		}
+		// Add Epsilon, End of Tokens
+		Terminal Epsilon = new Terminal("$", Token.NONE, -1, -1);
+		Terminal EOT = new Terminal("END_OF_FILE", Token.END_OF_TOKENS,-1, -1);
 		
-		// Add End of Tokens
-		SyntaxPair EOT = new SyntaxPair("END_OF_FILE", Token.END_OF_TOKENS,-1, -1);
-		ArrayList<SyntaxPair> END_FILE = new ArrayList<SyntaxPair>();
+		ArrayList<Terminal> END_FILE = new ArrayList<Terminal>();
+
+		END_FILE.add(Epsilon);
 		END_FILE.add(EOT);
 		Lexer.add(END_FILE);	
 		
@@ -321,9 +350,11 @@ public class LexerAnalyzer
 		for(int i = 0; i < Lexer.size() ; i++) // Print out Test Code. - Word
 		{
 			int count = 0;
-			ArrayList<SyntaxPair> temp = Lexer.get(i);
+			ArrayList<Terminal> temp = Lexer.get(i);
+			if(temp.get(count).getLine_index() == -1)
+				System.out.println();
 			System.out.print("[Line :" + temp.get(count).getLine_index() + "] ");
-			
+				
 			for(int j = 0; ; j++)
 			{
 				if(j == temp.size())
@@ -331,8 +362,6 @@ public class LexerAnalyzer
 				if(temp.get(j).getSyntax() != "\n") System.out.print( temp.get(j).getSyntax() + " ");
 				else System.out.print( temp.get(j).getSyntax() );
 			}
-			
-			System.out.println();
 			count++;
 		}
 		
@@ -341,7 +370,7 @@ public class LexerAnalyzer
 		for(int i = 0; i < Lexer.size() ; i++) // Print out Test Code. - TokenInfo
 		{
 			int count = 0;
-			ArrayList<SyntaxPair> temp = Lexer.get(i);
+			ArrayList<Terminal> temp = Lexer.get(i);
 			System.out.print("[Line :" + temp.get(count).getLine_index() + "] ");
 			
 			for(int j = 0; ; j++)
@@ -363,5 +392,5 @@ public class LexerAnalyzer
 	
 	private BufferedReader br;
 	private ArrayList<String> strarr;
-	private ArrayList<ArrayList<SyntaxPair>> Lexer; // Test
+	private ArrayList<ArrayList<Terminal>> Lexer; // Test
 }

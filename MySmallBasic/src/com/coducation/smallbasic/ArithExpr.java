@@ -2,13 +2,21 @@ package com.coducation.smallbasic;
 
 public class ArithExpr extends Expr
 {
-	ArithExpr(int op, Expr oprnd1, Expr oprnd2)
+	ArithExpr(Expr oprnd1, int op, Expr oprnd2)
+	{
+		super();
+		this.oprnd1 = oprnd1;
+		this.op = op;
+		this.oprnd2 = oprnd2;
+	} // Builder
+	
+	ArithExpr(int op, Expr oprnd1)
 	{
 		super();
 		this.op = op;
 		this.oprnd1 = oprnd1;
-		this.oprnd2 = oprnd2;
-	} // Builder
+		this.oprnd2 = null; // Thisisok?
+	}
 
 	private int op; // O + O, O ¡© O, O * O, O / O, ¡©O
 	private Expr oprnd1, oprnd2;
