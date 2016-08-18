@@ -13,8 +13,7 @@ public class LexerTest
 		int Success_Count = 0;
 		String[] args = 
 		{
-				"ParsingTest.sb"
-				/*"01_HelloWorld.sb",
+				"01_HelloWorld.sb",
 				"02_FontYellowColor.sb",
 				"03_Variables.sb",
 				"04_Temperature.sb",
@@ -24,7 +23,7 @@ public class LexerTest
 				"08_ForStep.sb",
 				"09_While.sb",
 				"10_GraphicWindow.sb",
-			        "11_GraphicWindowConfig.sb",
+			    "11_GraphicWindowConfig.sb",
 				"12_DrawLine.sb",
 				"13_LineColor.sb",
 				"14_LineThickness.sb",
@@ -41,7 +40,7 @@ public class LexerTest
 				"25_Events.sb",
 				"26_Flickr.sb",
 				"Bricks.sb",
-				"Testris.sb"*/
+				"Testris.sb"
 		};
 		
 		for(String f : args)
