@@ -1,2 +1,0 @@
-TextWindow.ForegroundColor = "Yellow" 
-TextWindow.WriteLine("Hello World")
