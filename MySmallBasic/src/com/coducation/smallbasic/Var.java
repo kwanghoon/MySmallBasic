@@ -16,9 +16,9 @@ public class Var extends Expr
 	} // Builder
 	
 	/* Notice 
-	 * Var ::= [a¡©zA¡©Z]+[a¡©zA¡©Z0¡©9_]*  
-	 * ¡© No more than 40 characters
-	 * ÇÑ±Û º¯¼öµµ »ç¿ë °¡´ÉÇÔ. // ³ªÁß¿¡ °í·Á...
+	 * Var ::= [aÂ­zAÂ­Z]+[aÂ­zAÂ­Z0Â­9_]*  
+	 * Â­ No more than 40 characters
+	 * í•œê¸€ ë³€ìˆ˜ë„ ì‚¬ìš© ê°€ëŠ¥í•¨. // ë‚˜ì¤‘ì— ê³ ë ¤...
 	 */
 
 	private String name;

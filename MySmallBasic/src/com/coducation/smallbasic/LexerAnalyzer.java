@@ -13,7 +13,7 @@ public class LexerAnalyzer
 		this.strarr = new ArrayList<String>();
 		this.Lexer = new ArrayList<ArrayList<Terminal>>();
 	}
-
+	
 	public ArrayList<ArrayList<Terminal>> Lexing() throws IOException
 	{
 		boolean Skip_CR = true; // Add, if Skip_CR is true and Next Line Token Only <CR>, then ignore it.
@@ -51,7 +51,9 @@ public class LexerAnalyzer
 				{
 					I = "\n";
 					CurrToken = Token.CR;
+
 					Tokenized_word.add(new Terminal(I, CurrToken, front_index, index+1));
+
 					break;
 				}
 				// ( ) { } , = : + - * / [ ] 
@@ -150,7 +152,7 @@ public class LexerAnalyzer
 						CurrToken = Token.LESS_THAN;
 					}
 				}
-				//臾몄옄�뿴 �솗�씤
+				//�눧紐꾩쁽占쎈였 占쎌넇占쎌뵥
 				else if(ch == '"')
 				{
 					I = I + ch;
@@ -328,6 +330,7 @@ public class LexerAnalyzer
 					System.exit(0);
 				}
 				Skip_CR = false; // Added.
+
 				Tokenized_word.add(new Terminal(I, CurrToken, front_index, index+1));
 				I = "";
 			}
@@ -354,7 +357,7 @@ public class LexerAnalyzer
 			if(temp.get(count).getLine_index() == -1)
 				System.out.println();
 			System.out.print("[Line :" + temp.get(count).getLine_index() + "] ");
-				
+
 			for(int j = 0; ; j++)
 			{
 				if(j == temp.size())
@@ -371,6 +374,7 @@ public class LexerAnalyzer
 		{
 			int count = 0;
 			ArrayList<Terminal> temp = Lexer.get(i);
+
 			System.out.print("[Line :" + temp.get(count).getLine_index() + "] ");
 			
 			for(int j = 0; ; j++)

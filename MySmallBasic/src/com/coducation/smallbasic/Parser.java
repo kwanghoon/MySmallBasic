@@ -800,4 +800,3 @@ public class Parser
 	private int final_line;
 	
 }
->>>>>>> 3272c62bf6ebccf8c61258bfd4597ece35460617

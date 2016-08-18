@@ -57,16 +57,16 @@ public enum Token
 	COMMA, // Mathod1(Param1, Param2, ... , Paramn)
 	COLON,// Label
 	
-	// ´ÜÇ× -
-	// °ö¼À, ³ª´°¼À
-	// µ¡¼À »¬¼À	
+	// ë‹¨í•­
+	// ê³±ì„¼, ë‚˜ëˆ—ì…ˆ
+	// ë§ì…ˆ ëº„ì…ˆ	
 	PLUS, // O + O
 	MINUS, // O - O
 	MULTIPLY, // O * O
 	DIVIDE, // O / O
 	UNARY_MINUS, // -O
 	
-	// ³í¸®¿¬»êÀÚ > < >= <= = <>
+	// ë…¼ë¦¬ ì—°ì‚°ì> < >= <= = <>
 	LESS_THAN, // O < O
 	LESS_EQUAL, // O <= O
 	GREATER_THAN, // O > O
@@ -79,6 +79,6 @@ public enum Token
 	AND,
 	OR,
 	
-	// ÇÒ´ç¿¬»êÀÚ =
+	// í• ë‹¹ì—°ì‚°ì =
 	ASSIGN // Var or Property = expr
 }
