@@ -57,16 +57,16 @@ public enum Token
 	COMMA, // Mathod1(Param1, Param2, ... , Paramn)
 	COLON,// Label
 	
-	// ?�항 -
-	// 곱셈, ?�눗??
-	// ?�셈 뺄셈	
+	// 단항
+	// 곱센, 나눗셈
+	// 덧셈 뺄셈	
 	PLUS, // O + O
 	MINUS, // O - O
 	MULTIPLY, // O * O
 	DIVIDE, // O / O
 	UNARY_MINUS, // -O
 	
-	// ?�리?�산??> < >= <= = <>
+	// 논리 연산자> < >= <= = <>
 	LESS_THAN, // O < O
 	LESS_EQUAL, // O <= O
 	GREATER_THAN, // O > O
@@ -79,6 +79,6 @@ public enum Token
 	AND,
 	OR,
 	
-	// �Ҵ翬���� =
+	// 할당연산자 =
 	ASSIGN // Var or Property = expr
 }

@@ -152,7 +152,7 @@ public class LexerAnalyzer
 						CurrToken = Token.LESS_THAN;
 					}
 				}
-				//臾몄옄�뿴 �솗�씤
+				//�눧紐꾩쁽占쎈였 占쎌넇占쎌뵥
 				else if(ch == '"')
 				{
 					I = I + ch;

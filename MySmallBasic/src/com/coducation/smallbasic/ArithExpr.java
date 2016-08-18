@@ -18,7 +18,7 @@ public class ArithExpr extends Expr
 		this.oprnd2 = null; // Thisisok?
 	}
 
-	private int op; // O + O, O ？ O, O * O, O / O, ？O
+	private int op; // O + O, O 足 O, O * O, O / O, 足O
 	private Expr oprnd1, oprnd2;
 	
 	public static final int PLUS = 1;

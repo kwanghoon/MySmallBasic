@@ -11,7 +11,7 @@ public class Lit extends CondExpr // extends Expr -> extends CondExpr
 	/* Notice 
 	 * 123  
 	 * 3.14
-	 * 'a', 'ÇÑ' // ¡° ... ¡° Çü½ÄÀ¸·Î »ç¿ëÇØ¾ß ÇÔ
+	 * 'a', 'í•œ' // â€œ ... â€œ í˜•ì‹ìœ¼ë¡œ ì‚¬ìš©í•´ì•¼ í•¨
 	 * Unicode.
 	 */
 	
