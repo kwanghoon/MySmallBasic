@@ -1,6 +1,8 @@
-If (Clock.Hour < 12) Then   
-	TextWindow.WriteLine("Good Morning World") 
+var = "a" 
+var2 = "true"
+ 
+If var Or var2 Then
+  var = 123
 EndIf
-If (Clock.Hour >= 12) Then   
-	TextWindow.WriteLine("Good Evening World") 
-EndIf
+
+TextWindow.WriteLine( "avr : " + var )

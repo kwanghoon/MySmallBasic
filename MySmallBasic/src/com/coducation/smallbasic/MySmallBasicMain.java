@@ -16,7 +16,11 @@ public class MySmallBasicMain
 		LexerAnalyzer Lexing = new LexerAnalyzer(fr);
 		Parser Parsing = new Parser(Lexing);
 		
+		
 		// Parser Test Routine.
-			Parsing.Parsing();
+			Nonterminal stack = Parsing.Parsing();
+			
+			Interpreter interpreting = new Interpreter(stack); 
+			interpreting.Interpreting();
 	}
 }

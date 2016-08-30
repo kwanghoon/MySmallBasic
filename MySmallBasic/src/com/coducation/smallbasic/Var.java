@@ -15,6 +15,15 @@ public class Var extends Expr
 			System.err.println("First character can Only Alphabet");
 	} // Builder
 	
+	public String getVarName(){
+		return name;
+	}
+	
+	public Result evalExpr(Env env){
+		Value temp_v = env.getValue( this.getVarName() );
+		return new Result(env, temp_v);
+	}
+	
 	/* Notice 
 	 * Var ::= [a­zA­Z]+[a­zA­Z0­9_]*  
 	 * ­ No more than 40 characters

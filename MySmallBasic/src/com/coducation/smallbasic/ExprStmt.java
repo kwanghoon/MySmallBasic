@@ -8,6 +8,15 @@ public class ExprStmt extends Stmt
 			this.expr = expr;
 		} // Builder
 		
+		public Result evalStmt(Env env){
+			Result res;
+			res = expr.evalExpr(env);
+			
+			return res;
+		}
+		
 		private Expr expr;
 		
 }
+
+  

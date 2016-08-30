@@ -5,6 +5,11 @@ class Stmt
 	public Stmt()
 	{
 	} // Builder
+	
+	public Result evalStmt(Env env){
+		return new Result(env , null);
+	}
+	
     public void prettyprint()
 	{
 //		if(this instanceof ExprStmt)

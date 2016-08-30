@@ -496,7 +496,8 @@ public class Parser
 					else if(Grammer_rule.get(state_num).equals("Primary -> STR"))
 					{
 						Terminal temp = (Terminal) stack.get(last_stack_tree_index-1);
-						tree = new Lit(temp.getSyntax());
+						String str = temp.getSyntax();
+						tree = new Lit(str.substring(1, str.length()-1));
 					}
 					else if(Grammer_rule.get(state_num).equals("Primary -> ( Expr )"))
 					{
