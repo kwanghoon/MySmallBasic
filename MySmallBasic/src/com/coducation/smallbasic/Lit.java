@@ -19,5 +19,10 @@ public class Lit extends CondExpr // extends Expr -> extends CondExpr
 	{
 		return lit;
 	}
+	
+	public Result evalExpr(Env env){
+		return new Result(env, new StrV(this.gets()) );
+	}
+	
 	private String lit;
 }

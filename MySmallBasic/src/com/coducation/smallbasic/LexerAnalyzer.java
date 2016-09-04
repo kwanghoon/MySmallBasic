@@ -184,6 +184,15 @@ public class LexerAnalyzer
 							do
 							{
 								I = I+ch;
+								i_index++;
+								
+								if(i_index == line.length()-1){
+									ch = line.charAt(i_index);
+									I = I+ch;
+									i_index++;
+									break;
+								}
+								
 								ch = line.charAt(i_index);
 								
 								if(dotonce == true && ch == '.')
@@ -191,8 +200,9 @@ public class LexerAnalyzer
 									System.err.println("Overlapped dot error.");
 									System.exit(0);	
 								}
-								i_index++;
 							}while(ch >= '0' && ch <= '9');
+							
+							I = "0" + I;
 							
 							CurrToken = Token.NUM;
 						}

@@ -10,6 +10,20 @@ public class IfStmt extends Stmt
 			this._else = _else;
 		} // Builder
 		
+		public Result evalStmt(Env env) throws Exception{
+			Result res = new Result(env);
+			Value bool_val = (cond.evalExpr(env)).getValue();
+
+			if(((StrV)bool_val).getValue() == "true"){
+				res = _then.evalStmt(env);
+			}
+			else if(_else != null){
+				res = _else.evalStmt(env);
+			}
+			
+			return res;
+		}
+		
 		private	CondExpr cond;
 		private	Stmt _then, _else;
 }
