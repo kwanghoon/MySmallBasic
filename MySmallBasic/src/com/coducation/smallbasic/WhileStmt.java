@@ -9,6 +9,20 @@ public class WhileStmt extends Stmt
 			this.block = block;
 		} // Builder
 		
+		public Result evalStmt(Env env) throws Exception{
+			Result res = new Result(env);
+			
+			while(true){
+				if( ((StrV)((cond.evalExpr(env)).getValue())).getValue() == "true"){
+					res = block.evalStmt(env);
+				}
+				else
+					break;
+			}
+			
+			return res;
+		}
+		
 		private CondExpr cond;
 		private Stmt block;
 }

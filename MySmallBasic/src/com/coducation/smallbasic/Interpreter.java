@@ -9,13 +9,16 @@ public class Interpreter {
 	}
 	
 	public void Interpreting(){
-		if (Tree.getTree() instanceof BlockStmt){
+		try {
+				BlockStmt stmt = (BlockStmt)Tree.getTree();
+				stmt.evalStmt(env);
+			
+		} catch (Exception e) {
+			//TODO : 라벨 찾아서 인터프리팅하기.
+			String labelname = e.getMessage();
+			Env tempEnv = env;
 			BlockStmt stmt = (BlockStmt)Tree.getTree();
-
-			stmt.evalStmt(env);
-		}
-		else if(Tree.getTree() instanceof Stmt){
-			((Stmt)Tree.getTree()).evalStmt(env);
+			ArrayList arr = stmt.getAL();
 		}
 	}
 	
@@ -29,6 +32,24 @@ public class Interpreter {
 //		}
 //		return result;	
 //	}
+	
+	public static void push(Stmt stmt){
+		stack.add(stmt);
+	}
+	
+	public static Stmt pop(int index){
+		Stmt stmt = stack.get(index);
+		stack.remove(index);
+		return stmt;
+	}
+	
+	public static int getStackSize(){
+		return stack.size();
+	}
+	
+	public static void stackInit(){
+		stack = new ArrayList<Stmt>();
+	}
 	
 	public static boolean isNum(String str) throws NumberFormatException {
 		try{
@@ -50,7 +71,7 @@ public class Interpreter {
 			return false;
 		}
 	}
-
+	private static ArrayList<Stmt> stack;
 	private Nonterminal Tree;
-	Env env;
+	private Env env;
 }

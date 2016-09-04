@@ -24,10 +24,10 @@ public class CompExpr extends CondExpr
 	
 	public Result evalExpr(Env env){
 		Expr[] temp_ex = this.GetOperand();
-
+		StrV sv1, sv2;
+		
 		Result oprnd1 = temp_ex[0].evalExpr(env);
 		Result oprnd2 = temp_ex[1].evalExpr(env);
-		StrV sv1, sv2;
 		
 		float parsed_float1, parsed_float2;
 		String oprnd1_str, oprnd2_str;
@@ -38,7 +38,7 @@ public class CompExpr extends CondExpr
 			oprnd1_str = sv1.getValue();
 		}
 		else {
-			//예외 경우 테스트 확인
+			//다른 경우 테스트 확인
 			System.err.println("CompExpr : err");
 		}
 
@@ -87,7 +87,6 @@ public class CompExpr extends CondExpr
 			if(parsed_float1 < parsed_float2)
 				return new Result(env, new StrV("true"));
 		}
-		
 		return new Result(env, new StrV("false"));		
 	}
 	

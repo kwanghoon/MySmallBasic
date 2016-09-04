@@ -20,7 +20,8 @@ public class MySmallBasicMain
 		// Parser Test Routine.
 			Nonterminal stack = Parsing.Parsing();
 			
-			Interpreter interpreting = new Interpreter(stack); 
+			Interpreter interpreting = new Interpreter(stack);
+			Interpreter.stackInit();
 			interpreting.Interpreting();
 	}
 }

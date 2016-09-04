@@ -6,7 +6,7 @@ class Stmt
 	{
 	} // Builder
 	
-	public Result evalStmt(Env env){
+	public Result evalStmt(Env env) throws Exception{
 		return new Result(env , null);
 	}
 	
