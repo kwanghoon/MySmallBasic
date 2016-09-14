@@ -40,7 +40,15 @@ public class MethodCallExpr extends Expr
 		
 		return new Result(env);
 	}
-
+	public String getObj() {
+		return obj;
+	}
+	public String getName() {
+		return name;
+	}
+	public ArrayList<Expr> getArgs() {
+		return args;
+	}
 	private String obj, name;
 	private ArrayList<Expr> args;
 }

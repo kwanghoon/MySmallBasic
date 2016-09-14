@@ -8,6 +8,11 @@ public class PropertyExpr extends Expr
 		this.obj = obj;
 		this.name = name;
 	} // Builder
-	
+	public String getObj() {
+		return obj;
+	}
+	public String getName() {
+		return name;
+	}
 	private String obj, name; // cf. obj . name
 }

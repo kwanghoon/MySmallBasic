@@ -7,6 +7,9 @@ public class SubCallExpr extends Expr
 		super();
 		this.name = name;
 	} // Builder
+	public String getName() {
+		return name;
+	}
 	
 	private String name;
 

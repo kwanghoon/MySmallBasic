@@ -40,6 +40,21 @@ public class ForStmt extends Stmt
 			
 			return new Result(env);
 		}
+		public Var getVar() {
+			return var;
+		}
+		public Expr getInit() {
+			return init;
+		}
+		public Expr getEnd() {
+			return end;
+		}
+		public Expr getStep() {
+			return step;
+		}
+		public Stmt getBlock() {
+			return block;
+		}
 		
 		private Var var;
 		private Expr init, end, step;

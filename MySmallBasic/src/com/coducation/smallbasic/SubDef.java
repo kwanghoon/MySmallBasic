@@ -9,6 +9,13 @@ public class SubDef extends Stmt
 			this.block = block;
 		} // Builder
 		
+		public String getName() {
+			return name;
+		}
+		public Stmt getBlock() {
+			return block;
+		}
+		
 		private String name;
 		private Stmt block;
 }

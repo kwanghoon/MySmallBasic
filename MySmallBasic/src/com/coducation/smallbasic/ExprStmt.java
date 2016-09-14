@@ -14,6 +14,9 @@ public class ExprStmt extends Stmt
 			
 			return res;
 		}
+		public Expr getExpr() {
+			return expr;
+		}
 		
 		private Expr expr;
 		

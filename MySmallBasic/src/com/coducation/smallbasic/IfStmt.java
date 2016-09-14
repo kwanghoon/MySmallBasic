@@ -23,6 +23,15 @@ public class IfStmt extends Stmt
 			
 			return res;
 		}
+		public CondExpr getCond() {
+			return cond;
+		}
+		public Stmt getThen() {
+			return _then;
+		}
+		public Stmt getElse() {
+			return _else;
+		}
 		
 		private	CondExpr cond;
 		private	Stmt _then, _else;

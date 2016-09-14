@@ -3,11 +3,9 @@ package com.coducation.smallbasic;
 import java.io.FileReader;
 import java.io.IOException;
 
-import org.junit.Test;
 
 public class LexerTest 
 {
-	@Test
 	public void main() throws IOException
 	{
 		int Success_Count = 0;

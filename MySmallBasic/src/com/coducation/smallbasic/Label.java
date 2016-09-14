@@ -7,6 +7,8 @@ public class Label extends Stmt
 			super();
 			this.label = label;
 		} // Builder
-		
+		public String getLabel() {
+			return label;
+		}
 		private String label;
 }

@@ -17,7 +17,12 @@ public class Lit extends CondExpr // extends Expr -> extends CondExpr
 	
 	public String gets()
 	{
-		return lit;
+		try {
+			Double.parseDouble(lit);
+			return lit;
+		} catch(NumberFormatException e) {
+			return "\"" + lit + "\"";
+		}
 	}
 	
 	public Result evalExpr(Env env){

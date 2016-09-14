@@ -22,6 +22,12 @@ public class WhileStmt extends Stmt
 			
 			return res;
 		}
+		public CondExpr getCond() {
+			return cond;
+		}
+		public Stmt getBlock() {
+			return block;
+		}
 		
 		private CondExpr cond;
 		private Stmt block;

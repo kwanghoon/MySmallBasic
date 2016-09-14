@@ -12,6 +12,9 @@ public class GotoStmt extends Stmt
 			
 			throw new Exception(targetLabel);
 		}
+		public String getTargetLabel() {
+			return targetLabel;
+		}
 		
 		private String targetLabel;
 }
