@@ -502,7 +502,7 @@ public class Parser
 					else if(Grammer_rule.get(state_num).equals("Primary -> ( Expr )"))
 					{
 						Nonterminal temp = (Nonterminal) stack.get(last_stack_tree_index-3);
-						tree = (Expr) temp.getTree();
+						tree = new ParenExpr ((Expr) temp.getTree());
 					}
 					else if(Grammer_rule.get(state_num).equals("Primary -> ID"))
 					{

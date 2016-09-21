@@ -18,6 +18,7 @@ public class PrettyPrinter {
 		prettyPrint(assignStmt.getLSide());
 		System.out.print(" = ");
 		prettyPrint(assignStmt.getRSide());
+		System.out.println();
 	}
 
 	public void prettyPrint(BlockStmt blockStmt) {
@@ -207,6 +208,12 @@ public class PrettyPrinter {
 	public void prettyPrint(Var var) {
 		System.out.print(var.getVarName());
 	}
+	
+	public void prettyPrint(ParenExpr parenExpr) {
+		System.out.print("(");
+		prettyPrint(parenExpr.get());
+		System.out.print(")");
+	}
 
 	public void prettyPrint(Expr expr) {
 		if(expr instanceof ArithExpr)
@@ -227,6 +234,8 @@ public class PrettyPrinter {
 			prettyPrint((SubCallExpr) expr);
 		else if(expr instanceof Var)
 			prettyPrint((Var) expr);
+		else if (expr instanceof ParenExpr)
+			prettyPrint((ParenExpr)expr);
 		else
 			System.err.println("Syntax Error! " + expr.getClass());
 	}

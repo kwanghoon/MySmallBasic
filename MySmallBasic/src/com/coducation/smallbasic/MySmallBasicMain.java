@@ -2,10 +2,17 @@ package com.coducation.smallbasic;
 
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Scanner;
 
 public class MySmallBasicMain {
 	public static void main(String[] args) throws IOException {
-		String Filename = "Sample\\" + "06_Goto.sb";
+		Scanner scan = new Scanner(System.in);
+		
+		String Filename;
+		
+		System.out.print("Enter your SmallBasic file name: ");
+		Filename = scan.next();
+		
 		System.out.println("Test File : " + Filename);
 		System.out.println("-------------------------------");
 
@@ -18,9 +25,9 @@ public class MySmallBasicMain {
 		if (stack.getTree() instanceof BlockStmt) {
 			PrettyPrinter printer = new PrettyPrinter((BlockStmt) stack.getTree());
 			printer.prettyPrint();
-			Interpreter interpreting = new Interpreter(stack);
-			Interpreter.stackInit();
-			interpreting.Interpreting();
+//			Interpreter interpreting = new Interpreter(stack);
+//			Interpreter.stackInit();
+//			interpreting.Interpreting();
 		} else {
 			System.err.println("Tree is not BlockStmt.");
 		}

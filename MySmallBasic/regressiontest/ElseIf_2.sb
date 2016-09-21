@@ -1,0 +1,12 @@
+x = TextWindow.Read()
+If x = 10 Then
+  TextWindow.WriteLine("x=10")
+ElseIf x = 20 Then
+    TextWindow.WriteLine("x=20")
+ElseIf x = 30 Then
+    TextWindow.WriteLine("x=20")
+ElseIf x = 40 Then
+    TextWindow.WriteLine("x=20")
+ElseIf x = 50 Then
+    TextWindow.WriteLine("x=20")
+EndIf
