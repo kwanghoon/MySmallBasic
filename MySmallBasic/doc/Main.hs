@@ -186,8 +186,12 @@ kTransform (StmtBlock (BlockStmt [])) stmtk =
   return (StmtBlock (BlockStmt [stmtk]))
 
 kTransform (StmtBlock (BlockStmt (StmtGoto (GotoStmt l) : stmts))) stmtk =
-  do l     <- newLabel
-     stmt' <- kTransform (StmtBlock (BlockStmt stmts)) stmtk
+  do _ <- kTransform (StmtBlock (BlockStmt stmts)) stmtk
+     return (StmtBlock (BlockStmt [StmtGoto (GotoStmt l)]))
+
+kTransform (StmtBlock (BlockStmt (StmtLabel (Label l) : stmts))) stmtk =
+  do stmt' <- kTransform (StmtBlock (BlockStmt stmts)) stmtk
+     putBlock l (StmtBlock (BlockStmt [stmt']))
      return (StmtBlock (BlockStmt [StmtGoto (GotoStmt l)]))
 
 kTransform (StmtBlock (BlockStmt (stmt : stmts))) stmtk =
@@ -208,7 +212,7 @@ kTransformMaybe Nothing stmtk =
   return Nothing
 
 -----
-main = case kTransform while (StmtBlock (BlockStmt [])) of
+main = case kTransform spagetti (StmtBlock (BlockStmt [])) of
          K f -> let (stmt, (_,blockmap)) = f (1,[]) in
                 do mapM_ prBlock blockmap 
                    putStrLn "main:"
@@ -265,4 +269,22 @@ while =
                (ExprVar (Var "I"))
                (ExprCond (CondExprLit (Lit "1"))))))
        ])))
+  ])
+
+-----
+
+spagetti = 
+  StmtBlock (BlockStmt
+  [
+     StmtAssign (AssignStmt 
+     (ExprVar (Var "I")) (ExprCond (CondExprLit (Lit "1"))))
+  ,  StmtLabel (Label "L1")
+  ,  StmtAssign (AssignStmt 
+     (ExprVar (Var "I")) (ExprCond (CondExprLit (Lit "2"))))
+  ,  StmtGoto (GotoStmt "L2")
+
+  ,  StmtLabel (Label "L2")
+  ,  StmtAssign (AssignStmt 
+     (ExprVar (Var "I")) (ExprCond (CondExprLit (Lit "3"))))
+  ,  StmtGoto (GotoStmt "L1")
   ])
