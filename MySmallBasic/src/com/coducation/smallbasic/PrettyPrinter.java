@@ -2,6 +2,7 @@ package com.coducation.smallbasic;
 
 public class PrettyPrinter {
 	BlockStmt tree;
+	int numberOfIndent;
 
 	PrettyPrinter() {
 	}
@@ -10,11 +11,20 @@ public class PrettyPrinter {
 		this.tree = tree;
 	}
 
+	public void printIndent() {
+		for (int i = 0; i <= numberOfIndent; i++) {
+			System.out.print("    ");
+		}
+	}
+
 	public void prettyPrint() {
+		numberOfIndent = 0;
 		prettyPrint(this.tree);
 	}
 
 	public void prettyPrint(Assign assignStmt) {
+		printIndent();
+
 		prettyPrint(assignStmt.getLSide());
 		System.out.print(" = ");
 		prettyPrint(assignStmt.getRSide());
@@ -22,16 +32,25 @@ public class PrettyPrinter {
 	}
 
 	public void prettyPrint(BlockStmt blockStmt) {
+		numberOfIndent++;
+
 		for (int i = 0; i < blockStmt.getAL().size(); i++) {
 			prettyPrint(blockStmt.getAL().get(i));
 		}
+
+		numberOfIndent--;
 	}
 
 	public void prettyPrint(ExprStmt exprStmt) {
+		printIndent();
+
 		prettyPrint(exprStmt.getExpr());
+		System.out.println();
 	}
 
 	public void prettyPrint(ForStmt forStmt) {
+		printIndent();
+
 		System.out.print("For ");
 		prettyPrint(forStmt.getVar());
 		System.out.print(" = ");
@@ -44,40 +63,62 @@ public class PrettyPrinter {
 		}
 		System.out.println();
 		prettyPrint(forStmt.getBlock());
+
+		printIndent();
+
 		System.out.println("EndFor");
 	}
 
 	public void prettyPrint(GotoStmt gotoStmt) {
+		printIndent();
+
 		System.out.println("Goto " + gotoStmt.getTargetLabel());
 	}
 
 	public void prettyPrint(IfStmt ifStmt) {
+		printIndent();
+
 		System.out.print("If (");
 		prettyPrint(ifStmt.getCond());
 		System.out.println(") Then");
+
 		prettyPrint(ifStmt.getThen());
 		if (ifStmt.getElse() != null) {
+			printIndent();
+
 			System.out.println("Else");
 			prettyPrint(ifStmt.getElse());
 		}
+
+		printIndent();
 		System.out.println("EndIf");
 	}
 
 	public void prettyPrint(Label labelStmt) {
+		printIndent();
 		System.out.println(labelStmt.getLabel() + ":");
 	}
 
 	public void prettyPrint(SubDef subDefStmt) {
+		printIndent();
+
 		System.out.println("Sub " + subDefStmt.getName());
 		prettyPrint(subDefStmt.getBlock());
+
+		printIndent();
+
 		System.out.println("EndSub");
 	}
 
 	public void prettyPrint(WhileStmt whileStmt) {
+		printIndent();
+
 		System.out.print("While(");
 		prettyPrint(whileStmt.getCond());
 		System.out.println(")");
 		prettyPrint(whileStmt.getBlock());
+
+		printIndent();
 		System.out.println("EndWhile");
 	}
 
@@ -105,25 +146,30 @@ public class PrettyPrinter {
 	}
 
 	public void prettyPrint(ArithExpr arithExpr) {
-		prettyPrint(arithExpr.GetOperand()[0]);
 		switch (arithExpr.GetOp()) {
 		case 1:
+			prettyPrint(arithExpr.GetOperand()[0]);
 			System.out.print(" + ");
 			break;
 		case 2:
+			prettyPrint(arithExpr.GetOperand()[0]);
 			System.out.print(" - ");
 			break;
 		case 3:
+			prettyPrint(arithExpr.GetOperand()[0]);
 			System.out.print(" * ");
 			break;
 		case 4:
+			prettyPrint(arithExpr.GetOperand()[0]);
 			System.out.print(" / ");
 			break;
 		case 5:
-			System.out.print(" - ");
+			System.out.print("- ");
+			prettyPrint(arithExpr.GetOperand()[0]);
 			break;
 		}
-		prettyPrint(arithExpr.GetOperand()[1]);
+		if (arithExpr.GetOperand()[1] != null)
+			prettyPrint(arithExpr.GetOperand()[1]);
 	}
 
 	public void prettyPrint(Array arrayExpr) {
@@ -193,49 +239,47 @@ public class PrettyPrinter {
 					System.out.print(", ");
 			}
 		}
-		System.out.println(")");
+		System.out.print(")");
 
 	}
-
-	public void prettyPrint(PropertyExpr propertyExpr) {
-		System.out.print(propertyExpr.getObj() + "." + propertyExpr.getName());
-	}
-
-	public void prettyPrint(SubCallExpr subCallExpr) {
-		System.out.println(subCallExpr.getName() + "()");
-	}
-
-	public void prettyPrint(Var var) {
-		System.out.print(var.getVarName());
-	}
-	
 	public void prettyPrint(ParenExpr parenExpr) {
 		System.out.print("(");
 		prettyPrint(parenExpr.get());
 		System.out.print(")");
 	}
+	public void prettyPrint(PropertyExpr propertyExpr) {
+		System.out.print(propertyExpr.getObj() + "." + propertyExpr.getName());
+	}
+
+	public void prettyPrint(SubCallExpr subCallExpr) {
+		System.out.print(subCallExpr.getName() + "()");
+	}
+
+	public void prettyPrint(Var var) {
+		System.out.print(var.getVarName());
+	}
 
 	public void prettyPrint(Expr expr) {
-		if(expr instanceof ArithExpr)
+		if (expr instanceof ArithExpr)
 			prettyPrint((ArithExpr) expr);
-		else if(expr instanceof Array)
+		else if (expr instanceof Array)
 			prettyPrint((Array) expr);
-		else if(expr instanceof CompExpr)
+		else if (expr instanceof CompExpr)
 			prettyPrint((CompExpr) expr);
-		else if(expr instanceof Lit)
+		else if (expr instanceof Lit)
 			prettyPrint((Lit) expr);
-		else if(expr instanceof LogicalExpr)
+		else if (expr instanceof LogicalExpr)
 			prettyPrint((LogicalExpr) expr);
-		else if(expr instanceof MethodCallExpr)
+		else if (expr instanceof MethodCallExpr)
 			prettyPrint((MethodCallExpr) expr);
-		else if(expr instanceof PropertyExpr)
-			prettyPrint((PropertyExpr) expr);
-		else if(expr instanceof SubCallExpr)
-			prettyPrint((SubCallExpr) expr);
-		else if(expr instanceof Var)
-			prettyPrint((Var) expr);
 		else if (expr instanceof ParenExpr)
-			prettyPrint((ParenExpr)expr);
+			prettyPrint((ParenExpr) expr);
+		else if (expr instanceof PropertyExpr)
+			prettyPrint((PropertyExpr) expr);
+		else if (expr instanceof SubCallExpr)
+			prettyPrint((SubCallExpr) expr);
+		else if (expr instanceof Var)
+			prettyPrint((Var) expr);
 		else
 			System.err.println("Syntax Error! " + expr.getClass());
 	}
