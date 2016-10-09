@@ -2,7 +2,7 @@ package com.coducation.smallbasic;
 
 public class IfStmt extends Stmt
 {
-		public IfStmt(Expr cond, Stmt _then, Stmt _else)
+		public IfStmt(CondExpr cond, Stmt _then, Stmt _else)
 		{
 			super();
 			this.cond = cond;
@@ -23,16 +23,7 @@ public class IfStmt extends Stmt
 			
 			return res;
 		}
-		public Expr getCond() {
-			return cond;
-		}
-		public Stmt getThen() {
-			return _then;
-		}
-		public Stmt getElse() {
-			return _else;
-		}
 		
-		private	Expr cond;
+		private	CondExpr cond;
 		private	Stmt _then, _else;
 }

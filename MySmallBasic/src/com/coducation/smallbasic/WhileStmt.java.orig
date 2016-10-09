@@ -2,7 +2,7 @@ package com.coducation.smallbasic;
 
 public class WhileStmt extends Stmt
 {
-		public WhileStmt(Expr cond, Stmt block)
+		public WhileStmt(CondExpr cond, Stmt block)
 		{
 			super();
 			this.cond = cond;
@@ -22,13 +22,13 @@ public class WhileStmt extends Stmt
 			
 			return res;
 		}
-		public Expr getCond() {
+		public CondExpr getCond() {
 			return cond;
 		}
 		public Stmt getBlock() {
 			return block;
 		}
 		
-		private Expr cond;
+		private CondExpr cond;
 		private Stmt block;
 }

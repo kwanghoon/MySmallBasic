@@ -4,10 +4,10 @@ public class PrettyPrinter {
 	BlockStmt tree;
 	int numberOfIndent;
 
-	PrettyPrinter() {
+	public PrettyPrinter() {
 	}
 
-	PrettyPrinter(BlockStmt tree) {
+	public PrettyPrinter(BlockStmt tree) {
 		this.tree = tree;
 	}
 
@@ -78,9 +78,9 @@ public class PrettyPrinter {
 	public void prettyPrint(IfStmt ifStmt) {
 		printIndent();
 
-		System.out.print("If (");
+		System.out.print("If ");
 		prettyPrint(ifStmt.getCond());
-		System.out.println(") Then");
+		System.out.println(" Then");
 
 		prettyPrint(ifStmt.getThen());
 		if (ifStmt.getElse() != null) {
@@ -113,9 +113,9 @@ public class PrettyPrinter {
 	public void prettyPrint(WhileStmt whileStmt) {
 		printIndent();
 
-		System.out.print("While(");
+		System.out.print("While ");
 		prettyPrint(whileStmt.getCond());
-		System.out.println(")");
+		System.out.println(" ");
 		prettyPrint(whileStmt.getBlock());
 
 		printIndent();

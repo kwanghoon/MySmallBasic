@@ -11,7 +11,7 @@ import java.util.Stack;
 
 public class Parser 
 {
-	Parser(LexerAnalyzer Lexer) throws IOException
+	public Parser(LexerAnalyzer Lexer) throws IOException
 	{
 		stack = new Stack<Stkelem>();
 		index_list = new ArrayList<Expr>();
@@ -74,7 +74,7 @@ public class Parser
 			}
 			line_index++;
 		}
-		System.out.println("==================================");
+		//System.out.println("==================================");
 		
 		// Main Parsing Routine.
 		while(true)
@@ -102,14 +102,14 @@ public class Parser
 			switch(order)
 			{
 				case "LALRShift":
-					System.out.println(order + " " + state);
+					//System.out.println(order + " " + state);
 					stack.push(a);
 					stack.push(new ParseState(state));
 					Tokens.remove(0);
 					break;
 				case "LALRReduce":
 				{	
-					System.out.println(order + " " + state);
+					//System.out.println(order + " " + state);
 					int state_num = atoi(state);
 
 					String[] reduce_arr = Grammer_rule.get(state_num).split("->"); // lhs, rhs split.
@@ -146,7 +146,7 @@ public class Parser
 						Nonterminal sub_tree1 = (Nonterminal)stack.get(last_stack_tree_index-3); // CondExpr
 						Nonterminal sub_tree2 = (Nonterminal)stack.get(last_stack_tree_index-5); // Block
 						
-						tree = new WhileStmt((CondExpr)sub_tree2.getTree(), (Stmt)sub_tree1.getTree());
+						tree = new WhileStmt((Expr)sub_tree2.getTree(), (Stmt)sub_tree1.getTree());
 			
 					}
 					else if(Grammer_rule.get(state_num).equals("Stmt -> ID :")) // case Label
@@ -183,7 +183,7 @@ public class Parser
 						Nonterminal sub_tree2 = (Nonterminal)stack.get(last_stack_tree_index-3);
 						Nonterminal sub_tree3 = (Nonterminal)stack.get(last_stack_tree_index-7);
 						
-						tree = new IfStmt((CondExpr)sub_tree3.getTree(), (Stmt)sub_tree2.getTree(), (Stmt)sub_tree1.getTree());
+						tree = new IfStmt((Expr)sub_tree3.getTree(), (Stmt)sub_tree2.getTree(), (Stmt)sub_tree1.getTree());
 					}
 					else if(Grammer_rule.get(state_num).equals("MoreThanZeroElseIf -> OptionalElse")) // Else, or not.
 					{
@@ -198,7 +198,7 @@ public class Parser
 						Nonterminal sub_tree2 = (Nonterminal)stack.get(last_stack_tree_index-3);
 						Nonterminal sub_tree3 = (Nonterminal)stack.get(last_stack_tree_index-7);
 						
-						tree = new IfStmt((CondExpr)sub_tree3.getTree(), (Stmt)sub_tree2.getTree(), (Stmt)sub_tree1.getTree());
+						tree = new IfStmt((Expr)sub_tree3.getTree(), (Stmt)sub_tree2.getTree(), (Stmt)sub_tree1.getTree());
 					}
 					else if(Grammer_rule.get(state_num).equals("OptionalElse -> EndIf")) // not Else
 					{
@@ -562,7 +562,7 @@ public class Parser
 					break;
 				}
 				case "LALRAccept":
-					System.out.println("Accepted.");
+					// System.out.println("Accepted.");
 					Tokens.remove(0);
 					break;
 			}

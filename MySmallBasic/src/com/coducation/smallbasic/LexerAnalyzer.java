@@ -360,42 +360,42 @@ public class LexerAnalyzer
 		Lexer.add(END_FILE);	
 		
 		
-		for(int i = 0; i < Lexer.size() ; i++) // Print out Test Code. - Word
-		{
-			int count = 0;
-			ArrayList<Terminal> temp = Lexer.get(i);
-			if(temp.get(count).getLine_index() == -1)
-				System.out.println();
-			System.out.print("[Line :" + temp.get(count).getLine_index() + "] ");
-
-			for(int j = 0; ; j++)
-			{
-				if(j == temp.size())
-					break;
-				if(temp.get(j).getSyntax() != "\n") System.out.print( temp.get(j).getSyntax() + " ");
-				else System.out.print( temp.get(j).getSyntax() );
-			}
-			count++;
-		}
-		
-		System.out.println("\n---");
-		
-		for(int i = 0; i < Lexer.size() ; i++) // Print out Test Code. - TokenInfo
-		{
-			int count = 0;
-			ArrayList<Terminal> temp = Lexer.get(i);
-
-			System.out.print("[Line :" + temp.get(count).getLine_index() + "] ");
-			
-			for(int j = 0; ; j++)
-			{
-				if(j == temp.size())
-					break;
-				System.out.print("<" + temp.get(j).getTokenInfo() + "> " );
-			}
-			System.out.println("");
-			count++;
-		}
+//		for(int i = 0; i < Lexer.size() ; i++) // Print out Test Code. - Word
+//		{
+//			int count = 0;
+//			ArrayList<Terminal> temp = Lexer.get(i);
+//			if(temp.get(count).getLine_index() == -1)
+//				System.out.println();
+//			System.out.print("[Line :" + temp.get(count).getLine_index() + "] ");
+//
+//			for(int j = 0; ; j++)
+//			{
+//				if(j == temp.size())
+//					break;
+//				if(temp.get(j).getSyntax() != "\n") System.out.print( temp.get(j).getSyntax() + " ");
+//				else System.out.print( temp.get(j).getSyntax() );
+//			}
+//			count++;
+//		}
+//		
+//		System.out.println("\n---");
+//		
+//		for(int i = 0; i < Lexer.size() ; i++) // Print out Test Code. - TokenInfo
+//		{
+//			int count = 0;
+//			ArrayList<Terminal> temp = Lexer.get(i);
+//
+//			System.out.print("[Line :" + temp.get(count).getLine_index() + "] ");
+//			
+//			for(int j = 0; ; j++)
+//			{
+//				if(j == temp.size())
+//					break;
+//				System.out.print("<" + temp.get(j).getTokenInfo() + "> " );
+//			}
+//			System.out.println("");
+//			count++;
+//		}
 		return Lexer;	
 	}
 
