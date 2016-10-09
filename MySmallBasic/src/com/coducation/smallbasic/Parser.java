@@ -183,7 +183,7 @@ public class Parser
 						Nonterminal sub_tree2 = (Nonterminal)stack.get(last_stack_tree_index-3);
 						Nonterminal sub_tree3 = (Nonterminal)stack.get(last_stack_tree_index-7);
 						
-						tree = new IfStmt((CondExpr)sub_tree3.getTree(), (Stmt)sub_tree2.getTree(), (Stmt)sub_tree1.getTree());
+						tree = new IfStmt((CondExpr)((ParenExpr)sub_tree3.getTree()).get(), (Stmt)sub_tree2.getTree(), (Stmt)sub_tree1.getTree());
 					}
 					else if(Grammer_rule.get(state_num).equals("MoreThanZeroElseIf -> OptionalElse")) // Else, or not.
 					{
@@ -198,7 +198,7 @@ public class Parser
 						Nonterminal sub_tree2 = (Nonterminal)stack.get(last_stack_tree_index-3);
 						Nonterminal sub_tree3 = (Nonterminal)stack.get(last_stack_tree_index-7);
 						
-						tree = new IfStmt((CondExpr)sub_tree3.getTree(), (Stmt)sub_tree2.getTree(), (Stmt)sub_tree1.getTree());
+						tree = new IfStmt((CondExpr)((ParenExpr)sub_tree3.getTree()).get(), (Stmt)sub_tree2.getTree(), (Stmt)sub_tree1.getTree());
 					}
 					else if(Grammer_rule.get(state_num).equals("OptionalElse -> EndIf")) // not Else
 					{
