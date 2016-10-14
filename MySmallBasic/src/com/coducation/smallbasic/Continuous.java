@@ -11,6 +11,7 @@ public class Continuous {
 	public Continuous() {
 		kMap = new HashMap<>();
 	}
+
 	private String fresh() {
 		String fresh = label + count;
 		count++;
@@ -44,64 +45,115 @@ public class Continuous {
 	}
 
 	public Stmt transform(Assign assignStmt, Stmt stmtk) {
-		
+
 		return null;
 	}
 
 	public Stmt transform(BlockStmt blockStmt, Stmt stmtk) {
-		ArrayList<Stmt> array = new ArrayList<>();
-		if(blockStmt.getAL() == null) {
-			array.add(stmtk);
-			return new BlockStmt(array);
+		if(blockStmt.getAL().size() == 0) {
+			return stmtk;
 		}
-//		else if()
-//			GotoStmt가 있는 경우
-//		else if()
-//			Label이 있는 경우
-//		else
-//			그외의 경우
-		
-		return null;
+		else {
+			Stmt head = blockStmt.getAL().get(0);
+			ArrayList<Stmt> stmts = (ArrayList<Stmt>) blockStmt.getAL().clone();
+
+			stmts.remove(0);
+			
+			if(head instanceof GotoStmt) {
+				transform(new BlockStmt(stmts), stmtk);
+				
+				return new GotoStmt(((GotoStmt)head).getTargetLabel());
+			}
+			else if(head instanceof Label) {
+				Stmt stmt = transform(new BlockStmt(stmts), stmtk);
+				
+				kMap.put(((Label)head).getLabel(), stmt);
+				
+				return new GotoStmt(((Label)head).getLabel());
+			}
+			else {
+				Stmt stmt = transform(head, new BlockStmt(new ArrayList<Stmt>()));
+				Stmt stmt1 = transform(new BlockStmt(stmts), stmtk);
+				
+				ArrayList<Stmt> block = new ArrayList<>();
+				
+				block.add(stmt);
+				block.add(stmt1);
+				
+				return new BlockStmt(block); 
+			}
+		}
 	}
 
 	public Stmt transform(ExprStmt exprStmt, Stmt stmtk) {
-
-		return null;
+		ArrayList<Stmt> block = new ArrayList<>();
+		
+		block.add(exprStmt);
+		block.add(stmtk);
+		
+		return new BlockStmt(block);
 	}
 
 	public Stmt transform(ForStmt forStmt, Stmt stmtk) {
 		String linit = fresh();
 		String ltest = fresh();
 
-		Stmt stmt = transform(forStmt.getBlock(), new GotoStmt(ltest));
-
+		Stmt stmt = transform(forStmt.getBlock(),
+				new BlockStmt(new ArrayList<Stmt>()));
+		
+		Expr step;
+		
 		if (forStmt.getStep() == null) {
-			//forStmt의 step을 var+1로 설정해주기
+			// forStmt의 step을 var+1로 설정해주기
+			step = new Lit("1");
+		}
+		else {
+			step = forStmt.getStep();
 		}
 
+		Stmt update = new Assign(forStmt.getVar(), 
+				new ArithExpr(forStmt.getVar(), ArithExpr.PLUS, step));
+		BlockStmt body = new BlockStmt(new ArrayList<Stmt>());
+		body.getAL().add(stmt);
+		body.getAL().add(update);
+		body.getAL().add(new GotoStmt(ltest));
+		
+		Expr ltestCond = 
+				new LogicalExpr(
+						new LogicalExpr(
+								new CompExpr(forStmt.getVar(), CompExpr.GREATER_EQUAL, new Lit("0")),
+								LogicalExpr.AND,
+								new CompExpr(forStmt.getVar(), CompExpr.LESS_EQUAL, forStmt.getEnd())),
+						LogicalExpr.OR,
+						new LogicalExpr(
+								new CompExpr(forStmt.getVar(), CompExpr.LESS_THAN, new Lit("0")),
+								LogicalExpr.AND,
+								new CompExpr(forStmt.getVar(), CompExpr.GREATER_THAN, forStmt.getEnd())));
+		Stmt ltestStmt = new IfStmt(ltestCond, body, stmtk);
+		
 		ArrayList<Stmt> init = new ArrayList<>();
 		init.add(new Assign(forStmt.getVar(), forStmt.getInit()));
 		init.add(new GotoStmt(ltest));
-		// step이 minus이거나 divide인 경우와
-		// step이 plus이거나 multiplication인 경우의 조건이 다름
-
-		ArrayList<Stmt> test = new ArrayList<>();
-		// test.add();
-		kMap.put(linit, new BlockStmt(init));
-		kMap.put(ltest, new BlockStmt(test));
+		Stmt linitStmt = new BlockStmt(init);
+		
+		kMap.put(linit, linitStmt);
+		kMap.put(ltest, ltestStmt);
 
 		return new GotoStmt(linit);
 	}
 
 	public Stmt transform(GotoStmt gotoStmt, Stmt stmtk) {
-
-		return null;
+		// stmtk를 어떻게 다뤄야하지??
+		
+		String l = gotoStmt.getTargetLabel();
+		
+		return new GotoStmt(l);
 	}
 
 	public Stmt transform(IfStmt ifStmt, Stmt stmtk) {
 		Stmt thenStmt = transform(ifStmt.getThen(), stmtk);
 		Stmt elseStmt;
-		
+
 		if (ifStmt.getElse() != null) {
 			elseStmt = transform(ifStmt.getElse(), stmtk);
 		} else {
@@ -112,8 +164,9 @@ public class Continuous {
 	}
 
 	public Stmt transform(Label labelStmt, Stmt stmtk) {
-
-		return null;
+		kMap.put(labelStmt.getLabel(), stmtk);
+		
+		return new GotoStmt(labelStmt.getLabel());
 	}
 
 	public Stmt transform(SubDef subdefStmt, Stmt stmtk) {
