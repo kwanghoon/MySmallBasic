@@ -1,0 +1,7 @@
+Sub Win
+  Sound.PlayBellRing()
+  TextWindow.WriteLine("Play bell ring...")
+EndSub
+
+
+TextWindow.WriteLine(Win())

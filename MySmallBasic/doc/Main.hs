@@ -1,5 +1,5 @@
 --------------------------------------------------------------------------
--- A Transformation of A Small Basic Program into `Continuation" blocks --
+-- A Transformation of A Small Basic Program into `Continuation' blocks --
 --   [ Updated: Octiber 1st, 2016]                                      --
 --                                                                      --
 --   Kwanghoon Choi                                                     --
@@ -14,7 +14,6 @@ data Expr =
   | ExprMethodCall MethodCallExpr
   | ExprParen      ParenExpr
   | ExprProperty   PropertyExpr
-  | ExprSubCall    SubCallExpr
   | ExprVar        Var
   deriving Show
 
@@ -61,9 +60,6 @@ data ParenExpr = ParenExpr Expr
 data PropertyExpr = PropertyExpr String String
   deriving Show
 
-data SubCallExpr = SubCalLExpr String
-  deriving Show
-
 data Var = Var String
   deriving Show
 
@@ -77,6 +73,7 @@ data Stmt =
   | StmtLabel  Label
   | StmtSubDef SubDef
   | StmtWhile  WhileStmt
+  | StmtSubCall SubCallStmt
   deriving Show
 
 data AssignStmt = AssignStmt Expr Expr
@@ -106,6 +103,8 @@ data SubDef = SubDef String Stmt
 data WhileStmt = WhileStmt CondExpr Stmt
   deriving Show
 
+data SubCallStmt = SubCalLStmt String
+  deriving Show
 
 -----
 
