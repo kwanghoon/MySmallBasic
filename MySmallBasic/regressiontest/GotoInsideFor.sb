@@ -1,0 +1,8 @@
+Goto Inside
+
+For i=1 To 10 
+  TextWindow.WriteLine("Hello")
+  Inside:
+  TextWindow.WriteLine("World")
+EndFor
+
