@@ -1,13 +1,13 @@
 package com.coducation.smallbasic;
 
 public class PrettyPrinter {
-	BlockStmt tree;
+	Stmt tree;
 	int numberOfIndent;
 
 	public PrettyPrinter() {
 	}
 
-	public PrettyPrinter(BlockStmt tree) {
+	public PrettyPrinter(Stmt tree) {
 		this.tree = tree;
 	}
 

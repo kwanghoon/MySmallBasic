@@ -6,14 +6,19 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 import org.junit.Test;
 
 import com.coducation.smallbasic.BlockStmt;
+import com.coducation.smallbasic.Continuous;
 import com.coducation.smallbasic.LexerAnalyzer;
 import com.coducation.smallbasic.Nonterminal;
 import com.coducation.smallbasic.Parser;
 import com.coducation.smallbasic.PrettyPrinter;
+import com.coducation.smallbasic.Stmt;
 
 public class RegressionTest {
 
@@ -41,6 +46,18 @@ public class RegressionTest {
 					
 					System.out.println("Pretty Printing.");
 					printer.prettyPrint();
+					
+					System.out.println("Transformation - Continuation blocks.");
+					HashMap<String,Stmt> map = new Continuous().transform((BlockStmt)stack.getTree());
+					Set<Map.Entry<String,Stmt>> set = map.entrySet();
+					for (Map.Entry<String,Stmt> entry : set) {
+						String key = entry.getKey();
+						Stmt stmt = entry.getValue();
+						System.out.println(key + ":");
+						new PrettyPrinter(stmt).prettyPrint();
+					}
+					System.out.println();
+					
 	//				Interpreter interpreting = new Interpreter(stack);
 	//				Interpreter.stackInit();
 	//				interpreting.Interpreting();

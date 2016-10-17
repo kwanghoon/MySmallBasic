@@ -5,7 +5,8 @@ import java.util.HashMap;
 
 public class Continuous {
 	HashMap<String, Stmt> kMap;
-	String label = "$L";
+	public static final String label = "$L";
+	public static final String mainLabel = "$main";
 	int count = 0;
 
 	public Continuous() {
@@ -18,35 +19,44 @@ public class Continuous {
 
 		return fresh;
 	}
+	
+	public HashMap<String,Stmt> transform(Stmt stmt) {
+		Stmt stmt_main = transform(stmt, 
+				new BlockStmt(new ArrayList<Stmt>()));
+		kMap.put(mainLabel, stmt_main);
+		
+		return kMap;
+	}
 
 	public Stmt transform(Stmt stmt, Stmt stmtk) {
 		if (stmt instanceof Assign)
-			transform((Assign) stmt, stmtk);
+			return transform((Assign) stmt, stmtk);
 		else if (stmt instanceof BlockStmt)
-			transform((BlockStmt) stmt, stmtk);
+			return transform((BlockStmt) stmt, stmtk);
 		else if (stmt instanceof ExprStmt)
-			transform((ExprStmt) stmt, stmtk);
+			return transform((ExprStmt) stmt, stmtk);
 		else if (stmt instanceof ForStmt)
-			transform((ForStmt) stmt, stmtk);
+			return transform((ForStmt) stmt, stmtk);
 		else if (stmt instanceof GotoStmt)
-			transform((GotoStmt) stmt, stmtk);
+			return transform((GotoStmt) stmt, stmtk);
 		else if (stmt instanceof IfStmt)
-			transform((IfStmt) stmt, stmtk);
+			return transform((IfStmt) stmt, stmtk);
 		else if (stmt instanceof Label)
-			transform((Label) stmt, stmtk);
+			return transform((Label) stmt, stmtk);
 		else if (stmt instanceof SubDef)
-			transform((SubDef) stmt, stmtk);
+			return transform((SubDef) stmt, stmtk);
 		else if (stmt instanceof WhileStmt)
-			transform((WhileStmt) stmt, stmtk);
-		else
-			System.err.println("Syntax Error! " + stmt.getClass());
-
-		return null;
+			return transform((WhileStmt) stmt, stmtk);
+		else {
+			throw new RuntimeException("[transform] Syntax Error! " + stmt.getClass());
+		}
 	}
 
 	public Stmt transform(Assign assignStmt, Stmt stmtk) {
-
-		return null;
+		ArrayList<Stmt> stmts = new ArrayList<Stmt>();
+		stmts.add(assignStmt);
+		stmts.add(stmtk);
+		return new BlockStmt(stmts);
 	}
 
 	public Stmt transform(BlockStmt blockStmt, Stmt stmtk) {
@@ -121,12 +131,12 @@ public class Continuous {
 		Expr ltestCond = 
 				new LogicalExpr(
 						new LogicalExpr(
-								new CompExpr(forStmt.getVar(), CompExpr.GREATER_EQUAL, new Lit("0")),
+								new CompExpr(forStmt.getStep(), CompExpr.GREATER_EQUAL, new Lit("0")),
 								LogicalExpr.AND,
 								new CompExpr(forStmt.getVar(), CompExpr.LESS_EQUAL, forStmt.getEnd())),
 						LogicalExpr.OR,
 						new LogicalExpr(
-								new CompExpr(forStmt.getVar(), CompExpr.LESS_THAN, new Lit("0")),
+								new CompExpr(forStmt.getStep(), CompExpr.LESS_THAN, new Lit("0")),
 								LogicalExpr.AND,
 								new CompExpr(forStmt.getVar(), CompExpr.GREATER_THAN, forStmt.getEnd())));
 		Stmt ltestStmt = new IfStmt(ltestCond, body, stmtk);
@@ -157,7 +167,7 @@ public class Continuous {
 		if (ifStmt.getElse() != null) {
 			elseStmt = transform(ifStmt.getElse(), stmtk);
 		} else {
-			elseStmt = null;
+			elseStmt = stmtk;
 		}
 
 		return new IfStmt(ifStmt.getCond(), thenStmt, elseStmt);
