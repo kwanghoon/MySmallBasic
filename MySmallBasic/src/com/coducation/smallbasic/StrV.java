@@ -2,6 +2,10 @@ package com.coducation.smallbasic;
 
 public class StrV extends Value {
 	
+	public StrV(){	
+		v = "";
+	}
+	
 	public StrV(double d){	
 		v = d+"";
 	}

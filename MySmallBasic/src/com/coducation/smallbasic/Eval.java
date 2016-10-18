@@ -5,7 +5,6 @@ public class Eval {
 	int numberOfIndent;
 
 	
-	
 	public Eval() {
 	}
 
@@ -24,107 +23,43 @@ public class Eval {
 		eval(this.tree);
 	}
 
-	public void eval(Assign assignStmt) {
-		printIndent();
-
-		eval(assignStmt.getLSide());
-		System.out.print(" = ");
-		eval(assignStmt.getRSide());
-		System.out.println();
+	public Env eval(BasicBlockEnv bbEnv, Env env, Assign assignStmt) {
+		return null;
 	}
 
-	public void eval(BlockStmt blockStmt) {
-		numberOfIndent++;
-
-		for (int i = 0; i < blockStmt.getAL().size(); i++) {
-			eval(blockStmt.getAL().get(i));
-		}
-
-		numberOfIndent--;
+	public Env eval(BasicBlockEnv bbEnv, Env env, BlockStmt blockStmt) {
+		return null;
 	}
 
-	public void eval(ExprStmt exprStmt) {
-		printIndent();
-
-		eval(exprStmt.getExpr());
-		System.out.println();
+	public Env eval(BasicBlockEnv bbEnv, Env env, ExprStmt exprStmt) {
+		return null;
 	}
 
-	public void eval(ForStmt forStmt) {
-		printIndent();
-
-		System.out.print("For ");
-		eval(forStmt.getVar());
-		System.out.print(" = ");
-		eval(forStmt.getInit());
-		System.out.print(" To ");
-		eval(forStmt.getEnd());
-		if (forStmt.getStep() != null) {
-			System.out.print(" Step ");
-			eval(forStmt.getStep());
-		}
-		System.out.println();
-		eval(forStmt.getBlock());
-
-		printIndent();
-
-		System.out.println("EndFor");
+	public Env eval(BasicBlockEnv bbEnv, Env env, ForStmt forStmt) {
+		return null;
 	}
 
-	public void eval(GotoStmt gotoStmt) {
-		printIndent();
-
-		System.out.println("Goto " + gotoStmt.getTargetLabel());
+	public Env eval(BasicBlockEnv bbEnv, Env env, GotoStmt gotoStmt) {
+		return null;
 	}
 
-	public void eval(IfStmt ifStmt) {
-		printIndent();
-
-		System.out.print("If ");
-		eval(ifStmt.getCond());
-		System.out.println(" Then");
-
-		eval(ifStmt.getThen());
-		if (ifStmt.getElse() != null) {
-			printIndent();
-
-			System.out.println("Else");
-			eval(ifStmt.getElse());
-		}
-
-		printIndent();
-		System.out.println("EndIf");
+	public Env eval(BasicBlockEnv bbEnv, Env env, IfStmt ifStmt) {
+		return null;
 	}
 
-	public void eval(Label labelStmt) {
-		printIndent();
-		System.out.println(labelStmt.getLabel() + ":");
+	public Env eval(BasicBlockEnv bbEnv, Env env, Label labelStmt) {
+		return null;
 	}
 
-	public void eval(SubDef subDefStmt) {
-		printIndent();
-
-		System.out.println("Sub " + subDefStmt.getName());
-		eval(subDefStmt.getBlock());
-
-		printIndent();
-
-		System.out.println("EndSub");
+	public Env eval(BasicBlockEnv bbEnv, Env env, SubDef subDefStmt) {
+		return null;
 	}
 
-	public void eval(WhileStmt whileStmt) {
-		printIndent();
-
-		System.out.print("While ");
-		eval(whileStmt.getCond());
-		System.out.println(" ");
-		eval(whileStmt.getBlock());
-
-		printIndent();
-		System.out.println("EndWhile");
+	public Env eval(BasicBlockEnv bbEnv, Env env, WhileStmt whileStmt) {
+		return null;
 	}
 
-	public void eval(Stmt stmt) {
+	public void eval(BasicBlockEnv bbEnv, Env env, Stmt stmt) {
 		if (stmt instanceof Assign)
 			eval((Assign) stmt);
 		else if (stmt instanceof BlockStmt)
@@ -147,121 +82,47 @@ public class Eval {
 			System.err.println("Syntax Error!" + stmt.getClass());
 	}
 
-	public void eval(ArithExpr arithExpr) {
-		switch (arithExpr.GetOp()) {
-		case 1:
-			eval(arithExpr.GetOperand()[0]);
-			System.out.print(" + ");
-			break;
-		case 2:
-			eval(arithExpr.GetOperand()[0]);
-			System.out.print(" - ");
-			break;
-		case 3:
-			eval(arithExpr.GetOperand()[0]);
-			System.out.print(" * ");
-			break;
-		case 4:
-			eval(arithExpr.GetOperand()[0]);
-			System.out.print(" / ");
-			break;
-		case 5:
-			System.out.print("- ");
-			eval(arithExpr.GetOperand()[0]);
-			break;
-		}
-		if (arithExpr.GetOperand()[1] != null)
-			eval(arithExpr.GetOperand()[1]);
+	public Value eval(Env env, ArithExpr arithExpr) {
+		return null;
 	}
 
-	public void eval(Array arrayExpr) {
-		System.out.print(arrayExpr.getVar());
-		for (int i = 0; i < arrayExpr.getDim(); i++) {
-			System.out.print("[");
-			eval(arrayExpr.getIndex(i));
-			System.out.print("]");
-		}
+	public Value eval(Env env, Array arrayExpr) {
+		return null;
 	}
 
-	public void eval(CompExpr compExpr) {
-		eval(compExpr.GetOperand()[0]);
-		switch (compExpr.GetOp()) {
-		case 1:
-			System.out.print(" > ");
-			break;
-		case 2:
-			System.out.print(" < ");
-			break;
-		case 3:
-			System.out.print(" >= ");
-			break;
-		case 4:
-			System.out.print(" <= ");
-			break;
-		case 5:
-			System.out.print(" = ");
-			break;
-		case 6:
-			System.out.print(" <> ");
-			break;
-		default:
-			System.err.println("Unknown CompExpr Operator " + compExpr.GetOp());
-			break;
-		}
-		eval(compExpr.GetOperand()[1]);
+	public Value eval(Env env, CompExpr compExpr) {
+		return null;
 	}
 
-	public void eval(Lit litExpr) {
-		System.out.print(litExpr.gets());
+	public Value eval(Env env, Lit litExpr) {
+		return null;
 	}
 
-	public void eval(LogicalExpr logicalExpr) {
-		eval(logicalExpr.GetOperand()[0]);
-		switch (logicalExpr.GetOp()) {
-		case 1:
-			System.out.print(" And ");
-			break;
-		case 2:
-			System.out.print(" Or ");
-			break;
-		default:
-			System.err.println("Unknown Logical Operator " + logicalExpr.GetOp());
-			break;
-		}
-		eval(logicalExpr.GetOperand()[1]);
+	public Value eval(Env env, LogicalExpr logicalExpr) {
+		return null;
 	}
 
-	public void eval(MethodCallExpr methodCallExpr) {
-		System.out.print(methodCallExpr.getObj() + "." + methodCallExpr.getName() + "(");
-		if (methodCallExpr.getArgs() != null) {
-			int size = methodCallExpr.getArgs().size();
-			for (int i = 0; i < size; i++) {
-				eval(methodCallExpr.getArgs().get(i));
-				if (i != size - 1)
-					System.out.print(", ");
-			}
-		}
-		System.out.print(")");
-
+	public Value eval(Env env, MethodCallExpr methodCallExpr) {
+		return null;
 	}
-	public void eval(ParenExpr parenExpr) {
-		System.out.print("(");
-		eval(parenExpr.get());
-		System.out.print(")");
+	
+	public Value eval(Env env, ParenExpr parenExpr) {
+		return null;
 	}
-	public void eval(PropertyExpr propertyExpr) {
-		System.out.print(propertyExpr.getObj() + "." + propertyExpr.getName());
+	
+	public Value eval(Env env, PropertyExpr propertyExpr) {
+		return null;
 	}
 
-	public void eval(SubCallExpr subCallExpr) {
-		System.out.print(subCallExpr.getName() + "()");
+	public Value eval(Env env, SubCallExpr subCallExpr) {
+		return null;
 	}
 
 	public void eval(Var var) {
 		System.out.print(var.getVarName());
 	}
 
-	public void eval(Expr expr) {
+	public void eval(Env env, Expr expr) {
 		if (expr instanceof ArithExpr)
 			eval((ArithExpr) expr);
 		else if (expr instanceof Array)
