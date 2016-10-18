@@ -15,7 +15,7 @@ public class Env {
 
 		if(map.containsKey(arrName)) {
 			if(map.get(arrName) instanceof StrV)
-				System.out.println(arrName+"는 일반벼수입니다. 다른이름을 사용");
+				System.out.println(arrName+"는 일반변수입니다. 다른이름을 사용");
 			else {
 				ArrayV a = (ArrayV) map.get(arrName); 
 				a.put(index, val);
