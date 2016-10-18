@@ -1,6 +1,6 @@
 package com.coducation.smallbasic;
 
-class Stmt
+public class Stmt
 {
 	public Stmt()
 	{

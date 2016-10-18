@@ -2,7 +2,10 @@ package com.coducation.smallbasic;
 
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
+import java.util.Set;
 
 public class MySmallBasicMain {
 	public static void main(String[] args) throws IOException {
@@ -25,6 +28,17 @@ public class MySmallBasicMain {
 		if (stack.getTree() instanceof BlockStmt) {
 			PrettyPrinter printer = new PrettyPrinter((BlockStmt) stack.getTree());
 			printer.prettyPrint();
+			
+			HashMap<String,Stmt> map = new Continuous().transform((BlockStmt)stack.getTree());
+			Set<Map.Entry<String,Stmt>> set = map.entrySet();
+			for (Map.Entry<String,Stmt> entry : set) {
+				String key = entry.getKey();
+				Stmt stmt = entry.getValue();
+				System.out.println(key + ":");
+				new PrettyPrinter(stmt).prettyPrint();
+			}
+			System.out.println();
+			
 //			Interpreter interpreting = new Interpreter(stack);
 //			Interpreter.stackInit();
 //			interpreting.Interpreting();
