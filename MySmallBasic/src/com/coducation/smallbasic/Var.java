@@ -19,10 +19,10 @@ public class Var extends Expr
 		return name;
 	}
 	
-	public Result evalExpr(Env env){
-		Value temp_v = env.getValue( this.getVarName() );
-		return new Result(env, temp_v);
-	}
+//	public Result evalExpr(Env env){
+//		Value temp_v = env.getValue( this.getVarName() );
+//		return new Result(env, temp_v);
+//	}
 	
 	/* Notice 
 	 * Var ::= [a­zA­Z]+[a­zA­Z0­9_]*  
