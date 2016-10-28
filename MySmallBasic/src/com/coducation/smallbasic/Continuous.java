@@ -53,10 +53,7 @@ public class Continuous {
 	}
 
 	public Stmt transform(Assign assignStmt, Stmt stmtk) {
-		ArrayList<Stmt> stmts = new ArrayList<Stmt>();
-		stmts.add(assignStmt);
-		stmts.add(stmtk);
-		return new BlockStmt(stmts);
+		return merge(assignStmt, stmtk);
 	}
 
 	public Stmt transform(BlockStmt blockStmt, Stmt stmtk) {
@@ -85,23 +82,13 @@ public class Continuous {
 				Stmt stmt = transform(head, new BlockStmt(new ArrayList<Stmt>()));
 				Stmt stmt1 = transform(new BlockStmt(stmts), stmtk);
 				
-				ArrayList<Stmt> block = new ArrayList<>();
-				
-				block.add(stmt);
-				block.add(stmt1);
-				
-				return new BlockStmt(block); 
+				return merge(stmt,stmt1); 
 			}
 		}
 	}
 
 	public Stmt transform(ExprStmt exprStmt, Stmt stmtk) {
-		ArrayList<Stmt> block = new ArrayList<>();
-		
-		block.add(exprStmt);
-		block.add(stmtk);
-		
-		return new BlockStmt(block);
+		return merge(exprStmt, stmtk);
 	}
 
 	public Stmt transform(ForStmt forStmt, Stmt stmtk) {
@@ -123,10 +110,8 @@ public class Continuous {
 
 		Stmt update = new Assign(forStmt.getVar(), 
 				new ArithExpr(forStmt.getVar(), ArithExpr.PLUS, step));
-		BlockStmt body = new BlockStmt(new ArrayList<Stmt>());
-		body.getAL().add(stmt);
-		body.getAL().add(update);
-		body.getAL().add(new GotoStmt(ltest));
+		
+		Stmt body = merge(stmt, update, new GotoStmt(ltest));
 		
 		Expr ltestCond = 
 				new LogicalExpr(
@@ -139,7 +124,7 @@ public class Continuous {
 								new CompExpr(forStmt.getStep(), CompExpr.LESS_THAN, new Lit("0")),
 								LogicalExpr.AND,
 								new CompExpr(forStmt.getVar(), CompExpr.GREATER_THAN, forStmt.getEnd())));
-		Stmt ltestStmt = new IfStmt(ltestCond, body, stmtk);
+		Stmt ltestStmt = newIfStmt(ltestCond, body, stmtk);
 		
 		ArrayList<Stmt> init = new ArrayList<>();
 		init.add(new Assign(forStmt.getVar(), forStmt.getInit()));
@@ -170,7 +155,7 @@ public class Continuous {
 			elseStmt = stmtk;
 		}
 
-		return new IfStmt(ifStmt.getCond(), thenStmt, elseStmt);
+		return newIfStmt(ifStmt.getCond(), thenStmt, elseStmt);
 	}
 
 	public Stmt transform(Label labelStmt, Stmt stmtk) {
@@ -182,7 +167,8 @@ public class Continuous {
 	public Stmt transform(SubDef subdefStmt, Stmt stmtk) {
 		String l = subdefStmt.getName();
 
-		Stmt stmt = transform(subdefStmt.getBlock(), new GotoStmt(l));
+		Stmt stmt = transform(subdefStmt.getBlock(), 
+				new BlockStmt(new ArrayList<Stmt>()));
 
 		ArrayList<Stmt> array = new ArrayList<>();
 
@@ -190,7 +176,7 @@ public class Continuous {
 
 		kMap.put(l, new BlockStmt(array));
 
-		return new GotoStmt(l);
+		return stmtk;
 	}
 
 	public Stmt transform(WhileStmt whileStmt, Stmt stmtk) {
@@ -199,9 +185,65 @@ public class Continuous {
 		ArrayList<Stmt> array = new ArrayList<>();
 		Stmt stmt = transform(whileStmt.getBlock(), new GotoStmt(l));
 
-		array.add(new IfStmt(whileStmt.getCond(), stmt, stmtk));
+		array.add(newIfStmt(whileStmt.getCond(), stmt, stmtk));
 		kMap.put(l, new BlockStmt(array));
 
 		return new GotoStmt(l);
+	}
+	
+	private Stmt merge(Stmt... stmts) {
+		Stmt accustmt = new BlockStmt(new ArrayList<Stmt>());
+		for(Stmt stmt : stmts) {
+			accustmt = merge(accustmt,stmt);
+		}
+		return accustmt;
+	}
+	
+	private Stmt merge(Stmt stmt1, Stmt stmt2) {
+		if (isEmpty(stmt1)) return stmt2;
+		else if (isEmpty(stmt2)) return stmt1;
+		else {
+			BlockStmt blockstmt = new BlockStmt(new ArrayList<Stmt>());
+			if(stmt1 instanceof BlockStmt) {
+				BlockStmt blockstmt1 = (BlockStmt)stmt1;
+				for(Stmt stmt : blockstmt1.getAL()) {
+					blockstmt.getAL().add(stmt);
+				}
+			}
+			else
+				blockstmt.getAL().add(stmt1);
+			
+			if (stmt2 instanceof BlockStmt) {
+				BlockStmt blockstmt2 = (BlockStmt)stmt2;
+				for(Stmt stmt : blockstmt2.getAL()) {
+					blockstmt.getAL().add(stmt);
+				}
+			} else 
+				blockstmt.getAL().add(stmt2);
+			
+			return blockstmt;
+		}
+	}
+	
+	private boolean isEmpty(Stmt stmt) {
+		if (stmt instanceof BlockStmt) {
+			BlockStmt blockstmt = (BlockStmt)stmt;
+			if (blockstmt.getAL().size() == 0) return true;
+			else {
+				boolean result = true;
+				for (Stmt substmt : blockstmt.getAL()) {
+					result = isEmpty(substmt);
+					if (result == false) break;
+				}
+				return result;
+			}
+		}
+		else 
+			return false;
+	}
+	
+	private IfStmt newIfStmt(Expr cond, Stmt thenstmt, Stmt elsestmt) {
+		if (isEmpty(elsestmt)) elsestmt = null;
+		return new IfStmt(cond, thenstmt, elsestmt);
 	}
 }

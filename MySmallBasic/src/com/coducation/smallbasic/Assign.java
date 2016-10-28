@@ -34,7 +34,7 @@ public class Assign extends Stmt
 				temp_str = ((Var)lhs).getVarName();
 			}
 			else if (lhs.getClass() == Array.class){
-				//TODO : 배열 할당..? 
+				//TODO : 배열 �당..? 
 			}
 			else if ( lhs instanceof PropertyExpr){
 
@@ -42,7 +42,7 @@ public class Assign extends Stmt
 
 			temp_res = rhs.evalExpr(env);	//Right Side Result.
 			
-			env.PutValue(temp_str, temp_res.getValue());//Left Side에 Right Side Value를 맵핑.
+			env.put(temp_str, temp_res.getValue());//Left SideRight Side Value�맵핑.
 		
 			return new Result(env);
 		}

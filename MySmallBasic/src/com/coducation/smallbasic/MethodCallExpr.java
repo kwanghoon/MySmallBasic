@@ -25,7 +25,7 @@ public class MethodCallExpr extends Expr
 				}
 				else if( expr instanceof Var){
 					Var v = (Var)expr;
-					Value val = env.getValue( v.getVarName() );
+					Value val = env.get( v.getVarName() );
 					
 					System.out.println( ((StrV)val).getValue() );
 				}

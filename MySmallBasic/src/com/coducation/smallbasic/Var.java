@@ -20,14 +20,14 @@ public class Var extends Expr
 	}
 	
 	public Result evalExpr(Env env){
-		Value temp_v = env.getValue( this.getVarName() );
+		Value temp_v = env.get( this.getVarName() );
 		return new Result(env, temp_v);
 	}
 	
 	/* Notice 
 	 * Var ::= [a­zA­Z]+[a­zA­Z0­9_]*  
 	 * ­ No more than 40 characters
-	 * 한글 변수도 사용 가능함. // 나중에 고려...
+	 * �� 변�도 �용 가�함. // �중고려...
 	 */
 
 	private String name;
