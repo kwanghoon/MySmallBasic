@@ -1,0 +1,4 @@
+For I=1 To 20
+	pic = Flickr.GetRandomPicture("Korea")
+	Desktop.SetWallPaper(pic)
+EndFor
