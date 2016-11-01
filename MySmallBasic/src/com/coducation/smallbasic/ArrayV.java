@@ -18,6 +18,16 @@ public class ArrayV extends Value {
 		arrmap.put(index, v);
 
 	}
+	
+	
+
+//	@Override
+//	public boolean equals(Object obj) {	// 자바 Object의 equals 메소드로 배열 비교
+//										// 배열의 주소 비교
+//		return super.equals(obj);
+//	}
+
+
 
 	private HashMap<String,Value> arrmap;
 
