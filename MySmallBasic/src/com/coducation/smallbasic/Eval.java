@@ -129,7 +129,16 @@ public class Eval {
 	}
 
 	public Value eval(Env env, Lit litExpr) {
-		return null;
+		switch(litExpr.type()) {
+		case Lit.NUM:
+			return new DoubleV(litExpr.getD());
+		case Lit.STRING:
+			return new StrV(litExpr.gets());
+		default:
+			throw new InterpretException(
+					"eval " + litExpr.gets() 
+					+ " : Unknown type " + litExpr.type());
+		}
 	}
 
 	public Value eval(Env env, LogicalExpr logicalExpr) {

@@ -295,7 +295,7 @@ public class Parser
 					}
 					else if(Grammer_rule.get(state_num).equals("OptStep ->"))
 					{
-						tree = new Lit("1");
+						tree = new Lit(1);
 					}
 					else if(Grammer_rule.get(state_num).equals("OptStep -> Step Expr"))
 					{
@@ -491,13 +491,13 @@ public class Parser
 					else if(Grammer_rule.get(state_num).equals("Primary -> NUM"))
 					{
 						Terminal temp = (Terminal) stack.get(last_stack_tree_index-1);
-						tree = new Lit(temp.getSyntax());
+						tree = new Lit(temp.getSyntax(), Lit.NUM);
 					}
 					else if(Grammer_rule.get(state_num).equals("Primary -> STR"))
 					{
 						Terminal temp = (Terminal) stack.get(last_stack_tree_index-1);
 						String str = temp.getSyntax();
-						tree = new Lit(str.substring(1, str.length()-1));
+						tree = new Lit(str.substring(1, str.length()-1), Lit.STRING);
 					}
 					else if(Grammer_rule.get(state_num).equals("Primary -> ( Expr )"))
 					{
