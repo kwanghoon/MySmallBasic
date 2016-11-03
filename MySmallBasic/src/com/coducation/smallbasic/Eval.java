@@ -27,6 +27,7 @@ public class Eval {
 		// 1. Get a stmt block of label
 		// 2. Execute it until either Goto l or the empty stmt
 		// 3. Return l or null
+
 		return null;
 	}
 
@@ -86,7 +87,7 @@ public class Eval {
 		else if (stmt instanceof WhileStmt)
 			eval(bbEnv, env, (WhileStmt) stmt);
 		else
-			System.err.println("Syntax Error!" + stmt.getClass());
+			throw new InterpretException("Syntax Error!" + stmt.getClass());
 	}
 
 	public Value eval(Env env, ArithExpr arithExpr) {
@@ -97,47 +98,144 @@ public class Eval {
 		return null;
 	}
 
+	public static boolean greaterEqual(Value v1, Value v2) {
+		// 1) StrV >= StrV
+		// 2) DoubleV >= DoubleV
+		// 3) error
+		if (v1 instanceof StrV && v2 instanceof StrV) {
+			String strV1 = ((StrV) v1).getValue().toString();
+			String strV2 = ((StrV) v2).getValue().toString();
+
+			if (strV1.compareTo(strV2) >= 0) // compareTo 결과 양수가 나오면 앞의 문자열이 뒤의
+											 // 문자열보다 크다는 것을 의미
+				return true;
+		} else if (v1 instanceof DoubleV && v2 instanceof DoubleV) {
+			double doubleV1 = ((DoubleV) v1).getValue();
+			double doubleV2 = ((DoubleV) v2).getValue();
+
+			if (doubleV1 >= doubleV2)
+				return true;
+		} else
+			throw new InterpretException("Different Value is not comparable.");
+		
+		return false;
+	}
+
+	public static boolean greaterThan(Value v1, Value v2) {
+		if (v1 instanceof StrV && v2 instanceof StrV) {
+			String strV1 = ((StrV) v1).getValue().toString();
+			String strV2 = ((StrV) v2).getValue().toString();
+
+			if (strV1.compareTo(strV2) > 0)
+				return true;
+		} else if (v1 instanceof DoubleV && v2 instanceof DoubleV) {
+			double doubleV1 = ((DoubleV) v1).getValue();
+			double doubleV2 = ((DoubleV) v2).getValue();
+
+			if (doubleV1 > doubleV2)
+				return true;
+		} else
+			throw new InterpretException("Different Value is not comparable.");
+		
+		return false;
+	}
+
+	public static boolean lessEqual(Value v1, Value v2) {
+		if (v1 instanceof StrV && v2 instanceof StrV) {
+			String strV1 = ((StrV) v1).getValue().toString();
+			String strV2 = ((StrV) v2).getValue().toString();
+
+			if (strV1.compareTo(strV2) <= 0)
+				return true;
+		} else if (v1 instanceof DoubleV && v2 instanceof DoubleV) {
+			double doubleV1 = ((DoubleV) v1).getValue();
+			double doubleV2 = ((DoubleV) v2).getValue();
+
+			if (doubleV1 <= doubleV2)
+				return true;
+		} else
+			throw new InterpretException("Different Value is not comparable.");
+		
+		return false;
+	}
+
+	public static boolean lessThan(Value v1, Value v2) {
+		if (v1 instanceof StrV && v2 instanceof StrV) {
+			String strV1 = ((StrV) v1).getValue().toString();
+			String strV2 = ((StrV) v2).getValue().toString();
+
+			if (strV1.compareTo(strV2) < 0)
+				return true;
+		} else if (v1 instanceof DoubleV && v2 instanceof DoubleV) {
+			double doubleV1 = ((DoubleV) v1).getValue();
+			double doubleV2 = ((DoubleV) v2).getValue();
+
+			if (doubleV1 < doubleV2)
+				return true;
+		} else
+			throw new InterpretException("Different Value is not comparable.");
+		
+		return false;
+	}
+
+	public static boolean notEqual(Value v1, Value v2) {
+		if (v1 instanceof StrV && v2 instanceof StrV) {
+			String strV1 = ((StrV) v1).getValue().toString();
+			String strV2 = ((StrV) v2).getValue().toString();
+
+			if (strV1 != strV2)
+				return true;
+			else
+				return false;
+		} else if (v1 instanceof DoubleV && v2 instanceof DoubleV) {
+			double doubleV1 = ((DoubleV) v1).getValue();
+			double doubleV2 = ((DoubleV) v2).getValue();
+
+			if (doubleV1 != doubleV2)
+				return true;
+		} else
+			throw new InterpretException("Different Value is not comparable.");
+		
+		return false;
+	}
+
 	public Value eval(Env env, CompExpr compExpr) {
+		Expr oprnd1 = compExpr.GetOperand()[0];
+		Expr oprnd2 = compExpr.GetOperand()[1];
+
+		Value v1 = eval(env, oprnd1);
+		Value v2 = eval(env, oprnd2);
 
 		switch (compExpr.GetOp()) {
 		case CompExpr.EQUAL:
-			Expr oprnd1 = compExpr.GetOperand()[0];
-			Expr oprnd2 = compExpr.GetOperand()[1];
-
-			Value v1 = eval(env, oprnd1);
-			Value v2 = eval(env, oprnd2);
-
 			if (v1 == v2)
 				return new StrV("true"); // v1.equals(v2);
 			else
 				return new StrV("false");
 		case CompExpr.GREATER_EQUAL:
-			break;
+			return new StrV(Boolean.toString(greaterEqual(v1, v2)));
 		case CompExpr.GREATER_THAN:
-			break;
+			return new StrV(Boolean.toString(greaterThan(v1, v2)));
 		case CompExpr.LESS_EQUAL:
-			break;
+			return new StrV(Boolean.toString(lessEqual(v1, v2)));
 		case CompExpr.LESS_THAN:
-			break;
+			return new StrV(Boolean.toString(lessThan(v1, v2)));
 		case CompExpr.NOT_EQUAL:
-			break;
+			return new StrV(Boolean.toString(notEqual(v1, v2)));
 		default:
 			break;
 		}
-
 		return null;
 	}
 
 	public Value eval(Env env, Lit litExpr) {
-		switch(litExpr.type()) {
+		switch (litExpr.type()) {
 		case Lit.NUM:
 			return new DoubleV(litExpr.getD());
 		case Lit.STRING:
 			return new StrV(litExpr.gets());
 		default:
-			throw new InterpretException(
-					"eval " + litExpr.gets() 
-					+ " : Unknown type " + litExpr.type());
+			throw new InterpretException("eval " + litExpr.gets() + " : Unknown type " + litExpr.type());
 		}
 	}
 
