@@ -2,10 +2,14 @@ package com.coducation.smallbasic;
 
 public class Lit extends CondExpr // extends Expr -> extends CondExpr
 {								  // Because, Lit := "true", "false" <= String, num...
-	public Lit(String lit)
+	public Lit(double lit) {
+		this.lit = lit + "";
+		this.type = NUM;
+	}
+	public Lit(String lit, int type)
 	{
-		super();
 		this.lit = lit;
+		this.type = type;
 	} // Builder
 	
 	/* Notice 
@@ -17,17 +21,22 @@ public class Lit extends CondExpr // extends Expr -> extends CondExpr
 	
 	public String gets()
 	{
-		try {
-			Double.parseDouble(lit);
-			return lit;
-		} catch(NumberFormatException e) {
-			return "\"" + lit + "\"";
-		}
+		if (type == NUM) return lit;
+		else if(type == STRING) return "\"" + lit + "\"";
+		else throw new InterpretException("Lit " + lit + " has invalid type: " + type);
 	}
 	
-	public Result evalExpr(Env env){
-		return new Result(env, new StrV(this.gets()) );
+	public double getD() {
+		if (type == NUM)
+			return Double.parseDouble(lit);
+		else 
+			throw new InterpretException("Lit " + lit + " is not NUM");
 	}
 	
+	public int type() { return type; }
+	
+	public static final int NUM = 1;
+	public static final int STRING = 2;
 	private String lit;
+	private int type;
 }

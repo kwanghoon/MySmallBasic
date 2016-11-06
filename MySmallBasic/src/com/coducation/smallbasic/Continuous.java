@@ -102,7 +102,7 @@ public class Continuous {
 		
 		if (forStmt.getStep() == null) {
 			// forStmt의 step을 var+1로 설정해주기
-			step = new Lit("1");
+			step = new Lit(1);
 		}
 		else {
 			step = forStmt.getStep();
@@ -116,12 +116,12 @@ public class Continuous {
 		Expr ltestCond = 
 				new LogicalExpr(
 						new LogicalExpr(
-								new CompExpr(forStmt.getStep(), CompExpr.GREATER_EQUAL, new Lit("0")),
+								new CompExpr(forStmt.getStep(), CompExpr.GREATER_EQUAL, new Lit(0)),
 								LogicalExpr.AND,
 								new CompExpr(forStmt.getVar(), CompExpr.LESS_EQUAL, forStmt.getEnd())),
 						LogicalExpr.OR,
 						new LogicalExpr(
-								new CompExpr(forStmt.getStep(), CompExpr.LESS_THAN, new Lit("0")),
+								new CompExpr(forStmt.getStep(), CompExpr.LESS_THAN, new Lit(0)),
 								LogicalExpr.AND,
 								new CompExpr(forStmt.getVar(), CompExpr.GREATER_THAN, forStmt.getEnd())));
 		Stmt ltestStmt = newIfStmt(ltestCond, body, stmtk);
