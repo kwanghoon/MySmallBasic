@@ -1,6 +1,6 @@
 package com.coducation.smallbasic;
 
-public class SubCallExpr extends Expr
+public class SubCallExpr extends Stmt
 {
 	public SubCallExpr(String name)
 	{

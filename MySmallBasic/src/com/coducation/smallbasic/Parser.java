@@ -237,7 +237,7 @@ public class Parser
 					else if(Grammer_rule.get(state_num).equals("ExprStatement -> ID ( )")) // SubRoutineCallExprStmt
 					{
 						Terminal sub_tree1 = (Terminal)stack.get(last_stack_tree_index-5);
-						tree = new ExprStmt(new SubCallExpr(sub_tree1.getSyntax()));
+						tree = new SubCallExpr(sub_tree1.getSyntax());
 					}
 					else if(Grammer_rule.get(state_num).equals("ExprStatement -> ID Idxs = Expr")) // Array Assign
 					{
