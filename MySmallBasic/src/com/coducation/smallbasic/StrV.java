@@ -25,6 +25,6 @@ public class StrV extends Value {
 		else
 			return false;
 	}
-
+	
 	private String v;
 }

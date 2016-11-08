@@ -2,69 +2,118 @@ package com.coducation.smallbasic;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 
 public class Eval {
-	BlockStmt tree;
 	int numberOfIndent;
+	String label;
+	BasicBlockEnv bbEnv;
+	Env env;
 
 	public Eval() {
 	}
 
-	public Eval(BlockStmt tree) {
-		this.tree = tree;
+	public Eval(BasicBlockEnv bbEnv) {
+		this.bbEnv = bbEnv;
 	}
 
 	public void eval() {
-		String label = "$main";
+		label = "$main";
+		env = new Env();
+
 		while (label != null) {
-			label = evalBlock(label);
+			Stmt stmt = bbEnv.get(label);
+			label = null;
+			eval(bbEnv, env, stmt);
 		}
 		// End
 	}
 
-	public String evalBlock(String label) {
-		// 1. Get a stmt block of label
-		// 2. Execute it until either Goto l or the empty stmt
-		// 3. Return l or null
+	public void eval(BasicBlockEnv bbEnv, Env env, Assign assignStmt) {
+		Expr lhs = assignStmt.getLSide();
+		Expr rhs = assignStmt.getRSide();
 
-		return null;
+		// Value v1 = eval(env, lhs);
+		Value v2 = eval(env, rhs);
+
+		if (lhs instanceof Var) {
+			env.put(((Var) lhs).getVarName(), v2);
+		} else if (lhs instanceof PropertyExpr) {
+			try {
+				String clzName = ((PropertyExpr) lhs).getObj();
+				Class clz = clzName.getClass();
+				Field fld = clz.getField(((PropertyExpr) lhs).getName());
+				fld.set(null, v2);
+			} catch (NoSuchFieldException | SecurityException e) {
+				throw new InterpretException("Assign : " + e.toString());
+			} catch (IllegalArgumentException e) {
+				throw new InterpretException("Assign : " + e.toString());
+			} catch (IllegalAccessException e) {
+				throw new InterpretException("Assign : " + e.toString());
+			}
+		} else {
+			throw new InterpretException("Assign : Unknown lhs " + lhs);
+		}
 	}
 
-	public Env eval(BasicBlockEnv bbEnv, Env env, Assign assignStmt) {
-		return null;
+	public void eval(BasicBlockEnv bbEnv, Env env, BlockStmt blockStmt) {
+		for (Stmt stmt : blockStmt.getAL()) {
+			eval(bbEnv, env, stmt);
+		}
 	}
 
-	public Env eval(BasicBlockEnv bbEnv, Env env, BlockStmt blockStmt) {
-		return null;
+	public void eval(BasicBlockEnv bbEnv, Env env, ExprStmt exprStmt) {
+		Expr expr = exprStmt.getExpr();
+
+		Value v = eval(env, expr);
+
 	}
 
-	public Env eval(BasicBlockEnv bbEnv, Env env, ExprStmt exprStmt) {
-		return null;
+	public void eval(BasicBlockEnv bbEnv, Env env, ForStmt forStmt) {
+		throw new InterpretException("ForStmt : Unexpected");
 	}
 
-	public Env eval(BasicBlockEnv bbEnv, Env env, ForStmt forStmt) {
-		return null;
+	public void eval(BasicBlockEnv bbEnv, Env env, GotoStmt gotoStmt) {
+		label = gotoStmt.getTargetLabel();
 	}
 
-	public Env eval(BasicBlockEnv bbEnv, Env env, GotoStmt gotoStmt) {
-		return null;
+	public void eval(BasicBlockEnv bbEnv, Env env, IfStmt ifStmt) {
+		Expr cond = ifStmt.getCond();
+
+		Value v1 = eval(env, cond);
+
+		if (isTrue(v1)) {
+			Stmt thenStmt = ifStmt.getThen();
+			eval(bbEnv, env, thenStmt);
+		} else {
+			Stmt elseStmt = ifStmt.getElse();
+			if (elseStmt != null)
+				eval(bbEnv, env, elseStmt);
+		}
 	}
 
-	public Env eval(BasicBlockEnv bbEnv, Env env, IfStmt ifStmt) {
-		return null;
+	public void eval(BasicBlockEnv bbEnv, Env env, Label labelStmt) {
+		throw new InterpretException("Label : Unexpected");
 	}
 
-	public Env eval(BasicBlockEnv bbEnv, Env env, Label labelStmt) {
-		return null;
+	public void eval(BasicBlockEnv bbEnv, Env env, SubDef subDefStmt) {
+		throw new InterpretException("SubDef : Unexpected");
 	}
 
-	public Env eval(BasicBlockEnv bbEnv, Env env, SubDef subDefStmt) {
-		return null;
+	public void eval(Env env, SubCallExpr subCallExpr) {
+		// 1. Let label be the label of the Sub call
+		// 2. evalBlock(label)
+		label = subCallExpr.getName();
+		while (label != null) {
+			Stmt stmt = bbEnv.get(label);
+			label = null;
+			eval(bbEnv, env, stmt);
+		}
 	}
 
-	public Env eval(BasicBlockEnv bbEnv, Env env, WhileStmt whileStmt) {
-		return null;
+	public void eval(BasicBlockEnv bbEnv, Env env, WhileStmt whileStmt) {
+		throw new InterpretException("WhileStmt : Unexpected");
 	}
 
 	public void eval(BasicBlockEnv bbEnv, Env env, Stmt stmt) {
@@ -84,6 +133,8 @@ public class Eval {
 			eval(bbEnv, env, (Label) stmt);
 		else if (stmt instanceof SubDef)
 			eval(bbEnv, env, (SubDef) stmt);
+		else if (stmt instanceof SubCallExpr)
+			eval(bbEnv, env, (SubCallExpr) stmt);
 		else if (stmt instanceof WhileStmt)
 			eval(bbEnv, env, (WhileStmt) stmt);
 		else
@@ -98,6 +149,14 @@ public class Eval {
 		return null;
 	}
 
+	public static boolean isTrue(Value v) {
+		if (v instanceof StrV) {
+			StrV str = (StrV) v;
+			return str.getValue().equalsIgnoreCase("True");
+		} else
+			return false;
+	}
+
 	public static boolean greaterEqual(Value v1, Value v2) {
 		// 1) StrV >= StrV
 		// 2) DoubleV >= DoubleV
@@ -107,7 +166,7 @@ public class Eval {
 			String strV2 = ((StrV) v2).getValue().toString();
 
 			if (strV1.compareTo(strV2) >= 0) // compareTo 결과 양수가 나오면 앞의 문자열이 뒤의
-											 // 문자열보다 크다는 것을 의미
+												// 문자열보다 크다는 것을 의미
 				return true;
 		} else if (v1 instanceof DoubleV && v2 instanceof DoubleV) {
 			double doubleV1 = ((DoubleV) v1).getValue();
@@ -117,7 +176,7 @@ public class Eval {
 				return true;
 		} else
 			throw new InterpretException("Different Value is not comparable.");
-		
+
 		return false;
 	}
 
@@ -136,7 +195,7 @@ public class Eval {
 				return true;
 		} else
 			throw new InterpretException("Different Value is not comparable.");
-		
+
 		return false;
 	}
 
@@ -155,7 +214,7 @@ public class Eval {
 				return true;
 		} else
 			throw new InterpretException("Different Value is not comparable.");
-		
+
 		return false;
 	}
 
@@ -174,7 +233,7 @@ public class Eval {
 				return true;
 		} else
 			throw new InterpretException("Different Value is not comparable.");
-		
+
 		return false;
 	}
 
@@ -195,7 +254,7 @@ public class Eval {
 				return true;
 		} else
 			throw new InterpretException("Different Value is not comparable.");
-		
+
 		return false;
 	}
 
@@ -240,6 +299,20 @@ public class Eval {
 	}
 
 	public Value eval(Env env, LogicalExpr logicalExpr) {
+		Expr oprnd1 = logicalExpr.GetOperand()[0];
+		Expr oprnd2 = logicalExpr.GetOperand()[1];
+
+		Value v1 = eval(env, oprnd1);
+		Value v2 = eval(env, oprnd2);
+
+		switch (logicalExpr.GetOp()) {
+		case LogicalExpr.AND:
+
+		case LogicalExpr.OR:
+
+		default:
+			break;
+		}
 		return null;
 	}
 
@@ -276,13 +349,18 @@ public class Eval {
 	}
 
 	public Value eval(Env env, PropertyExpr propertyExpr) {
-		return null;
-	}
-
-	public Value eval(Env env, SubCallExpr subCallExpr) {
-		// 1. Let label be the label of the Sub call
-		// 2. evalBlock(label)
-		return null;
+		try {
+			String clzName = propertyExpr.getObj();
+			Class clz = clzName.getClass();
+			Field fld = clz.getField(propertyExpr.getName());
+			return (Value) fld.get(null);
+		} catch (NoSuchFieldException | SecurityException e) {
+			throw new InterpretException("PropertyExpr : " + e.toString());
+		} catch (IllegalArgumentException e) {
+			throw new InterpretException("PropertyExpr : " + e.toString());
+		} catch (IllegalAccessException e) {
+			throw new InterpretException("PropertyExpr : " + e.toString());
+		}
 	}
 
 	public double toDouble(String strDouble) {
@@ -315,8 +393,6 @@ public class Eval {
 			return eval(env, (ParenExpr) expr);
 		else if (expr instanceof PropertyExpr)
 			return eval(env, (PropertyExpr) expr);
-		else if (expr instanceof SubCallExpr)
-			return eval(env, (SubCallExpr) expr);
 		else if (expr instanceof Var)
 			return eval(env, (Var) expr);
 		else

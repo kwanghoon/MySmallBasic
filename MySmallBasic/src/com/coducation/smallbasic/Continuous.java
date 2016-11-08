@@ -12,6 +12,9 @@ public class Continuous {
 	public Continuous() {
 		kMap = new HashMap<>();
 	}
+	public BasicBlockEnv blocks() {
+		return new BasicBlockEnv(kMap);
+	}
 
 	private String fresh() {
 		String fresh = label + count;
@@ -19,12 +22,11 @@ public class Continuous {
 
 		return fresh;
 	}
-	
-	public HashMap<String,Stmt> transform(Stmt stmt) {
-		Stmt stmt_main = transform(stmt, 
-				new BlockStmt(new ArrayList<Stmt>()));
+
+	public HashMap<String, Stmt> transform(Stmt stmt) {
+		Stmt stmt_main = transform(stmt, new BlockStmt(new ArrayList<Stmt>()));
 		kMap.put(mainLabel, stmt_main);
-		
+
 		return kMap;
 	}
 
@@ -45,6 +47,8 @@ public class Continuous {
 			return transform((Label) stmt, stmtk);
 		else if (stmt instanceof SubDef)
 			return transform((SubDef) stmt, stmtk);
+		else if (stmt instanceof SubCallExpr)
+			return transform((SubCallExpr) stmt, stmtk);
 		else if (stmt instanceof WhileStmt)
 			return transform((WhileStmt) stmt, stmtk);
 		else {
@@ -57,32 +61,29 @@ public class Continuous {
 	}
 
 	public Stmt transform(BlockStmt blockStmt, Stmt stmtk) {
-		if(blockStmt.getAL().size() == 0) {
+		if (blockStmt.getAL().size() == 0) {
 			return stmtk;
-		}
-		else {
+		} else {
 			Stmt head = blockStmt.getAL().get(0);
 			ArrayList<Stmt> stmts = (ArrayList<Stmt>) blockStmt.getAL().clone();
 
 			stmts.remove(0);
-			
-			if(head instanceof GotoStmt) {
+
+			if (head instanceof GotoStmt) {
 				transform(new BlockStmt(stmts), stmtk);
-				
-				return new GotoStmt(((GotoStmt)head).getTargetLabel());
-			}
-			else if(head instanceof Label) {
+
+				return new GotoStmt(((GotoStmt) head).getTargetLabel());
+			} else if (head instanceof Label) {
 				Stmt stmt = transform(new BlockStmt(stmts), stmtk);
-				
-				kMap.put(((Label)head).getLabel(), stmt);
-				
-				return new GotoStmt(((Label)head).getLabel());
-			}
-			else {
+
+				kMap.put(((Label) head).getLabel(), stmt);
+
+				return new GotoStmt(((Label) head).getLabel());
+			} else {
 				Stmt stmt = transform(head, new BlockStmt(new ArrayList<Stmt>()));
 				Stmt stmt1 = transform(new BlockStmt(stmts), stmtk);
-				
-				return merge(stmt,stmt1); 
+
+				return merge(stmt, stmt1);
 			}
 		}
 	}
@@ -95,42 +96,33 @@ public class Continuous {
 		String linit = fresh();
 		String ltest = fresh();
 
-		Stmt stmt = transform(forStmt.getBlock(),
-				new BlockStmt(new ArrayList<Stmt>()));
-		
+		Stmt stmt = transform(forStmt.getBlock(), new BlockStmt(new ArrayList<Stmt>()));
+
 		Expr step;
-		
+
 		if (forStmt.getStep() == null) {
 			// forStmt의 step을 var+1로 설정해주기
 			step = new Lit(1);
-		}
-		else {
+		} else {
 			step = forStmt.getStep();
 		}
 
-		Stmt update = new Assign(forStmt.getVar(), 
-				new ArithExpr(forStmt.getVar(), ArithExpr.PLUS, step));
-		
+		Stmt update = new Assign(forStmt.getVar(), new ArithExpr(forStmt.getVar(), ArithExpr.PLUS, step));
+
 		Stmt body = merge(stmt, update, new GotoStmt(ltest));
-		
-		Expr ltestCond = 
-				new LogicalExpr(
-						new LogicalExpr(
-								new CompExpr(forStmt.getStep(), CompExpr.GREATER_EQUAL, new Lit(0)),
-								LogicalExpr.AND,
-								new CompExpr(forStmt.getVar(), CompExpr.LESS_EQUAL, forStmt.getEnd())),
-						LogicalExpr.OR,
-						new LogicalExpr(
-								new CompExpr(forStmt.getStep(), CompExpr.LESS_THAN, new Lit(0)),
-								LogicalExpr.AND,
-								new CompExpr(forStmt.getVar(), CompExpr.GREATER_THAN, forStmt.getEnd())));
+
+		Expr ltestCond = new LogicalExpr(
+				new LogicalExpr(new CompExpr(forStmt.getStep(), CompExpr.GREATER_EQUAL, new Lit(0)), LogicalExpr.AND,
+						new CompExpr(forStmt.getVar(), CompExpr.LESS_EQUAL, forStmt.getEnd())),
+				LogicalExpr.OR, new LogicalExpr(new CompExpr(forStmt.getStep(), CompExpr.LESS_THAN, new Lit(0)),
+						LogicalExpr.AND, new CompExpr(forStmt.getVar(), CompExpr.GREATER_THAN, forStmt.getEnd())));
 		Stmt ltestStmt = newIfStmt(ltestCond, body, stmtk);
-		
+
 		ArrayList<Stmt> init = new ArrayList<>();
 		init.add(new Assign(forStmt.getVar(), forStmt.getInit()));
 		init.add(new GotoStmt(ltest));
 		Stmt linitStmt = new BlockStmt(init);
-		
+
 		kMap.put(linit, linitStmt);
 		kMap.put(ltest, ltestStmt);
 
@@ -139,9 +131,9 @@ public class Continuous {
 
 	public Stmt transform(GotoStmt gotoStmt, Stmt stmtk) {
 		// stmtk를 어떻게 다뤄야하지??
-		
+
 		String l = gotoStmt.getTargetLabel();
-		
+
 		return new GotoStmt(l);
 	}
 
@@ -160,15 +152,14 @@ public class Continuous {
 
 	public Stmt transform(Label labelStmt, Stmt stmtk) {
 		kMap.put(labelStmt.getLabel(), stmtk);
-		
+
 		return new GotoStmt(labelStmt.getLabel());
 	}
 
 	public Stmt transform(SubDef subdefStmt, Stmt stmtk) {
 		String l = subdefStmt.getName();
 
-		Stmt stmt = transform(subdefStmt.getBlock(), 
-				new BlockStmt(new ArrayList<Stmt>()));
+		Stmt stmt = transform(subdefStmt.getBlock(), new BlockStmt(new ArrayList<Stmt>()));
 
 		ArrayList<Stmt> array = new ArrayList<>();
 
@@ -177,6 +168,9 @@ public class Continuous {
 		kMap.put(l, new BlockStmt(array));
 
 		return stmtk;
+	}
+	public Stmt transform(SubCallExpr subcallExpr, Stmt stmtk) {
+		return merge(subcallExpr, stmtk);
 	}
 
 	public Stmt transform(WhileStmt whileStmt, Stmt stmtk) {
@@ -190,60 +184,63 @@ public class Continuous {
 
 		return new GotoStmt(l);
 	}
-	
+
 	private Stmt merge(Stmt... stmts) {
 		Stmt accustmt = new BlockStmt(new ArrayList<Stmt>());
-		for(Stmt stmt : stmts) {
-			accustmt = merge(accustmt,stmt);
+		for (Stmt stmt : stmts) {
+			accustmt = merge(accustmt, stmt);
 		}
 		return accustmt;
 	}
-	
+
 	private Stmt merge(Stmt stmt1, Stmt stmt2) {
-		if (isEmpty(stmt1)) return stmt2;
-		else if (isEmpty(stmt2)) return stmt1;
+		if (isEmpty(stmt1))
+			return stmt2;
+		else if (isEmpty(stmt2))
+			return stmt1;
 		else {
 			BlockStmt blockstmt = new BlockStmt(new ArrayList<Stmt>());
-			if(stmt1 instanceof BlockStmt) {
-				BlockStmt blockstmt1 = (BlockStmt)stmt1;
-				for(Stmt stmt : blockstmt1.getAL()) {
+			if (stmt1 instanceof BlockStmt) {
+				BlockStmt blockstmt1 = (BlockStmt) stmt1;
+				for (Stmt stmt : blockstmt1.getAL()) {
 					blockstmt.getAL().add(stmt);
 				}
-			}
-			else
+			} else
 				blockstmt.getAL().add(stmt1);
-			
+
 			if (stmt2 instanceof BlockStmt) {
-				BlockStmt blockstmt2 = (BlockStmt)stmt2;
-				for(Stmt stmt : blockstmt2.getAL()) {
+				BlockStmt blockstmt2 = (BlockStmt) stmt2;
+				for (Stmt stmt : blockstmt2.getAL()) {
 					blockstmt.getAL().add(stmt);
 				}
-			} else 
+			} else
 				blockstmt.getAL().add(stmt2);
-			
+
 			return blockstmt;
 		}
 	}
-	
+
 	private boolean isEmpty(Stmt stmt) {
 		if (stmt instanceof BlockStmt) {
-			BlockStmt blockstmt = (BlockStmt)stmt;
-			if (blockstmt.getAL().size() == 0) return true;
+			BlockStmt blockstmt = (BlockStmt) stmt;
+			if (blockstmt.getAL().size() == 0)
+				return true;
 			else {
 				boolean result = true;
 				for (Stmt substmt : blockstmt.getAL()) {
 					result = isEmpty(substmt);
-					if (result == false) break;
+					if (result == false)
+						break;
 				}
 				return result;
 			}
-		}
-		else 
+		} else
 			return false;
 	}
-	
+
 	private IfStmt newIfStmt(Expr cond, Stmt thenstmt, Stmt elsestmt) {
-		if (isEmpty(elsestmt)) elsestmt = null;
+		if (isEmpty(elsestmt))
+			elsestmt = null;
 		return new IfStmt(cond, thenstmt, elsestmt);
 	}
 }

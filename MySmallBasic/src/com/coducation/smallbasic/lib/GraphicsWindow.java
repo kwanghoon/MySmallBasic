@@ -100,4 +100,6 @@ public class GraphicsWindow {
 		// 메시지 상자를 표시함
 
 	}
+	public static Value Height;
+	public static Value Width;
 }

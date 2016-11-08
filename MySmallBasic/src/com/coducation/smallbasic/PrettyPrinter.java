@@ -110,6 +110,12 @@ public class PrettyPrinter {
 		System.out.println("EndSub");
 	}
 
+	public void prettyPrint(SubCallExpr subCallExpr) {
+		printIndent();
+		
+		System.out.println(subCallExpr.getName() + "()");
+	}
+
 	public void prettyPrint(WhileStmt whileStmt) {
 		printIndent();
 
@@ -137,6 +143,8 @@ public class PrettyPrinter {
 			prettyPrint((IfStmt) stmt);
 		else if (stmt instanceof Label)
 			prettyPrint((Label) stmt);
+		else if (stmt instanceof SubCallExpr)
+			prettyPrint((SubCallExpr) stmt);
 		else if (stmt instanceof SubDef)
 			prettyPrint((SubDef) stmt);
 		else if (stmt instanceof WhileStmt)
@@ -242,17 +250,15 @@ public class PrettyPrinter {
 		System.out.print(")");
 
 	}
+
 	public void prettyPrint(ParenExpr parenExpr) {
 		System.out.print("(");
 		prettyPrint(parenExpr.get());
 		System.out.print(")");
 	}
+
 	public void prettyPrint(PropertyExpr propertyExpr) {
 		System.out.print(propertyExpr.getObj() + "." + propertyExpr.getName());
-	}
-
-	public void prettyPrint(SubCallExpr subCallExpr) {
-		System.out.print(subCallExpr.getName() + "()");
 	}
 
 	public void prettyPrint(Var var) {
@@ -276,8 +282,6 @@ public class PrettyPrinter {
 			prettyPrint((ParenExpr) expr);
 		else if (expr instanceof PropertyExpr)
 			prettyPrint((PropertyExpr) expr);
-		else if (expr instanceof SubCallExpr)
-			prettyPrint((SubCallExpr) expr);
 		else if (expr instanceof Var)
 			prettyPrint((Var) expr);
 		else
