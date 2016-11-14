@@ -1,69 +1,122 @@
 package com.coducation.smallbasic;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 
 public class Eval {
-	BlockStmt tree;
 	int numberOfIndent;
+	String label;
+	BasicBlockEnv bbEnv;
+	Env env;
 
 	public Eval() {
 	}
 
-	public Eval(BlockStmt tree) {
-		this.tree = tree;
+	public Eval(BasicBlockEnv bbEnv) {
+		this.bbEnv = bbEnv;
 	}
 
 	public void eval() {
-		String label = "$main";
+		label = "$main";
+		env = new Env();
+
 		while (label != null) {
-			label = evalBlock(label);
+			Stmt stmt = bbEnv.get(label);
+			label = null;
+			eval(bbEnv, env, stmt);
 		}
 		// End
 	}
 
-	public String evalBlock(String label) {
-		// 1. Get a stmt block of label
-		// 2. Execute it until either Goto l or the empty stmt
-		// 3. Return l or null
-		return null;
+	public void eval(BasicBlockEnv bbEnv, Env env, Assign assignStmt) {
+		Expr lhs = assignStmt.getLSide();
+		Expr rhs = assignStmt.getRSide();
+
+		// Value v1 = eval(env, lhs);
+		Value v2 = eval(env, rhs);
+
+		if (lhs instanceof Var) {
+			env.put(((Var) lhs).getVarName(), v2);
+		} else if (lhs instanceof PropertyExpr) {
+			try {
+				String clzName = ((PropertyExpr) lhs).getObj();
+				Class clz = clzName.getClass();
+				Field fld = clz.getField(((PropertyExpr) lhs).getName());
+				fld.set(null, v2);
+			} catch (NoSuchFieldException | SecurityException e) {
+				throw new InterpretException("Assign : " + e.toString());
+			} catch (IllegalArgumentException e) {
+				throw new InterpretException("Assign : " + e.toString());
+			} catch (IllegalAccessException e) {
+				throw new InterpretException("Assign : " + e.toString());
+			}
+		} else if (lhs instanceof Array) {
+
+		} else {
+			throw new InterpretException("Assign : Unknown lhs " + lhs);
+		}
+
 	}
 
-	public Env eval(BasicBlockEnv bbEnv, Env env, Assign assignStmt) {
-		return null;
+	public void eval(BasicBlockEnv bbEnv, Env env, BlockStmt blockStmt) {
+		for (Stmt stmt : blockStmt.getAL()) {
+			eval(bbEnv, env, stmt);
+		}
 	}
 
-	public Env eval(BasicBlockEnv bbEnv, Env env, BlockStmt blockStmt) {
-		return null;
+	public void eval(BasicBlockEnv bbEnv, Env env, ExprStmt exprStmt) {
+		Expr expr = exprStmt.getExpr();
+
+		Value v = eval(env, expr);
+
 	}
 
-	public Env eval(BasicBlockEnv bbEnv, Env env, ExprStmt exprStmt) {
-		return null;
+	public void eval(BasicBlockEnv bbEnv, Env env, ForStmt forStmt) {
+		throw new InterpretException("ForStmt : Unexpected");
 	}
 
-	public Env eval(BasicBlockEnv bbEnv, Env env, ForStmt forStmt) {
-		return null;
+	public void eval(BasicBlockEnv bbEnv, Env env, GotoStmt gotoStmt) {
+		label = gotoStmt.getTargetLabel();
 	}
 
-	public Env eval(BasicBlockEnv bbEnv, Env env, GotoStmt gotoStmt) {
-		return null;
+	public void eval(BasicBlockEnv bbEnv, Env env, IfStmt ifStmt) {
+		Expr cond = ifStmt.getCond();
+
+		Value v1 = eval(env, cond);
+
+		if (isTrue(v1)) {
+			Stmt thenStmt = ifStmt.getThen();
+			eval(bbEnv, env, thenStmt);
+		} else {
+			Stmt elseStmt = ifStmt.getElse();
+			if (elseStmt != null)
+				eval(bbEnv, env, elseStmt);
+		}
 	}
 
-	public Env eval(BasicBlockEnv bbEnv, Env env, IfStmt ifStmt) {
-		return null;
+	public void eval(BasicBlockEnv bbEnv, Env env, Label labelStmt) {
+		throw new InterpretException("Label : Unexpected");
 	}
 
-	public Env eval(BasicBlockEnv bbEnv, Env env, Label labelStmt) {
-		return null;
+	public void eval(BasicBlockEnv bbEnv, Env env, SubDef subDefStmt) {
+		throw new InterpretException("SubDef : Unexpected");
 	}
 
-	public Env eval(BasicBlockEnv bbEnv, Env env, SubDef subDefStmt) {
-		return null;
+	public void eval(Env env, SubCallExpr subCallExpr) {
+		// 1. Let label be the label of the Sub call
+		// 2. evalBlock(label)
+		label = subCallExpr.getName();
+		while (label != null) {
+			Stmt stmt = bbEnv.get(label);
+			label = null;
+			eval(bbEnv, env, stmt);
+		}
 	}
 
-	public Env eval(BasicBlockEnv bbEnv, Env env, WhileStmt whileStmt) {
-		return null;
+	public void eval(BasicBlockEnv bbEnv, Env env, WhileStmt whileStmt) {
+		throw new InterpretException("WhileStmt : Unexpected");
 	}
 
 	public void eval(BasicBlockEnv bbEnv, Env env, Stmt stmt) {
@@ -83,66 +136,179 @@ public class Eval {
 			eval(bbEnv, env, (Label) stmt);
 		else if (stmt instanceof SubDef)
 			eval(bbEnv, env, (SubDef) stmt);
+		else if (stmt instanceof SubCallExpr)
+			eval(bbEnv, env, (SubCallExpr) stmt);
 		else if (stmt instanceof WhileStmt)
 			eval(bbEnv, env, (WhileStmt) stmt);
 		else
-			System.err.println("Syntax Error!" + stmt.getClass());
+			throw new InterpretException("Syntax Error!" + stmt.getClass());
 	}
 
 	public Value eval(Env env, ArithExpr arithExpr) {
-		return null;
-	}
+		// Unary 연산자
+		if (arithExpr.GetOp() == ArithExpr.UNARY_MINUS) {
+			Expr oprnd1 = arithExpr.GetOperand()[0];
+			Value v1 = eval(env, oprnd1);
+			DoubleV d1;
 
-	public Value eval(Env env, Array arrayExpr) {
-		return null;
-	}
-
-	public Value eval(Env env, CompExpr compExpr) {
-
-		switch (compExpr.GetOp()) {
-		case CompExpr.EQUAL:
-			Expr oprnd1 = compExpr.GetOperand()[0];
-			Expr oprnd2 = compExpr.GetOperand()[1];
+			if (v1 instanceof DoubleV) {
+				d1 = (DoubleV) v1;
+				return new DoubleV(-d1.getValue());
+			} else
+				throw new InterpretException("Syntax Error!");
+		} else { // Binary 연산자
+			Expr oprnd1 = arithExpr.GetOperand()[0];
+			Expr oprnd2 = arithExpr.GetOperand()[1];
 
 			Value v1 = eval(env, oprnd1);
 			Value v2 = eval(env, oprnd2);
 
+			StrV s1, s2;
+			DoubleV d1, d2;
+
+			switch (arithExpr.GetOp()) {
+			case ArithExpr.PLUS:
+				if (v1 instanceof DoubleV && v2 instanceof DoubleV) {
+					return new DoubleV(((DoubleV) v1).getValue() + ((DoubleV) v2).getValue());
+				} else if (v1 instanceof StrV && v2 instanceof StrV) {
+					s1 = (StrV) v1;
+					s2 = (StrV) v2;
+
+					return new StrV(s1.getValue() + s2.getValue());
+				} else {
+					throw new InterpretException("Syntax Error! " + arithExpr);
+				}
+			case ArithExpr.MINUS:
+				if (v1 instanceof DoubleV && v2 instanceof DoubleV) {
+					d1 = (DoubleV) v1;
+					d2 = (DoubleV) v2;
+
+					return new DoubleV(d1.getValue() - d2.getValue());
+				} else {
+					throw new InterpretException("Syntax Error! " + arithExpr);
+				}
+			case ArithExpr.MULTIFLY:
+				if (v1 instanceof DoubleV && v2 instanceof DoubleV) {
+					d1 = (DoubleV) v1;
+					d2 = (DoubleV) v2;
+
+					return new DoubleV(d1.getValue() * d2.getValue());
+				} else {
+					throw new InterpretException("Syntax Error! " + arithExpr);
+				}
+			case ArithExpr.DIVIDE:
+				if (v1 instanceof DoubleV && v2 instanceof DoubleV) {
+					d1 = (DoubleV) v1;
+					d2 = (DoubleV) v2;
+
+					return new DoubleV(d1.getValue() / d2.getValue());
+				} else {
+					throw new InterpretException("Syntax Error! " + arithExpr);
+				}
+			case ArithExpr.UNARY_MINUS:
+			default:
+				throw new InterpretException("Unexpected Op Code " + arithExpr.GetOp());
+			}
+		}
+	}
+
+	public Value eval(Env env, Array arrayExpr) {
+		// arr[3]
+		ArrayV arrV = (ArrayV) env.get(arrayExpr.getVar());
+		Value elem = arrV;
+
+		for (int i = 0; i < arrayExpr.getDim(); i++) {
+			Expr idx = arrayExpr.getIndex(i);
+			Value v = eval(env, idx);
+			String idx_s;
+
+			if (v instanceof StrV) {
+				idx_s = ((StrV) v).getValue();
+			} else if (v instanceof DoubleV) {
+				idx_s = ((DoubleV) v).getValue() + "";
+			} else {
+				throw new InterpretException("Unexpected Index" + v);
+			}
+
+			elem = ((ArrayV) elem).get(idx_s);
+		}
+
+		return elem;
+	}
+
+	public Value eval(Env env, CompExpr compExpr) {
+		Expr oprnd1 = compExpr.GetOperand()[0];
+		Expr oprnd2 = compExpr.GetOperand()[1];
+
+		Value v1 = eval(env, oprnd1);
+		Value v2 = eval(env, oprnd2);
+
+		switch (compExpr.GetOp()) {
+		case CompExpr.EQUAL:
 			if (v1 == v2)
 				return new StrV("true"); // v1.equals(v2);
 			else
 				return new StrV("false");
 		case CompExpr.GREATER_EQUAL:
-			break;
+			return new StrV(Boolean.toString(greaterEqual(v1, v2)));
 		case CompExpr.GREATER_THAN:
-			break;
+			return new StrV(Boolean.toString(greaterThan(v1, v2)));
 		case CompExpr.LESS_EQUAL:
-			break;
+			return new StrV(Boolean.toString(lessEqual(v1, v2)));
 		case CompExpr.LESS_THAN:
-			break;
+			return new StrV(Boolean.toString(lessThan(v1, v2)));
 		case CompExpr.NOT_EQUAL:
-			break;
+			return new StrV(Boolean.toString(notEqual(v1, v2)));
 		default:
-			break;
+			throw new InterpretException("Unexpected CompExpr Op Code " + compExpr.GetOp());
 		}
-
-		return null;
 	}
 
 	public Value eval(Env env, Lit litExpr) {
-		switch(litExpr.type()) {
+		switch (litExpr.type()) {
 		case Lit.NUM:
 			return new DoubleV(litExpr.getD());
 		case Lit.STRING:
 			return new StrV(litExpr.gets());
 		default:
-			throw new InterpretException(
-					"eval " + litExpr.gets() 
-					+ " : Unknown type " + litExpr.type());
+			throw new InterpretException("eval " + litExpr.gets() + " : Unknown type " + litExpr.type());
 		}
 	}
 
 	public Value eval(Env env, LogicalExpr logicalExpr) {
-		return null;
+		Expr oprnd1 = logicalExpr.GetOperand()[0];
+		Expr oprnd2 = logicalExpr.GetOperand()[1];
+
+		Value v1 = eval(env, oprnd1);
+		Value v2 = eval(env, oprnd2);
+
+		StrV s1, s2;
+
+		boolean ret = false;
+
+		switch (logicalExpr.GetOp()) {
+		case LogicalExpr.AND:
+			if (v1 instanceof StrV && v2 instanceof StrV) {
+				s1 = (StrV) v1;
+				s2 = (StrV) v2;
+
+				if (s1.getValue().equalsIgnoreCase("true") && s2.getValue().equalsIgnoreCase("true"))
+					ret = true;
+			}
+			break;
+		case LogicalExpr.OR:
+			if (v1 instanceof StrV && v2 instanceof StrV) {
+				s1 = (StrV) v1;
+				s2 = (StrV) v2;
+
+				if (s1.getValue().equalsIgnoreCase("true") || s2.getValue().equalsIgnoreCase("true"))
+					ret = true;
+			}
+			break;
+		default:
+			throw new InterpretException("Unexpected Logical Expr Op Code " + logicalExpr.GetOp());
+		}
+		return ret ? new StrV("true") : new StrV("false");
 	}
 
 	public Value eval(Env env, MethodCallExpr methodCallExpr) {
@@ -152,17 +318,20 @@ public class Eval {
 
 		ArrayList<Value> argValues = new ArrayList<Value>();
 
-		for (Expr arg : args) {
-			Value v = eval(env, arg);
-			argValues.add(v);
+		if (args != null) {
+			for (Expr arg : args) {
+				Value v = eval(env, arg);
+				argValues.add(v);
+			}
 		}
 		try {
-			Class c = clzName.getClass();
-			Method m = c.getMethod(mthName, null);
-			m.invoke(null, argValues);
+			// Class c = clzName.getClass();
+			Class c = com.coducation.smallbasic.lib.TextWindow.class;
+			Method m = c.getMethod(mthName, ArrayList.class);
+			return (Value) m.invoke(null, argValues);
 
 		} catch (NoSuchMethodException e) {
-			throw new InterpretException(e.toString());
+			throw new InterpretException(e.toString() + mthName);
 		} catch (IllegalAccessException e) {
 			throw new InterpretException(e.toString());
 		} catch (IllegalArgumentException e) {
@@ -170,21 +339,26 @@ public class Eval {
 		} catch (InvocationTargetException e) {
 			throw new InterpretException(e.toString());
 		}
-		return null;
+
 	}
 
 	public Value eval(Env env, ParenExpr parenExpr) {
-		return null;
+		return eval(env, parenExpr.get());
 	}
 
 	public Value eval(Env env, PropertyExpr propertyExpr) {
-		return null;
-	}
-
-	public Value eval(Env env, SubCallExpr subCallExpr) {
-		// 1. Let label be the label of the Sub call
-		// 2. evalBlock(label)
-		return null;
+		try {
+			String clzName = propertyExpr.getObj();
+			Class clz = clzName.getClass();
+			Field fld = clz.getField(propertyExpr.getName());
+			return (Value) fld.get(null);
+		} catch (NoSuchFieldException | SecurityException e) {
+			throw new InterpretException("PropertyExpr : " + e.toString());
+		} catch (IllegalArgumentException e) {
+			throw new InterpretException("PropertyExpr : " + e.toString());
+		} catch (IllegalAccessException e) {
+			throw new InterpretException("PropertyExpr : " + e.toString());
+		}
 	}
 
 	public double toDouble(String strDouble) {
@@ -217,12 +391,119 @@ public class Eval {
 			return eval(env, (ParenExpr) expr);
 		else if (expr instanceof PropertyExpr)
 			return eval(env, (PropertyExpr) expr);
-		else if (expr instanceof SubCallExpr)
-			return eval(env, (SubCallExpr) expr);
 		else if (expr instanceof Var)
 			return eval(env, (Var) expr);
 		else
 			throw new InterpretException("Syntax Error! " + expr.getClass());
 
+	}
+
+	public static boolean isTrue(Value v) {
+		if (v instanceof StrV) {
+			StrV str = (StrV) v;
+			return str.getValue().equalsIgnoreCase("True");
+		} else
+			return false;
+	}
+
+	public static boolean greaterEqual(Value v1, Value v2) {
+		// 1) StrV >= StrV
+		// 2) DoubleV >= DoubleV
+		// 3) error
+		if (v1 instanceof StrV && v2 instanceof StrV) {
+			String strV1 = ((StrV) v1).getValue().toString();
+			String strV2 = ((StrV) v2).getValue().toString();
+
+			if (strV1.compareTo(strV2) >= 0) // compareTo 결과 양수가 나오면 앞의 문자열이 뒤의
+												// 문자열보다 크다는 것을 의미
+				return true;
+		} else if (v1 instanceof DoubleV && v2 instanceof DoubleV) {
+			double doubleV1 = ((DoubleV) v1).getValue();
+			double doubleV2 = ((DoubleV) v2).getValue();
+
+			if (doubleV1 >= doubleV2)
+				return true;
+		} else
+			throw new InterpretException("Different Value is not comparable.");
+
+		return false;
+	}
+
+	public static boolean greaterThan(Value v1, Value v2) {
+		if (v1 instanceof StrV && v2 instanceof StrV) {
+			String strV1 = ((StrV) v1).getValue().toString();
+			String strV2 = ((StrV) v2).getValue().toString();
+
+			if (strV1.compareTo(strV2) > 0)
+				return true;
+		} else if (v1 instanceof DoubleV && v2 instanceof DoubleV) {
+			double doubleV1 = ((DoubleV) v1).getValue();
+			double doubleV2 = ((DoubleV) v2).getValue();
+
+			if (doubleV1 > doubleV2)
+				return true;
+		} else
+			throw new InterpretException("Different Value is not comparable.");
+
+		return false;
+	}
+
+	public static boolean lessEqual(Value v1, Value v2) {
+		if (v1 instanceof StrV && v2 instanceof StrV) {
+			String strV1 = ((StrV) v1).getValue().toString();
+			String strV2 = ((StrV) v2).getValue().toString();
+
+			if (strV1.compareTo(strV2) <= 0)
+				return true;
+		} else if (v1 instanceof DoubleV && v2 instanceof DoubleV) {
+			double doubleV1 = ((DoubleV) v1).getValue();
+			double doubleV2 = ((DoubleV) v2).getValue();
+
+			if (doubleV1 <= doubleV2)
+				return true;
+		} else
+			throw new InterpretException("Different Value is not comparable.");
+
+		return false;
+	}
+
+	public static boolean lessThan(Value v1, Value v2) {
+		if (v1 instanceof StrV && v2 instanceof StrV) {
+			String strV1 = ((StrV) v1).getValue().toString();
+			String strV2 = ((StrV) v2).getValue().toString();
+
+			if (strV1.compareTo(strV2) < 0)
+				return true;
+		} else if (v1 instanceof DoubleV && v2 instanceof DoubleV) {
+			double doubleV1 = ((DoubleV) v1).getValue();
+			double doubleV2 = ((DoubleV) v2).getValue();
+
+			if (doubleV1 < doubleV2)
+				return true;
+		} else
+			throw new InterpretException("Different Value is not comparable.");
+
+		return false;
+	}
+
+	public static boolean notEqual(Value v1, Value v2) {
+		if (v1 instanceof StrV && v2 instanceof StrV) {
+			String strV1 = ((StrV) v1).getValue().toString();
+			String strV2 = ((StrV) v2).getValue().toString();
+
+			if (strV1 != strV2)
+				return true;
+			else
+				return false;
+		} else if (v1 instanceof DoubleV && v2 instanceof DoubleV) {
+			double doubleV1 = ((DoubleV) v1).getValue();
+			double doubleV2 = ((DoubleV) v2).getValue();
+
+			if (doubleV1 != doubleV2)
+				return true;
+		} else
+			throw new InterpretException("Different Value is not comparable.");
+
+		return false;
 	}
 }

@@ -39,9 +39,8 @@ public class MySmallBasicMain {
 			}
 			System.out.println();
 			
-//			Interpreter interpreting = new Interpreter(stack);
-//			Interpreter.stackInit();
-//			interpreting.Interpreting();
+			System.out.println("Excution");
+			new Eval(new BasicBlockEnv(map)).eval();
 		} else {
 			System.err.println("Tree is not BlockStmt.");
 		}
