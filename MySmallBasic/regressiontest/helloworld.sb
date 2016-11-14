@@ -1,0 +1,2 @@
+name = TextWindow.Read()
+TextWindow.WriteLine("hello " + name)

@@ -1,8 +1,8 @@
 package com.coducation.smallbasic;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 
 public class Eval {
@@ -52,9 +52,12 @@ public class Eval {
 			} catch (IllegalAccessException e) {
 				throw new InterpretException("Assign : " + e.toString());
 			}
+		} else if (lhs instanceof Array) {
+
 		} else {
 			throw new InterpretException("Assign : Unknown lhs " + lhs);
 		}
+
 	}
 
 	public void eval(BasicBlockEnv bbEnv, Env env, BlockStmt blockStmt) {
@@ -142,11 +145,257 @@ public class Eval {
 	}
 
 	public Value eval(Env env, ArithExpr arithExpr) {
-		return null;
+		// Unary 연산자
+		if (arithExpr.GetOp() == ArithExpr.UNARY_MINUS) {
+			Expr oprnd1 = arithExpr.GetOperand()[0];
+			Value v1 = eval(env, oprnd1);
+			DoubleV d1;
+
+			if (v1 instanceof DoubleV) {
+				d1 = (DoubleV) v1;
+				return new DoubleV(-d1.getValue());
+			} else
+				throw new InterpretException("Syntax Error!");
+		} else { // Binary 연산자
+			Expr oprnd1 = arithExpr.GetOperand()[0];
+			Expr oprnd2 = arithExpr.GetOperand()[1];
+
+			Value v1 = eval(env, oprnd1);
+			Value v2 = eval(env, oprnd2);
+
+			StrV s1, s2;
+			DoubleV d1, d2;
+
+			switch (arithExpr.GetOp()) {
+			case ArithExpr.PLUS:
+				if (v1 instanceof DoubleV && v2 instanceof DoubleV) {
+					return new DoubleV(((DoubleV) v1).getValue() + ((DoubleV) v2).getValue());
+				} else if (v1 instanceof StrV && v2 instanceof StrV) {
+					s1 = (StrV) v1;
+					s2 = (StrV) v2;
+
+					return new StrV(s1.getValue() + s2.getValue());
+				} else {
+					throw new InterpretException("Syntax Error! " + arithExpr);
+				}
+			case ArithExpr.MINUS:
+				if (v1 instanceof DoubleV && v2 instanceof DoubleV) {
+					d1 = (DoubleV) v1;
+					d2 = (DoubleV) v2;
+
+					return new DoubleV(d1.getValue() - d2.getValue());
+				} else {
+					throw new InterpretException("Syntax Error! " + arithExpr);
+				}
+			case ArithExpr.MULTIFLY:
+				if (v1 instanceof DoubleV && v2 instanceof DoubleV) {
+					d1 = (DoubleV) v1;
+					d2 = (DoubleV) v2;
+
+					return new DoubleV(d1.getValue() * d2.getValue());
+				} else {
+					throw new InterpretException("Syntax Error! " + arithExpr);
+				}
+			case ArithExpr.DIVIDE:
+				if (v1 instanceof DoubleV && v2 instanceof DoubleV) {
+					d1 = (DoubleV) v1;
+					d2 = (DoubleV) v2;
+
+					return new DoubleV(d1.getValue() / d2.getValue());
+				} else {
+					throw new InterpretException("Syntax Error! " + arithExpr);
+				}
+			case ArithExpr.UNARY_MINUS:
+			default:
+				throw new InterpretException("Unexpected Op Code " + arithExpr.GetOp());
+			}
+		}
 	}
 
 	public Value eval(Env env, Array arrayExpr) {
-		return null;
+		// arr[3]
+		ArrayV arrV = (ArrayV) env.get(arrayExpr.getVar());
+		Value elem = arrV;
+
+		for (int i = 0; i < arrayExpr.getDim(); i++) {
+			Expr idx = arrayExpr.getIndex(i);
+			Value v = eval(env, idx);
+			String idx_s;
+
+			if (v instanceof StrV) {
+				idx_s = ((StrV) v).getValue();
+			} else if (v instanceof DoubleV) {
+				idx_s = ((DoubleV) v).getValue() + "";
+			} else {
+				throw new InterpretException("Unexpected Index" + v);
+			}
+
+			elem = ((ArrayV) elem).get(idx_s);
+		}
+
+		return elem;
+	}
+
+	public Value eval(Env env, CompExpr compExpr) {
+		Expr oprnd1 = compExpr.GetOperand()[0];
+		Expr oprnd2 = compExpr.GetOperand()[1];
+
+		Value v1 = eval(env, oprnd1);
+		Value v2 = eval(env, oprnd2);
+
+		switch (compExpr.GetOp()) {
+		case CompExpr.EQUAL:
+			if (v1 == v2)
+				return new StrV("true"); // v1.equals(v2);
+			else
+				return new StrV("false");
+		case CompExpr.GREATER_EQUAL:
+			return new StrV(Boolean.toString(greaterEqual(v1, v2)));
+		case CompExpr.GREATER_THAN:
+			return new StrV(Boolean.toString(greaterThan(v1, v2)));
+		case CompExpr.LESS_EQUAL:
+			return new StrV(Boolean.toString(lessEqual(v1, v2)));
+		case CompExpr.LESS_THAN:
+			return new StrV(Boolean.toString(lessThan(v1, v2)));
+		case CompExpr.NOT_EQUAL:
+			return new StrV(Boolean.toString(notEqual(v1, v2)));
+		default:
+			throw new InterpretException("Unexpected CompExpr Op Code " + compExpr.GetOp());
+		}
+	}
+
+	public Value eval(Env env, Lit litExpr) {
+		switch (litExpr.type()) {
+		case Lit.NUM:
+			return new DoubleV(litExpr.getD());
+		case Lit.STRING:
+			return new StrV(litExpr.gets());
+		default:
+			throw new InterpretException("eval " + litExpr.gets() + " : Unknown type " + litExpr.type());
+		}
+	}
+
+	public Value eval(Env env, LogicalExpr logicalExpr) {
+		Expr oprnd1 = logicalExpr.GetOperand()[0];
+		Expr oprnd2 = logicalExpr.GetOperand()[1];
+
+		Value v1 = eval(env, oprnd1);
+		Value v2 = eval(env, oprnd2);
+
+		StrV s1, s2;
+
+		boolean ret = false;
+
+		switch (logicalExpr.GetOp()) {
+		case LogicalExpr.AND:
+			if (v1 instanceof StrV && v2 instanceof StrV) {
+				s1 = (StrV) v1;
+				s2 = (StrV) v2;
+
+				if (s1.getValue().equalsIgnoreCase("true") && s2.getValue().equalsIgnoreCase("true"))
+					ret = true;
+			}
+			break;
+		case LogicalExpr.OR:
+			if (v1 instanceof StrV && v2 instanceof StrV) {
+				s1 = (StrV) v1;
+				s2 = (StrV) v2;
+
+				if (s1.getValue().equalsIgnoreCase("true") || s2.getValue().equalsIgnoreCase("true"))
+					ret = true;
+			}
+			break;
+		default:
+			throw new InterpretException("Unexpected Logical Expr Op Code " + logicalExpr.GetOp());
+		}
+		return ret ? new StrV("true") : new StrV("false");
+	}
+
+	public Value eval(Env env, MethodCallExpr methodCallExpr) {
+		String mthName = methodCallExpr.getName();
+		String clzName = methodCallExpr.getObj();
+		ArrayList<Expr> args = methodCallExpr.getArgs();
+
+		ArrayList<Value> argValues = new ArrayList<Value>();
+
+		if (args != null) {
+			for (Expr arg : args) {
+				Value v = eval(env, arg);
+				argValues.add(v);
+			}
+		}
+		try {
+			// Class c = clzName.getClass();
+			Class c = com.coducation.smallbasic.lib.TextWindow.class;
+			Method m = c.getMethod(mthName, ArrayList.class);
+			return (Value) m.invoke(null, argValues);
+
+		} catch (NoSuchMethodException e) {
+			throw new InterpretException(e.toString() + mthName);
+		} catch (IllegalAccessException e) {
+			throw new InterpretException(e.toString());
+		} catch (IllegalArgumentException e) {
+			throw new InterpretException(e.toString());
+		} catch (InvocationTargetException e) {
+			throw new InterpretException(e.toString());
+		}
+
+	}
+
+	public Value eval(Env env, ParenExpr parenExpr) {
+		return eval(env, parenExpr.get());
+	}
+
+	public Value eval(Env env, PropertyExpr propertyExpr) {
+		try {
+			String clzName = propertyExpr.getObj();
+			Class clz = clzName.getClass();
+			Field fld = clz.getField(propertyExpr.getName());
+			return (Value) fld.get(null);
+		} catch (NoSuchFieldException | SecurityException e) {
+			throw new InterpretException("PropertyExpr : " + e.toString());
+		} catch (IllegalArgumentException e) {
+			throw new InterpretException("PropertyExpr : " + e.toString());
+		} catch (IllegalAccessException e) {
+			throw new InterpretException("PropertyExpr : " + e.toString());
+		}
+	}
+
+	public double toDouble(String strDouble) {
+		try {
+			return Double.parseDouble(strDouble);
+		} catch (NumberFormatException e) {
+			throw new InterpretException(e.toString());
+		}
+	}
+
+	public Value eval(Env env, Var var) {
+		return env.get(var.getVarName());
+		// System.out.print(var.getVarName());
+	}
+
+	public Value eval(Env env, Expr expr) {
+		if (expr instanceof ArithExpr)
+			return eval(env, (ArithExpr) expr);
+		else if (expr instanceof Array)
+			return eval(env, (Array) expr);
+		else if (expr instanceof CompExpr)
+			return eval(env, (CompExpr) expr);
+		else if (expr instanceof Lit)
+			return eval(env, (Lit) expr);
+		else if (expr instanceof LogicalExpr)
+			return eval(env, (LogicalExpr) expr);
+		else if (expr instanceof MethodCallExpr)
+			return eval(env, (MethodCallExpr) expr);
+		else if (expr instanceof ParenExpr)
+			return eval(env, (ParenExpr) expr);
+		else if (expr instanceof PropertyExpr)
+			return eval(env, (PropertyExpr) expr);
+		else if (expr instanceof Var)
+			return eval(env, (Var) expr);
+		else
+			throw new InterpretException("Syntax Error! " + expr.getClass());
+
 	}
 
 	public static boolean isTrue(Value v) {
@@ -256,147 +505,5 @@ public class Eval {
 			throw new InterpretException("Different Value is not comparable.");
 
 		return false;
-	}
-
-	public Value eval(Env env, CompExpr compExpr) {
-		Expr oprnd1 = compExpr.GetOperand()[0];
-		Expr oprnd2 = compExpr.GetOperand()[1];
-
-		Value v1 = eval(env, oprnd1);
-		Value v2 = eval(env, oprnd2);
-
-		switch (compExpr.GetOp()) {
-		case CompExpr.EQUAL:
-			if (v1 == v2)
-				return new StrV("true"); // v1.equals(v2);
-			else
-				return new StrV("false");
-		case CompExpr.GREATER_EQUAL:
-			return new StrV(Boolean.toString(greaterEqual(v1, v2)));
-		case CompExpr.GREATER_THAN:
-			return new StrV(Boolean.toString(greaterThan(v1, v2)));
-		case CompExpr.LESS_EQUAL:
-			return new StrV(Boolean.toString(lessEqual(v1, v2)));
-		case CompExpr.LESS_THAN:
-			return new StrV(Boolean.toString(lessThan(v1, v2)));
-		case CompExpr.NOT_EQUAL:
-			return new StrV(Boolean.toString(notEqual(v1, v2)));
-		default:
-			break;
-		}
-		return null;
-	}
-
-	public Value eval(Env env, Lit litExpr) {
-		switch (litExpr.type()) {
-		case Lit.NUM:
-			return new DoubleV(litExpr.getD());
-		case Lit.STRING:
-			return new StrV(litExpr.gets());
-		default:
-			throw new InterpretException("eval " + litExpr.gets() + " : Unknown type " + litExpr.type());
-		}
-	}
-
-	public Value eval(Env env, LogicalExpr logicalExpr) {
-		Expr oprnd1 = logicalExpr.GetOperand()[0];
-		Expr oprnd2 = logicalExpr.GetOperand()[1];
-
-		Value v1 = eval(env, oprnd1);
-		Value v2 = eval(env, oprnd2);
-
-		switch (logicalExpr.GetOp()) {
-		case LogicalExpr.AND:
-
-		case LogicalExpr.OR:
-
-		default:
-			break;
-		}
-		return null;
-	}
-
-	public Value eval(Env env, MethodCallExpr methodCallExpr) {
-		String mthName = methodCallExpr.getName();
-		String clzName = methodCallExpr.getObj();
-		ArrayList<Expr> args = methodCallExpr.getArgs();
-
-		ArrayList<Value> argValues = new ArrayList<Value>();
-
-		for (Expr arg : args) {
-			Value v = eval(env, arg);
-			argValues.add(v);
-		}
-		try {
-			Class c = clzName.getClass();
-			Method m = c.getMethod(mthName, null);
-			m.invoke(null, argValues);
-
-		} catch (NoSuchMethodException e) {
-			throw new InterpretException(e.toString());
-		} catch (IllegalAccessException e) {
-			throw new InterpretException(e.toString());
-		} catch (IllegalArgumentException e) {
-			throw new InterpretException(e.toString());
-		} catch (InvocationTargetException e) {
-			throw new InterpretException(e.toString());
-		}
-		return null;
-	}
-
-	public Value eval(Env env, ParenExpr parenExpr) {
-		return null;
-	}
-
-	public Value eval(Env env, PropertyExpr propertyExpr) {
-		try {
-			String clzName = propertyExpr.getObj();
-			Class clz = clzName.getClass();
-			Field fld = clz.getField(propertyExpr.getName());
-			return (Value) fld.get(null);
-		} catch (NoSuchFieldException | SecurityException e) {
-			throw new InterpretException("PropertyExpr : " + e.toString());
-		} catch (IllegalArgumentException e) {
-			throw new InterpretException("PropertyExpr : " + e.toString());
-		} catch (IllegalAccessException e) {
-			throw new InterpretException("PropertyExpr : " + e.toString());
-		}
-	}
-
-	public double toDouble(String strDouble) {
-		try {
-			return Double.parseDouble(strDouble);
-		} catch (NumberFormatException e) {
-			throw new InterpretException(e.toString());
-		}
-	}
-
-	public Value eval(Env env, Var var) {
-		return env.get(var.getVarName());
-		// System.out.print(var.getVarName());
-	}
-
-	public Value eval(Env env, Expr expr) {
-		if (expr instanceof ArithExpr)
-			return eval(env, (ArithExpr) expr);
-		else if (expr instanceof Array)
-			return eval(env, (Array) expr);
-		else if (expr instanceof CompExpr)
-			return eval(env, (CompExpr) expr);
-		else if (expr instanceof Lit)
-			return eval(env, (Lit) expr);
-		else if (expr instanceof LogicalExpr)
-			return eval(env, (LogicalExpr) expr);
-		else if (expr instanceof MethodCallExpr)
-			return eval(env, (MethodCallExpr) expr);
-		else if (expr instanceof ParenExpr)
-			return eval(env, (ParenExpr) expr);
-		else if (expr instanceof PropertyExpr)
-			return eval(env, (PropertyExpr) expr);
-		else if (expr instanceof Var)
-			return eval(env, (Var) expr);
-		else
-			throw new InterpretException("Syntax Error! " + expr.getClass());
-
 	}
 }
