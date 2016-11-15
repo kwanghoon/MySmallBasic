@@ -1,0 +1,39 @@
+x =123
+y = 456
+z = x+y
+
+TextWindow.WriteLine(x)
+TextWindow.WriteLine(y)
+TextWindow.WriteLine(z)
+
+GraphicsWindow.Height = 480
+GraphicsWindow.Width = 640
+
+TextWindow.WriteLine(GraphicsWindow.Height)
+TextWindow.WriteLine(GraphicsWindow.Width)
+
+arr[0] = 123
+arr[1] = 456
+arr[2] = 789
+
+brr[0][0] = 1
+brr[0][1] = 2
+brr[0][2] = 3
+brr[1][0] = 4
+brr[1][1] = 5
+brr[1][2] = 6
+brr[2][0] = 7
+brr[2][1] = 8
+brr[2][2] = 9
+
+w=arr[0]+arr[1]+arr[2]
+q=brr[0][0]+brr[1][1] + brr[2][2]
+
+TextWindow.WriteLine(w)
+TextWindow.WriteLine(q)
+
+crr["x"] = "x123"
+crr["y"] = "y456"
+crr["z"] = "z789"
+
+TextWindow.WriteLine(crr["x"] + crr["y"] + crr["z"])

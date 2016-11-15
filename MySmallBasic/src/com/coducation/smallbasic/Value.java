@@ -1,6 +1,6 @@
 package com.coducation.smallbasic;
 
 public abstract class Value {
-
-	//TODO : 비우는게 맞나..?
+	public abstract String toString();
+	// TODO : 비우는게 맞나..?
 }

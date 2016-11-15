@@ -1,0 +1,7 @@
+x = "123" + 456
+y = "abc" + 456
+z = "123" + "456"
+
+TextWindow.WriteLine(x)
+TextWindow.WriteLine(y)
+TextWindow.WriteLine(z)

@@ -35,6 +35,10 @@ public class Lit extends CondExpr // extends Expr -> extends CondExpr
 	
 	public int type() { return type; }
 	
+	public String toString() {
+		return lit;
+	}
+	
 	public static final int NUM = 1;
 	public static final int STRING = 2;
 	private String lit;

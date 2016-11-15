@@ -21,5 +21,9 @@ public class DoubleV extends Value {
 			return false;
 	}
 	
+	public String toString() {
+		return value + "";
+	}
+	
 	private double value;
 }
