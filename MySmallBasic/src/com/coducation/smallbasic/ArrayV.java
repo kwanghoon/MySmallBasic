@@ -19,6 +19,10 @@ public class ArrayV extends Value {
 
 	}
 	
+	public String toString() {
+		return "*** Array ***";
+	}
+	
 	
 
 //	@Override

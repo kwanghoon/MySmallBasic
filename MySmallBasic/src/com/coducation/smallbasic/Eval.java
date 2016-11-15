@@ -10,6 +10,7 @@ public class Eval {
 	String label;
 	BasicBlockEnv bbEnv;
 	Env env;
+	static final String lib = "com.coducation.smallbasic.lib.";
 
 	public Eval() {
 	}
@@ -42,7 +43,7 @@ public class Eval {
 		} else if (lhs instanceof PropertyExpr) {
 			try {
 				String clzName = ((PropertyExpr) lhs).getObj();
-				Class clz = clzName.getClass();
+				Class clz = getClass(clzName);
 				Field fld = clz.getField(((PropertyExpr) lhs).getName());
 				fld.set(null, v2);
 			} catch (NoSuchFieldException | SecurityException e) {
@@ -51,9 +52,40 @@ public class Eval {
 				throw new InterpretException("Assign : " + e.toString());
 			} catch (IllegalAccessException e) {
 				throw new InterpretException("Assign : " + e.toString());
+			} catch (ClassNotFoundException e) {
+				throw new InterpretException("Class Not Found " + e.toString());
 			}
 		} else if (lhs instanceof Array) {
+			Array arr = (Array) lhs;
+			ArrayV elem = (ArrayV) env.get(arr.getVar());
 
+			if (elem == null) {
+				elem = new ArrayV();
+				env.put(arr.getVar(), elem);
+			}
+
+			for (int i = 0; i < arr.getDim(); i++) {
+				Expr idx = arr.getIndex(i);
+				Value v = eval(env, idx);
+				String idx_s;
+
+				if (v instanceof StrV || v instanceof DoubleV) {
+					idx_s = v.toString();
+				} else {
+					throw new InterpretException("Unexpected Index" + v);
+				}
+
+				if (i < arr.getDim() - 1) {
+					ArrayV elem_elem = (ArrayV) elem.get(idx_s);
+					if(elem_elem == null) {
+						elem_elem = new ArrayV();
+						elem.put(idx_s, elem_elem);
+					}
+					elem = elem_elem;
+				} else {
+					elem.put(idx_s, v2);
+				}
+			}
 		} else {
 			throw new InterpretException("Assign : Unknown lhs " + lhs);
 		}
@@ -104,7 +136,7 @@ public class Eval {
 		throw new InterpretException("SubDef : Unexpected");
 	}
 
-	public void eval(Env env, SubCallExpr subCallExpr) {
+	public void eval(BasicBlockEnv bbEnv, Env env, SubCallExpr subCallExpr) {
 		// 1. Let label be the label of the Sub call
 		// 2. evalBlock(label)
 		label = subCallExpr.getName();
@@ -168,16 +200,33 @@ public class Eval {
 
 			switch (arithExpr.GetOp()) {
 			case ArithExpr.PLUS:
-				if (v1 instanceof DoubleV && v2 instanceof DoubleV) {
-					return new DoubleV(((DoubleV) v1).getValue() + ((DoubleV) v2).getValue());
-				} else if (v1 instanceof StrV && v2 instanceof StrV) {
-					s1 = (StrV) v1;
-					s2 = (StrV) v2;
+				Double dv1 = 0.0, dv2 = 0.0;
+				boolean numplus = true; // numplus == false => concatenation
 
-					return new StrV(s1.getValue() + s2.getValue());
-				} else {
-					throw new InterpretException("Syntax Error! " + arithExpr);
-				}
+				if (v1 instanceof DoubleV)
+					dv1 = ((DoubleV) v1).getValue();
+
+				else if (v1 instanceof StrV && ((StrV) v1).isNumber())
+					dv1 = ((StrV) v1).parseDouble();
+				else if (v1 instanceof StrV)
+					numplus = false;
+				else
+					throw new InterpretException("PLUS 1st operand unexpected" + v1);
+
+				if (v2 instanceof DoubleV)
+					dv2 = ((DoubleV) v2).getValue();
+				else if (v2 instanceof StrV && ((StrV) v2).isNumber())
+					dv2 = ((StrV) v2).parseDouble();
+				else if (v2 instanceof StrV)
+					numplus = false;
+				else
+					throw new InterpretException("PLUS 2nd operand unexpected" + v2);
+
+				if (numplus == true)
+					return new DoubleV(dv1 + dv2);
+				else
+					return new StrV(v1.toString() + v2.toString());
+
 			case ArithExpr.MINUS:
 				if (v1 instanceof DoubleV && v2 instanceof DoubleV) {
 					d1 = (DoubleV) v1;
@@ -245,10 +294,18 @@ public class Eval {
 
 		switch (compExpr.GetOp()) {
 		case CompExpr.EQUAL:
-			if (v1 == v2)
-				return new StrV("true"); // v1.equals(v2);
-			else
-				return new StrV("false");
+			if (v1 instanceof StrV && v2 instanceof StrV) {
+				StrV s1 = (StrV) v1;
+				StrV s2 = (StrV) v2;
+				if (s1.getValue() == s2.getValue())
+					return new StrV("true"); // v1.equals(v2);
+			} else if (v1 instanceof DoubleV && v2 instanceof DoubleV) {
+				DoubleV d1 = (DoubleV) v1;
+				DoubleV d2 = (DoubleV) v2;
+				if (d1.getValue() == d2.getValue())
+					return new StrV("true");
+			}
+			return new StrV("false");
 		case CompExpr.GREATER_EQUAL:
 			return new StrV(Boolean.toString(greaterEqual(v1, v2)));
 		case CompExpr.GREATER_THAN:
@@ -269,7 +326,7 @@ public class Eval {
 		case Lit.NUM:
 			return new DoubleV(litExpr.getD());
 		case Lit.STRING:
-			return new StrV(litExpr.gets());
+			return new StrV(litExpr.toString());
 		default:
 			throw new InterpretException("eval " + litExpr.gets() + " : Unknown type " + litExpr.type());
 		}
@@ -325,8 +382,7 @@ public class Eval {
 			}
 		}
 		try {
-			// Class c = clzName.getClass();
-			Class c = com.coducation.smallbasic.lib.TextWindow.class;
+			Class c = getClass(clzName);
 			Method m = c.getMethod(mthName, ArrayList.class);
 			return (Value) m.invoke(null, argValues);
 
@@ -338,6 +394,8 @@ public class Eval {
 			throw new InterpretException(e.toString());
 		} catch (InvocationTargetException e) {
 			throw new InterpretException(e.toString());
+		} catch (ClassNotFoundException e) {
+			throw new InterpretException("Class Not Found " + e.toString());
 		}
 
 	}
@@ -349,7 +407,7 @@ public class Eval {
 	public Value eval(Env env, PropertyExpr propertyExpr) {
 		try {
 			String clzName = propertyExpr.getObj();
-			Class clz = clzName.getClass();
+			Class clz = getClass(clzName);
 			Field fld = clz.getField(propertyExpr.getName());
 			return (Value) fld.get(null);
 		} catch (NoSuchFieldException | SecurityException e) {
@@ -358,6 +416,8 @@ public class Eval {
 			throw new InterpretException("PropertyExpr : " + e.toString());
 		} catch (IllegalAccessException e) {
 			throw new InterpretException("PropertyExpr : " + e.toString());
+		} catch (ClassNotFoundException e) {
+			throw new InterpretException("Class Not Found " + e.toString());
 		}
 	}
 
@@ -505,5 +565,9 @@ public class Eval {
 			throw new InterpretException("Different Value is not comparable.");
 
 		return false;
+	}
+
+	public static Class getClass(String name) throws ClassNotFoundException {
+		return Class.forName(lib + name);
 	}
 }
