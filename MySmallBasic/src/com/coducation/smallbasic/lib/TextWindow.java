@@ -80,5 +80,11 @@ public class TextWindow {
 		// 텍스트 창에 텍스트나 숫자를 씀 줄바꿈 표시 문자가 출력값에 포함됨
 		
 	}
-	public static Value ForegroundColor;
+	public static Value BackgroundColor = new StrV("#000000"); // black
+	public static Value CursorLeft = new DoubleV(0);
+	public static Value CursorTop = new DoubleV(0);
+	public static Value ForegroundColor = new StrV("#FFFFFF"); // white
+	public static Value Left = new DoubleV(0);
+	public static Value Title = new StrV("");
+	public static Value Top = new DoubleV(0);
 }

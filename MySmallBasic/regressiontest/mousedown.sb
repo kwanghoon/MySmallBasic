@@ -1,0 +1,9 @@
+GraphicsWindow.Show()
+GraphicsWindow.MouseDown = OnMouseDown
+Sub OnMouseDown   
+	x = GraphicsWindow.MouseX - 10   
+	y = GraphicsWindow.MouseY - 10   
+	GraphicsWindow.FillEllipse(x, y, 20, 20) 
+	TextWindow.WriteLine(x)
+	TextWindow.WriteLine(y)
+EndSub 

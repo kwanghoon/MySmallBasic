@@ -7,16 +7,18 @@ import java.util.ArrayList;
 
 public class Eval {
 	int numberOfIndent;
-	String label;
-	BasicBlockEnv bbEnv;
-	Env env;
+	static String label;
+	static BasicBlockEnv bbEnv;
+	static Env env;
 	static final String lib = "com.coducation.smallbasic.lib.";
+	static Eval eval;
 
 	public Eval() {
 	}
 
 	public Eval(BasicBlockEnv bbEnv) {
 		this.bbEnv = bbEnv;
+		this.eval= this;
 	}
 
 	public void eval() {
@@ -393,7 +395,7 @@ public class Eval {
 		} catch (IllegalArgumentException e) {
 			throw new InterpretException(e.toString());
 		} catch (InvocationTargetException e) {
-			throw new InterpretException(e.toString());
+			throw new InterpretException(e.toString() + clzName + ", " + mthName);
 		} catch (ClassNotFoundException e) {
 			throw new InterpretException("Class Not Found " + e.toString());
 		}
@@ -456,6 +458,15 @@ public class Eval {
 		else
 			throw new InterpretException("Syntax Error! " + expr.getClass());
 
+	}
+	
+	public static void eval(Value labelV) {
+		label = ((StrV)labelV).getValue();
+		while (label != null) {
+			Stmt stmt = bbEnv.get(label);
+			label = null;
+			eval.eval(bbEnv, env, stmt);
+		}
 	}
 
 	public static boolean isTrue(Value v) {
