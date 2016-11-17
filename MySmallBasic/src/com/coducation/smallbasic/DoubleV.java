@@ -21,5 +21,13 @@ public class DoubleV extends Value {
 			return false;
 	}
 	
+	public String toString() {
+		int i = (int) value;
+		if(i == value)
+			return i + "";
+		else
+			return value + "";
+	}
+	
 	private double value;
 }
