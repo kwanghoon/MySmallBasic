@@ -22,7 +22,11 @@ public class DoubleV extends Value {
 	}
 	
 	public String toString() {
-		return value + "";
+		int i = (int) value;
+		if(i == value)
+			return i + "";
+		else
+			return value + "";
 	}
 	
 	private double value;
