@@ -3,10 +3,14 @@ package com.coducation.smallbasic.lib;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Random;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -98,8 +102,11 @@ public class GraphicsWindow {
 
 	public static Value GetRandomColor(ArrayList<Value> args) {
 		// 표현 가능한 임의의 색을 가져옴
-
-		return null;
+		if (frame == null)
+			Show(args);
+		Random r = new Random(Calendar.getInstance().get(Calendar.MILLISECOND));
+		int i = r.nextInt(colorInfo.length);
+		return hexColor(new StrV(colorInfo[i]), defaultPenColor);
 	}
 
 	public static void Hide(ArrayList<Value> args) {
@@ -137,10 +144,11 @@ public class GraphicsWindow {
 		}
 	}
 
-	private static class Panel extends JPanel implements MouseListener {
+	private static class Panel extends JPanel implements MouseListener, KeyListener {
 		public Panel(int width, int height) {
 			cmdList = new ArrayList<>();
 			addMouseListener(this);
+			addKeyListener(this);
 			setPreferredSize(new Dimension(width, height));
 		}
 
@@ -222,6 +230,7 @@ public class GraphicsWindow {
 			cmd.y = (int) ((DoubleV) args.get(1)).getValue();
 			cmd.w = (int) ((DoubleV) args.get(2)).getValue();
 			cmd.h = (int) ((DoubleV) args.get(3)).getValue();
+			
 
 			cmdList.add(cmd);
 
@@ -259,6 +268,33 @@ public class GraphicsWindow {
 		public void mouseReleased(MouseEvent arg0) {
 			// TODO Auto-generated method stub
 
+		}
+
+		public void addNotify() {
+			super.addNotify();
+			requestFocus();
+		}
+		
+		@Override
+		public void keyTyped(KeyEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void keyPressed(KeyEvent e) {
+			if (KeyDown != null) {
+				LastKey = new StrV(e.getKeyChar());
+				
+				Eval.eval(KeyDown);
+			}
+			
+		}
+
+		@Override
+		public void keyReleased(KeyEvent e) {
+			// TODO Auto-generated method stub
+			
 		}
 	}
 
@@ -522,7 +558,7 @@ public class GraphicsWindow {
 		
 	}
 
-	public void notifyFieldRead(String fieldName) {
+	public static void notifyFieldRead(String fieldName) {
 		if (frame == null)
 			Show(new ArrayList<Value>());	
 	}
