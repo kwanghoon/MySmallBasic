@@ -84,4 +84,8 @@ public class TextWindow {
 	public static void notifyFieldAssign(String fieldName) {
 		
 	}
+	
+	public static void notifyFieldRead(String fieldName) {
+		
+	}
 }

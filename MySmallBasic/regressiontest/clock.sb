@@ -1,0 +1,2 @@
+TextWindow.WriteLine(Clock.WeekDay)
+TextWindow.WriteLine(Clock.Time)
