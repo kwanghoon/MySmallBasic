@@ -12,6 +12,7 @@ public class Eval {
 	static Env env;
 	static final String lib = "com.coducation.smallbasic.lib.";
 	static final String notifyFieldAssign = "notifyFieldAssign";
+	static final String notifyFieldRead = "notifyFieldRead";
 	static Eval eval;
 
 	public Eval() {
@@ -419,6 +420,12 @@ public class Eval {
 			String clzName = propertyExpr.getObj();
 			Class clz = getClass(clzName);
 			Field fld = clz.getField(propertyExpr.getName());
+			
+			// Before any field reading, invoke notifyFieldRead for Library to prepare
+			// the field value to read if necessary.
+			Method mth = clz.getMethod(notifyFieldRead, String.class);
+			mth.invoke(null, propertyExpr.getName());
+			
 			return (Value) fld.get(null);
 		} catch (NoSuchFieldException | SecurityException e) {
 			throw new InterpretException("PropertyExpr : " + e.toString());
@@ -428,6 +435,10 @@ public class Eval {
 			throw new InterpretException("PropertyExpr : " + e.toString());
 		} catch (ClassNotFoundException e) {
 			throw new InterpretException("Class Not Found " + e.toString());
+		} catch (NoSuchMethodException e) {
+			throw new InterpretException("Method Not Found " + e.toString());
+		} catch (InvocationTargetException e) {
+			throw new InterpretException("Target Not Found " + e.toString() + ": ");
 		}
 	}
 

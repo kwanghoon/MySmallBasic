@@ -72,4 +72,8 @@ public class Math {
 	public static void notifyFieldAssign(String fieldName) {
 		
 	}
+	
+	public static void notifyFieldRead(String fieldName) {
+		
+	}
 }

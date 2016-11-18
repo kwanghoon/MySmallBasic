@@ -281,6 +281,10 @@ public class GraphicsWindow {
 	private static Frame frame = null;
 	private static Panel panel = null;
 
+	private static final Value defaultBrushColor = new StrV("#6A5ACD");
+	private static final Value defaultPenColor = new StrV("#000000");
+	private static final Value defaultBackgroundColor = new StrV("#FFFFFF");
+	
 	public static Value BackgroundColor = GraphicsWindow.defaultBackgroundColor; // white
 	public static Value BrushColor = GraphicsWindow.defaultBrushColor;
 	public static Value CanResize;
@@ -294,7 +298,7 @@ public class GraphicsWindow {
 	public static Value Left;
 	public static Value MouseX;
 	public static Value MouseY;
-	public static Value PenColor = new StrV("#000000"); // black
+	public static Value PenColor = defaultPenColor; // black
 	public static Value PenWidth;
 	public static Value Title;
 	public static Value Top;
@@ -306,10 +310,7 @@ public class GraphicsWindow {
 	public static Value MouseMove;
 	public static Value MouseUp;
 	public static Value TextInput;
-	
-	private static final Value defaultBrushColor = new StrV("#6A5ACD");
-	private static final Value defaultPenColor = new StrV("#000000");
-	private static final Value defaultBackgroundColor = new StrV("#FFFFFF");
+
 	
 	private static String[] colorInfo = {
 			"IndianRed", "#CD5C5C", 
@@ -519,5 +520,10 @@ public class GraphicsWindow {
 				return new StrV(hex);
 		}
 		
+	}
+
+	public void notifyFieldRead(String fieldName) {
+		if (frame == null)
+			Show(new ArrayList<Value>());	
 	}
 }
