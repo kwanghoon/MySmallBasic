@@ -1,4 +1,4 @@
-﻿package com.coducation.smallbasic;
+package com.coducation.smallbasic;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -348,6 +348,16 @@ public class LexerAnalyzer
 			// Condition Statement Added.
 			if(!Skip_CR) Lexer.add(Tokenized_word);
 			Skip_CR = true; // Because, Every statements have <CR> at last.
+		}
+		
+		// By K. Choi: Remove the trailing CRs in the end.
+		if (Lexer.size() > 0) {
+			ArrayList<Terminal> lastLine = Lexer.get(Lexer.size()-1);
+			if (lastLine.size() > 0) {
+				Terminal t = lastLine.get(lastLine.size()-1);
+				if (t.getTokenInfo() == Token.CR)
+					lastLine.remove(lastLine.size()-1);
+			}
 		}
 		// Add Epsilon, End of Tokens
 		Terminal Epsilon = new Terminal("$", Token.NONE, -1, -1);

@@ -1,0 +1,17 @@
+
+
+x = 1 + 2
+y = 3 * 4
+
+
+z = x - y
+ 
+For i=1 to 10
+	TextWindow.WriteLine(i)
+EndFor
+
+
+' This is a comment
+' ...
+' ...
+

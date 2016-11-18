@@ -11,6 +11,7 @@ public class Eval {
 	static BasicBlockEnv bbEnv;
 	static Env env;
 	static final String lib = "com.coducation.smallbasic.lib.";
+	static final String notifyFieldAssign = "notifyFieldAssign";
 	static Eval eval;
 
 	public Eval() {
@@ -48,6 +49,11 @@ public class Eval {
 				Class clz = getClass(clzName);
 				Field fld = clz.getField(((PropertyExpr) lhs).getName());
 				fld.set(null, v2);
+				
+				// After any field assignment, invoke notifyFieldAssign for Library to know
+				// the change of the field value.
+				Method mth = clz.getMethod(notifyFieldAssign, String.class);
+				mth.invoke(null, ((PropertyExpr) lhs).getName());
 			} catch (NoSuchFieldException | SecurityException e) {
 				throw new InterpretException("Assign : " + e.toString());
 			} catch (IllegalArgumentException e) {
@@ -56,6 +62,10 @@ public class Eval {
 				throw new InterpretException("Assign : " + e.toString());
 			} catch (ClassNotFoundException e) {
 				throw new InterpretException("Class Not Found " + e.toString());
+			} catch (NoSuchMethodException e) {
+				throw new InterpretException("Method Not Found " + e.toString());
+			} catch (InvocationTargetException e) {
+				throw new InterpretException("Target Not Found " + e.toString() + ": ");
 			}
 		} else if (lhs instanceof Array) {
 			Array arr = (Array) lhs;
@@ -273,10 +283,8 @@ public class Eval {
 			Value v = eval(env, idx);
 			String idx_s;
 
-			if (v instanceof StrV) {
-				idx_s = ((StrV) v).getValue();
-			} else if (v instanceof DoubleV) {
-				idx_s = ((DoubleV) v).getValue() + "";
+			if (v instanceof StrV || v instanceof DoubleV) {
+				idx_s = v.toString();
 			} else {
 				throw new InterpretException("Unexpected Index" + v);
 			}
@@ -432,7 +440,11 @@ public class Eval {
 	}
 
 	public Value eval(Env env, Var var) {
-		return env.get(var.getVarName());
+		Value v = env.get(var.getVarName());
+		if (v == null && bbEnv.get(var.getVarName())!=null) // Subroutine name!!
+			return new StrV(var.getVarName());
+			
+		return v;
 		// System.out.print(var.getVarName());
 	}
 

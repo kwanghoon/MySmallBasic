@@ -19,4 +19,8 @@ public class Clock {
 	public static Value Time = new StrV(new Date().getYear() + "-" + new Date().getMonth() + "-" + new Date().getDate());
 	public static Value WeekDay = new DoubleV(Calendar.DAY_OF_WEEK);
 	public static Value Year = new DoubleV(new Date().getYear());
+	
+	public static void notifyFieldAssign(String fieldName) {
+		
+	}
 }

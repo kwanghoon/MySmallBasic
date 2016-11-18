@@ -68,4 +68,8 @@ public class Math {
 		return null;
 	}
 	public static Value Pi = new DoubleV(3.14159265358979);
+	
+	public static void notifyFieldAssign(String fieldName) {
+		
+	}
 }
