@@ -1,0 +1,4 @@
+TextWindow.WriteLine(Clock.WeekDay)
+TextWindow.WriteLine(Clock.Time)
+TextWindow.WriteLine(Clock.Millisecond)
+TextWindow.WriteLine(Clock.ElapsedMilliseconds)

@@ -67,14 +67,7 @@ public class TextWindow {
 
 	public static void WriteLine(ArrayList<Value> args) {
 		for(Value v:args) {
-			if(v instanceof StrV)
-				System.out.print(((StrV)v).getValue());
-			else if(v instanceof DoubleV)
-				System.out.print(((DoubleV)v).getValue());
-			else if(v instanceof ArrayV)
-				System.out.print("Array");
-			else
-				throw new InterpretException("Unexpected Value");
+			System.out.print(v.toString());
 		}
 		System.out.println();
 		// 텍스트 창에 텍스트나 숫자를 씀 줄바꿈 표시 문자가 출력값에 포함됨
@@ -87,4 +80,12 @@ public class TextWindow {
 	public static Value Left = new DoubleV(0);
 	public static Value Title = new StrV("");
 	public static Value Top = new DoubleV(0);
+	
+	public static void notifyFieldAssign(String fieldName) {
+		
+	}
+	
+	public static void notifyFieldRead(String fieldName) {
+		
+	}
 }
