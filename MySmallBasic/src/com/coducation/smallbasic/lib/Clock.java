@@ -28,7 +28,6 @@ public class Clock {
 	
 	public static void notifyFieldRead(String fieldName) {
 		Calendar currentCal = Calendar.getInstance();
-		
 		if ("Date".equalsIgnoreCase(fieldName)) {
 			Date = new DoubleV(currentCal.get(Calendar.DATE));
 		}
@@ -62,7 +61,7 @@ public class Clock {
 		}
 		else if ("WeekDay".equalsIgnoreCase(fieldName)) {
 			String day = "unknown";
-			switch(Calendar.DAY_OF_WEEK) {
+			switch(currentCal.get(Calendar.DAY_OF_WEEK)) {
 				case Calendar.MONDAY:
 					day = "Monday";
 					break;
