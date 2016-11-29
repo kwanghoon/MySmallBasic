@@ -7,13 +7,13 @@ public class ArrayV extends Value {
 		arrmap = new HashMap<String,Value>();
 	}
 	
-	Value get(String index) {
+	public Value get(String index) {
 
 		return arrmap.get(index);
 
 	}
 
-	void put(String index, Value v) {
+	public void put(String index, Value v) {
 
 		arrmap.put(index, v);
 
