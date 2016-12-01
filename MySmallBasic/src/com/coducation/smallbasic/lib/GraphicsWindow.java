@@ -1,17 +1,24 @@
 package com.coducation.smallbasic.lib;
 
+import java.awt.AWTException;
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.Robot;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Random;
 
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
@@ -24,12 +31,15 @@ import com.coducation.smallbasic.Value;
 public class GraphicsWindow {
 	public static void Clear(ArrayList<Value> args) {
 		// 그래픽 창에 표시된 모든 것을 지움
-
+		panel.cmdList.clear();
+		panel.repaint();
 	}
 
 	public static void DrawBoundText(ArrayList<Value> args) {
 		// 그래픽 창의 지정한 위치에 지정한 길이 범위 안에서 글자를 표시함
-
+		if (frame == null)
+			Show(args);
+		panel.DrawBoundText(args);
 	}
 
 	public static void DrawEllipse(ArrayList<Value> args) {
@@ -41,7 +51,9 @@ public class GraphicsWindow {
 
 	public static void DrawImage(ArrayList<Value> args) {
 		// 지정한 위치의 그림 파일을 불러와 그래픽 창의 지정한 위치에 표시함
-
+		if(frame == null)
+			Show(args);
+		panel.DrawImage(args);
 	}
 
 	public static void DrawLine(ArrayList<Value> args) {
@@ -53,22 +65,30 @@ public class GraphicsWindow {
 
 	public static void DrawRectangle(ArrayList<Value> args) {
 		// 그래픽 창의 지정한 위치에 지정한 펜으로 사각형을 그림
-
+		if(frame == null)
+			Show(args);
+		panel.DrawRectangle(args);
 	}
 
 	public static void DrawResizedImage(ArrayList<Value> args) {
 		// 지정한 위치의 그림 파일을 불러와 지정한 크기로 바꿔 그래픽 창의 지정한 위치에 표시
-
+		if(frame == null)
+			Show(args);
+		panel.DrawResizedImage(args);
 	}
 
 	public static void DrawText(ArrayList<Value> args) {
 		// 그래픽 창의 지정한 위치에 지정한 길이의 범위 안에서 글자를 표시함
-
+		if(frame == null)
+			Show(args);
+		panel.DrawText(args);
 	}
 
 	public static void DrawTriangle(ArrayList<Value> args) {
 		// 그래픽 창의 지정한 위치에 지정된 펜으로 삼각형을 그림
-
+		if(frame == null)
+			Show(args);
+		panel.DrawTriangle(args);
 	}
 
 	public static void FillEllipse(ArrayList<Value> args) {
@@ -80,24 +100,44 @@ public class GraphicsWindow {
 
 	public static void FillRectangle(ArrayList<Value> args) {
 		// 그래픽 창의 지정한 위치에 색이 채워진 사각형을 그림
-
+		if(frame == null)
+			Show(args);
+		panel.FillRectangle(args);
 	}
 
 	public static void FillTriangle(ArrayList<Value> args) {
 		// 그래픽 창의 지정한 위치에 색이 채워진 삼각형을 그림
-
+		if(frame == null)
+			Show(args);
+		panel.FillTriangle(args);
 	}
 
 	public static Value GetColorFromRGB(ArrayList<Value> args) {
 		// 빨강, 초록, 파랑을 조합해 색을 만듬
-
+		
 		return null;
 	}
 
 	public static Value GetPixel(ArrayList<Value> args) {
 		// 지정한 x와 y 좌표의 픽셀 색상값을 rgb 형식으로 가져옴
 		// Robot
+		try {
+			Robot robot = new Robot();
+			int x = (int) ((DoubleV) args.get(0)).getValue();
+			int y = (int) ((DoubleV) args.get(1)).getValue();
 
+			Color color = robot.getPixelColor(x, y);
+			
+			String red = Integer.toHexString(color.getRed());
+			String green = Integer.toHexString(color.getGreen());
+			String blue = Integer.toHexString(color.getBlue());
+			
+			StrV rgbColor = new StrV("#"+red+green+blue);
+			
+			return rgbColor;
+		} catch (AWTException e) {
+			e.printStackTrace();
+		}
 		return null;
 	}
 
@@ -137,6 +177,7 @@ public class GraphicsWindow {
 
 	private static class Frame extends JFrame {
 		Frame() {
+			setTitle(Title.toString());
 			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 			int width = (int) ((DoubleV) Width).getValue();
@@ -150,7 +191,7 @@ public class GraphicsWindow {
 		}
 	}
 
-	private static class Panel extends JPanel implements MouseListener, KeyListener {
+	private static class Panel extends JPanel implements MouseListener, KeyListener, MouseMotionListener {
 		public Panel(int width, int height) {
 			cmdList = new ArrayList<>();
 			addMouseListener(this);
@@ -162,12 +203,13 @@ public class GraphicsWindow {
 			super.paintComponent(g);
 
 			String color;
-
 			for (Cmd cmd : cmdList) {
+				((Graphics2D) g).setStroke(new BasicStroke((float) ((DoubleV)PenWidth).getValue()));
 				switch (cmd.cmd) {
 				case NOCOMMAND:
 					break;
 				case DRAWBOUNDTEXT:
+					
 					break;
 				case DRAWELLIPSE:
 					DrawEllipseCmd dec = (DrawEllipseCmd) cmd;
@@ -176,6 +218,10 @@ public class GraphicsWindow {
 					g.drawOval(dec.x, dec.y, dec.w, dec.h);
 					break;
 				case DRAWIMAGE:
+					DrawImageCmd dic = (DrawImageCmd) cmd;
+					ImageIcon icon = new ImageIcon(dic.imageName);
+					Image img = icon.getImage();
+					g.drawImage(img, dic.x, dic.y, this);
 					break;
 				case DRAWLINE:
 					DrawLineCmd dlc = (DrawLineCmd) cmd;
@@ -184,12 +230,28 @@ public class GraphicsWindow {
 					g.drawLine(dlc.x1, dlc.y1, dlc.x2, dlc.y2);
 					break;
 				case DRAWRECTANGLE:
+					DrawRectangleCmd drc = (DrawRectangleCmd) cmd;
+					color = ((StrV) PenColor).getValue();
+					g.setColor(new Color(Integer.parseInt(color.substring(1), 16)));
+					g.drawRect(drc.x, drc.y, drc.w, drc.h);
 					break;
 				case DRAWRESIZEDIMAGE:
+					DrawResizedImageCmd dric = (DrawResizedImageCmd) cmd;
+					ImageIcon iconResized = new ImageIcon(dric.imageName);
+					Image imgResized= iconResized.getImage();
+					g.drawImage(imgResized, dric.x, dric.y, dric.w, dric.h, this);
 					break;
 				case DRAWTEXT:
+					DrawTextCmd dtc = (DrawTextCmd) cmd;
+					color = ((StrV) PenColor).getValue();
+					g.setColor(new Color(Integer.parseInt(color.substring(1), 16)));
+					g.drawString(dtc.text, dtc.x, dtc.y);
 					break;
 				case DRAWTRIANGLE:
+					DrawTriangleCmd dtrc = (DrawTriangleCmd) cmd;
+					color = ((StrV) PenColor).getValue();
+					g.setColor(new Color(Integer.parseInt(color.substring(1), 16)));
+					g.drawPolygon(dtrc.x, dtrc.y, 3);
 					break;
 
 				case FILLELLIPSE:
@@ -199,8 +261,16 @@ public class GraphicsWindow {
 					g.fillOval(fec.x, fec.y, fec.w, fec.h);
 					break;
 				case FILLRECTANGLE:
+					FillRectangleCmd frc = (FillRectangleCmd) cmd;
+					color = ((StrV) BrushColor).getValue();
+					g.setColor(new Color(Integer.parseInt(color.substring(1), 16)));
+					g.fillRect(frc.x, frc.y, frc.w, frc.h);
 					break;
 				case FILLTRIANGLE:
+					FillTriangleCmd ftc = (FillTriangleCmd) cmd;
+					color = ((StrV) BrushColor).getValue();
+					g.setColor(new Color(Integer.parseInt(color.substring(1), 16)));
+					g.fillPolygon(ftc.x, ftc.y, 3);
 					break;
 				}
 			}
@@ -221,7 +291,47 @@ public class GraphicsWindow {
 		final int FILLTRIANGLE = 11;
 
 		ArrayList<Cmd> cmdList;
+		
+		public void DrawBoundText(ArrayList<Value> args) {
+			DrawBoundTextCmd cmd = new DrawBoundTextCmd();
+			
+			cmd.cmd = DRAWBOUNDTEXT;
+			
+			cmd.x = (int) ((DoubleV) args.get(0)).getValue();
+			cmd.y = (int) ((DoubleV) args.get(1)).getValue();
+			cmd.text = ((StrV) args.get(2)).getValue();
+			
+			cmdList.add(cmd);
+			
+			repaint();
+		}
+		public void DrawEllipse(ArrayList<Value> args) {
+			DrawEllipseCmd cmd = new DrawEllipseCmd();
 
+			cmd.cmd = DRAWELLIPSE;
+
+			cmd.x = (int) ((DoubleV) args.get(0)).getValue();
+			cmd.y = (int) ((DoubleV) args.get(1)).getValue();
+			cmd.w = (int) ((DoubleV) args.get(2)).getValue();
+			cmd.h = (int) ((DoubleV) args.get(3)).getValue();
+
+			cmdList.add(cmd);
+
+			repaint();
+		}
+		public void DrawImage(ArrayList<Value> args) {
+			DrawImageCmd cmd = new DrawImageCmd();
+			
+			cmd.cmd = DRAWIMAGE;
+			
+			cmd.imageName = ((StrV) args.get(0)).getValue();
+			cmd.x = (int) ((DoubleV) args.get(1)).getValue();
+			cmd.y = (int) ((DoubleV) args.get(2)).getValue();
+			
+			cmdList.add(cmd);
+			
+			repaint();
+		}
 		public void DrawLine(ArrayList<Value> args) {
 			DrawLineCmd cmd = new DrawLineCmd();
 
@@ -236,19 +346,62 @@ public class GraphicsWindow {
 
 			repaint();
 		}
-
-		public void DrawEllipse(ArrayList<Value> args) {
-			DrawEllipseCmd cmd = new DrawEllipseCmd();
-
-			cmd.cmd = DRAWELLIPSE;
-
+		public void DrawRectangle(ArrayList<Value> args) {
+			DrawRectangleCmd cmd = new DrawRectangleCmd();
+			
+			cmd.cmd = DRAWRECTANGLE;
+			
 			cmd.x = (int) ((DoubleV) args.get(0)).getValue();
 			cmd.y = (int) ((DoubleV) args.get(1)).getValue();
 			cmd.w = (int) ((DoubleV) args.get(2)).getValue();
 			cmd.h = (int) ((DoubleV) args.get(3)).getValue();
-
+			
 			cmdList.add(cmd);
-
+			
+			repaint();
+		}
+		public void DrawResizedImage(ArrayList<Value> args) {
+			DrawResizedImageCmd cmd = new DrawResizedImageCmd();
+			
+			cmd.cmd = DRAWRESIZEDIMAGE;
+			
+			cmd.imageName = ((StrV) args.get(0)).getValue();
+			cmd.x = (int) ((DoubleV) args.get(1)).getValue();
+			cmd.y = (int) ((DoubleV) args.get(2)).getValue();
+			cmd.w = (int) ((DoubleV) args.get(3)).getValue();
+			cmd.h = (int) ((DoubleV) args.get(4)).getValue();
+			
+			cmdList.add(cmd);
+			
+			repaint();			
+		}
+		public void DrawText(ArrayList<Value> args) {
+			DrawTextCmd cmd = new DrawTextCmd();
+			
+			cmd.cmd = DRAWTEXT;
+			
+			cmd.x = (int) ((DoubleV) args.get(0)).getValue();
+			cmd.y = (int) ((DoubleV) args.get(1)).getValue();
+			cmd.text = ((StrV) args.get(2)).getValue();
+			
+			cmdList.add(cmd);
+			
+			repaint();
+		}
+		public void DrawTriangle(ArrayList<Value> args) {
+			DrawTriangleCmd cmd = new DrawTriangleCmd();
+			
+			cmd.cmd = DRAWTRIANGLE;
+			
+			cmd.x[0] = (int) ((DoubleV) args.get(0)).getValue();
+			cmd.y[0] = (int) ((DoubleV) args.get(1)).getValue();
+			cmd.x[1] = (int) ((DoubleV) args.get(2)).getValue();
+			cmd.y[1] = (int) ((DoubleV) args.get(3)).getValue();
+			cmd.x[2] = (int) ((DoubleV) args.get(4)).getValue();
+			cmd.y[2] = (int) ((DoubleV) args.get(5)).getValue();
+			
+			cmdList.add(cmd);
+			
 			repaint();
 		}
 
@@ -266,6 +419,36 @@ public class GraphicsWindow {
 
 			repaint();
 		}
+		public void FillRectangle(ArrayList<Value> args) {
+			FillRectangleCmd cmd = new FillRectangleCmd();
+			
+			cmd.cmd = FILLRECTANGLE;
+			
+			cmd.x = (int) ((DoubleV) args.get(0)).getValue();
+			cmd.y = (int) ((DoubleV) args.get(1)).getValue();
+			cmd.w = (int) ((DoubleV) args.get(2)).getValue();
+			cmd.h = (int) ((DoubleV) args.get(3)).getValue();
+			
+			cmdList.add(cmd);
+			
+			repaint();
+		}
+		public void FillTriangle(ArrayList<Value> args) {
+			FillTriangleCmd cmd = new FillTriangleCmd();
+			
+			cmd.cmd = FILLTRIANGLE;
+			
+			cmd.x[0] = (int) ((DoubleV) args.get(0)).getValue();
+			cmd.y[0] = (int) ((DoubleV) args.get(1)).getValue();
+			cmd.x[1] = (int) ((DoubleV) args.get(2)).getValue();
+			cmd.y[1] = (int) ((DoubleV) args.get(3)).getValue();
+			cmd.x[2] = (int) ((DoubleV) args.get(4)).getValue();
+			cmd.y[2] = (int) ((DoubleV) args.get(5)).getValue();
+			
+			cmdList.add(cmd);
+			
+			repaint();
+		}
 
 		@Override
 		public void mouseClicked(MouseEvent e) {
@@ -273,15 +456,11 @@ public class GraphicsWindow {
 		}
 
 		@Override
-		public void mouseEntered(MouseEvent arg0) {
-			// TODO Auto-generated method stub
-
+		public void mouseEntered(MouseEvent e) {
 		}
 
 		@Override
-		public void mouseExited(MouseEvent arg0) {
-			// TODO Auto-generated method stub
-
+		public void mouseExited(MouseEvent e) {
 		}
 
 		@Override
@@ -295,9 +474,18 @@ public class GraphicsWindow {
 		}
 
 		@Override
-		public void mouseReleased(MouseEvent arg0) {
-			// TODO Auto-generated method stub
+		public void mouseReleased(MouseEvent e) {
 
+		}
+		
+		@Override
+		public void mouseDragged(MouseEvent e) {	
+			
+		}
+
+		@Override
+		public void mouseMoved(MouseEvent e) {
+			
 		}
 
 		public void addNotify() {
@@ -307,7 +495,6 @@ public class GraphicsWindow {
 
 		@Override
 		public void keyTyped(KeyEvent e) {
-			// TODO Auto-generated method stub
 
 		}
 
@@ -323,25 +510,54 @@ public class GraphicsWindow {
 
 		@Override
 		public void keyReleased(KeyEvent e) {
-			// TODO Auto-generated method stub
 
 		}
+
 	}
 
 	private static class Cmd {
 		int cmd;
 	}
 
+	private static class DrawBoundTextCmd extends Cmd {
+		int x, y, w;
+		String text;
+	}
+	private static class DrawEllipseCmd extends Cmd {
+		int x, y, w, h;
+	}
+	private static class DrawImageCmd extends Cmd {
+		int x, y;
+		String imageName;
+	}
 	private static class DrawLineCmd extends Cmd {
 		int x1, y1, x2, y2;
 	}
-
-	private static class DrawEllipseCmd extends Cmd {
+	private static class DrawRectangleCmd extends Cmd {
 		int x, y, w, h;
+	}
+	private static class DrawResizedImageCmd extends Cmd {
+		String imageName;
+		int x, y, w, h;
+	}
+	private static class DrawTextCmd extends Cmd {
+		int x, y;
+		String text;
+	}
+	private static class DrawTriangleCmd extends Cmd {
+		int x[] = new int[3];
+		int y[] = new int[3];
 	}
 
 	private static class FillEllipseCmd extends Cmd {
 		int x, y, w, h;
+	}
+	private static class FillRectangleCmd extends Cmd {
+		int x, y, w, h;
+	}
+	private static class FillTriangleCmd extends Cmd {
+		int x[] = new int[3];
+		int y[] = new int[3];
 	}
 
 	private static Frame frame = null;
@@ -365,8 +581,8 @@ public class GraphicsWindow {
 	public static Value MouseX;
 	public static Value MouseY;
 	public static Value PenColor = defaultPenColor; // black
-	public static Value PenWidth;
-	public static Value Title;
+	public static Value PenWidth = new DoubleV(2);
+	public static Value Title = new StrV("Small Basic Graphics Window");
 	public static Value Top;
 	public static Value Width = new DoubleV(640);
 
