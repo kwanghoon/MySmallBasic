@@ -6,7 +6,9 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GraphicsConfiguration;
 import java.awt.Image;
+import java.awt.Rectangle;
 import java.awt.Robot;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -20,6 +22,7 @@ import java.util.Random;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import com.coducation.smallbasic.DoubleV;
@@ -37,6 +40,7 @@ public class GraphicsWindow {
 
 	public static void DrawBoundText(ArrayList<Value> args) {
 		// 그래픽 창의 지정한 위치에 지정한 길이 범위 안에서 글자를 표시함
+		// x, y, text 순서
 		if (frame == null)
 			Show(args);
 		panel.DrawBoundText(args);
@@ -44,6 +48,7 @@ public class GraphicsWindow {
 
 	public static void DrawEllipse(ArrayList<Value> args) {
 		// 그래픽 창의 지정한 위치에 지정한 펜으로 타원형을 그림
+		// x, y, width, height
 		if (frame == null)
 			Show(args);
 		panel.DrawEllipse(args);
@@ -51,13 +56,15 @@ public class GraphicsWindow {
 
 	public static void DrawImage(ArrayList<Value> args) {
 		// 지정한 위치의 그림 파일을 불러와 그래픽 창의 지정한 위치에 표시함
-		if(frame == null)
+		// imageName, x, y
+		if (frame == null)
 			Show(args);
 		panel.DrawImage(args);
 	}
 
 	public static void DrawLine(ArrayList<Value> args) {
 		// 한 지점에서 다른 지점으로 직선을 그림
+		// x1, y1, x2, y2
 		if (frame == null)
 			Show(args);
 		panel.DrawLine(args);
@@ -65,34 +72,39 @@ public class GraphicsWindow {
 
 	public static void DrawRectangle(ArrayList<Value> args) {
 		// 그래픽 창의 지정한 위치에 지정한 펜으로 사각형을 그림
-		if(frame == null)
+		// x, y, width, height
+		if (frame == null)
 			Show(args);
 		panel.DrawRectangle(args);
 	}
 
 	public static void DrawResizedImage(ArrayList<Value> args) {
 		// 지정한 위치의 그림 파일을 불러와 지정한 크기로 바꿔 그래픽 창의 지정한 위치에 표시
-		if(frame == null)
+		// imageName, x, y, width, height
+		if (frame == null)
 			Show(args);
 		panel.DrawResizedImage(args);
 	}
 
 	public static void DrawText(ArrayList<Value> args) {
 		// 그래픽 창의 지정한 위치에 지정한 길이의 범위 안에서 글자를 표시함
-		if(frame == null)
+		// x, y, text
+		if (frame == null)
 			Show(args);
 		panel.DrawText(args);
 	}
 
 	public static void DrawTriangle(ArrayList<Value> args) {
 		// 그래픽 창의 지정한 위치에 지정된 펜으로 삼각형을 그림
-		if(frame == null)
+		// x1, y1, x2, y2, x3, y3
+		if (frame == null)
 			Show(args);
 		panel.DrawTriangle(args);
 	}
 
 	public static void FillEllipse(ArrayList<Value> args) {
 		// 그래픽 창의 지정한 위치에 색이 채워진 타원형을 그림
+		// x, y, width, height
 		if (frame == null)
 			Show(args);
 		panel.FillEllipse(args);
@@ -100,45 +112,62 @@ public class GraphicsWindow {
 
 	public static void FillRectangle(ArrayList<Value> args) {
 		// 그래픽 창의 지정한 위치에 색이 채워진 사각형을 그림
-		if(frame == null)
+		// x, y, width, height
+		if (frame == null)
 			Show(args);
 		panel.FillRectangle(args);
 	}
 
 	public static void FillTriangle(ArrayList<Value> args) {
 		// 그래픽 창의 지정한 위치에 색이 채워진 삼각형을 그림
-		if(frame == null)
+		// x1, y1, x2, y2, x3, y3
+		if (frame == null)
 			Show(args);
 		panel.FillTriangle(args);
 	}
 
 	public static Value GetColorFromRGB(ArrayList<Value> args) {
 		// 빨강, 초록, 파랑을 조합해 색을 만듬
-		
+		// red, green, blue
+		if (args.size() == 3) {
+			boolean isInteger[] = { false, false, false };
+			int values[] = new int[3];
+			
+			for (int i = 0; i < args.size(); i++) {
+				if (args.get(i) instanceof DoubleV) {
+					isInteger[i] = true;
+					values[i] = (int) ((DoubleV) args.get(i)).getValue();
+				} else if (args.get(i) instanceof StrV) {
+					if (((StrV) args.get(i)).isNumber()) {
+						isInteger[i] = true;
+						values[i] = (int) ((StrV) args.get(i)).parseDouble();
+					}
+				} else {
+					throw new InterpretException("Unexpected type " + args.get(i));
+				}
+			}
+			
+			if (isInteger[0] && isInteger[1] && isInteger[2]) {
+				String red = Integer.toHexString(values[0]);
+				String green = Integer.toHexString(values[1]);
+				String blue = Integer.toHexString(values[2]);
+
+				return new StrV("#" + red + green + blue);
+			}
+		} else {
+			throw new InterpretException("Unexpected # of args " + args.size());
+		}
 		return null;
 	}
 
 	public static Value GetPixel(ArrayList<Value> args) {
 		// 지정한 x와 y 좌표의 픽셀 색상값을 rgb 형식으로 가져옴
-		// Robot
-		try {
-			Robot robot = new Robot();
-			int x = (int) ((DoubleV) args.get(0)).getValue();
-			int y = (int) ((DoubleV) args.get(1)).getValue();
+		// x, y
+		if (frame == null)
+			Show(args);
+		StrV color = (StrV) panel.GetPixel(args);
 
-			Color color = robot.getPixelColor(x, y);
-			
-			String red = Integer.toHexString(color.getRed());
-			String green = Integer.toHexString(color.getGreen());
-			String blue = Integer.toHexString(color.getBlue());
-			
-			StrV rgbColor = new StrV("#"+red+green+blue);
-			
-			return rgbColor;
-		} catch (AWTException e) {
-			e.printStackTrace();
-		}
-		return null;
+		return color;
 	}
 
 	public static Value GetRandomColor(ArrayList<Value> args) {
@@ -152,19 +181,25 @@ public class GraphicsWindow {
 
 	public static void Hide(ArrayList<Value> args) {
 		// 그래픽 창을 숨김
-		if(frame == null)
+		if (frame == null)
 			Show(args);
 		frame.setVisible(false);
 	}
 
 	public static void SetPixel(ArrayList<Value> args) {
 		// 지정한 색을 사용하여 지정한 x와 y 좌표상에 점을 찍음
-
+		// x, y, color
+		if (args.size() == 3) {
+			if (frame == null)
+				Show(args);
+			panel.SetPixel(args);
+		} else
+			throw new InterpretException("Unexpected # of args " + args.size());
 	}
 
 	public static void Show(ArrayList<Value> args) {
 		// 그래픽 창을 표시함
-		if(frame != null)
+		if (frame != null)
 			frame.setVisible(true);
 		else
 			frame = new Frame();
@@ -172,7 +207,26 @@ public class GraphicsWindow {
 
 	public static void ShowMessage(ArrayList<Value> args) {
 		// 메시지 상자를 표시함
+		// text, title
+		if (frame == null)
+			Show(args);
 
+		String title = "", text = "";
+		if (args.size() == 2) {
+			if (args.get(0) instanceof StrV)
+				text = ((StrV) args.get(0)).getValue();
+			else if (args.get(0) instanceof DoubleV)
+				text = ((DoubleV) args.get(0)).toString();
+
+			if (args.get(1) instanceof StrV)
+				title = ((StrV) args.get(1)).getValue();
+			else if (args.get(1) instanceof DoubleV)
+				title = ((DoubleV) args.get(1)).toString();
+		} else
+			throw new InterpretException("Unexpected # of args " + args.size());
+		
+		JOptionPane.showMessageDialog(frame, text, title, JOptionPane.INFORMATION_MESSAGE);
+		
 	}
 
 	private static class Frame extends JFrame {
@@ -193,23 +247,28 @@ public class GraphicsWindow {
 
 	private static class Panel extends JPanel implements MouseListener, KeyListener, MouseMotionListener {
 		public Panel(int width, int height) {
+			this.setOpaque(true);
 			cmdList = new ArrayList<>();
+			pixelList = new ArrayList<>();
 			addMouseListener(this);
 			addKeyListener(this);
 			setPreferredSize(new Dimension(width, height));
+			
 		}
 
 		public void paintComponent(Graphics g) {
 			super.paintComponent(g);
-
+			String backColor = ((StrV) BackgroundColor).getValue();
+			setBackground(new Color(Integer.parseInt(backColor.substring(1), 16)));
 			String color;
+
 			for (Cmd cmd : cmdList) {
-				((Graphics2D) g).setStroke(new BasicStroke((float) ((DoubleV)PenWidth).getValue()));
+				((Graphics2D) g).setStroke(new BasicStroke((float) ((DoubleV) PenWidth).getValue()));
 				switch (cmd.cmd) {
 				case NOCOMMAND:
 					break;
 				case DRAWBOUNDTEXT:
-					
+
 					break;
 				case DRAWELLIPSE:
 					DrawEllipseCmd dec = (DrawEllipseCmd) cmd;
@@ -238,7 +297,7 @@ public class GraphicsWindow {
 				case DRAWRESIZEDIMAGE:
 					DrawResizedImageCmd dric = (DrawResizedImageCmd) cmd;
 					ImageIcon iconResized = new ImageIcon(dric.imageName);
-					Image imgResized= iconResized.getImage();
+					Image imgResized = iconResized.getImage();
 					g.drawImage(imgResized, dric.x, dric.y, dric.w, dric.h, this);
 					break;
 				case DRAWTEXT:
@@ -274,6 +333,103 @@ public class GraphicsWindow {
 					break;
 				}
 			}
+			if (pixelList.size() != 0) {
+				for (Pixel pixel : pixelList) {
+					for (int i = 0; i < (int) ((DoubleV) Height).getValue(); i++) {
+						for (int j = 0; j < (int) ((DoubleV) Width).getValue(); j++) {
+							if (pixel.x == j && pixel.y == i) {
+								String pColor = pixel.color.getValue();
+								if (pColor.contains("#")) {
+									// hex 상태
+									g.setColor(new Color(Integer.parseInt(pColor.substring(1), 16)));
+								} else {
+									// Red, Blue, ...
+									pColor = colorMap.get(pColor.toUpperCase());
+									g.setColor(new Color(Integer.parseInt(pColor.substring(1), 16)));
+								}
+								g.drawLine(j, i, j, i);
+								break;
+							}
+						}
+					}
+				}
+			}
+		}
+
+		public Value GetPixel(ArrayList<Value> args) {
+			try {
+				if (args.size() == 2) {
+					Robot robot = new Robot();
+					boolean isInteger[] = { false, false };
+					int values[] = new int[2];
+
+					for (int i = 0; i < args.size(); i++) {
+						if (args.get(i) instanceof DoubleV) {
+							isInteger[i] = true;
+							values[i] = (int) ((DoubleV) args.get(i)).getValue();
+						} else if (args.get(i) instanceof StrV) {
+							if (((StrV) args.get(i)).isNumber()) {
+								isInteger[i] = true;
+								values[i] = (int) ((StrV) args.get(i)).parseDouble();
+							}
+						} else
+							throw new InterpretException("Unexpected type " + args.get(i));
+					}
+
+					if (isInteger[0] && isInteger[1]) {
+						GraphicsConfiguration gc = getGraphicsConfiguration();
+						Rectangle r = gc.getBounds();
+						Color color = robot.getPixelColor(r.x + values[0], r.y + values[1]);
+
+						String red = Integer.toHexString(color.getRed());
+						String green = Integer.toHexString(color.getGreen());
+						String blue = Integer.toHexString(color.getBlue());
+
+						StrV rgbColor = new StrV("#" + red + green + blue);
+
+						return rgbColor;
+					}
+				} else
+					throw new InterpretException("Unexpected # of args " + args.size());
+			} catch (AWTException e) {
+				e.printStackTrace();
+			}
+			return null;
+		}
+
+		public void SetPixel(ArrayList<Value> args) {
+			int values[] = new int[2];
+			boolean isInteger[] = { false, false };
+
+			for (int i = 0; i < 2; i++) {
+				if (args.get(i) instanceof DoubleV) {
+					isInteger[i] = true;
+					values[i] = (int) ((DoubleV) args.get(i)).getValue();
+				} else if (args.get(i) instanceof StrV) {
+					if (((StrV) args.get(i)).isNumber()) {
+						isInteger[i] = true;
+						values[i] = (int) ((StrV) args.get(i)).parseDouble();
+					}
+				} else
+					throw new InterpretException("Unexpected type " + args.get(i));
+			}
+
+			if (isInteger[0] && isInteger[1] && args.get(2) instanceof StrV) {
+				Pixel pixel = new Pixel();
+				pixel.x = values[0];
+				pixel.y = values[1];
+				pixel.color = (StrV) args.get(2);
+
+				pixelList.add(pixel);
+			}
+		}
+
+		ArrayList<Pixel> pixelList;
+
+		private static class Pixel {
+			StrV color;
+			int x;
+			int y;
 		}
 
 		final int NOCOMMAND = 0;
@@ -291,47 +447,129 @@ public class GraphicsWindow {
 		final int FILLTRIANGLE = 11;
 
 		ArrayList<Cmd> cmdList;
-		
+
 		public void DrawBoundText(ArrayList<Value> args) {
 			DrawBoundTextCmd cmd = new DrawBoundTextCmd();
-			
-			cmd.cmd = DRAWBOUNDTEXT;
-			
-			cmd.x = (int) ((DoubleV) args.get(0)).getValue();
-			cmd.y = (int) ((DoubleV) args.get(1)).getValue();
-			cmd.text = ((StrV) args.get(2)).getValue();
-			
-			cmdList.add(cmd);
-			
-			repaint();
+
+			if (args.size() == 3) {
+				cmd.cmd = DRAWBOUNDTEXT;
+
+				int[] values = new int[2];
+				boolean[] isInteger = new boolean[2];
+
+				for (int i = 0; i < 2; i++) {
+					if (args.get(i) instanceof DoubleV) {
+						isInteger[i] = true;
+						values[i] = (int) ((DoubleV) args.get(i)).getValue();
+					} else if (args.get(i) instanceof StrV) {
+						if (((StrV) args.get(i)).isNumber()) {
+							isInteger[i] = true;
+							values[i] = (int) ((StrV) args.get(i)).parseDouble();
+						} else {
+							isInteger[i] = false;
+							throw new InterpretException("Unexpected type " + args.get(i));
+						}
+					} else {
+						isInteger[i] = false;
+						throw new InterpretException("Unexpected type " + args.get(i));
+					}
+				}
+
+				if (isInteger[0] && isInteger[1]) {
+					cmd.x = (int) ((DoubleV) args.get(0)).getValue();
+					cmd.y = (int) ((DoubleV) args.get(1)).getValue();
+				}
+
+				if (args.get(2) instanceof StrV)
+					cmd.text = ((StrV) args.get(2)).getValue();
+				else if (args.get(2) instanceof DoubleV)
+					cmd.text = ((DoubleV) args.get(2)).toString();
+
+				cmdList.add(cmd);
+
+				repaint();
+			} else {
+				throw new InterpretException("Unexpected # of args " + args.size());
+			}
 		}
+
 		public void DrawEllipse(ArrayList<Value> args) {
 			DrawEllipseCmd cmd = new DrawEllipseCmd();
 
-			cmd.cmd = DRAWELLIPSE;
+			if (args.size() == 4) {
+				cmd.cmd = DRAWELLIPSE;
 
-			cmd.x = (int) ((DoubleV) args.get(0)).getValue();
-			cmd.y = (int) ((DoubleV) args.get(1)).getValue();
-			cmd.w = (int) ((DoubleV) args.get(2)).getValue();
-			cmd.h = (int) ((DoubleV) args.get(3)).getValue();
+				boolean[] isInteger = new boolean[4];
+				int[] values = new int[4];
 
-			cmdList.add(cmd);
+				for (int i = 0; i < args.size(); i++) {
+					if (args.get(i) instanceof DoubleV) {
+						isInteger[i] = true;
+						values[i] = (int) ((DoubleV) args.get(i)).getValue();
+					} else if (args.get(i) instanceof StrV) {
+						if (((StrV) args.get(i)).isNumber()) {
+							isInteger[i] = true;
+							values[i] = (int) ((StrV) args.get(i)).parseDouble();
+						}
+					} else {
+						isInteger[i] = false;
+						throw new InterpretException("Unexpected type " + args.get(i));
+					}
 
-			repaint();
+				}
+				if (isInteger[0] && isInteger[1] && isInteger[2] && isInteger[3]) {
+					cmd.x = values[0];
+					cmd.y = values[1];
+					cmd.w = values[2];
+					cmd.h = values[3];
+
+					cmdList.add(cmd);
+
+					repaint();
+				}
+			} else {
+				throw new InterpretException("Unexpected # of args " + args.size());
+			}
 		}
+
 		public void DrawImage(ArrayList<Value> args) {
 			DrawImageCmd cmd = new DrawImageCmd();
-			
-			cmd.cmd = DRAWIMAGE;
-			
-			cmd.imageName = ((StrV) args.get(0)).getValue();
-			cmd.x = (int) ((DoubleV) args.get(1)).getValue();
-			cmd.y = (int) ((DoubleV) args.get(2)).getValue();
-			
-			cmdList.add(cmd);
-			
-			repaint();
+
+			if (args.size() == 3) {
+				cmd.cmd = DRAWIMAGE;
+
+				int[] values = new int[2];
+				boolean[] isInteger = new boolean[2];
+
+				for (int i = 1; i < args.size(); i++) {
+					if (args.get(i) instanceof DoubleV) {
+						isInteger[i] = true;
+						values[i] = (int) ((DoubleV) args.get(i)).getValue();
+					} else if (args.get(i) instanceof StrV) {
+						if (((StrV) args.get(i)).isNumber()) {
+							isInteger[i] = true;
+							values[i] = (int) ((StrV) args.get(i)).parseDouble();
+						}
+					} else {
+						isInteger[i] = false;
+						throw new InterpretException("Unexpected type " + args.get(i));
+					}
+				}
+
+				if (args.get(0) instanceof StrV && isInteger[0] && isInteger[1]) {
+					cmd.imageName = ((StrV) args.get(0)).getValue();
+					cmd.x = (int) ((DoubleV) args.get(1)).getValue();
+					cmd.y = (int) ((DoubleV) args.get(2)).getValue();
+
+					cmdList.add(cmd);
+
+					repaint();
+				}
+			} else {
+				throw new InterpretException("Unexpected # of args " + args.size());
+			}
 		}
+
 		public void DrawLine(ArrayList<Value> args) {
 			DrawLineCmd cmd = new DrawLineCmd();
 
@@ -346,62 +584,66 @@ public class GraphicsWindow {
 
 			repaint();
 		}
+
 		public void DrawRectangle(ArrayList<Value> args) {
 			DrawRectangleCmd cmd = new DrawRectangleCmd();
-			
+
 			cmd.cmd = DRAWRECTANGLE;
-			
+
 			cmd.x = (int) ((DoubleV) args.get(0)).getValue();
 			cmd.y = (int) ((DoubleV) args.get(1)).getValue();
 			cmd.w = (int) ((DoubleV) args.get(2)).getValue();
 			cmd.h = (int) ((DoubleV) args.get(3)).getValue();
-			
+
 			cmdList.add(cmd);
-			
+
 			repaint();
 		}
+
 		public void DrawResizedImage(ArrayList<Value> args) {
 			DrawResizedImageCmd cmd = new DrawResizedImageCmd();
-			
+
 			cmd.cmd = DRAWRESIZEDIMAGE;
-			
+
 			cmd.imageName = ((StrV) args.get(0)).getValue();
 			cmd.x = (int) ((DoubleV) args.get(1)).getValue();
 			cmd.y = (int) ((DoubleV) args.get(2)).getValue();
 			cmd.w = (int) ((DoubleV) args.get(3)).getValue();
 			cmd.h = (int) ((DoubleV) args.get(4)).getValue();
-			
+
 			cmdList.add(cmd);
-			
-			repaint();			
+
+			repaint();
 		}
+
 		public void DrawText(ArrayList<Value> args) {
 			DrawTextCmd cmd = new DrawTextCmd();
-			
+
 			cmd.cmd = DRAWTEXT;
-			
+
 			cmd.x = (int) ((DoubleV) args.get(0)).getValue();
 			cmd.y = (int) ((DoubleV) args.get(1)).getValue();
 			cmd.text = ((StrV) args.get(2)).getValue();
-			
+
 			cmdList.add(cmd);
-			
+
 			repaint();
 		}
+
 		public void DrawTriangle(ArrayList<Value> args) {
 			DrawTriangleCmd cmd = new DrawTriangleCmd();
-			
+
 			cmd.cmd = DRAWTRIANGLE;
-			
+
 			cmd.x[0] = (int) ((DoubleV) args.get(0)).getValue();
 			cmd.y[0] = (int) ((DoubleV) args.get(1)).getValue();
 			cmd.x[1] = (int) ((DoubleV) args.get(2)).getValue();
 			cmd.y[1] = (int) ((DoubleV) args.get(3)).getValue();
 			cmd.x[2] = (int) ((DoubleV) args.get(4)).getValue();
 			cmd.y[2] = (int) ((DoubleV) args.get(5)).getValue();
-			
+
 			cmdList.add(cmd);
-			
+
 			repaint();
 		}
 
@@ -419,34 +661,36 @@ public class GraphicsWindow {
 
 			repaint();
 		}
+
 		public void FillRectangle(ArrayList<Value> args) {
 			FillRectangleCmd cmd = new FillRectangleCmd();
-			
+
 			cmd.cmd = FILLRECTANGLE;
-			
+
 			cmd.x = (int) ((DoubleV) args.get(0)).getValue();
 			cmd.y = (int) ((DoubleV) args.get(1)).getValue();
 			cmd.w = (int) ((DoubleV) args.get(2)).getValue();
 			cmd.h = (int) ((DoubleV) args.get(3)).getValue();
-			
+
 			cmdList.add(cmd);
-			
+
 			repaint();
 		}
+
 		public void FillTriangle(ArrayList<Value> args) {
 			FillTriangleCmd cmd = new FillTriangleCmd();
-			
+
 			cmd.cmd = FILLTRIANGLE;
-			
+
 			cmd.x[0] = (int) ((DoubleV) args.get(0)).getValue();
 			cmd.y[0] = (int) ((DoubleV) args.get(1)).getValue();
 			cmd.x[1] = (int) ((DoubleV) args.get(2)).getValue();
 			cmd.y[1] = (int) ((DoubleV) args.get(3)).getValue();
 			cmd.x[2] = (int) ((DoubleV) args.get(4)).getValue();
 			cmd.y[2] = (int) ((DoubleV) args.get(5)).getValue();
-			
+
 			cmdList.add(cmd);
-			
+
 			repaint();
 		}
 
@@ -477,15 +721,15 @@ public class GraphicsWindow {
 		public void mouseReleased(MouseEvent e) {
 
 		}
-		
+
 		@Override
-		public void mouseDragged(MouseEvent e) {	
-			
+		public void mouseDragged(MouseEvent e) {
+
 		}
 
 		@Override
 		public void mouseMoved(MouseEvent e) {
-			
+
 		}
 
 		public void addNotify() {
@@ -523,27 +767,34 @@ public class GraphicsWindow {
 		int x, y, w;
 		String text;
 	}
+
 	private static class DrawEllipseCmd extends Cmd {
 		int x, y, w, h;
 	}
+
 	private static class DrawImageCmd extends Cmd {
 		int x, y;
 		String imageName;
 	}
+
 	private static class DrawLineCmd extends Cmd {
 		int x1, y1, x2, y2;
 	}
+
 	private static class DrawRectangleCmd extends Cmd {
 		int x, y, w, h;
 	}
+
 	private static class DrawResizedImageCmd extends Cmd {
 		String imageName;
 		int x, y, w, h;
 	}
+
 	private static class DrawTextCmd extends Cmd {
 		int x, y;
 		String text;
 	}
+
 	private static class DrawTriangleCmd extends Cmd {
 		int x[] = new int[3];
 		int y[] = new int[3];
@@ -552,9 +803,11 @@ public class GraphicsWindow {
 	private static class FillEllipseCmd extends Cmd {
 		int x, y, w, h;
 	}
+
 	private static class FillRectangleCmd extends Cmd {
 		int x, y, w, h;
 	}
+
 	private static class FillTriangleCmd extends Cmd {
 		int x[] = new int[3];
 		int y[] = new int[3];
