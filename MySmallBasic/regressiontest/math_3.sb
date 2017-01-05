@@ -1,0 +1,3 @@
+For i = 0 To 1000 
+  TextWindow.WriteLine(Math.GetRandomNumber(100))
+  EndFor

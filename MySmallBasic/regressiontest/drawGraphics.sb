@@ -1,0 +1,11 @@
+GraphicsWindow.BrushColor = "OrangeRed"
+GraphicsWindow.PenColor = "LightSalmon"
+
+GraphicsWindow.DrawLine(0, 0, 30, 30)
+GraphicsWindow.DrawTriangle(50, 50, 100, 150, 150, 100)
+
+GraphicsWindow.Clear()
+
+GraphicsWindow.FillTriangle(80, 80, 90, 120, 120, 90)
+
+GraphicsWindow.GetPixel(100, 100)
