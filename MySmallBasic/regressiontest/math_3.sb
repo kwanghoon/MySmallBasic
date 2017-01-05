@@ -1,3 +1,14 @@
-For i = 0 To 1000 
-  TextWindow.WriteLine(Math.GetRandomNumber(100))
-  EndFor
+TextWindow.WriteLine(Math.GetRandomNumber(100))
+TextWindow.WriteLine(Math.Remainder(3,2))
+TextWindow.WriteLine(Math.Power(3,2))
+TextWindow.WriteLine(Math.Max(100,50))
+TextWindow.WriteLine(Math.Min(100,50))
+TextWindow.WriteLine(Math.Abs(-100.321))
+TextWindow.WriteLine(Math.GetRandomNumber(100))
+TextWindow.WriteLine(Math.GetRandomNumber(100))
+TextWindow.WriteLine(Math.GetRandomNumber(100))
+TextWindow.WriteLine(Math.GetRandomNumber(100))
+TextWindow.WriteLine(Math.GetRandomNumber(100))
+TextWindow.WriteLine(Math.GetRandomNumber(100))
+TextWindow.WriteLine(Math.GetRandomNumber(100))
+TextWindow.WriteLine(Math.GetRandomNumber(100))
