@@ -40,7 +40,7 @@ public class GraphicsWindow {
 
 	public static void DrawBoundText(ArrayList<Value> args) {
 		// 그래픽 창의 지정한 위치에 지정한 길이 범위 안에서 글자를 표시함
-		// x, y, text 순서
+		// x, y, text
 		if (frame == null)
 			Show(args);
 		panel.DrawBoundText(args);
@@ -132,7 +132,7 @@ public class GraphicsWindow {
 		if (args.size() == 3) {
 			boolean isInteger[] = { false, false, false };
 			int values[] = new int[3];
-			
+
 			for (int i = 0; i < args.size(); i++) {
 				if (args.get(i) instanceof DoubleV) {
 					isInteger[i] = true;
@@ -146,7 +146,8 @@ public class GraphicsWindow {
 					throw new InterpretException("Unexpected type " + args.get(i));
 				}
 			}
-			
+
+			// 모든 값이 숫자일 경우 색을 만들어냄
 			if (isInteger[0] && isInteger[1] && isInteger[2]) {
 				String red = Integer.toHexString(values[0]);
 				String green = Integer.toHexString(values[1]);
@@ -224,9 +225,9 @@ public class GraphicsWindow {
 				title = ((DoubleV) args.get(1)).toString();
 		} else
 			throw new InterpretException("Unexpected # of args " + args.size());
-		
+
 		JOptionPane.showMessageDialog(frame, text, title, JOptionPane.INFORMATION_MESSAGE);
-		
+
 	}
 
 	private static class Frame extends JFrame {
@@ -253,7 +254,7 @@ public class GraphicsWindow {
 			addMouseListener(this);
 			addKeyListener(this);
 			setPreferredSize(new Dimension(width, height));
-			
+
 		}
 
 		public void paintComponent(Graphics g) {
@@ -476,8 +477,8 @@ public class GraphicsWindow {
 				}
 
 				if (isInteger[0] && isInteger[1]) {
-					cmd.x = (int) ((DoubleV) args.get(0)).getValue();
-					cmd.y = (int) ((DoubleV) args.get(1)).getValue();
+					cmd.x = values[0];
+					cmd.y = values[1];
 				}
 
 				if (args.get(2) instanceof StrV)
@@ -543,6 +544,161 @@ public class GraphicsWindow {
 
 				for (int i = 1; i < args.size(); i++) {
 					if (args.get(i) instanceof DoubleV) {
+						isInteger[i - 1] = true;
+						values[i - 1] = (int) ((DoubleV) args.get(i)).getValue();
+					} else if (args.get(i) instanceof StrV) {
+						if (((StrV) args.get(i)).isNumber()) {
+							isInteger[i - 1] = true;
+							values[i - 1] = (int) ((StrV) args.get(i)).parseDouble();
+						}
+					} else {
+						isInteger[i - 1] = false;
+						throw new InterpretException("Unexpected type " + args.get(i));
+					}
+				}
+
+				if (args.get(0) instanceof StrV && isInteger[0] && isInteger[1]) {
+					cmd.imageName = ((StrV) args.get(0)).getValue();
+					cmd.x = values[0];
+					cmd.y = values[1];
+
+					cmdList.add(cmd);
+
+					repaint();
+				}
+			} else {
+				throw new InterpretException("Unexpected # of args " + args.size());
+			}
+		}
+
+		public void DrawLine(ArrayList<Value> args) {
+			DrawLineCmd cmd = new DrawLineCmd();
+
+			if (args.size() == 4) {
+				cmd.cmd = DRAWLINE;
+
+				int[] values = new int[4];
+				boolean[] isInteger = new boolean[4];
+
+				for (int i = 0; i < args.size(); i++) {
+					if (args.get(i) instanceof DoubleV) {
+						isInteger[i] = true;
+						values[i] = (int) ((DoubleV) args.get(i)).getValue();
+					} else if (args.get(i) instanceof StrV) {
+						if (((StrV) args.get(i)).isNumber()) {
+							isInteger[i] = true;
+							values[i] = (int) ((StrV) args.get(i)).parseDouble();
+						}
+					} else {
+						isInteger[i] = false;
+						throw new InterpretException("Unexpected type " + args.get(i));
+					}
+				}
+				if (isInteger[0] && isInteger[1] && isInteger[2] && isInteger[3]) {
+					cmd.x1 = values[0];
+					cmd.y1 = values[1];
+					cmd.x2 = values[2];
+					cmd.y2 = values[3];
+
+					cmdList.add(cmd);
+
+					repaint();
+				}
+			} else {
+				throw new InterpretException("Unexpected # of args " + args.size());
+			}
+		}
+
+		public void DrawRectangle(ArrayList<Value> args) {
+			DrawRectangleCmd cmd = new DrawRectangleCmd();
+
+			if (args.size() == 4) {
+				cmd.cmd = DRAWRECTANGLE;
+
+				int[] values = new int[4];
+				boolean[] isInteger = new boolean[4];
+
+				for (int i = 0; i < args.size(); i++) {
+					if (args.get(i) instanceof DoubleV) {
+						isInteger[i] = true;
+						values[i] = (int) ((DoubleV) args.get(i)).getValue();
+					} else if (args.get(i) instanceof StrV) {
+						if (((StrV) args.get(i)).isNumber()) {
+							isInteger[i] = true;
+							values[i] = (int) ((StrV) args.get(i)).parseDouble();
+						}
+					} else {
+						isInteger[i] = false;
+						throw new InterpretException("Unexpected type " + args.get(i));
+					}
+				}
+
+				if (isInteger[0] && isInteger[1] && isInteger[2] && isInteger[3]) {
+					cmd.x = values[0];
+					cmd.y = values[1];
+					cmd.w = values[2];
+					cmd.h = values[3];
+
+					cmdList.add(cmd);
+
+					repaint();
+				}
+			} else {
+				throw new InterpretException("Unexpected # of args " + args.size());
+			}
+		}
+
+		public void DrawResizedImage(ArrayList<Value> args) {
+			DrawResizedImageCmd cmd = new DrawResizedImageCmd();
+
+			if (args.size() == 5) {
+				cmd.cmd = DRAWRESIZEDIMAGE;
+
+				int[] values = new int[4];
+				boolean[] isInteger = new boolean[4];
+
+				for (int i = 1; i < args.size(); i++) {
+					if (args.get(i) instanceof DoubleV) {
+						isInteger[i - 1] = true;
+						values[i - 1] = (int) ((DoubleV) args.get(i)).getValue();
+					} else if (args.get(i) instanceof StrV) {
+						if (((StrV) args.get(i)).isNumber()) {
+							isInteger[i - 1] = true;
+							values[i - 1] = (int) ((StrV) args.get(i)).parseDouble();
+						}
+					} else {
+						isInteger[i - 1] = false;
+						throw new InterpretException("Unexpected type " + args.get(i));
+					}
+				}
+
+				if (args.get(0) instanceof StrV && isInteger[0] && isInteger[1] && isInteger[2] && isInteger[3]) {
+					cmd.imageName = ((StrV) args.get(0)).getValue();
+					cmd.x = values[0];
+					cmd.y = values[1];
+					cmd.w = values[2];
+					cmd.h = values[3];
+
+					cmdList.add(cmd);
+
+					repaint();
+				}
+			} else {
+				throw new InterpretException("Unexpected # of args " + args.size());
+			}
+		}
+
+		public void DrawText(ArrayList<Value> args) {
+			DrawTextCmd cmd = new DrawTextCmd();
+
+			if (args.size() == 3) {
+
+				cmd.cmd = DRAWTEXT;
+				int[] values = new int[2];
+				boolean[] isInteger = new boolean[2];
+
+				for (int i = 1; i < args.size(); i++) {
+					if (args.get(i) instanceof DoubleV) {
 						isInteger[i] = true;
 						values[i] = (int) ((DoubleV) args.get(i)).getValue();
 					} else if (args.get(i) instanceof StrV) {
@@ -557,9 +713,9 @@ public class GraphicsWindow {
 				}
 
 				if (args.get(0) instanceof StrV && isInteger[0] && isInteger[1]) {
-					cmd.imageName = ((StrV) args.get(0)).getValue();
-					cmd.x = (int) ((DoubleV) args.get(1)).getValue();
-					cmd.y = (int) ((DoubleV) args.get(2)).getValue();
+					cmd.x = values[0];
+					cmd.y = values[1];
+					cmd.text = ((StrV) args.get(2)).getValue();
 
 					cmdList.add(cmd);
 
@@ -570,128 +726,160 @@ public class GraphicsWindow {
 			}
 		}
 
-		public void DrawLine(ArrayList<Value> args) {
-			DrawLineCmd cmd = new DrawLineCmd();
-
-			cmd.cmd = DRAWLINE;
-
-			cmd.x1 = (int) ((DoubleV) args.get(0)).getValue();
-			cmd.y1 = (int) ((DoubleV) args.get(1)).getValue();
-			cmd.x2 = (int) ((DoubleV) args.get(2)).getValue();
-			cmd.y2 = (int) ((DoubleV) args.get(3)).getValue();
-
-			cmdList.add(cmd);
-
-			repaint();
-		}
-
-		public void DrawRectangle(ArrayList<Value> args) {
-			DrawRectangleCmd cmd = new DrawRectangleCmd();
-
-			cmd.cmd = DRAWRECTANGLE;
-
-			cmd.x = (int) ((DoubleV) args.get(0)).getValue();
-			cmd.y = (int) ((DoubleV) args.get(1)).getValue();
-			cmd.w = (int) ((DoubleV) args.get(2)).getValue();
-			cmd.h = (int) ((DoubleV) args.get(3)).getValue();
-
-			cmdList.add(cmd);
-
-			repaint();
-		}
-
-		public void DrawResizedImage(ArrayList<Value> args) {
-			DrawResizedImageCmd cmd = new DrawResizedImageCmd();
-
-			cmd.cmd = DRAWRESIZEDIMAGE;
-
-			cmd.imageName = ((StrV) args.get(0)).getValue();
-			cmd.x = (int) ((DoubleV) args.get(1)).getValue();
-			cmd.y = (int) ((DoubleV) args.get(2)).getValue();
-			cmd.w = (int) ((DoubleV) args.get(3)).getValue();
-			cmd.h = (int) ((DoubleV) args.get(4)).getValue();
-
-			cmdList.add(cmd);
-
-			repaint();
-		}
-
-		public void DrawText(ArrayList<Value> args) {
-			DrawTextCmd cmd = new DrawTextCmd();
-
-			cmd.cmd = DRAWTEXT;
-
-			cmd.x = (int) ((DoubleV) args.get(0)).getValue();
-			cmd.y = (int) ((DoubleV) args.get(1)).getValue();
-			cmd.text = ((StrV) args.get(2)).getValue();
-
-			cmdList.add(cmd);
-
-			repaint();
-		}
-
 		public void DrawTriangle(ArrayList<Value> args) {
 			DrawTriangleCmd cmd = new DrawTriangleCmd();
 
-			cmd.cmd = DRAWTRIANGLE;
+			if (args.size() == 6) {
+				cmd.cmd = DRAWTRIANGLE;
 
-			cmd.x[0] = (int) ((DoubleV) args.get(0)).getValue();
-			cmd.y[0] = (int) ((DoubleV) args.get(1)).getValue();
-			cmd.x[1] = (int) ((DoubleV) args.get(2)).getValue();
-			cmd.y[1] = (int) ((DoubleV) args.get(3)).getValue();
-			cmd.x[2] = (int) ((DoubleV) args.get(4)).getValue();
-			cmd.y[2] = (int) ((DoubleV) args.get(5)).getValue();
+				int[] values = new int[6];
+				boolean[] isInteger = new boolean[6];
 
-			cmdList.add(cmd);
+				for (int i = 0; i < args.size(); i++) {
+					if (args.get(i) instanceof DoubleV) {
+						isInteger[i] = true;
+						values[i] = (int) ((DoubleV) args.get(i)).getValue();
+					} else if (args.get(i) instanceof StrV) {
+						if (((StrV) args.get(i)).isNumber()) {
+							isInteger[i] = true;
+							values[i] = (int) ((StrV) args.get(i)).parseDouble();
+						}
+					} else {
+						isInteger[i] = false;
+						throw new InterpretException("Unexpected type " + args.get(i));
+					}
+				}
+				if (isInteger[0] && isInteger[1] && isInteger[2] && isInteger[3] && isInteger[4] && isInteger[5]) {
+					cmd.x[0] = values[0];
+					cmd.y[0] = values[1];
+					cmd.x[1] = values[2];
+					cmd.y[1] = values[3];
+					cmd.x[2] = values[4];
+					cmd.y[2] = values[5];
 
-			repaint();
+					cmdList.add(cmd);
+
+					repaint();
+				}
+			} else {
+				throw new InterpretException("Unexpected # of args " + args.size());
+			}
 		}
 
 		public void FillEllipse(ArrayList<Value> args) {
 			FillEllipseCmd cmd = new FillEllipseCmd();
 
-			cmd.cmd = FILLELLIPSE;
+			if (args.size() == 4) {
+				cmd.cmd = FILLELLIPSE;
 
-			cmd.x = (int) ((DoubleV) args.get(0)).getValue();
-			cmd.y = (int) ((DoubleV) args.get(1)).getValue();
-			cmd.w = (int) ((DoubleV) args.get(2)).getValue();
-			cmd.h = (int) ((DoubleV) args.get(3)).getValue();
+				int[] values = new int[4];
+				boolean[] isInteger = new boolean[4];
 
-			cmdList.add(cmd);
+				for (int i = 0; i < args.size(); i++) {
+					if (args.get(i) instanceof DoubleV) {
+						isInteger[i] = true;
+						values[i] = (int) ((DoubleV) args.get(i)).getValue();
+					} else if (args.get(i) instanceof StrV) {
+						if (((StrV) args.get(i)).isNumber()) {
+							isInteger[i] = true;
+							values[i] = (int) ((StrV) args.get(i)).parseDouble();
+						}
+					} else {
+						isInteger[i] = false;
+						throw new InterpretException("Unexpected type " + args.get(i));
+					}
+				}
 
-			repaint();
+				if (isInteger[0] && isInteger[1] && isInteger[2] && isInteger[3]) {
+
+					cmd.x = (int) ((DoubleV) args.get(0)).getValue();
+					cmd.y = (int) ((DoubleV) args.get(1)).getValue();
+					cmd.w = (int) ((DoubleV) args.get(2)).getValue();
+					cmd.h = (int) ((DoubleV) args.get(3)).getValue();
+
+					cmdList.add(cmd);
+
+					repaint();
+				}
+			} else
+				throw new InterpretException("Unexpected # of args " + args.size());
 		}
 
 		public void FillRectangle(ArrayList<Value> args) {
 			FillRectangleCmd cmd = new FillRectangleCmd();
 
-			cmd.cmd = FILLRECTANGLE;
+			if (args.size() == 4) {
+				cmd.cmd = FILLRECTANGLE;
 
-			cmd.x = (int) ((DoubleV) args.get(0)).getValue();
-			cmd.y = (int) ((DoubleV) args.get(1)).getValue();
-			cmd.w = (int) ((DoubleV) args.get(2)).getValue();
-			cmd.h = (int) ((DoubleV) args.get(3)).getValue();
+				int[] values = new int[4];
+				boolean[] isInteger = new boolean[4];
 
-			cmdList.add(cmd);
+				for (int i = 0; i < args.size(); i++) {
+					if (args.get(i) instanceof DoubleV) {
+						isInteger[i] = true;
+						values[i] = (int) ((DoubleV) args.get(i)).getValue();
+					} else if (args.get(i) instanceof StrV) {
+						if (((StrV) args.get(i)).isNumber()) {
+							isInteger[i] = true;
+							values[i] = (int) ((StrV) args.get(i)).parseDouble();
+						}
+					} else {
+						isInteger[i] = false;
+						throw new InterpretException("Unexpected type " + args.get(i));
+					}
+				}
+				if (isInteger[0] && isInteger[1] && isInteger[2] && isInteger[3]) {
+					cmd.x = values[0];
+					cmd.y = values[1];
+					cmd.w = values[2];
+					cmd.h = values[3];
 
-			repaint();
+					cmdList.add(cmd);
+
+					repaint();
+				}
+			} else
+				throw new InterpretException("Unexpected # of args " + args.size());
 		}
 
 		public void FillTriangle(ArrayList<Value> args) {
 			FillTriangleCmd cmd = new FillTriangleCmd();
 
-			cmd.cmd = FILLTRIANGLE;
+			if (args.size() == 6) {
+				cmd.cmd = FILLTRIANGLE;
 
-			cmd.x[0] = (int) ((DoubleV) args.get(0)).getValue();
-			cmd.y[0] = (int) ((DoubleV) args.get(1)).getValue();
-			cmd.x[1] = (int) ((DoubleV) args.get(2)).getValue();
-			cmd.y[1] = (int) ((DoubleV) args.get(3)).getValue();
-			cmd.x[2] = (int) ((DoubleV) args.get(4)).getValue();
-			cmd.y[2] = (int) ((DoubleV) args.get(5)).getValue();
+				int[] values = new int[6];
+				boolean[] isInteger = new boolean[6];
 
-			cmdList.add(cmd);
+				for (int i = 0; i < args.size(); i++) {
+					if (args.get(i) instanceof DoubleV) {
+						isInteger[i] = true;
+						values[i] = (int) ((DoubleV) args.get(i)).getValue();
+					} else if (args.get(i) instanceof StrV) {
+						if (((StrV) args.get(i)).isNumber()) {
+							isInteger[i] = true;
+							values[i] = (int) ((StrV) args.get(i)).parseDouble();
+						}
+					} else {
+						isInteger[i] = false;
+						throw new InterpretException("Unexpected type " + args.get(i));
+					}
+				}
+				if (isInteger[0] && isInteger[1] && isInteger[2] && isInteger[3] && isInteger[4] && isInteger[5]) {
+					cmd.x[0] = values[0];
+					cmd.y[0] = values[1];
+					cmd.x[1] = values[2];
+					cmd.y[1] = values[3];
+					cmd.x[2] = values[4];
+					cmd.y[2] = values[5];
 
-			repaint();
+					cmdList.add(cmd);
+
+					repaint();
+				}
+			} else {
+				throw new InterpretException("Unexpected # of args " + args.size());
+			}
 		}
 
 		@Override
