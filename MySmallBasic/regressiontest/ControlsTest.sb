@@ -1,0 +1,14 @@
+first = Controls.AddButton("first button", 10, 50)
+second = Controls.AddTextBox("10", "80")
+third = Controls.AddMultiLineTextBox("10", "120")
+fourth = Controls.AddButton("second button", 100, 50)
+
+Controls.ButtonClicked = displayPopUp
+
+Sub displayPopUp
+  If(Controls.LastClickedButton = first) Then
+    GraphicsWindow.ShowMessage(Controls.GetTextBoxText(second), "First Button Message")
+  ElseIf(Controls.LastClickedButton = fourth) Then
+    GraphicsWindow.ShowMessage(Controls.GetTextBoxText(third), "Second Button Message")
+  EndIf
+EndSub
