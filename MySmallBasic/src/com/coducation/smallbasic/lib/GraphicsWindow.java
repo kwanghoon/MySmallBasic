@@ -174,18 +174,24 @@ public class GraphicsWindow {
 
 	public static Value GetRandomColor(ArrayList<Value> args) {
 		// 표현 가능한 임의의 색을 가져옴
-		if (frame == null)
-			Show(args);
-		Random r = new Random(Calendar.getInstance().get(Calendar.MILLISECOND));
-		int i = r.nextInt(colorInfo.length);
-		return hexColor(new StrV(colorInfo[i]), defaultPenColor);
+		if (args.size() == 0) {
+			if (frame == null)
+				Show(args);
+			Random r = new Random(Calendar.getInstance().get(Calendar.MILLISECOND));
+			int i = r.nextInt(colorInfo.length);
+			return hexColor(new StrV(colorInfo[i]), defaultPenColor);
+		} else
+			throw new InterpretException("Unexpected # of args " + args.size());
 	}
 
 	public static void Hide(ArrayList<Value> args) {
 		// 그래픽 창을 숨김
-		if (frame == null)
-			Show(args);
-		frame.setVisible(false);
+		if (args.size() == 0) {
+			if (frame == null)
+				Show(args);
+			frame.setVisible(false);
+		} else
+			throw new InterpretException("Unexpected # of args " + args.size());
 	}
 
 	public static void SetPixel(ArrayList<Value> args) {
@@ -201,10 +207,13 @@ public class GraphicsWindow {
 
 	public static void Show(ArrayList<Value> args) {
 		// 그래픽 창을 표시함
-		if (frame != null)
-			frame.setVisible(true);
-		else
-			frame = new Frame();
+		if (args.size() == 0) {
+			if (frame != null)
+				frame.setVisible(true);
+			else
+				frame = new Frame();
+		} else
+			throw new InterpretException("Unexpected # of args " + args.size());
 	}
 
 	public static void ShowMessage(ArrayList<Value> args) {
@@ -227,7 +236,7 @@ public class GraphicsWindow {
 		} else
 			throw new InterpretException("Unexpected # of args " + args.size());
 
-		JOptionPane.showMessageDialog(frame, text, title, JOptionPane.INFORMATION_MESSAGE);
+		JOptionPane.showMessageDialog(frame, text, title, JOptionPane.PLAIN_MESSAGE);
 
 	}
 
@@ -488,7 +497,7 @@ public class GraphicsWindow {
 				if (isInteger[0] && isInteger[1]) {
 					cmd.x = values[0];
 					cmd.y = values[1];
-					
+
 					cmd.font = settingFont();
 					cmd.brushcolor = BrushColor;
 				}
@@ -535,7 +544,7 @@ public class GraphicsWindow {
 					cmd.y = values[1];
 					cmd.w = values[2];
 					cmd.h = values[3];
-					
+
 					cmd.pencolor = PenColor;
 					cmd.penwidth = PenWidth;
 
@@ -614,7 +623,7 @@ public class GraphicsWindow {
 					cmd.y1 = values[1];
 					cmd.x2 = values[2];
 					cmd.y2 = values[3];
-					
+
 					cmd.pencolor = PenColor;
 					cmd.penwidth = PenWidth;
 
@@ -656,7 +665,7 @@ public class GraphicsWindow {
 					cmd.y = values[1];
 					cmd.w = values[2];
 					cmd.h = values[3];
-					
+
 					cmd.pencolor = PenColor;
 					cmd.penwidth = PenWidth;
 
@@ -737,7 +746,7 @@ public class GraphicsWindow {
 					cmd.x = values[0];
 					cmd.y = values[1];
 					cmd.text = ((StrV) args.get(2)).getValue();
-					
+
 					cmd.font = settingFont();
 					cmd.brushcolor = BrushColor;
 
@@ -780,7 +789,7 @@ public class GraphicsWindow {
 					cmd.y[1] = values[3];
 					cmd.x[2] = values[4];
 					cmd.y[2] = values[5];
-					
+
 					cmd.pencolor = PenColor;
 					cmd.penwidth = PenWidth;
 
@@ -823,7 +832,7 @@ public class GraphicsWindow {
 					cmd.y = (int) ((DoubleV) args.get(1)).getValue();
 					cmd.w = (int) ((DoubleV) args.get(2)).getValue();
 					cmd.h = (int) ((DoubleV) args.get(3)).getValue();
-					
+
 					cmd.brushcolor = BrushColor;
 
 					cmdList.add(cmd);
@@ -862,7 +871,7 @@ public class GraphicsWindow {
 					cmd.y = values[1];
 					cmd.w = values[2];
 					cmd.h = values[3];
-					
+
 					cmd.brushcolor = BrushColor;
 
 					cmdList.add(cmd);
@@ -903,7 +912,7 @@ public class GraphicsWindow {
 					cmd.y[1] = values[3];
 					cmd.x[2] = values[4];
 					cmd.y[2] = values[5];
-					
+
 					cmd.brushcolor = BrushColor;
 
 					cmdList.add(cmd);
@@ -915,7 +924,6 @@ public class GraphicsWindow {
 			}
 		}
 
-		
 		@Override
 		public void mouseClicked(MouseEvent e) {
 
@@ -980,52 +988,54 @@ public class GraphicsWindow {
 		}
 
 	}
+
 	private static boolean fontBold() {
 		StrV bold = (StrV) FontBold;
 		String boolBold = bold.getValue();
-		
-		if(boolBold.equalsIgnoreCase("True"))
+
+		if (boolBold.equalsIgnoreCase("True"))
 			return true;
 		else
 			return false;
 	}
-	
+
 	private static boolean fontItalic() {
 		StrV italic = (StrV) FontItalic;
 		String boolItalic = italic.getValue();
-		
-		if(boolItalic.equalsIgnoreCase("True"))
+
+		if (boolItalic.equalsIgnoreCase("True"))
 			return true;
 		else
 			return false;
 	}
+
 	private static Font settingFont() {
 		Font font;
-		
+
 		boolean bold = fontBold();
 		boolean italic = fontItalic();
 		String fontName = ((StrV) FontName).getValue();
 		int fontSize;
-		
-		if(FontSize instanceof DoubleV)
+
+		if (FontSize instanceof DoubleV)
 			fontSize = (int) ((DoubleV) FontSize).getValue();
-		else if(FontSize instanceof StrV && ((StrV) FontSize).isNumber())
+		else if (FontSize instanceof StrV && ((StrV) FontSize).isNumber())
 			fontSize = (int) ((StrV) FontSize).parseDouble();
 		else
 			throw new InterpretException("Unexpected type of " + FontSize);
-			
-		if(bold && italic)
+
+		if (bold && italic)
 			font = new Font(fontName, Font.BOLD | Font.ITALIC, fontSize);
-		else if(bold)
+		else if (bold)
 			font = new Font(fontName, Font.BOLD, fontSize);
-		else if(italic)
+		else if (italic)
 			font = new Font(fontName, Font.ITALIC, fontSize);
 		else
-			font = new Font(fontName, Font.PLAIN, fontSize);			
-		
+			font = new Font(fontName, Font.PLAIN, fontSize);
+
 		return font;
 	}
-	
+
 	private static class Cmd {
 		int cmd;
 	}
@@ -1033,14 +1043,14 @@ public class GraphicsWindow {
 	private static class DrawBoundTextCmd extends Cmd {
 		int x, y, w;
 		String text;
-		
+
 		Font font;
 		Value brushcolor;
 	}
 
 	private static class DrawEllipseCmd extends Cmd {
 		int x, y, w, h;
-		
+
 		Value pencolor;
 		Value penwidth;
 	}
@@ -1052,14 +1062,14 @@ public class GraphicsWindow {
 
 	private static class DrawLineCmd extends Cmd {
 		int x1, y1, x2, y2;
-		
+
 		Value pencolor;
 		Value penwidth;
 	}
 
 	private static class DrawRectangleCmd extends Cmd {
 		int x, y, w, h;
-		
+
 		Value pencolor;
 		Value penwidth;
 	}
@@ -1072,7 +1082,7 @@ public class GraphicsWindow {
 	private static class DrawTextCmd extends Cmd {
 		int x, y;
 		String text;
-		
+
 		Font font;
 		Value brushcolor;
 	}
@@ -1080,27 +1090,27 @@ public class GraphicsWindow {
 	private static class DrawTriangleCmd extends Cmd {
 		int x[] = new int[3];
 		int y[] = new int[3];
-		
+
 		Value pencolor;
 		Value penwidth;
 	}
 
 	private static class FillEllipseCmd extends Cmd {
 		int x, y, w, h;
-		
+
 		Value brushcolor;
 	}
 
 	private static class FillRectangleCmd extends Cmd {
 		int x, y, w, h;
-		
+
 		Value brushcolor;
 	}
 
 	private static class FillTriangleCmd extends Cmd {
 		int x[] = new int[3];
 		int y[] = new int[3];
-		
+
 		Value brushcolor;
 	}
 
