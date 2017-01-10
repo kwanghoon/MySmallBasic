@@ -1,7 +1,6 @@
 first = Shapes.AddRectangle(200, 20)
 Shapes.Move(first, 100, 100)
 Shapes.Animate(first, 250, 250, 3000)
-Shapes.SetText(first, "hello")
 Shapes.Zoom(first, 2, 2)
 
 second = Shapes.AddEllipse(100, 100)
@@ -9,6 +8,12 @@ Shapes.Move(second, 50, 40)
 
 third = Shapes.AddText("hello")
 Shapes.Move(third, 150, 50)
+Shapes.SetText(third, "hello world")
 
 fourth = Shapes.AddLine(10, 10, 50, 50)
 Shapes.SetOpacity(fourth, 30)
+
+For i = 10 To 90 Step 5
+	Shapes.Rotate(first, i)
+	TextWindow.Read()
+EndFor
