@@ -1,0 +1,26 @@
+'  Array.ContainsIndex
+arr[0] = "hello"
+arr[2] = "world"
+arr[4] = "123"
+b = Array.ContainsIndex(arr,1)
+TextWindow.WriteLine(b)
+
+b = Array.ContainsIndex(arr,2)
+TextWindow.WriteLine(b)
+
+b = Array.ContainsIndex(arr,"1")
+TextWindow.WriteLine(b)
+
+b = Array.ContainsIndex(arr,"2")
+TextWindow.WriteLine(b)
+
+' Array.ContainsValue
+
+c = Array.ContainsValue(arr,"hello")
+TextWindow.WriteLine(c)
+
+c = Array.ContainsValue(arr,2)
+TextWindow.WriteLine(c)
+
+c = Array.ContainsValue(arr,123)
+TextWindow.WriteLine(c)
