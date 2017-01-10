@@ -244,6 +244,11 @@ public class GraphicsWindow {
 		Frame() {
 			setTitle(Title.toString());
 			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			
+			int left = getLeft();
+			int top = getTop();
+			
+			setLocation(left, top);
 
 			int width = (int) ((DoubleV) Width).getValue();
 			int height = (int) ((DoubleV) Height).getValue();
@@ -378,9 +383,12 @@ public class GraphicsWindow {
 		public Value GetPixel(ArrayList<Value> args) {
 			try {
 				if (args.size() == 2) {
-					Robot robot = new Robot();
+					Robot robot = new Robot(panel.getGraphicsConfiguration().getDevice());
 					boolean isInteger[] = { false, false };
 					int values[] = new int[2];
+					
+					int left = (int) frame.getLocation().getX();
+					int top = (int) frame.getLocation().getY();
 
 					for (int i = 0; i < args.size(); i++) {
 						if (args.get(i) instanceof DoubleV) {
@@ -396,13 +404,11 @@ public class GraphicsWindow {
 					}
 
 					if (isInteger[0] && isInteger[1]) {
-						GraphicsConfiguration gc = getGraphicsConfiguration();
-						Rectangle r = gc.getBounds();
-						Color color = robot.getPixelColor(r.x + values[0], r.y + values[1]);
-
-						String red = Integer.toHexString(color.getRed());
-						String green = Integer.toHexString(color.getGreen());
-						String blue = Integer.toHexString(color.getBlue());
+						Color color = robot.getPixelColor(values[0] + 7 + left, values[1] + 30 + top);
+						
+						String red = String.format("%02x", color.getRed());
+						String green = String.format("%02x", color.getGreen());
+						String blue = String.format("%02x", color.getBlue());
 
 						StrV rgbColor = new StrV("#" + red + green + blue);
 
@@ -1035,6 +1041,32 @@ public class GraphicsWindow {
 
 		return font;
 	}
+	
+	private static int getLeft() {
+		int left;
+		
+		if(Left instanceof DoubleV)
+			left = (int) ((DoubleV) Left).getValue();
+		else if(Left instanceof StrV && ((StrV) Left).isNumber())
+			left = (int) ((StrV) Left).parseDouble();
+		else
+			throw new InterpretException("Unexpected type " + Left);
+		
+		return left;
+	}
+	
+	private static int getTop() {
+		int top;
+		
+		if(Top instanceof DoubleV)
+			top = (int) ((DoubleV) Top).getValue();
+		else if(Top instanceof StrV && ((StrV) Top).isNumber())
+			top = (int) ((DoubleV) Top).getValue();
+		else
+			throw new InterpretException("Unexpected type " + Top);
+		
+		return top;
+	}
 
 	private static class Cmd {
 		int cmd;
@@ -1131,13 +1163,13 @@ public class GraphicsWindow {
 	public static Value Height = new DoubleV(480);
 	public static Value LastKey;
 	public static Value LastText;
-	public static Value Left = new DoubleV(76.8);
+	public static Value Left = new DoubleV(51.2);
 	public static Value MouseX;
 	public static Value MouseY;
 	public static Value PenColor = defaultPenColor; // black
 	public static Value PenWidth = new DoubleV(2);
 	public static Value Title = new StrV("Small Basic Graphics Window");
-	public static Value Top = new DoubleV(179.2);
+	public static Value Top = new DoubleV(51.2);
 	public static Value Width = new DoubleV(640);
 
 	public static Value KeyDown;
