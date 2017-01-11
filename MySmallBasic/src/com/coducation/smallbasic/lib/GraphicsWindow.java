@@ -240,7 +240,7 @@ public class GraphicsWindow {
 
 	}
 
-	private static class Frame extends JFrame {
+	protected static class Frame extends JFrame {
 		Frame() {
 			setTitle(Title.toString());
 			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -261,15 +261,17 @@ public class GraphicsWindow {
 		}
 	}
 
-	private static class Panel extends JPanel implements MouseListener, KeyListener, MouseMotionListener {
+	protected static class Panel extends JPanel implements MouseListener, KeyListener, MouseMotionListener {
 		public Panel(int width, int height) {
 			this.setOpaque(true);
+			this.setLayout(null);
+			
 			cmdList = new ArrayList<>();
 			pixelList = new ArrayList<>();
+			
 			addMouseListener(this);
 			addKeyListener(this);
 			setPreferredSize(new Dimension(width, height));
-
 		}
 
 		public void paintComponent(Graphics g) {
@@ -1015,7 +1017,7 @@ public class GraphicsWindow {
 			return false;
 	}
 
-	private static Font settingFont() {
+	protected static Font settingFont() {
 		Font font;
 
 		boolean bold = fontBold();
@@ -1146,8 +1148,8 @@ public class GraphicsWindow {
 		Value brushcolor;
 	}
 
-	private static Frame frame = null;
-	private static Panel panel = null;
+	protected static Frame frame = null;
+	protected static Panel panel = null;
 
 	private static final Value defaultBrushColor = new StrV("#6A5ACD");
 	private static final Value defaultPenColor = new StrV("#000000");
