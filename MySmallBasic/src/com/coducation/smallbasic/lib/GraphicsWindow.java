@@ -404,7 +404,7 @@ public class GraphicsWindow {
 					}
 
 					if (isInteger[0] && isInteger[1]) {
-						Color color = robot.getPixelColor(values[0] + 7 + left, values[1] + 30 + top);
+						Color color = robot.getPixelColor(values[0] + (int) panel.getLocationOnScreen().getX(), values[1] + (int) panel.getLocationOnScreen().getY());
 						
 						String red = String.format("%02x", color.getRed());
 						String green = String.format("%02x", color.getGreen());
