@@ -1,0 +1,22 @@
+' Timer Pause(), Resume() 적용
+Timer.Interval = 2000
+Timer.Tick = OnTime
+
+i=0
+isPause=0
+
+Sub OnTime
+  
+  TextWindow.WriteLine(i)
+  If i=4 Then
+  Timer.Pause()
+  isPause=1
+  EndIf
+
+  If isPause=1 Then
+  TextWindow.WriteLine("Hello")
+  Timer.Resume()
+  isPause=0
+  EndIf 
+  i = i+1
+  EndSub
