@@ -1,0 +1,53 @@
+'simple stack test
+
+Stack.PushValue("Stack", 1)
+Stack.PushValue("Stack", "hi")
+TextWindow.WriteLine("push 1, push hi")
+TextWindow.WriteLine("pop : " + Stack.PopValue("Stack"))
+
+
+'different type item in stack test
+
+TextWindow.WriteLine()
+TextWindow.WriteLine("========================================")
+
+TextWindow.WriteLine("myStack num : " + Stack.GetCount("myStack"))
+
+Stack.PushValue("myStack", 1)
+Stack.PushValue("myStack", "hi")
+TextWindow.WriteLine("push 1 , push hi")
+
+TextWindow.WriteLine("myStack num : " + Stack.GetCount("myStack"))
+TextWindow.WriteLine("myStack pop : " + Stack.PopValue("myStack"))
+TextWindow.WriteLine("myStack pop : " + Stack.PopValue("myStack"))
+TextWindow.WriteLine("myStack num : " + Stack.GetCount("myStack"))
+
+
+'numberValue stackName test
+
+TextWindow.WriteLine()
+TextWindow.WriteLine("========================================")
+
+num1 = 1
+num2 = 2
+num3 = 3
+
+Stack.PushValue("myStack2", num1)
+Stack.PushValue("myStack2", num2)
+Stack.PushValue("myStack2", num3)
+TextWindow.WriteLine("myStack2 : push 1, push 2, push 3")
+
+pop1 = Stack.PopValue("myStack2")
+pop2 = Stack.PopValue("myStack2")
+
+TextWindow.WriteLine("pop1 + pop2 = " + (pop1 + pop2))
+
+
+'arg1 is numValue
+
+TextWindow.WriteLine()
+TextWindow.WriteLine("========================================")
+
+a = 12
+Stack.PushValue(12,1)
+TextWindow.WriteLine(Stack.PopValue(a))
