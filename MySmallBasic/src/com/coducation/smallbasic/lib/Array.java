@@ -109,6 +109,7 @@ public class Array {
 			throw new InterpretException("Error in # of Arguments: " + args.size());
 	}
 
+	
 	//배열 여부
 	public static Value IsArray(ArrayList<Value> args){
 		if(args.size()==1){

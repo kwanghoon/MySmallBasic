@@ -17,6 +17,7 @@ TextWindow.WriteLine(b)
 ' Array.ContainsValue
 
 
+
 c = Array.ContainsValue(arr,"hello")
 TextWindow.WriteLine(c)
 
