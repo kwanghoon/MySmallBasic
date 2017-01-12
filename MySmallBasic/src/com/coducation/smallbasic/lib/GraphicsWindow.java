@@ -7,9 +7,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.GraphicsConfiguration;
 import java.awt.Image;
-import java.awt.Rectangle;
 import java.awt.Robot;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -244,10 +242,10 @@ public class GraphicsWindow {
 		Frame() {
 			setTitle(Title.toString());
 			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-			
+
 			int left = getLeft();
 			int top = getTop();
-			
+
 			setLocation(left, top);
 
 			int width = (int) ((DoubleV) Width).getValue();
@@ -265,10 +263,10 @@ public class GraphicsWindow {
 		public Panel(int width, int height) {
 			this.setOpaque(true);
 			this.setLayout(null);
-			
+
 			cmdList = new ArrayList<>();
 			pixelList = new ArrayList<>();
-			
+
 			addMouseListener(this);
 			addKeyListener(this);
 			setPreferredSize(new Dimension(width, height));
@@ -336,7 +334,7 @@ public class GraphicsWindow {
 					color = ((StrV) dtrc.pencolor).getValue();
 					((Graphics2D) g).setStroke(new BasicStroke((float) ((DoubleV) dtrc.penwidth).getValue()));
 					g.setColor(new Color(Integer.parseInt(color.substring(1), 16)));
-					g.drawPolygon(dtrc.x, dtrc.y, 3);
+					g.drawPolygon(dtrc.xs, dtrc.ys, 3);
 					break;
 
 				case FILLELLIPSE:
@@ -355,7 +353,7 @@ public class GraphicsWindow {
 					FillTriangleCmd ftc = (FillTriangleCmd) cmd;
 					color = ((StrV) ftc.brushcolor).getValue();
 					g.setColor(new Color(Integer.parseInt(color.substring(1), 16)));
-					g.fillPolygon(ftc.x, ftc.y, 3);
+					g.fillPolygon(ftc.xs, ftc.ys, 3);
 					break;
 				}
 			}
@@ -388,7 +386,7 @@ public class GraphicsWindow {
 					Robot robot = new Robot(panel.getGraphicsConfiguration().getDevice());
 					boolean isInteger[] = { false, false };
 					int values[] = new int[2];
-					
+
 					int left = (int) frame.getLocation().getX();
 					int top = (int) frame.getLocation().getY();
 
@@ -406,8 +404,9 @@ public class GraphicsWindow {
 					}
 
 					if (isInteger[0] && isInteger[1]) {
-						Color color = robot.getPixelColor(values[0] + (int) panel.getLocationOnScreen().getX(), values[1] + (int) panel.getLocationOnScreen().getY());
-						
+						Color color = robot.getPixelColor(values[0] + (int) panel.getLocationOnScreen().getX(),
+								values[1] + (int) panel.getLocationOnScreen().getY());
+
 						String red = String.format("%02x", color.getRed());
 						String green = String.format("%02x", color.getGreen());
 						String blue = String.format("%02x", color.getBlue());
@@ -791,12 +790,12 @@ public class GraphicsWindow {
 					}
 				}
 				if (isInteger[0] && isInteger[1] && isInteger[2] && isInteger[3] && isInteger[4] && isInteger[5]) {
-					cmd.x[0] = values[0];
-					cmd.y[0] = values[1];
-					cmd.x[1] = values[2];
-					cmd.y[1] = values[3];
-					cmd.x[2] = values[4];
-					cmd.y[2] = values[5];
+					cmd.xs[0] = values[0];
+					cmd.ys[0] = values[1];
+					cmd.xs[1] = values[2];
+					cmd.ys[1] = values[3];
+					cmd.xs[2] = values[4];
+					cmd.ys[2] = values[5];
 
 					cmd.pencolor = PenColor;
 					cmd.penwidth = PenWidth;
@@ -914,12 +913,12 @@ public class GraphicsWindow {
 					}
 				}
 				if (isInteger[0] && isInteger[1] && isInteger[2] && isInteger[3] && isInteger[4] && isInteger[5]) {
-					cmd.x[0] = values[0];
-					cmd.y[0] = values[1];
-					cmd.x[1] = values[2];
-					cmd.y[1] = values[3];
-					cmd.x[2] = values[4];
-					cmd.y[2] = values[5];
+					cmd.xs[0] = values[0];
+					cmd.ys[0] = values[1];
+					cmd.xs[1] = values[2];
+					cmd.ys[1] = values[3];
+					cmd.xs[2] = values[4];
+					cmd.ys[2] = values[5];
 
 					cmd.brushcolor = BrushColor;
 
@@ -930,6 +929,10 @@ public class GraphicsWindow {
 			} else {
 				throw new InterpretException("Unexpected # of args " + args.size());
 			}
+		}
+
+		public ArrayList<Cmd> getCmdList() {
+			return cmdList;
 		}
 
 		@Override
@@ -997,6 +1000,87 @@ public class GraphicsWindow {
 
 	}
 
+	// Shapes Library
+	private static final String rectIdLabel = "Rectangle";
+
+	private static int rectId = 0;
+	private static int ellipId = 0;
+	private static int triId = 0;
+	private static int lineId = 0;
+	private static int textId = 0;
+	private static int imageId = 0;
+
+	private static HashMap<String, ArrayList<Cmd>> shapeMap = new HashMap<>();
+
+	public static String AddRectangle(int width, int height) {
+		if (frame == null)
+			Show(new ArrayList<Value>());
+
+		ArrayList<Value> grArgs = new ArrayList<Value>();
+		grArgs.add(new DoubleV(0));
+		grArgs.add(new DoubleV(0));
+		grArgs.add(new DoubleV(width));
+		grArgs.add(new DoubleV(height));
+
+		GraphicsWindow.FillRectangle(grArgs);
+		Cmd cmd1 = panel.getCmdList().get(panel.getCmdList().size() - 1);
+		GraphicsWindow.DrawRectangle(grArgs);
+		Cmd cmd2 = panel.getCmdList().get(panel.getCmdList().size() - 1);
+
+		ArrayList<Cmd> cmds = new ArrayList<>();
+		cmds.add(cmd1);
+		cmds.add(cmd2);
+
+		String id = rectIdLabel + rectId;
+		rectId++;
+
+		shapeMap.put(id, cmds);
+
+		return id;
+	}
+	
+	public static String AddEllipse(int width, int height) {
+		
+		return null;
+	}
+	
+	public static String AddTriangle(int width, int height) {
+		
+		return null;
+	}
+	
+	public static String AddImage(int width, int height) {
+		
+		return null;
+	}
+	
+	public static String AddText(int width, int height) {
+		
+		return null;
+	}
+
+	public static void Remove(String shape) {
+		ArrayList<Cmd> cmds = shapeMap.remove(shape);
+		if (cmds != null) {
+			for (Cmd cmd : cmds) {
+				panel.getCmdList().remove(cmd);
+			}
+			panel.repaint();
+		}
+	}
+
+	public static void Move(String shape, int x, int y) {
+		ArrayList<Cmd> cmds = shapeMap.get(shape);
+
+		if (cmds != null) {
+			for (Cmd cmd : cmds) {
+				cmd.Move(x, y);
+			}
+			panel.repaint();
+		}
+	}
+
+	// font
 	private static boolean fontBold() {
 		StrV bold = (StrV) FontBold;
 		String boolBold = bold.getValue();
@@ -1043,39 +1127,45 @@ public class GraphicsWindow {
 
 		return font;
 	}
-	
+
 	private static int getLeft() {
 		int left;
-		
-		if(Left instanceof DoubleV)
+
+		if (Left instanceof DoubleV)
 			left = (int) ((DoubleV) Left).getValue();
-		else if(Left instanceof StrV && ((StrV) Left).isNumber())
+		else if (Left instanceof StrV && ((StrV) Left).isNumber())
 			left = (int) ((StrV) Left).parseDouble();
 		else
 			throw new InterpretException("Unexpected type " + Left);
-		
+
 		return left;
 	}
-	
+
 	private static int getTop() {
 		int top;
-		
-		if(Top instanceof DoubleV)
+
+		if (Top instanceof DoubleV)
 			top = (int) ((DoubleV) Top).getValue();
-		else if(Top instanceof StrV && ((StrV) Top).isNumber())
+		else if (Top instanceof StrV && ((StrV) Top).isNumber())
 			top = (int) ((DoubleV) Top).getValue();
 		else
 			throw new InterpretException("Unexpected type " + Top);
-		
+
 		return top;
 	}
 
-	private static class Cmd {
+	private static abstract class Cmd {
 		int cmd;
+		int x, y;
+
+		void Move(int x, int y) {
+			this.x = x;
+			this.y = y;
+		}
 	}
 
 	private static class DrawBoundTextCmd extends Cmd {
-		int x, y, w;
+		int w;
 		String text;
 
 		Font font;
@@ -1083,14 +1173,13 @@ public class GraphicsWindow {
 	}
 
 	private static class DrawEllipseCmd extends Cmd {
-		int x, y, w, h;
+		int w, h;
 
 		Value pencolor;
 		Value penwidth;
 	}
 
 	private static class DrawImageCmd extends Cmd {
-		int x, y;
 		String imageName;
 	}
 
@@ -1099,10 +1188,21 @@ public class GraphicsWindow {
 
 		Value pencolor;
 		Value penwidth;
+
+		@Override
+		void Move(int x, int y) {
+			int dx = x1 - x;
+			int dy = y1 - y;
+
+			x1 = x;
+			y1 = y;
+			x2 = x2 + dx;
+			y2 = y2 + dy;
+		}
 	}
 
 	private static class DrawRectangleCmd extends Cmd {
-		int x, y, w, h;
+		int w, h;
 
 		Value pencolor;
 		Value penwidth;
@@ -1110,11 +1210,10 @@ public class GraphicsWindow {
 
 	private static class DrawResizedImageCmd extends Cmd {
 		String imageName;
-		int x, y, w, h;
+		int w, h;
 	}
 
 	private static class DrawTextCmd extends Cmd {
-		int x, y;
 		String text;
 
 		Font font;
@@ -1122,30 +1221,54 @@ public class GraphicsWindow {
 	}
 
 	private static class DrawTriangleCmd extends Cmd {
-		int x[] = new int[3];
-		int y[] = new int[3];
+		int xs[] = new int[3];
+		int ys[] = new int[3];
 
 		Value pencolor;
 		Value penwidth;
+
+		@Override
+		void Move(int x, int y) {
+			int dx = xs[0] - x;
+			int dy = ys[0] - y;
+			xs[0] = x;
+			ys[0] = y;
+			xs[1] = xs[1] - dx;
+			ys[1] = ys[1] - dy;
+			xs[2] = xs[2] - dx;
+			ys[2] = ys[2] - dy;
+		}
 	}
 
 	private static class FillEllipseCmd extends Cmd {
-		int x, y, w, h;
+		int w, h;
 
 		Value brushcolor;
 	}
 
 	private static class FillRectangleCmd extends Cmd {
-		int x, y, w, h;
+		int w, h;
 
 		Value brushcolor;
 	}
 
 	private static class FillTriangleCmd extends Cmd {
-		int x[] = new int[3];
-		int y[] = new int[3];
+		int xs[] = new int[3];
+		int ys[] = new int[3];
 
 		Value brushcolor;
+
+		@Override
+		void Move(int x, int y) {
+			int dx = xs[0] - x;
+			int dy = ys[0] - y;
+			xs[0] = x;
+			ys[0] = y;
+			xs[1] = xs[1] - dx;
+			ys[1] = ys[1] - dy;
+			xs[2] = xs[2] - dx;
+			ys[2] = ys[2] - dy;
+		}
 	}
 
 	protected static Frame frame = null;
