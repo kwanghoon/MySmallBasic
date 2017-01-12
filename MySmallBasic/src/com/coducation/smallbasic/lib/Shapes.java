@@ -8,7 +8,8 @@ import com.coducation.smallbasic.StrV;
 import com.coducation.smallbasic.Value;
 
 public class Shapes {
-	public static void AddRectangle(ArrayList<Value> args) {
+	
+	public static Value AddRectangle(ArrayList<Value> args) {
 		// width, height
 		// GraphicsWiindow에 사각형을 추가한 창을 반환
 		if (args.size() == 2) {
@@ -27,6 +28,12 @@ public class Shapes {
 				height = (int) ((StrV) args.get(1)).parseDouble();
 			} else
 				throw new InterpretException("Unexpected type " + args.get(1));
+			
+					
+			String id = GraphicsWindow.AddRectangle(width, height);
+			
+			
+			return new StrV(id);
 		} else
 			throw new InterpretException("Unexpected # of args " + args.size());
 	}
@@ -137,7 +144,9 @@ public class Shapes {
 		// shapeName에 해당하는 shape를 삭제함
 		if (args.size() == 1) {
 			if (args.get(0) instanceof StrV) {
-
+				String shape = ((StrV) args.get(0)).getValue();
+				
+				GraphicsWindow.Remove(shape);
 			} else
 				throw new InterpretException("Unexpected type " + args.get(0));
 		} else
@@ -148,25 +157,29 @@ public class Shapes {
 		// shapeName, x, y
 		// shapeName에 해당하는 shape를 새로운 x, y로 이동
 		if (args.size() == 3) {
+			String shape;
+			int x, y;
+			
 			if (args.get(0) instanceof StrV) {
-
+				shape = ((StrV) args.get(0)).getValue();
 			} else
 				throw new InterpretException("Unexpected type " + args.get(0));
 
 			if (args.get(1) instanceof DoubleV) {
-
+				x = (int) ((DoubleV) args.get(1)).getValue();
 			} else if (args.get(1) instanceof StrV && ((StrV) args.get(1)).isNumber()) {
-
+				x = (int) ((StrV) args.get(1)).parseDouble();
 			} else
 				throw new InterpretException("Unexpected type " + args.get(1));
 
 			if (args.get(2) instanceof DoubleV) {
-
+				y = (int) ((DoubleV) args.get(2)).getValue();
 			} else if (args.get(2) instanceof StrV && ((StrV) args.get(2)).isNumber()) {
-
+				y = (int) ((StrV) args.get(2)).parseDouble();
 			} else
 				throw new InterpretException("Unexpected type " + args.get(2));
-
+			
+			GraphicsWindow.Move(shape, x, y);
 		} else
 			throw new InterpretException("Unexpected # of args " + args.size());
 	}

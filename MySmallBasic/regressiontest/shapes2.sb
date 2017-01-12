@@ -1,0 +1,8 @@
+a = Shapes.AddRectangle(100, 100)
+Shapes.Move(a, 100, 100)
+
+GraphicsWindow.MouseDown = OnMouseClick
+
+Sub OnMouseClick
+	Shapes.Remove(a)
+EndSub
