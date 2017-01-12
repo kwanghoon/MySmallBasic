@@ -92,7 +92,7 @@ public class Array {
 			throw new InterpretException("Error in # of Arguments: " + args.size());
 	}
 
-	//배열에 들어있는 index의 개수
+	//배열에 들어있는 index의 개수!
 	public static Value GetItemCount(ArrayList<Value> args){
 		if(args.size()==1){
 			Value arg = args.get(0);
