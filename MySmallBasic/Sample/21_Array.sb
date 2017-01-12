@@ -1,6 +1,6 @@
 For i = 1 To 5   
 	TextWindow.Write("User" + i + ", enter name: ")   
-	name[i] = TextWindow.Read() 
+	name[i] = i
 EndFor  
 TextWindow.Write("Hello ") 
 For i = 1 To 5   
