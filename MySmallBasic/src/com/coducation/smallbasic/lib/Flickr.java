@@ -1,6 +1,17 @@
 package com.coducation.smallbasic.lib;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.xml.sax.SAXException;
 
 import com.coducation.smallbasic.DoubleV;
 import com.coducation.smallbasic.InterpretException;
@@ -9,10 +20,44 @@ import com.coducation.smallbasic.Value;
 
 public class Flickr {
 	
-	public static Value GetPictureOfMoment() {
+	public static Value GetPictureOfMoment(ArrayList<Value> args) {
 		// Flickr 의 현재 사진에 대한 파일 url을 가져옴
+		String u = "https://api.flickr.com/services/rest/?method=flickr.photos.getRecent&api_key=b0aedc61fdcad3b86eda9a20e9c8bc4b&per_page=1";
+		String photourl = "";
+		
+		if (args.size() == 0) {
+			try {
 
-		return new StrV("URL");
+				DocumentBuilderFactory f = DocumentBuilderFactory.newInstance();
+				DocumentBuilder parser = f.newDocumentBuilder();
+				Document xmlDoc = parser.parse(u);
+
+				Element root = xmlDoc.getDocumentElement(); // 현재 rsp
+				String farm_id, server_id, id, secret;
+				// farm-id, server-id, photo-id, secret 필요
+				Node xmlNode1 = root.getElementsByTagName("photo").item(0);
+
+				farm_id = ((Element) xmlNode1).getAttribute("farm");
+				server_id = ((Element) xmlNode1).getAttribute("server");
+				id = ((Element) xmlNode1).getAttribute("id");
+				secret = ((Element) xmlNode1).getAttribute("secret");
+
+				photourl = "https://farm"+farm_id+".staticflickr.com/"+server_id+"/"+id+"_"+secret+".jpg";
+				
+			} catch (MalformedURLException e) {
+				e.printStackTrace();
+			} catch (ParserConfigurationException e) {
+				e.printStackTrace();
+			} catch (SAXException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} 
+				
+		}
+		else throw new InterpretException("ReadContents: Unexpected # of args: " + args.size());
+
+		return new StrV(photourl);
 	}
 
 	public static Value GetRandomPicture(ArrayList<Value> args) {
