@@ -14,23 +14,20 @@ import com.coducation.smallbasic.DoubleV;
 import com.coducation.smallbasic.InterpretException;
 import com.coducation.smallbasic.StrV;
 import com.coducation.smallbasic.Value;
+import com.sun.org.apache.xpath.internal.Arg;
 
 public class Controls {
-	static {
-		controls = new HashMap<String, JComponent>();
-	}
-
-	public static void AddButton(ArrayList<Value> args) {
+	public static Value AddButton(ArrayList<Value> args) {
 		// caption, left, top
 		// GraphicsWindow에 버튼을 추가한 창을 반환
 
 		if (args.size() == 3) {
-			JButton btn;
+			String caption;
 			int left, top;
 
 			// caption check
 			if (args.get(0) instanceof StrV || args.get(0) instanceof DoubleV)
-				btn = new JButton(args.get(0).toString());
+				caption = args.get(0).toString();
 			else
 				throw new InterpretException("Unexpected type " + args.get(0));
 
@@ -50,14 +47,9 @@ public class Controls {
 			} else
 				throw new InterpretException("Unexpected type " + args.get(2));
 
-			Font font = GraphicsWindow.settingFont();
-			btn.setFont(font);
-			btn.setSize(btn.getPreferredSize());
-			btn.setLocation(left, top);
-
-			// HashMap에도 추가하는 부분 넣기
-			panel.add(btn);
-
+			String id = GraphicsWindow.AddButton(caption, left, top);
+			
+			return new StrV(id);
 		} else
 			throw new InterpretException("Unexpected # of args " + args.size());
 	}
@@ -70,13 +62,13 @@ public class Controls {
 			String buttonName;
 
 			if (args.get(0) instanceof StrV) {
-				// controls가 비어있는 경우 처리
-				// controls에 buttonName이 존재하지 않는 경우처리
-				// contorls에 buttonName이 존재하지만 Button이 아닌 경우 처리
-				// controls에 buttonName이 존재하고 Button인 경우 처리
+				buttonName = ((StrV) args.get(0)).getValue();
 			} else
 				throw new InterpretException("Unexpected type " + args.get(0));
-			return null;
+			
+			String caption = GraphicsWindow.GetButtonCaption(buttonName);
+			
+			return new StrV(caption);
 		} else
 			throw new InterpretException("Unexpected # of args " + args.size());
 	}
@@ -86,13 +78,10 @@ public class Controls {
 		// buttonName에 해당하는 버튼의 caption을 설정함, 반환값 없음
 
 		if (args.size() == 2) {
+			String buttonName;
 			String caption;
 			if (args.get(0) instanceof StrV) {
-				// controls의 크기가 0인 경우
-				// buttonName이 controls에 존재하지 않는 경우
-				// buttonName의 controls가 존재하지만 button이 아닌 경우
-				// buttonName의 controls가 존재하고 button인 경우
-
+				buttonName = ((StrV) args.get(0)).getValue();
 			} else
 				throw new InterpretException("Unexpected type " + args.get(0));
 
@@ -100,15 +89,16 @@ public class Controls {
 				caption = ((StrV) args.get(1)).getValue();
 			} else if (args.get(1) instanceof DoubleV) {
 				caption = ((DoubleV) args.get(1)).toString();
-			}
-
-			else
+			} else
 				throw new InterpretException("Unexpected type " + args.get(1));
+			
+			GraphicsWindow.SetButtonCaption(buttonName, caption);
+			
 		} else
 			throw new InterpretException("Unexpected # of args " + args.size());
 	}
 
-	public static void AddTextBox(ArrayList<Value> args) {
+	public static Value AddTextBox(ArrayList<Value> args) {
 		// left, top
 		// GraphicsWindow에 텍스트박스를 추가한 창을 반환
 		if (args.size() == 2) {
@@ -131,19 +121,14 @@ public class Controls {
 			} else
 				throw new InterpretException("Unexpected type " + args.get(1));
 
-			Font font = GraphicsWindow.settingFont();
-			tf = new JTextField();
-			tf.setFont(font);
-			tf.setSize(160, 20);
-			tf.setLocation(left, top);
-
-			// HashMap에도 tf 추가하는 부분 넣기
-			panel.add(tf);
+			String id = GraphicsWindow.AddTextBox(left, top);
+			
+			return new StrV(id);
 		} else
 			throw new InterpretException("Unexpected # of args " + args.size());
 	}
 
-	public static void AddMultiLineTextBox(ArrayList<Value> args) {
+	public static Value AddMultiLineTextBox(ArrayList<Value> args) {
 		// left, top
 		// GraphicsWiindow에 텍스트박스를 추가한 창을 반환
 		if (args.size() == 2) {
@@ -165,14 +150,9 @@ public class Controls {
 			} else
 				throw new InterpretException("Unexpected type " + args.get(1));
 
-			Font font = GraphicsWindow.settingFont();
-			ta = new JTextArea(5, 27);
-			ta.setFont(font);
-			ta.setLocation(left, top);
-			scroll = new JScrollPane(ta);
-
-			// controls에 추가
-			panel.add(scroll);
+			String id = GraphicsWindow.AddMultiLineTextBox(left, top);
+			
+			return new StrV(id);
 		} else
 			throw new InterpretException("Unexpected # of args " + args.size());
 	}
@@ -181,11 +161,15 @@ public class Controls {
 		// textBoxName
 		// textBoxName에 해당하는 텍스트 박스의 내용을 반환
 		if (args.size() == 1) {
+			String textBoxName;
 			if (args.get(0) instanceof StrV) {
-
+				textBoxName = ((StrV) args.get(0)).getValue();
 			} else
 				throw new InterpretException("Unexpected type " + args.get(0));
-			return null;
+			
+			String text = GraphicsWindow.GetTextBoxText(textBoxName);
+			
+			return new StrV(text);
 		} else
 			throw new InterpretException("Unexpected # of args " + args.size());
 
@@ -195,18 +179,22 @@ public class Controls {
 		// textBoxName, text
 		// textBoxName에 해당하는 텍스트 박스의 내용을 text로 설정함
 		if (args.size() == 2) {
-
+			String textBoxName;
+			String text;
 			if (args.get(0) instanceof StrV) {
-
+				textBoxName = ((StrV) args.get(0)).getValue();
 			} else
 				throw new InterpretException("Unexpected type " + args.get(0));
 
 			if (args.get(1) instanceof StrV) {
-
+				text = ((StrV) args.get(1)).getValue();
 			} else if (args.get(1) instanceof DoubleV) {
-
+				text = ((DoubleV) args.get(1)).toString();
 			} else
 				throw new InterpretException("Unexpected type " + args.get(1));
+			
+			GraphicsWindow.SetTextBoxText(textBoxName, text);
+			
 		} else
 			throw new InterpretException("Unexpected # of args " + args.size());
 	}
@@ -227,24 +215,29 @@ public class Controls {
 		// control, x, y
 		// control을 새로운 x, y로 옮김
 		if (args.size() == 3) {
+			String control;
+			int x, y;
+			
 			if (args.get(0) instanceof StrV) {
-
+				control = ((StrV) args.get(0)).getValue();
 			} else
 				throw new InterpretException("Unexpected type " + args.get(0));
 
 			if (args.get(1) instanceof DoubleV) {
-
+				x = (int) ((DoubleV) args.get(1)).getValue();
 			} else if (args.get(1) instanceof StrV && ((StrV) args.get(1)).isNumber()) {
-
+				x = (int) ((StrV) args.get(1)).parseDouble();
 			} else
 				throw new InterpretException("Unexpected type " + args.get(1));
 
 			if (args.get(2) instanceof DoubleV) {
-
+				y = (int) ((DoubleV) args.get(2)).getValue();
 			} else if (args.get(2) instanceof StrV && ((StrV) args.get(2)).isNumber()) {
-
+				y = (int) ((StrV) args.get(2)).parseDouble();
 			} else
 				throw new InterpretException("Unexpected type " + args.get(2));
+			
+			
 		} else
 			throw new InterpretException("Unexpected # of args " + args.size());
 	}
@@ -299,10 +292,6 @@ public class Controls {
 		} else
 			throw new InterpretException("Unexpected # of args " + args.size());
 	}
-
-	private static HashMap<String, JComponent> controls;
-
-	private static GraphicsWindow.Panel panel;
 
 	public static Value LastClickedButton;
 	public static Value LastTypedTextBox;
