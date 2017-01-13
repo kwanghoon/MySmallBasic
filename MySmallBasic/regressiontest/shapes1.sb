@@ -1,6 +1,8 @@
 a = Shapes.AddRectangle(100, 100)
 b = Shapes.AddRectangle(100, 100)
 Shapes.Move(b, 100, 100)
+TextWindow.WriteLine(a)
+TextWindow.WriteLine(b)
 GraphicsWindow.MouseDown = OnMouseDown
 
 Sub OnMouseDown
