@@ -1,0 +1,30 @@
+first = Shapes.AddLine(10, 10, 100, 100)
+second = Shapes.AddEllipse(30, 30)
+third = Shapes.AddRectangle(50, 50)
+fourth = Shapes.AddTriangle(30, 30, 30, 10, 50, 10)
+fifth = Shapes.AddText("test")
+
+shape = first
+
+GraphicsWindow.KeyDown = OnKeyPressed
+GraphicsWindow.MouseDown = OnMouseClicked
+
+Sub OnKeyPressed
+  If GraphicsWindow.LastKey = "D1" Then
+    shape = first
+  ElseIf GraphicsWindow.LastKey = "D2" Then
+    shape = second
+  ElseIf GraphicsWindow.LastKey = "D3" Then
+    shape = third
+  ElseIf GraphicsWindow.LastKey = "D4" Then
+    shape = fourth
+  ElseIf GraphicsWindow.LastKey = "D5" Then
+  	shape = fifth
+  EndIf
+EndSub
+
+Sub OnMouseClicked
+  x = GraphicsWindow.MouseX
+  y = GraphicsWindow.MouseY
+  Shapes.Move(shape, x, y)
+EndSub
