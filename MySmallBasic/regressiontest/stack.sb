@@ -8,7 +8,6 @@ TextWindow.WriteLine("pop : " + Stack.PopValue("Stack"))
 
 'different type item in stack test
 
-TextWindow.WriteLine()
 TextWindow.WriteLine("========================================")
 
 TextWindow.WriteLine("myStack num : " + Stack.GetCount("myStack"))
@@ -25,7 +24,6 @@ TextWindow.WriteLine("myStack num : " + Stack.GetCount("myStack"))
 
 'numberValue stackName test
 
-TextWindow.WriteLine()
 TextWindow.WriteLine("========================================")
 
 num1 = 1
@@ -43,11 +41,26 @@ pop2 = Stack.PopValue("myStack2")
 TextWindow.WriteLine("pop1 + pop2 = " + (pop1 + pop2))
 
 
-'arg1 is numValue
+'stackNameTest
 
-TextWindow.WriteLine()
 TextWindow.WriteLine("========================================")
 
-a = 12
-Stack.PushValue(12,1)
-TextWindow.WriteLine(Stack.PopValue(a))
+Stack.PushValue(1,1)
+Stack.PushValue("1",2)
+TextWindow.WriteLine("PushValue(1, 1) PushValue(string 1, 2)")
+
+TextWindow.WriteLine("pop 1 : " + Stack.PopValue(1))
+TextWindow.WriteLine("pop 1 : " + Stack.PopValue(1))
+
+'if stackName is array
+
+TextWindow.WriteLine("========================================")
+
+myArr[1] = 1
+myArr[2] = 2
+
+Stack.PushValue(myArr, 1)
+Stack.PushValue(myArr, 2)
+TextWindow.WriteLine("push 1, push 2")
+TextWindow.WriteLine("myArr.toString : " + myArr)
+TextWindow.WriteLine("pop : " + Stack.PopValue(myArr))

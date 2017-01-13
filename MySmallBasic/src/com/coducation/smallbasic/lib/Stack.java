@@ -5,23 +5,16 @@ import java.util.HashMap;
 
 import com.coducation.smallbasic.DoubleV;
 import com.coducation.smallbasic.InterpretException;
-import com.coducation.smallbasic.StrV;
 import com.coducation.smallbasic.Value;
 
 public class Stack
 {
 	static 
 	{
-		stacks = new HashMap<Value, java.util.Stack<Value>>();
+		stacks = new HashMap<String, java.util.Stack<Value>>();
 	}
 	
-	/* stackName인자로 모든 type이 가능하므로 수정
-	 * hashMap stacks - 현재 동일성검사로 인한 문제발생.(동등성을 체크해야한다...) 
-	 * Value들의 equals, hashCode메소드 오버라이딩 or 다른방법.. - 다른 클래스에서 hashCode가 사용되는지..
-	 * equals재정의는 필요(StrV, ArrayV)
-	 * 더 나은 방법 모색중...
-	 */
-	private static HashMap<Value, java.util.Stack<Value>> stacks;
+	private static HashMap<String, java.util.Stack<Value>> stacks;
 	
 	
 	//Stack.PushValue(stackName, value) - push in stack
@@ -31,7 +24,7 @@ public class Stack
 		if (args.size() == 2) 
 		{
 			//parameter
-			Value stackName = args.get(0);	//arg1
+			String stackName = args.get(0).toString();	//arg1
 			Value value = args.get(1);	//arg2
 			
 			java.util.Stack<Value> stack = stacks.get(stackName);
@@ -61,7 +54,7 @@ public class Stack
 		if (args.size() == 1) 
 		{
 			//parameter
-			Value stackName = args.get(0);	//arg1
+			String stackName = args.get(0).toString();	//arg1
 			
 			java.util.Stack<Value> stack = stacks.get(stackName);
 				
@@ -86,7 +79,7 @@ public class Stack
 		if (args.size() == 1) 
 		{
 			//parameter
-			Value stackName = args.get(0);	//arg1
+			String stackName = args.get(0).toString();	//arg1
 
 			java.util.Stack<Value> stack = stacks.get(stackName);
 				
