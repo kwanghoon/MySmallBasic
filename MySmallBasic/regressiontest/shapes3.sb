@@ -1,0 +1,9 @@
+GraphicsWindow.CanResize = "False"
+a = Shapes.AddLine(10, 10, 100, 100)
+GraphicsWindow.MouseDown = OnMouseClick
+
+Sub OnMouseClick
+	x = GraphicsWindow.MouseX
+	y = GraphicsWindow.MouseY
+	Shapes.Move(a, x, y)
+EndSub

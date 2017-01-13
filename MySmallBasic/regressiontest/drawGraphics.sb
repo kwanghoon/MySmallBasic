@@ -11,5 +11,13 @@ GraphicsWindow.FillTriangle(80, 80, 90, 120, 120, 90)
 GraphicsWindow.SetPixel(80, 80, "#123456")
 TextWindow.WriteLine(GraphicsWindow.GetPixel(80, 80))
 GraphicsWindow.SetPixel(100, 100, "SaddleBrown")
-
 GraphicsWindow.ShowMessage("hello", "test")
+
+GraphicsWindow.MouseDown = OnMouseDown
+
+Sub OnMouseDown
+	x = GraphicsWindow.MouseX
+	y = GraphicsWindow.MouseY
+	b = GraphicsWindow.GetPixel(x, y)
+	TextWindow.WriteLine(b)
+EndSub

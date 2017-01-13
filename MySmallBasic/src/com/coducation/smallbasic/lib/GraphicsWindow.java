@@ -1,15 +1,14 @@
 package com.coducation.smallbasic.lib;
 
 import java.awt.AWTException;
+import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.GraphicsConfiguration;
 import java.awt.Image;
-import java.awt.Rectangle;
 import java.awt.Robot;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -22,9 +21,14 @@ import java.util.HashMap;
 import java.util.Random;
 
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
 
 import com.coducation.smallbasic.DoubleV;
 import com.coducation.smallbasic.Eval;
@@ -244,6 +248,16 @@ public class GraphicsWindow {
 		Frame() {
 			setTitle(Title.toString());
 			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			
+			if(((StrV) CanResize).getValue().equalsIgnoreCase("true"))
+				setResizable(true);
+			else
+				setResizable(false);
+
+			int left = getLeft();
+			int top = getTop();
+
+			setLocation(left, top);
 
 			int width = (int) ((DoubleV) Width).getValue();
 			int height = (int) ((DoubleV) Height).getValue();
@@ -259,97 +273,135 @@ public class GraphicsWindow {
 	private static class Panel extends JPanel implements MouseListener, KeyListener, MouseMotionListener {
 		public Panel(int width, int height) {
 			this.setOpaque(true);
+			this.setLayout(null);
+
 			cmdList = new ArrayList<>();
 			pixelList = new ArrayList<>();
+
 			addMouseListener(this);
 			addKeyListener(this);
 			setPreferredSize(new Dimension(width, height));
-
 		}
 
 		public void paintComponent(Graphics g) {
 			super.paintComponent(g);
+			Graphics2D g2 = (Graphics2D) g;
 			String backColor = ((StrV) BackgroundColor).getValue();
 			setBackground(new Color(Integer.parseInt(backColor.substring(1), 16)));
 			String color;
 
 			for (Cmd cmd : cmdList) {
-				((Graphics2D) g).setStroke(new BasicStroke((float) ((DoubleV) PenWidth).getValue()));
-				switch (cmd.cmd) {
-				case NOCOMMAND:
-					break;
-				case DRAWBOUNDTEXT:
-					DrawBoundTextCmd dbtc = (DrawBoundTextCmd) cmd;
-					color = ((StrV) dbtc.brushcolor).getValue();
-					g.setFont(dbtc.font);
-					g.setColor(new Color(Integer.parseInt(color.substring(1), 16)));
-					break;
-				case DRAWELLIPSE:
-					DrawEllipseCmd dec = (DrawEllipseCmd) cmd;
-					color = ((StrV) dec.pencolor).getValue();
-					((Graphics2D) g).setStroke(new BasicStroke((float) ((DoubleV) dec.penwidth).getValue()));
-					g.setColor(new Color(Integer.parseInt(color.substring(1), 16)));
-					g.drawOval(dec.x, dec.y, dec.w, dec.h);
-					break;
-				case DRAWIMAGE:
-					DrawImageCmd dic = (DrawImageCmd) cmd;
-					ImageIcon icon = new ImageIcon(dic.imageName);
-					Image img = icon.getImage();
-					g.drawImage(img, dic.x, dic.y, this);
-					break;
-				case DRAWLINE:
-					DrawLineCmd dlc = (DrawLineCmd) cmd;
-					color = ((StrV) dlc.pencolor).getValue();
-					((Graphics2D) g).setStroke(new BasicStroke((float) ((DoubleV) dlc.penwidth).getValue()));
-					g.setColor(new Color(Integer.parseInt(color.substring(1), 16)));
-					g.drawLine(dlc.x1, dlc.y1, dlc.x2, dlc.y2);
-					break;
-				case DRAWRECTANGLE:
-					DrawRectangleCmd drc = (DrawRectangleCmd) cmd;
-					color = ((StrV) drc.pencolor).getValue();
-					((Graphics2D) g).setStroke(new BasicStroke((float) ((DoubleV) drc.penwidth).getValue()));
-					g.setColor(new Color(Integer.parseInt(color.substring(1), 16)));
-					g.drawRect(drc.x, drc.y, drc.w, drc.h);
-					break;
-				case DRAWRESIZEDIMAGE:
-					DrawResizedImageCmd dric = (DrawResizedImageCmd) cmd;
-					ImageIcon iconResized = new ImageIcon(dric.imageName);
-					Image imgResized = iconResized.getImage();
-					g.drawImage(imgResized, dric.x, dric.y, dric.w, dric.h, this);
-					break;
-				case DRAWTEXT:
-					DrawTextCmd dtc = (DrawTextCmd) cmd;
-					color = ((StrV) dtc.brushcolor).getValue();
-					g.setFont(dtc.font);
-					g.setColor(new Color(Integer.parseInt(color.substring(1), 16)));
-					g.drawString(dtc.text, dtc.x, dtc.y);
-					break;
-				case DRAWTRIANGLE:
-					DrawTriangleCmd dtrc = (DrawTriangleCmd) cmd;
-					color = ((StrV) dtrc.pencolor).getValue();
-					((Graphics2D) g).setStroke(new BasicStroke((float) ((DoubleV) dtrc.penwidth).getValue()));
-					g.setColor(new Color(Integer.parseInt(color.substring(1), 16)));
-					g.drawPolygon(dtrc.x, dtrc.y, 3);
-					break;
+				if (cmd.show) {
+					switch (cmd.cmd) {
+					case NOCOMMAND:
+						break;
+					case DRAWBOUNDTEXT:
+						DrawBoundTextCmd dbtc = (DrawBoundTextCmd) cmd;
+						color = ((StrV) dbtc.brushcolor).getValue();
+						g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) dbtc.opacity));
+						g2.rotate(java.lang.Math.toRadians(dbtc.degree));
+						g2.scale(dbtc.scaleX, dbtc.scaleY);
+						g2.setFont(dbtc.font);
+						g2.setColor(new Color(Integer.parseInt(color.substring(1), 16)));
+						
+						break;
+					case DRAWELLIPSE:
+						DrawEllipseCmd dec = (DrawEllipseCmd) cmd;
+						color = ((StrV) dec.pencolor).getValue();
+						g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) dec.opacity));
+						g2.rotate(java.lang.Math.toRadians(dec.degree));
+						g2.scale(dec.scaleX, dec.scaleY);
+						g2.setStroke(new BasicStroke((float) ((DoubleV) dec.penwidth).getValue()));
+						g2.setColor(new Color(Integer.parseInt(color.substring(1), 16)));
+						g2.drawOval((int) dec.x, (int) dec.y, dec.w, dec.h);
+						break;
+					case DRAWIMAGE:
+						DrawImageCmd dic = (DrawImageCmd) cmd;
+						ImageIcon icon = new ImageIcon(dic.imageName);
+						Image img = icon.getImage();
+						g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) dic.opacity));
+						g2.rotate(java.lang.Math.toRadians(dic.degree));
+						g2.scale(dic.scaleX, dic.scaleY);
+						g2.drawImage(img, (int) dic.x, (int) dic.y, this);
+						break;
+					case DRAWLINE:
+						DrawLineCmd dlc = (DrawLineCmd) cmd;
+						color = ((StrV) dlc.pencolor).getValue();
+						g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) dlc.opacity));
+						g2.rotate(java.lang.Math.toRadians(dlc.degree));
+						g2.scale(dlc.scaleX, dlc.scaleY);
+						g2.setStroke(new BasicStroke((float) ((DoubleV) dlc.penwidth).getValue()));
+						g2.setColor(new Color(Integer.parseInt(color.substring(1), 16)));
+						g2.drawLine(dlc.x1, dlc.y1, dlc.x2, dlc.y2);
+						break;
+					case DRAWRECTANGLE:
+						DrawRectangleCmd drc = (DrawRectangleCmd) cmd;
+						color = ((StrV) drc.pencolor).getValue();
+						g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) drc.opacity));
+						g2.rotate(java.lang.Math.toRadians(drc.degree));
+						g2.scale(drc.scaleX, drc.scaleY);
+						g2.setStroke(new BasicStroke((float) ((DoubleV) drc.penwidth).getValue()));
+						g2.setColor(new Color(Integer.parseInt(color.substring(1), 16)));
+						g2.drawRect((int) drc.x, (int) drc.y, drc.w, drc.h);
+						break;
+					case DRAWRESIZEDIMAGE:
+						DrawResizedImageCmd dric = (DrawResizedImageCmd) cmd;
+						ImageIcon iconResized = new ImageIcon(dric.imageName);
+						Image imgResized = iconResized.getImage();
+						g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) dric.opacity));
+						g2.rotate(java.lang.Math.toRadians(dric.degree));
+						g2.scale(dric.scaleX, dric.scaleY);
+						g2.drawImage(imgResized, (int) dric.x, (int) dric.y, dric.w, dric.h, this);
+						break;
+					case DRAWTEXT:
+						DrawTextCmd dtc = (DrawTextCmd) cmd;
+						color = ((StrV) dtc.brushcolor).getValue();
+						g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) dtc.opacity));
+						g2.rotate(java.lang.Math.toRadians(dtc.degree));
+						g2.scale(dtc.scaleX, dtc.scaleY);
+						g2.setFont(dtc.font);
+						g2.setColor(new Color(Integer.parseInt(color.substring(1), 16)));
+						g2.drawString(dtc.text, (int) dtc.x, (int) dtc.y);
+						break;
+					case DRAWTRIANGLE:
+						DrawTriangleCmd dtrc = (DrawTriangleCmd) cmd;
+						color = ((StrV) dtrc.pencolor).getValue();
+						g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) dtrc.opacity));
+						g2.rotate(java.lang.Math.toRadians(dtrc.degree));
+						g2.scale(dtrc.scaleX, dtrc.scaleY);
+						g2.setStroke(new BasicStroke((float) ((DoubleV) dtrc.penwidth).getValue()));
+						g2.setColor(new Color(Integer.parseInt(color.substring(1), 16)));
+						g2.drawPolygon(dtrc.xs, dtrc.ys, 3);
+						break;
 
-				case FILLELLIPSE:
-					FillEllipseCmd fec = (FillEllipseCmd) cmd;
-					color = ((StrV) fec.brushcolor).getValue();
-					g.setColor(new Color(Integer.parseInt(color.substring(1), 16)));
-					g.fillOval(fec.x, fec.y, fec.w, fec.h);
-					break;
-				case FILLRECTANGLE:
-					FillRectangleCmd frc = (FillRectangleCmd) cmd;
-					color = ((StrV) frc.brushcolor).getValue();
-					g.setColor(new Color(Integer.parseInt(color.substring(1), 16)));
-					g.fillRect(frc.x, frc.y, frc.w, frc.h);
-					break;
-				case FILLTRIANGLE:
-					FillTriangleCmd ftc = (FillTriangleCmd) cmd;
-					color = ((StrV) ftc.brushcolor).getValue();
-					g.setColor(new Color(Integer.parseInt(color.substring(1), 16)));
-					g.fillPolygon(ftc.x, ftc.y, 3);
-					break;
+					case FILLELLIPSE:
+						FillEllipseCmd fec = (FillEllipseCmd) cmd;
+						color = ((StrV) fec.brushcolor).getValue();
+						g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) fec.opacity));
+						g2.rotate(java.lang.Math.toRadians(fec.degree));
+						g2.scale(fec.scaleX, fec.scaleY);
+						g2.setColor(new Color(Integer.parseInt(color.substring(1), 16)));
+						g2.fillOval((int) fec.x, (int) fec.y, fec.w, fec.h);
+						break;
+					case FILLRECTANGLE:
+						FillRectangleCmd frc = (FillRectangleCmd) cmd;
+						color = ((StrV) frc.brushcolor).getValue();
+						g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) frc.opacity));
+						g2.rotate(java.lang.Math.toRadians(frc.degree));
+						g2.scale(frc.scaleX, frc.scaleY);
+						g2.setColor(new Color(Integer.parseInt(color.substring(1), 16)));
+						g2.fillRect((int) frc.x, (int) frc.y, frc.w, frc.h);
+						break;
+					case FILLTRIANGLE:
+						FillTriangleCmd ftc = (FillTriangleCmd) cmd;
+						color = ((StrV) ftc.brushcolor).getValue();
+						g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) ftc.opacity));
+						g2.rotate(java.lang.Math.toRadians(ftc.degree));
+						g2.scale(ftc.scaleX, ftc.scaleY);
+						g2.setColor(new Color(Integer.parseInt(color.substring(1), 16)));
+						g2.fillPolygon(ftc.xs, ftc.ys, 3);
+						break;
+					}
 				}
 			}
 			if (pixelList.size() != 0) {
@@ -378,9 +430,12 @@ public class GraphicsWindow {
 		public Value GetPixel(ArrayList<Value> args) {
 			try {
 				if (args.size() == 2) {
-					Robot robot = new Robot();
+					Robot robot = new Robot(panel.getGraphicsConfiguration().getDevice());
 					boolean isInteger[] = { false, false };
 					int values[] = new int[2];
+
+					int left = (int) frame.getLocation().getX();
+					int top = (int) frame.getLocation().getY();
 
 					for (int i = 0; i < args.size(); i++) {
 						if (args.get(i) instanceof DoubleV) {
@@ -396,13 +451,12 @@ public class GraphicsWindow {
 					}
 
 					if (isInteger[0] && isInteger[1]) {
-						GraphicsConfiguration gc = getGraphicsConfiguration();
-						Rectangle r = gc.getBounds();
-						Color color = robot.getPixelColor(r.x + values[0], r.y + values[1]);
+						Color color = robot.getPixelColor(values[0] + (int) panel.getLocationOnScreen().getX(),
+								values[1] + (int) panel.getLocationOnScreen().getY());
 
-						String red = Integer.toHexString(color.getRed());
-						String green = Integer.toHexString(color.getGreen());
-						String blue = Integer.toHexString(color.getBlue());
+						String red = String.format("%02x", color.getRed());
+						String green = String.format("%02x", color.getGreen());
+						String blue = String.format("%02x", color.getBlue());
 
 						StrV rgbColor = new StrV("#" + red + green + blue);
 
@@ -500,6 +554,11 @@ public class GraphicsWindow {
 
 					cmd.font = settingFont();
 					cmd.brushcolor = BrushColor;
+					cmd.show = true;
+					cmd.opacity = 1;
+					cmd.degree = 0;
+					cmd.scaleX = 1;
+					cmd.scaleY = 1;
 				}
 
 				if (args.get(2) instanceof StrV)
@@ -547,7 +606,12 @@ public class GraphicsWindow {
 
 					cmd.pencolor = PenColor;
 					cmd.penwidth = PenWidth;
-
+					cmd.show = true;
+					cmd.opacity = 1;
+					cmd.degree = 0;
+					cmd.scaleX = 1;
+					cmd.scaleY = 1;
+					
 					cmdList.add(cmd);
 
 					repaint();
@@ -586,6 +650,12 @@ public class GraphicsWindow {
 					cmd.x = values[0];
 					cmd.y = values[1];
 
+					cmd.show = true;
+					cmd.opacity = 1;
+					cmd.degree = 0;
+					cmd.scaleX = 1;
+					cmd.scaleY = 1;
+					
 					cmdList.add(cmd);
 
 					repaint();
@@ -626,7 +696,12 @@ public class GraphicsWindow {
 
 					cmd.pencolor = PenColor;
 					cmd.penwidth = PenWidth;
-
+					cmd.show = true;
+					cmd.opacity = 1;
+					cmd.degree = 0;
+					cmd.scaleX = 1;
+					cmd.scaleY = 1;
+					
 					cmdList.add(cmd);
 
 					repaint();
@@ -668,7 +743,12 @@ public class GraphicsWindow {
 
 					cmd.pencolor = PenColor;
 					cmd.penwidth = PenWidth;
-
+					cmd.show = true;
+					cmd.opacity = 1;
+					cmd.degree = 0;
+					cmd.scaleX = 1;
+					cmd.scaleY = 1;
+					
 					cmdList.add(cmd);
 
 					repaint();
@@ -709,6 +789,12 @@ public class GraphicsWindow {
 					cmd.w = values[2];
 					cmd.h = values[3];
 
+					cmd.show = true;
+					cmd.opacity = 1;
+					cmd.degree = 0;
+					cmd.scaleX = 1;
+					cmd.scaleY = 1;
+					
 					cmdList.add(cmd);
 
 					repaint();
@@ -727,7 +813,7 @@ public class GraphicsWindow {
 				int[] values = new int[2];
 				boolean[] isInteger = new boolean[2];
 
-				for (int i = 1; i < args.size(); i++) {
+				for (int i = 0; i < args.size(); i++) {
 					if (args.get(i) instanceof DoubleV) {
 						isInteger[i] = true;
 						values[i] = (int) ((DoubleV) args.get(i)).getValue();
@@ -742,14 +828,19 @@ public class GraphicsWindow {
 					}
 				}
 
-				if (args.get(0) instanceof StrV && isInteger[0] && isInteger[1]) {
+				if (isInteger[0] && isInteger[1]) {
 					cmd.x = values[0];
 					cmd.y = values[1];
-					cmd.text = ((StrV) args.get(2)).getValue();
+					cmd.text = args.get(2).toString();
 
 					cmd.font = settingFont();
 					cmd.brushcolor = BrushColor;
-
+					cmd.show = true;
+					cmd.opacity = 1;
+					cmd.degree = 0;
+					cmd.scaleX = 1;
+					cmd.scaleY = 1;
+					
 					cmdList.add(cmd);
 
 					repaint();
@@ -783,16 +874,21 @@ public class GraphicsWindow {
 					}
 				}
 				if (isInteger[0] && isInteger[1] && isInteger[2] && isInteger[3] && isInteger[4] && isInteger[5]) {
-					cmd.x[0] = values[0];
-					cmd.y[0] = values[1];
-					cmd.x[1] = values[2];
-					cmd.y[1] = values[3];
-					cmd.x[2] = values[4];
-					cmd.y[2] = values[5];
+					cmd.xs[0] = values[0];
+					cmd.ys[0] = values[1];
+					cmd.xs[1] = values[2];
+					cmd.ys[1] = values[3];
+					cmd.xs[2] = values[4];
+					cmd.ys[2] = values[5];
 
 					cmd.pencolor = PenColor;
 					cmd.penwidth = PenWidth;
-
+					cmd.show = true;
+					cmd.opacity = 1;
+					cmd.degree = 0;
+					cmd.scaleX = 1;
+					cmd.scaleY = 1;
+					
 					cmdList.add(cmd);
 
 					repaint();
@@ -834,7 +930,12 @@ public class GraphicsWindow {
 					cmd.h = (int) ((DoubleV) args.get(3)).getValue();
 
 					cmd.brushcolor = BrushColor;
-
+					cmd.show = true;
+					cmd.opacity = 1;
+					cmd.degree = 0;
+					cmd.scaleX = 1;
+					cmd.scaleY = 1;
+					
 					cmdList.add(cmd);
 
 					repaint();
@@ -873,7 +974,12 @@ public class GraphicsWindow {
 					cmd.h = values[3];
 
 					cmd.brushcolor = BrushColor;
-
+					cmd.show = true;
+					cmd.opacity = 1;
+					cmd.degree = 0;
+					cmd.scaleX = 1;
+					cmd.scaleY = 1;
+					
 					cmdList.add(cmd);
 
 					repaint();
@@ -906,15 +1012,20 @@ public class GraphicsWindow {
 					}
 				}
 				if (isInteger[0] && isInteger[1] && isInteger[2] && isInteger[3] && isInteger[4] && isInteger[5]) {
-					cmd.x[0] = values[0];
-					cmd.y[0] = values[1];
-					cmd.x[1] = values[2];
-					cmd.y[1] = values[3];
-					cmd.x[2] = values[4];
-					cmd.y[2] = values[5];
+					cmd.xs[0] = values[0];
+					cmd.ys[0] = values[1];
+					cmd.xs[1] = values[2];
+					cmd.ys[1] = values[3];
+					cmd.xs[2] = values[4];
+					cmd.ys[2] = values[5];
 
 					cmd.brushcolor = BrushColor;
-
+					cmd.show = true;
+					cmd.opacity = 1;
+					cmd.degree = 0;
+					cmd.scaleX = 1;
+					cmd.scaleY = 1;
+					
 					cmdList.add(cmd);
 
 					repaint();
@@ -922,6 +1033,10 @@ public class GraphicsWindow {
 			} else {
 				throw new InterpretException("Unexpected # of args " + args.size());
 			}
+		}
+
+		public ArrayList<Cmd> getCmdList() {
+			return cmdList;
 		}
 
 		@Override
@@ -989,6 +1104,414 @@ public class GraphicsWindow {
 
 	}
 
+	// Shapes Library
+	private static final String rectIdLabel = "Rectangle";
+	private static final String ellipIdLabel = "Ellipse";
+	private static final String triIdLabel = "Triangle";
+	private static final String lineIdLabel = "Line";
+	private static final String textIdLabel = "Text";
+	private static final String imageIdLabel = "Image";
+
+	private static int rectId = 1;
+	private static int ellipId = 1;
+	private static int triId = 1;
+	private static int lineId = 1;
+	private static int textId = 1;
+	private static int imageId = 1;
+
+	private static HashMap<String, ArrayList<Cmd>> shapeMap = new HashMap<>();
+
+	public static String AddRectangle(int width, int height) {
+		if (frame == null)
+			Show(new ArrayList<Value>());
+
+		ArrayList<Value> grArgs = new ArrayList<Value>();
+		grArgs.add(new DoubleV(0));
+		grArgs.add(new DoubleV(0));
+		grArgs.add(new DoubleV(width));
+		grArgs.add(new DoubleV(height));
+
+		GraphicsWindow.FillRectangle(grArgs);
+		Cmd fillCmd = panel.getCmdList().get(panel.getCmdList().size() - 1);
+		GraphicsWindow.DrawRectangle(grArgs);
+		Cmd drawCmd = panel.getCmdList().get(panel.getCmdList().size() - 1);
+
+		ArrayList<Cmd> cmds = new ArrayList<>();
+		cmds.add(fillCmd);
+		cmds.add(drawCmd);
+
+		String id = rectIdLabel + rectId;
+		rectId++;
+
+		shapeMap.put(id, cmds);
+
+		return id;
+	}
+
+	public static String AddEllipse(int width, int height) {
+		if (frame == null)
+			Show(new ArrayList<Value>());
+
+		ArrayList<Value> grArgs = new ArrayList<>();
+		grArgs.add(new DoubleV(0));
+		grArgs.add(new DoubleV(0));
+		grArgs.add(new DoubleV(width));
+		grArgs.add(new DoubleV(height));
+
+		GraphicsWindow.FillEllipse(grArgs);
+		Cmd fillCmd = panel.getCmdList().get(panel.getCmdList().size() - 1);
+		GraphicsWindow.DrawEllipse(grArgs);
+		Cmd drawCmd = panel.getCmdList().get(panel.getCmdList().size() - 1);
+
+		ArrayList<Cmd> cmds = new ArrayList<>();
+		cmds.add(fillCmd);
+		cmds.add(drawCmd);
+
+		String id = ellipIdLabel + ellipId;
+		ellipId++;
+
+		shapeMap.put(id, cmds);
+
+		return id;
+	}
+
+	public static String AddTriangle(int x1, int y1, int x2, int y2, int x3, int y3) {
+		if (frame == null)
+			Show(new ArrayList<Value>());
+
+		ArrayList<Value> grArgs = new ArrayList<>();
+		grArgs.add(new DoubleV(x1));
+		grArgs.add(new DoubleV(y1));
+		grArgs.add(new DoubleV(x2));
+		grArgs.add(new DoubleV(y2));
+		grArgs.add(new DoubleV(x3));
+		grArgs.add(new DoubleV(y3));
+
+		GraphicsWindow.FillTriangle(grArgs);
+		Cmd fillCmd = panel.getCmdList().get(panel.getCmdList().size() - 1);
+		GraphicsWindow.DrawTriangle(grArgs);
+		Cmd drawCmd = panel.getCmdList().get(panel.getCmdList().size() - 1);
+
+		ArrayList<Cmd> cmds = new ArrayList<>();
+		cmds.add(fillCmd);
+		cmds.add(drawCmd);
+
+		String id = triIdLabel + triId;
+		triId++;
+
+		shapeMap.put(id, cmds);
+
+		return id;
+	}
+
+	public static String AddLine(int x1, int y1, int x2, int y2) {
+		if (frame == null)
+			Show(new ArrayList<Value>());
+
+		ArrayList<Value> grArgs = new ArrayList<>();
+		grArgs.add(new DoubleV(x1));
+		grArgs.add(new DoubleV(y1));
+		grArgs.add(new DoubleV(x2));
+		grArgs.add(new DoubleV(y2));
+
+		GraphicsWindow.DrawLine(grArgs);
+		Cmd drawCmd = panel.getCmdList().get(panel.getCmdList().size() - 1);
+
+		ArrayList<Cmd> cmds = new ArrayList<>();
+		cmds.add(drawCmd);
+
+		String id = lineIdLabel + lineId;
+		lineId++;
+
+		shapeMap.put(id, cmds);
+
+		return id;
+	}
+
+	public static String AddImage(String imageName) {
+		if (frame == null)
+			Show(new ArrayList<Value>());
+
+		ArrayList<Value> grArgs = new ArrayList<>();
+		grArgs.add(new StrV(imageName));
+		grArgs.add(new DoubleV(0));
+		grArgs.add(new DoubleV(0));
+
+		GraphicsWindow.DrawImage(grArgs);
+		Cmd drawCmd = panel.getCmdList().get(panel.getCmdList().size() - 1);
+
+		ArrayList<Cmd> cmds = new ArrayList<>();
+		cmds.add(drawCmd);
+
+		String id = imageIdLabel + imageId;
+		imageId++;
+
+		shapeMap.put(id, cmds);
+
+		return null;
+	}
+
+	public static String AddText(String text) {
+		if (frame == null)
+			Show(new ArrayList<Value>());
+
+		ArrayList<Value> grArgs = new ArrayList<>();
+		grArgs.add(new DoubleV(0));
+		grArgs.add(new DoubleV(0));
+		grArgs.add(new StrV(text));
+
+		GraphicsWindow.DrawText(grArgs);
+		Cmd drawCmd = panel.getCmdList().get(panel.getCmdList().size() - 1);
+
+		ArrayList<Cmd> cmds = new ArrayList<>();
+		cmds.add(drawCmd);
+
+		String id = textIdLabel + textId;
+		textId++;
+
+		shapeMap.put(id, cmds);
+
+		return id;
+	}
+
+	public static void SetText(String shapeName, String text) {
+		ArrayList<Cmd> cmds = shapeMap.get(shapeName);
+
+		if (cmds != null && cmds.size() == 1) {
+			if (cmds.get(0) instanceof DrawTextCmd)
+				((DrawTextCmd) cmds.get(0)).text = text;
+		}
+		panel.repaint();
+	}
+
+	public static void Remove(String shape) {
+		ArrayList<Cmd> cmds = shapeMap.remove(shape);
+		if (cmds != null) {
+			for (Cmd cmd : cmds) {
+				panel.getCmdList().remove(cmd);
+			}
+			panel.repaint();
+		}
+	}
+
+	public static void Move(String shape, double x, double y) {
+		ArrayList<Cmd> cmds = shapeMap.get(shape);
+
+		if (cmds != null) {
+			for (Cmd cmd : cmds) {
+				cmd.Move(x, y);
+			}
+			panel.repaint();
+		}
+	}
+	
+	public static void Rotate(String shapeName, double angle) {
+		ArrayList<Cmd> cmds = shapeMap.get(shapeName);
+		
+		if(cmds != null) {
+			for(Cmd cmd : cmds) {
+				cmd.degree = angle;
+			}
+		}
+	}
+	
+	public static void Zoom(String shapeName, double scaleX, double scaleY) {
+		ArrayList<Cmd> cmds = shapeMap.get(shapeName);
+		
+		if(cmds != null) {
+			for(Cmd cmd : cmds) {
+				cmd.scaleX = scaleX;
+				cmd.scaleY = scaleY;
+			}
+		}
+	}
+	
+	public static void Animate(String shapeName, double x, double y, int duration) {
+		
+	}
+
+	public static double GetLeft(String shapeName) {
+		ArrayList<Cmd> cmds = shapeMap.get(shapeName);
+		
+		if(cmds != null) {
+			return cmds.get(0).x;
+		}
+		
+		return 0;
+	}
+	
+	public static double GetTop(String shapeName) {
+		ArrayList<Cmd> cmds = shapeMap.get(shapeName);
+		
+		if(cmds != null) {
+			return cmds.get(0).x;
+		}
+		
+		return 0;
+	}
+	
+	public static double GetOpacity(String shapeName) {
+		ArrayList<Cmd> cmds = shapeMap.get(shapeName);
+		
+		if(cmds != null) {
+			return cmds.get(0).opacity * 100;
+		}
+		
+		return 0;
+	}
+	
+	public static void SetOpacity(String shapeName, double opacity) {
+		ArrayList<Cmd> cmds = shapeMap.get(shapeName);
+		
+		if(cmds != null) {
+			for(Cmd cmd : cmds) {
+				if(opacity >= 0 && opacity <= 100)
+					cmd.opacity = (float) (opacity / 100);
+				else if(opacity < 0)
+					cmd.opacity = 0;
+				else if(opacity > 100)
+					cmd.opacity = 1;
+			}
+		}
+	}
+	
+	public static void HideShape(String shapeName) {
+		ArrayList<Cmd> cmds = shapeMap.get(shapeName);
+
+		if (cmds != null) {
+			for (Cmd cmd : cmds) {
+				cmd.show = false;
+			}
+			panel.repaint();
+		}
+	}
+
+	public static void ShowShape(String shapeName) {
+		ArrayList<Cmd> cmds = shapeMap.get(shapeName);
+
+		if (cmds != null) {
+			for (Cmd cmd : cmds) {
+				cmd.show = true;
+			}
+			panel.repaint();
+		}
+	}
+	// End Shapes Library
+	
+	// Controls Library
+	private static final String btnIdLabel = "Button";
+	private static final String txtBoxIdLabel = "TextBox";
+	
+	private static int btnId = 1;
+	private static int txtBoxId = 1;
+	
+	private static HashMap<String, JComponent> controlMap = new HashMap<>();
+	
+	public static String AddButton(String caption, int left, int top) {
+		JButton btn = new JButton(caption);
+		
+		btn.setFont(settingFont());
+		btn.setSize(btn.getPreferredSize());
+		btn.setLocation(left, top);
+		panel.add(btn);
+			
+		String id = btnIdLabel + btnId;
+		btnId++;
+		
+		controlMap.put(id, btn);
+		
+		return id;
+	}
+	
+	public static String AddTextBox(int left, int top) {
+		JTextField tf = new JTextField();
+		
+		tf.setFont(settingFont());
+		tf.setSize(tf.getPreferredSize());
+		tf.setLocation(left, top);
+		
+		panel.add(tf);
+		
+		String id = txtBoxIdLabel + txtBoxId;
+		txtBoxId++;
+		
+		controlMap.put(id, tf);
+		
+		return id;
+	}
+	
+	public static String AddMultiLineTextBox(int left, int top) {
+		JTextArea ta = new JTextArea();
+		JScrollPane scroll = new JScrollPane(ta);
+		
+		scroll.setFont(settingFont());
+		scroll.setSize(scroll.getPreferredSize());
+		scroll.setLocation(left, top);
+		
+		panel.add(scroll);
+		
+		String id = txtBoxIdLabel + txtBoxId;
+		txtBoxId++;
+		
+		controlMap.put(id, ta);
+		
+		return id;
+	}
+	
+	public static String GetButtonCaption(String buttonName) {
+		JComponent comp = controlMap.get(buttonName);
+		String caption = "";
+		
+		if(comp != null && comp instanceof JButton) {
+			caption = ((JButton) comp).getText();
+		}
+		
+		return caption;
+	}
+	
+	public static void SetButtonCaption(String buttonName, String caption) {
+		JComponent comp = controlMap.get(buttonName);
+		
+		if(comp != null && comp instanceof JButton) {
+			JButton btn = (JButton) comp;
+			btn.setText(caption);
+			btn.setSize(btn.getPreferredSize());
+		}
+	}
+	
+	public static String GetTextBoxText(String textBoxName) {
+		JComponent comp = controlMap.get(textBoxName);
+		String text = "";
+		
+		if(comp != null) {
+			if(comp instanceof JTextField) {
+				text = ((JTextField) comp).getText();
+			}
+			else if(comp instanceof JTextArea) {
+				text = ((JTextArea) comp).getText();
+			}
+		}
+		
+		return text;
+	}
+
+	public static void SetTextBoxText(String textBoxName, String text) {
+		JComponent comp = controlMap.get(textBoxName);
+		
+		if(comp != null) {
+			if(comp instanceof JTextField) {
+				JTextField tf = (JTextField) comp;
+				tf.setText(text);
+			}
+			else if(comp instanceof JTextArea) {
+				JTextArea ta = (JTextArea) comp;
+				ta.setText(text);
+			}
+		}
+	}
+	// End Controls Library
+	
+	// font
 	private static boolean fontBold() {
 		StrV bold = (StrV) FontBold;
 		String boolBold = bold.getValue();
@@ -1036,12 +1559,48 @@ public class GraphicsWindow {
 		return font;
 	}
 
-	private static class Cmd {
+	private static int getLeft() {
+		int left;
+
+		if (Left instanceof DoubleV)
+			left = (int) ((DoubleV) Left).getValue();
+		else if (Left instanceof StrV && ((StrV) Left).isNumber())
+			left = (int) ((StrV) Left).parseDouble();
+		else
+			throw new InterpretException("Unexpected type " + Left);
+
+		return left;
+	}
+
+	private static int getTop() {
+		int top;
+
+		if (Top instanceof DoubleV)
+			top = (int) ((DoubleV) Top).getValue();
+		else if (Top instanceof StrV && ((StrV) Top).isNumber())
+			top = (int) ((DoubleV) Top).getValue();
+		else
+			throw new InterpretException("Unexpected type " + Top);
+
+		return top;
+	}
+
+	private static abstract class Cmd {
+		boolean show;
 		int cmd;
+		double x, y;
+		float opacity;
+		double scaleX, scaleY;
+		double degree;
+
+		void Move(double x, double y) {
+			this.x = x;
+			this.y = y;
+		}
 	}
 
 	private static class DrawBoundTextCmd extends Cmd {
-		int x, y, w;
+		int w;
 		String text;
 
 		Font font;
@@ -1049,14 +1608,13 @@ public class GraphicsWindow {
 	}
 
 	private static class DrawEllipseCmd extends Cmd {
-		int x, y, w, h;
+		int w, h;
 
 		Value pencolor;
 		Value penwidth;
 	}
 
 	private static class DrawImageCmd extends Cmd {
-		int x, y;
 		String imageName;
 	}
 
@@ -1065,10 +1623,24 @@ public class GraphicsWindow {
 
 		Value pencolor;
 		Value penwidth;
+
+		@Override
+		void Move(double x, double y) {
+			this.x = x;
+			this.y = y;
+			
+			int dx = x1 - (int) x;
+			int dy = y1 - (int) y;
+
+			x1 = (int) x;
+			y1 = (int) y;
+			x2 = x2 - dx;
+			y2 = y2 - dy;
+		}
 	}
 
 	private static class DrawRectangleCmd extends Cmd {
-		int x, y, w, h;
+		int w, h;
 
 		Value pencolor;
 		Value penwidth;
@@ -1076,11 +1648,10 @@ public class GraphicsWindow {
 
 	private static class DrawResizedImageCmd extends Cmd {
 		String imageName;
-		int x, y, w, h;
+		int w, h;
 	}
 
 	private static class DrawTextCmd extends Cmd {
-		int x, y;
 		String text;
 
 		Font font;
@@ -1088,30 +1659,62 @@ public class GraphicsWindow {
 	}
 
 	private static class DrawTriangleCmd extends Cmd {
-		int x[] = new int[3];
-		int y[] = new int[3];
+		int xs[] = new int[3];
+		int ys[] = new int[3];
 
 		Value pencolor;
 		Value penwidth;
+
+		@Override
+		void Move(double x, double y) {
+			this.x = x;
+			this.y = y;
+			
+			int dx = xs[0] - (int) x;
+			int dy = ys[0] - (int) y;
+			
+			xs[0] = (int) x;
+			ys[0] = (int) y;
+			xs[1] = xs[1] - dx;
+			ys[1] = ys[1] - dy;
+			xs[2] = xs[2] - dx;
+			ys[2] = ys[2] - dy;
+		}
 	}
 
 	private static class FillEllipseCmd extends Cmd {
-		int x, y, w, h;
+		int w, h;
 
 		Value brushcolor;
 	}
 
 	private static class FillRectangleCmd extends Cmd {
-		int x, y, w, h;
+		int w, h;
 
 		Value brushcolor;
 	}
 
 	private static class FillTriangleCmd extends Cmd {
-		int x[] = new int[3];
-		int y[] = new int[3];
+		int xs[] = new int[3];
+		int ys[] = new int[3];
 
 		Value brushcolor;
+
+		@Override
+		void Move(double x, double y) {
+			this.x = x;
+			this.y = y;
+			
+			int dx = xs[0] - (int) x;
+			int dy = ys[0] - (int) y;
+			
+			xs[0] = (int) x;
+			ys[0] = (int) y;
+			xs[1] = xs[1] - dx;
+			ys[1] = ys[1] - dy;
+			xs[2] = xs[2] - dx;
+			ys[2] = ys[2] - dy;
+		}
 	}
 
 	private static Frame frame = null;
@@ -1123,7 +1726,7 @@ public class GraphicsWindow {
 
 	public static Value BackgroundColor = GraphicsWindow.defaultBackgroundColor; // white
 	public static Value BrushColor = GraphicsWindow.defaultBrushColor;
-	public static Value CanResize;
+	public static Value CanResize = new StrV("True");
 	public static Value FontBold = new StrV("False");
 	public static Value FontItalic = new StrV("False");
 	public static Value FontName = new StrV("Tahoma");
@@ -1131,13 +1734,13 @@ public class GraphicsWindow {
 	public static Value Height = new DoubleV(480);
 	public static Value LastKey;
 	public static Value LastText;
-	public static Value Left = new DoubleV(76.8);
+	public static Value Left = new DoubleV(51.2);
 	public static Value MouseX;
 	public static Value MouseY;
 	public static Value PenColor = defaultPenColor; // black
 	public static Value PenWidth = new DoubleV(2);
 	public static Value Title = new StrV("Small Basic Graphics Window");
-	public static Value Top = new DoubleV(179.2);
+	public static Value Top = new DoubleV(51.2);
 	public static Value Width = new DoubleV(640);
 
 	public static Value KeyDown;
