@@ -1,0 +1,25 @@
+' Timer.Tick이 없어서 콘솔 뒤의 배경만 지속되는 경우
+
+Timer.Interval = 1000
+
+i = 0
+
+Timer.Resume()
+
+Timer.Resume() ' Multiple calls to Timer.Resume() 
+
+Sub OnTimer
+
+  i = i +1
+
+  TextWindow.WriteLine(i)
+
+  Timer.Interval = i * 1000  ' Reset timer interval on each OnTimer invocation
+
+  If i = 10 Then
+
+    Timer.Pause()
+
+  EndIf
+
+EndSub

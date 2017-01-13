@@ -1,0 +1,28 @@
+' 정상적으로 타이머가 작동하는 경우, Interval이 바뀔 때
+
+Timer.Interval = 1000
+
+Timer.Tick = OnTimer           
+
+i = 0
+
+While i >= 0 
+
+j=0
+
+EndWhile
+
+
+Sub OnTimer
+
+  i = i +1
+
+  TextWindow.WriteLine(i)
+
+  If i = 10 Then
+
+    Timer.Pause()
+
+  EndIf
+
+EndSub
