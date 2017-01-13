@@ -6,19 +6,18 @@ Timer.Tick = OnTimer
 
 i = 0
 
-Timer.Resume()
+While i >= 0 
 
-Timer.Resume() ' Multiple calls to Timer.Resume()
- 
-TextWindow.WriteLine("Hello")
+j=0
+
+EndWhile
+
 
 Sub OnTimer
 
   i = i +1
 
   TextWindow.WriteLine(i)
-
-  Timer.Interval = i * 1000  ' Reset timer interval on each OnTimer invocation
 
   If i = 10 Then
 

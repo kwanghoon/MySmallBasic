@@ -1,0 +1,7 @@
+i = 1
+
+While i > 0
+
+j = 0
+
+EndWhile
