@@ -2,6 +2,7 @@
 arr[0] = "hello"
 arr[2] = "world"
 arr[4] = "123"
+
 b = Array.ContainsIndex(arr,1)
 TextWindow.WriteLine(b)
 
@@ -26,3 +27,39 @@ TextWindow.WriteLine(c)
 
 c = Array.ContainsValue(arr,123)
 TextWindow.WriteLine(c)
+
+
+'TextWindow.WriteLine("GetAllIndices")
+'d = Array.GetAllIndices(arr)
+'TextWindow.WriteLine(d)
+
+TextWindow.WriteLine("GetItemCount")
+e = Array.GetItemCount(arr)
+TextWindow.WriteLine(e)
+
+TextWindow.WriteLine("IsArray")
+f = Array.IsArray(arr)
+TextWindow.WriteLine(f)
+
+TextWindow.WriteLine("setValue")
+Array.SetValue(arr,5,5)
+Array.SetValue(arr,6,"se")
+Array.SetValue(arr,"os",7)
+Array.SetValue(arr,"is","yeong")
+TextWindow.WriteLine(arr)
+
+TextWindow.WriteLine("GetItemCount")
+e = Array.GetItemCount(arr)
+TextWindow.WriteLine(e)
+
+TextWindow.WriteLine("GetValue")
+g = Array.GetValue(arr,4)
+TextWindow.WriteLine(g)
+g = Array.GetValue(arr,"is")
+TextWindow.WriteLine(g)
+
+TextWindow.WriteLine("RemoveValue")
+Array.RemoveValue(arr,4)
+TextWindow.WriteLine(arr)
+Array.RemoveValue(arr,"is")
+TextWindow.WriteLine(arr)
