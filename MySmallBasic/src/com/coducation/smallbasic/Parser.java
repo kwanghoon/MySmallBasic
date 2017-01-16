@@ -252,6 +252,7 @@ public class Parser
 						Nonterminal sub_tree1 = (Nonterminal)stack.get(last_stack_tree_index-1);
 						
 						ArrayList<Stmt> ALStmt = (ArrayList<Stmt>)sub_tree1.getTree();
+						if (ALStmt == null) ALStmt = new ArrayList<Stmt>();
 						tree = new BlockStmt(ALStmt);
 					}
 					else if(Grammer_rule.get(state_num).equals("TheRest ->")) // empty
