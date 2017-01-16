@@ -1,0 +1,25 @@
+'turtle fractal test 
+
+angle = 30
+delta = 10
+distance = 60
+Turtle.Speed = 9
+GraphicsWindow.BackgroundColor = "Black"
+GraphicsWindow.PenColor = "LightGreen"
+DrawTree()
+Sub DrawTree
+  If (distance > 0) Then
+    Turtle.Move(distance)
+    Turtle.Turn(angle)
+    
+    Stack.PushValue("distance", distance)
+    distance = distance - delta
+    DrawTree()
+    Turtle.Turn(-angle * 2)
+    DrawTree()
+    Turtle.Turn(angle)
+    distance = Stack.PopValue("distance")
+    
+    Turtle.Move(-distance)
+  EndIf
+EndSub
