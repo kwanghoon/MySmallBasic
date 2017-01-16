@@ -1571,7 +1571,7 @@ public class GraphicsWindow {
 		panel.repaint();
 	}
 
-	public static void Remove(String shape) {
+	public static void ShapesRemove(String shape) {
 		ArrayList<Cmd> cmds = shapeMap.remove(shape);
 		if (cmds != null) {
 			for (Cmd cmd : cmds) {
@@ -1581,7 +1581,7 @@ public class GraphicsWindow {
 		}
 	}
 
-	public static void Move(String shape, double x, double y) {
+	public static void ShapesMove(String shape, double x, double y) {
 		ArrayList<Cmd> cmds = shapeMap.get(shape);
 
 		if (cmds != null) {
@@ -1697,6 +1697,9 @@ public class GraphicsWindow {
 	private static HashMap<String, JComponent> controlMap = new HashMap<>();
 	
 	public static String AddButton(String caption, int left, int top) {
+		if(frame == null)
+			Show(new ArrayList<Value>());
+		
 		JButton btn = new JButton(caption);
 		
 		btn.setFont(settingFont());
@@ -1713,6 +1716,9 @@ public class GraphicsWindow {
 	}
 	
 	public static String AddTextBox(int left, int top) {
+		if(frame == null)
+			Show(new ArrayList<Value>());
+		
 		JTextField tf = new JTextField();
 		
 		tf.setFont(settingFont());
@@ -1730,6 +1736,9 @@ public class GraphicsWindow {
 	}
 	
 	public static String AddMultiLineTextBox(int left, int top) {
+		if(frame == null)
+			Show(new ArrayList<Value>());
+		
 		JTextArea ta = new JTextArea();
 		JScrollPane scroll = new JScrollPane(ta);
 		
@@ -1796,6 +1805,49 @@ public class GraphicsWindow {
 				JTextArea ta = (JTextArea) comp;
 				ta.setText(text);
 			}
+		}
+	}
+	
+	public static void ContorlsRemove(String control) {
+		JComponent comp = controlMap.get(control);
+		
+		if(comp != null) {
+			controlMap.remove(control);
+			panel.remove(comp);
+			panel.validate();
+			panel.repaint();
+		}
+	}
+	
+	public static void ControlsMove(String control, int x, int y) {
+		JComponent comp = controlMap.get(control);
+		
+		if(comp != null) {
+			comp.setLocation(x, y);
+		}
+	}
+	
+	public static void SetSize(String control, int width, int height) {
+		JComponent comp = controlMap.get(control);
+		
+		if(comp != null) {
+			comp.setSize(width, height);
+		}
+	}
+	
+	public static void HideControl(String control) {
+		JComponent comp = controlMap.get(control);
+		
+		if(comp != null) {
+			comp.setVisible(false);
+		}
+	}
+	
+	public static void ShowControl(String control) {
+		JComponent comp = controlMap.get(control);
+		
+		if(comp != null) {
+			comp.setVisible(true);
 		}
 	}
 	// End Controls Library
@@ -2019,7 +2071,7 @@ public class GraphicsWindow {
 	public static Value FontBold = new StrV("False");
 	public static Value FontItalic = new StrV("False");
 	public static Value FontName = new StrV("Tahoma");
-	public static Value FontSize = new DoubleV(20);
+	public static Value FontSize = new DoubleV(12);
 	public static Value Height = new DoubleV(480);
 	public static Value LastKey;
 	public static Value LastText;
