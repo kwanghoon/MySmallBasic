@@ -1,0 +1,40 @@
+'디렉토리가  존재할 경우 원본파일의 이름으로 생성
+TextWindow.WriteLine("CopyFile")
+TextWindow.WriteLine(File.CopyFile("555.txt", "C:\Users\Administrator\Desktop\dir\444.txt"))
+
+'디렉토리삭제 시 실패
+'없는파일삭제 시 성공
+TextWindow.WriteLine("")
+TextWindow.WriteLine("DeleteFile")
+TextWindow.WriteLine(File.DeleteFile("C:\Users\Administrator\Desktop\dir\444.txt"))
+TextWindow.WriteLine(File.DeleteFile("C:\Users\Administrator\Desktop\dir\222.txt"))
+
+TextWindow.WriteLine("")
+TextWindow.WriteLine("CreateDirectory")
+TextWindow.WriteLine(File.CreateDirectory("C:\Users\Administrator\Desktop\dir\444.txt"))
+TextWindow.WriteLine(File.CreateDirectory("C:\Users\Administrator\Desktop\dir\4441.txt"))
+
+'없는디렉토리삭제 시 실패
+TextWindow.WriteLine("")
+TextWindow.WriteLine("DeleteDirectory")
+TextWindow.WriteLine(File.DeleteDirectory("C:\Users\Administrator\Desktop\dir\4441.txt"))
+TextWindow.WriteLine(File.DeleteDirectory("C:\Users\Administrator\Desktop\dir\11"))
+
+'없는디렉토리 실패
+'경로에 \\사용
+TextWindow.WriteLine("")
+TextWindow.WriteLine("GetFiles")
+TextWindow.WriteLine(File.GetFiles("C:\Users\Administrator\Desktop\dir\444.txt"))
+TextWindow.WriteLine(File.GetFiles("C:\Users\Administrator\Desktop\dirs"))
+
+'없는디렉토리 실패
+'경로에 \\사용
+'빈폴더이면 공백반환
+TextWindow.WriteLine("")
+TextWindow.WriteLine("GetFiles")
+TextWindow.WriteLine(File.GetDirectories("C:\Users\Administrator\Desktop\dir\444.txt"))
+TextWindow.WriteLine(File.GetDirectories("C:\Users\Administrator\Desktop\dir"))
+
+TextWindow.WriteLine("")
+TextWindow.WriteLine("GetTemporaryFilePath")
+TextWindow.WriteLine(File.GetTemporaryFilePath())

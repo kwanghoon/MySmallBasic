@@ -1,0 +1,6 @@
+TextWindow.WriteLine("DownloadFile")
+TextWindow.WriteLine(Network.DownloadFile("http://www.jnu.ac.kr"))
+
+TextWindow.WriteLine("")
+TextWindow.WriteLine("GetWebPageContents")
+TextWindow.WriteLine(Network.GetWebPageContents("http://www.jnu.ac.kr"))

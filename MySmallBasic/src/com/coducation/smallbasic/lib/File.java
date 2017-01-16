@@ -54,7 +54,7 @@ public class File {
 				if(args.get(0) instanceof StrV) {
 					if(args.get(1) instanceof StrV || args.get(1) instanceof DoubleV) {
 						DataOutputStream dos = new DataOutputStream(new FileOutputStream(args.get(0).toString()));
-						dos.writeChars(args.get(1).toString());
+						dos.writeBytes(args.get(1).toString());
 						dos.flush();
 						dos.close();
 						return new StrV("SUCCESS");
@@ -62,7 +62,7 @@ public class File {
 					else { /*
 				DataOutputStream dos = new DataOutputStream(new FileOutputStream(args.get(0).toString()));
 				for(int i=0;i<((ArrayV)args.get(1)).)
-				dos.writeChars(((ArrayV)args.get(1)).get(0).toString());
+				dos.writeBytes(((ArrayV)args.get(1)).get(0).toString());
 				dos.flush();
 				dos.close();
 				return new StrV("SUCCESS");*/
@@ -134,13 +134,15 @@ public class File {
 							while((b=dis.readLine())!=null) {
 								n++;
 								if((n+"").equals(args.get(1).toString()))
-									s.append(args.get(2).toString());
-								else s.append(b);
+									s.append(args.get(2).toString()+"\r\n");
+								else s.append(b+"\r\n");
 							}
+							if(Integer.parseInt(args.get(1).toString())>=n+1)
+								s.append(args.get(2).toString()+"\r\n");
 							dis.close();
 
 							DataOutputStream dos = new DataOutputStream(new FileOutputStream(args.get(0).toString()));
-							dos.writeChars(s.toString());
+							dos.writeBytes(s.toString());
 							dos.flush();
 							dos.close();
 							return new StrV("SUCCESS");
@@ -178,13 +180,15 @@ public class File {
 							while((b=dis.readLine())!=null) {
 								n++;
 								if((n+"").equals(args.get(1).toString()))
-									s.append(args.get(2).toString());
-								s.append(b);
+									s.append(args.get(2).toString()+"\r\n");
+								s.append(b+"\r\n");
 							}
+							if(Integer.parseInt(args.get(1).toString())>=n+1)
+								s.append(args.get(2).toString()+"\r\n");
 							dis.close();
 
 							DataOutputStream dos = new DataOutputStream(new FileOutputStream(args.get(0).toString()));
-							dos.writeChars(s.toString());
+							dos.writeBytes(s.toString());
 							dos.flush();
 							dos.close();
 							return new StrV("SUCCESS");
@@ -216,7 +220,7 @@ public class File {
 				if(args.get(0) instanceof StrV) {
 					if(args.get(1) instanceof StrV || args.get(1) instanceof DoubleV) {
 						DataOutputStream dos = new DataOutputStream(new FileOutputStream(args.get(0).toString(),true));
-						dos.writeChars(args.get(1).toString());
+						dos.writeBytes(args.get(1).toString()+"\r\n");
 						dos.flush();
 						dos.close();
 						return new StrV("SUCCESS");
