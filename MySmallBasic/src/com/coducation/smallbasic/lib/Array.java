@@ -1,6 +1,7 @@
 package com.coducation.smallbasic.lib;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import com.coducation.smallbasic.ArrayV;
 import com.coducation.smallbasic.DoubleV;
@@ -10,33 +11,32 @@ import com.coducation.smallbasic.Value;
 
 public class Array {
 
-	//배열에 index 존재 여부
+	//배열에 index 여부
 	public static Value ContainsIndex(ArrayList<Value> args){
 		if(args.size()== 2){
 			Value arg1 = args.get(0); // array name
 			Value arg2 = args.get(1); // index
 			//String arrayName;
-			double index;
-			if(arg1 instanceof StrV){
-				//StrV str_arg1 = (StrV) arg1;
-				//arrayName= str_arg1.getValue();
+			String index;
+			ArrayV arr;
+			if(arg1 instanceof ArrayV){
+				arr = (ArrayV)arg1;
 			}
 			else 
-				throw new InterpretException("Not String Value for ArrayName" + arg1);
+				throw new InterpretException("Not Array Value for ArrayName" + arg1);
 			if(arg2 instanceof DoubleV){
-				DoubleV d_arg2 = (DoubleV)arg2;
-				index = d_arg2.getValue();
+				index= ((DoubleV)arg2).toString();
+				
 			}
 			else if(arg2 instanceof StrV && ((StrV)arg2).isNumber()){
 				StrV str_arg2 = (StrV) arg2;
-				index = str_arg2.parseDouble();
+				index = str_arg2.getValue();
 
 			}
 			else 
 				throw new InterpretException("Not Value for index" + arg2);
-			ArrayV arr = (ArrayV)arg1;
-			String index_s = Double.toString(index);
-			if(arr.get(index_s)==null)
+			
+			if(arr.get(index) == null)
 				return new StrV("false");
 			else
 				return new StrV("true");
@@ -50,25 +50,23 @@ public class Array {
 			Value arg1 = args.get(0); // array name
 			Value arg2 = args.get(1); // value
 			//String s;
-			//double value;
-			if(arg1 instanceof StrV){
-				//StrV str_arg1 = (StrV) arg1;
-				//s= str_arg1.getValue();
+			String value;
+			ArrayV arr ;
+			if(arg1 instanceof ArrayV){
+				arr = (ArrayV)arg1;
 			}
 			else 
-				throw new InterpretException("Not String Value for ArrayName" + arg1);
+				throw new InterpretException("Not Array Value for ArrayName" + arg1);
 			if(arg2 instanceof DoubleV){
-				//DoubleV d_arg2 = (DoubleV)arg2;
-				//value = d_arg2.getValue();
+				value = ((DoubleV)arg2).toString();
 			}
-			else if(arg2 instanceof StrV && ((StrV)arg2).isNumber()){
-				//StrV str_arg2 = (StrV)arg2;
-				//value = str_arg2.parseDouble();
+			else if(arg2 instanceof StrV){
+				StrV str_arg2 = (StrV) arg2;
+				value = str_arg2.getValue();
 			}
 			else 
-				throw new InterpretException("Not Value for value" + arg2);
-			ArrayV arr = (ArrayV)arg1;
-			if(arr.containsV(arg2))
+				throw new InterpretException("Not Value for index" + arg2);
+			if(arr.containsV(value))
 				return new StrV("true");
 			else
 				return new StrV("false");
@@ -80,29 +78,29 @@ public class Array {
 	public static Value GetAllIndices(ArrayList<Value> args){
 		if(args.size()==1){
 			Value arg = args.get(0);
-			if(arg instanceof StrV){
-				StrV str_arg = (StrV) arg;
-				String s = str_arg.getValue();
+			ArrayV arr;
+			if(arg instanceof ArrayV){
+				 arr = (ArrayV)arg;
 			}
 			else 
 				throw new InterpretException("Not String Value for ArrayName" + arg);
-			return null;
+			return arr.getKey();
 		}
 		else
 			throw new InterpretException("Error in # of Arguments: " + args.size());
 	}
 
-	//배열에 들어있는 index의 개수!
+	//배열에 들어있는 index의 개수
 	public static Value GetItemCount(ArrayList<Value> args){
 		if(args.size()==1){
 			Value arg = args.get(0);
-			if(arg instanceof StrV){
-				//StrV str_arg = (StrV) arg;
-				//String s = str_arg.getValue();
+			ArrayV arr;
+			if(arg instanceof ArrayV){
+				arr = (ArrayV)arg;
 			}
 			else 
 				throw new InterpretException("Not String Value for ArrayName" + arg);
-			ArrayV arr = (ArrayV)arg;
+		
 			return new DoubleV(arr.size());
 		}
 		else
@@ -114,12 +112,6 @@ public class Array {
 	public static Value IsArray(ArrayList<Value> args){
 		if(args.size()==1){
 			Value arg = args.get(0);
-			if(arg instanceof StrV){
-				StrV str_arg = (StrV) arg;
-				String s = str_arg.getValue();
-			}
-			else 
-				throw new InterpretException("Not String Value for ArrayName" + arg);
 			if(arg instanceof ArrayV)
 				return new StrV("true");
 			else
@@ -135,20 +127,19 @@ public class Array {
 			Value arg1 = args.get(0); // array name
 			Value arg2 = args.get(1); // index
 			Value arg3 = args.get(2); // value
-			double index;
-			if(arg1 instanceof StrV){
+			String index;
+			if(arg1 instanceof ArrayV){
 				//StrV str_arg1 = (StrV) arg1;
 				//String s= str_arg1.getValue();
 			}
 			else 
 				throw new InterpretException("Not String Value for ArrayName" + arg1);
 			if(arg2 instanceof DoubleV){
-				DoubleV d_arg2 = (DoubleV)arg2;
-				index = d_arg2.getValue();
+				index= ((DoubleV)arg2).toString();
 			}
-			else if(arg2 instanceof StrV && ((StrV)arg2).isNumber()){
+			else if(arg2 instanceof StrV){
 				StrV str_arg2 = (StrV) arg2;
-				index = str_arg2.parseDouble();
+				index = str_arg2.getValue();
 			}
 			else 
 				throw new InterpretException("Not Value for index" + arg2);
@@ -156,15 +147,14 @@ public class Array {
 				//DoubleV d_arg3 = (DoubleV)arg3;
 				//double d = d_arg3.getValue();
 			}
-			else if(arg3 instanceof StrV && ((StrV)arg3).isNumber()){
+			else if(arg3 instanceof StrV){
 				//StrV str_arg3 = (StrV) arg3;
 				//value = str_arg3.parseDouble();
 			}
 			else 
 				throw new InterpretException("Not Value for value" + arg3);
 			ArrayV arr = (ArrayV)arg1;
-			String index_s = Double.toString(index);
-			arr.put(index_s, arg3);
+			arr.put(index, arg3);
 			return null;
 		} else 
 			throw new InterpretException("Error in # of Arguments: " + args.size());
@@ -175,26 +165,24 @@ public class Array {
 		if(args.size()== 2){
 			Value arg1 = args.get(0); // array name
 			Value arg2 = args.get(1); // index
-			double index;
-			if(arg1 instanceof StrV){
+			String index;
+			if(arg1 instanceof ArrayV){
 				//StrV str_arg1 = (StrV) arg1;
 				//String s= str_arg1.getValue();
 			}
 			else 
 				throw new InterpretException("Not String Value for ArrayName" + arg1);
 			if(arg2 instanceof DoubleV){
-				DoubleV d_arg2 = (DoubleV)arg2;
-				index = d_arg2.getValue();
+				index= ((DoubleV)arg2).toString();
 			}
-			else if(arg2 instanceof StrV && ((StrV)arg2).isNumber()){
+			else if(arg2 instanceof StrV){
 				StrV str_arg2 = (StrV) arg2;
-				index = str_arg2.parseDouble();
+				index = str_arg2.getValue();
 			}
 			else 
 				throw new InterpretException("Not Value for index" + arg2);
 			ArrayV arr = (ArrayV)arg1;
-			String index_s = Double.toString(index);
-			return (StrV)arr.get(index_s);
+			return (StrV)arr.get(index);
 		} else 
 			throw new InterpretException("Error in # of Arguments: " + args.size());
 	}
@@ -204,26 +192,24 @@ public class Array {
 		if(args.size()== 2){
 			Value arg1 = args.get(0); // array name
 			Value arg2 = args.get(1); // index
-			double index;
-			if(arg1 instanceof StrV){
+			String index;
+			if(arg1 instanceof ArrayV){
 				//StrV str_arg1 = (StrV) arg1;
 				//String s= str_arg1.getValue();
 			}
 			else 
 				throw new InterpretException("Not String Value for ArrayName" + arg1);
 			if(arg2 instanceof DoubleV){
-				DoubleV d_arg2 = (DoubleV)arg2;
-				index = d_arg2.getValue();
+				index= ((DoubleV)arg2).toString();
 			}
-			else if(arg2 instanceof StrV && ((StrV)arg2).isNumber()){
+			else if(arg2 instanceof StrV){
 				StrV str_arg2 = (StrV) arg2;
-				index = str_arg2.parseDouble();
+				index = str_arg2.getValue();
 			}
 			else 
 				throw new InterpretException("Not Value for index" + arg2);
 			ArrayV arr = (ArrayV)arg1;
-			String index_s = Double.toString(index);
-			arr.remove(index_s);
+			arr.remove(index);
 			return null;
 		} else 
 			throw new InterpretException("Error in # of Arguments: " + args.size());
