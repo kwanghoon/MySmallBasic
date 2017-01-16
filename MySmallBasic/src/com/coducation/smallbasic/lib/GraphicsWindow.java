@@ -274,6 +274,7 @@ public class GraphicsWindow {
 		public Panel(int width, int height) {
 			this.setOpaque(true);
 			this.setLayout(null);
+			requestFocus();
 
 			cmdList = new ArrayList<>();
 			pixelList = new ArrayList<>();
@@ -1090,8 +1091,273 @@ public class GraphicsWindow {
 		@Override
 		public void keyPressed(KeyEvent e) {
 			if (KeyDown != null) {
-				LastKey = new StrV(e.getKeyChar());
-
+				String lastKey = "";
+				
+				switch(e.getKeyCode()) {
+				case KeyEvent.VK_0:
+				case KeyEvent.VK_RIGHT_PARENTHESIS:
+					lastKey = "D0";
+					break;
+				case KeyEvent.VK_1:
+				case KeyEvent.VK_EXCLAMATION_MARK:
+					lastKey = "D1";
+					break;
+				case KeyEvent.VK_2:
+				case KeyEvent.VK_AT:
+					lastKey = "D2";
+					break;
+				case KeyEvent.VK_3:
+				case KeyEvent.VK_NUMBER_SIGN:
+					lastKey = "D3";
+					break;
+				case KeyEvent.VK_4:
+				case KeyEvent.VK_DOLLAR:
+					lastKey = "D4";
+					break;
+				case KeyEvent.VK_5:
+					lastKey = "D5";
+					break;
+				case KeyEvent.VK_6:
+				case KeyEvent.VK_CIRCUMFLEX:
+					lastKey = "D6";
+					break;
+				case KeyEvent.VK_7:
+					lastKey = "D7";
+					break;
+				case KeyEvent.VK_8:
+					lastKey = "D8";
+					break;
+				case KeyEvent.VK_9:
+				case KeyEvent.VK_LEFT_PARENTHESIS:
+					lastKey = "D9";
+					break;
+				case KeyEvent.VK_F1:
+					lastKey = "F1";
+					break;
+				case KeyEvent.VK_F2:
+					lastKey = "F2";
+					break;
+				case KeyEvent.VK_F3:
+					lastKey = "F3";
+					break;
+				case KeyEvent.VK_F4:
+					lastKey = "F4";
+					break;
+				case KeyEvent.VK_F5:
+					lastKey = "F5";
+					break;
+				case KeyEvent.VK_F6:
+					lastKey = "F6";
+					break;
+				case KeyEvent.VK_F7:
+					lastKey = "F7";
+					break;
+				case KeyEvent.VK_F8:
+					lastKey = "F8";
+					break;
+				case KeyEvent.VK_F9:
+					lastKey = "F9";
+					break;
+				case KeyEvent.VK_F10:
+					lastKey = "System";
+					break;
+				case KeyEvent.VK_F11:
+					lastKey = "F11";
+					break;
+				case KeyEvent.VK_F12:
+					lastKey = "F12";
+					break;
+				case KeyEvent.VK_A:
+				case KeyEvent.VK_B:
+				case KeyEvent.VK_C:
+				case KeyEvent.VK_D:
+				case KeyEvent.VK_E:
+				case KeyEvent.VK_F:
+				case KeyEvent.VK_G:
+				case KeyEvent.VK_H:
+				case KeyEvent.VK_I:
+				case KeyEvent.VK_J:
+				case KeyEvent.VK_K:
+				case KeyEvent.VK_L:
+				case KeyEvent.VK_M:
+				case KeyEvent.VK_N:
+				case KeyEvent.VK_O:
+				case KeyEvent.VK_P:
+				case KeyEvent.VK_Q:
+				case KeyEvent.VK_R:
+				case KeyEvent.VK_S:
+				case KeyEvent.VK_T:
+				case KeyEvent.VK_U:
+				case KeyEvent.VK_V:
+				case KeyEvent.VK_W:
+				case KeyEvent.VK_X:
+				case KeyEvent.VK_Y:
+				case KeyEvent.VK_Z:
+					lastKey = String.valueOf(e.getKeyChar()).toUpperCase();
+					break;
+				case KeyEvent.VK_ESCAPE:
+					lastKey = "Escape";
+					break;
+				case KeyEvent.VK_EQUALS:
+					lastKey = "OemPlus";
+					break;
+				case KeyEvent.VK_MINUS:
+					lastKey = "OemMinus";
+					break;
+				case KeyEvent.VK_BACK_SPACE:
+					lastKey = "Back";
+					break;
+				case KeyEvent.VK_BACK_QUOTE:
+					lastKey = "Oem3";
+					break;
+				case KeyEvent.VK_INSERT:
+					lastKey = "Insert";
+					break;
+				case KeyEvent.VK_HOME:
+					lastKey = "Home";
+					break;
+				case KeyEvent.VK_PAGE_UP:
+					lastKey = "PageUp";
+					break;
+				case KeyEvent.VK_DELETE:
+					lastKey = "Delete";
+					break;
+				case KeyEvent.VK_END:
+					lastKey = "End";
+					break;
+				case KeyEvent.VK_PAGE_DOWN:
+					lastKey = "Next";
+					break;
+				case KeyEvent.VK_NUM_LOCK:
+					lastKey = "NumLock";
+					break;
+				case KeyEvent.VK_NUMPAD0:
+					lastKey = "NumPad0";
+					break;
+				case KeyEvent.VK_NUMPAD1:
+					lastKey = "NumPad1";
+					break;
+				case KeyEvent.VK_NUMPAD2:
+					lastKey = "NumPad2";
+					break;
+				case KeyEvent.VK_NUMPAD3:
+					lastKey = "NumPad3";
+					break;
+				case KeyEvent.VK_NUMPAD4:
+					lastKey = "NumPad4";
+					break;
+				case KeyEvent.VK_NUMPAD5:
+					lastKey = "NumPad5";
+					break;
+				case KeyEvent.VK_NUMPAD6:
+					lastKey = "NumPad6";
+					break;
+				case KeyEvent.VK_NUMPAD7:
+					lastKey = "NumPad7";
+					break;
+				case KeyEvent.VK_NUMPAD8:
+					lastKey = "NumPad8";
+					break;
+				case KeyEvent.VK_NUMPAD9:
+					lastKey = "NumPad9";
+					break;
+				case KeyEvent.VK_COMMA:
+					lastKey = "OemComma";
+					break;
+				case KeyEvent.VK_PERIOD:
+					lastKey = "OemPeriod";
+					break;
+				case KeyEvent.VK_SEMICOLON:
+				case KeyEvent.VK_COLON:
+					lastKey = "Oem1";
+					break;
+				case KeyEvent.VK_QUOTE:
+					lastKey = "OemQuotes";
+					break;
+				case KeyEvent.VK_BACK_SLASH:
+					lastKey = "Oem5";
+					break;
+				case KeyEvent.VK_SLASH:
+					lastKey = "OemQuestion";
+					break;
+				case KeyEvent.VK_OPEN_BRACKET:
+					lastKey = "OemOpenBrackets";
+					break;
+				case KeyEvent.VK_CLOSE_BRACKET:
+					lastKey = "Oem6";
+					break;
+				case KeyEvent.VK_CAPS_LOCK:
+					lastKey = "Capital";
+					break;
+				case KeyEvent.VK_UP:
+				case KeyEvent.VK_KP_UP:
+					lastKey = "Up";
+					break;
+				case KeyEvent.VK_DOWN:
+				case KeyEvent.VK_KP_DOWN:
+					lastKey = "Down";
+					break;
+				case KeyEvent.VK_LEFT:
+				case KeyEvent.VK_KP_LEFT:
+					lastKey = "Left";
+					break;
+				case KeyEvent.VK_RIGHT:
+				case KeyEvent.VK_KP_RIGHT:
+					lastKey = "Right";
+					break;
+				case KeyEvent.VK_ENTER:
+					lastKey = "Return";
+					break;
+				case KeyEvent.VK_CONTROL:	// LEFT, RIGHT 구분 필요
+					lastKey = "Ctrl";
+					break;
+				case KeyEvent.VK_WINDOWS:	// LEFT, RIGHT 구분 필요
+					lastKey = "Win";
+					break;
+				case KeyEvent.VK_SHIFT:	// LEFT, RIGHT 구분 필요
+					lastKey = "Shift";
+					break;
+				case KeyEvent.VK_ALT:
+					lastKey = "System";
+					break;
+				case KeyEvent.VK_SCROLL_LOCK:
+					lastKey = "Scroll";
+					break;
+				case KeyEvent.VK_PAUSE:
+					lastKey = "Pause";
+					break;
+				case KeyEvent.VK_ADD:
+					lastKey = "Add";
+					break;
+				case KeyEvent.VK_SUBTRACT:
+					lastKey = "Subtract";
+					break;
+				case KeyEvent.VK_MULTIPLY:
+					lastKey = "Multiply";
+					break;
+				case KeyEvent.VK_DIVIDE:
+					lastKey = "Divide";
+					break;
+				case KeyEvent.VK_TAB:
+					lastKey = "Tab";
+					break;
+				case KeyEvent.VK_DECIMAL:
+					lastKey = "Decimal";
+					break;
+				case KeyEvent.VK_CLEAR:
+					lastKey = "Clear";
+					break;
+				case KeyEvent.VK_SPACE:
+					lastKey = "Space";
+					break;
+				case KeyEvent.VK_CONTEXT_MENU:
+					lastKey = "Apps";
+					break;
+				case KeyEvent.VK_INPUT_METHOD_ON_OFF:
+					lastKey = "HanjaMode";
+					break;
+				}
+				LastKey = new StrV(lastKey);
 				Eval.eval(KeyDown);
 			}
 
