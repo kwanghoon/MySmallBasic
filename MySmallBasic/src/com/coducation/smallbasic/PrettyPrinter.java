@@ -192,22 +192,22 @@ public class PrettyPrinter {
 	public void prettyPrint(CompExpr compExpr) {
 		prettyPrint(compExpr.GetOperand()[0]);
 		switch (compExpr.GetOp()) {
-		case 1:
+		case CompExpr.GREATER_THAN:
 			System.out.print(" > ");
 			break;
-		case 2:
+		case CompExpr.LESS_THAN:
 			System.out.print(" < ");
 			break;
-		case 3:
+		case CompExpr.GREATER_EQUAL:
 			System.out.print(" >= ");
 			break;
-		case 4:
+		case CompExpr.LESS_EQUAL:
 			System.out.print(" <= ");
 			break;
-		case 5:
+		case CompExpr.EQUAL:
 			System.out.print(" = ");
 			break;
-		case 6:
+		case CompExpr.NOT_EQUAL:
 			System.out.print(" <> ");
 			break;
 		default:

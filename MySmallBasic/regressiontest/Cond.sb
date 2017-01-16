@@ -1,0 +1,16 @@
+If 10 > 9 Then
+EndIf
+
+If 10 >= 9 Then
+EndIf
+
+If 10 < 9 Then
+EndIf
+
+If 10 <= 9 Then
+EndIf
+
+If 10 = 9 Then
+EndIf
+
+
