@@ -96,7 +96,7 @@ public class Continuous {
 		String linit = fresh();
 		String ltest = fresh();
 
-		Stmt stmt = transform(forStmt.getBlock(), new BlockStmt(new ArrayList<Stmt>()));
+		// Stmt stmt = transform(forStmt.getBlock(), new BlockStmt(new ArrayList<Stmt>()));
 
 		Expr step;
 
@@ -109,13 +109,20 @@ public class Continuous {
 
 		Stmt update = new Assign(forStmt.getVar(), new ArithExpr(forStmt.getVar(), ArithExpr.PLUS, step));
 
-		Stmt body = merge(stmt, update, new GotoStmt(ltest));
+		//Stmt body = merge(stmt, update, new GotoStmt(ltest));
+		
+		ArrayList<Stmt> blockstmts = new ArrayList<Stmt>();
+		blockstmts.add(update);
+		blockstmts.add(new GotoStmt(ltest));
+		Stmt blockstmtk = new BlockStmt(blockstmts);
+		
+		Stmt body = transform(forStmt.getBlock(), blockstmtk);
 
 		Expr ltestCond = new LogicalExpr(
-				new LogicalExpr(new CompExpr(forStmt.getStep(), CompExpr.GREATER_EQUAL, new Lit(0)), LogicalExpr.AND,
+				new LogicalExpr(new CompExpr(forStmt.getStep(), CompExpr.GREATER_THAN, new Lit(0)), LogicalExpr.AND,
 						new CompExpr(forStmt.getVar(), CompExpr.LESS_EQUAL, forStmt.getEnd())),
 				LogicalExpr.OR, new LogicalExpr(new CompExpr(forStmt.getStep(), CompExpr.LESS_THAN, new Lit(0)),
-						LogicalExpr.AND, new CompExpr(forStmt.getVar(), CompExpr.GREATER_THAN, forStmt.getEnd())));
+						LogicalExpr.AND, new CompExpr(forStmt.getVar(), CompExpr.GREATER_EQUAL, forStmt.getEnd())));
 		Stmt ltestStmt = newIfStmt(ltestCond, body, stmtk);
 
 		ArrayList<Stmt> init = new ArrayList<>();
