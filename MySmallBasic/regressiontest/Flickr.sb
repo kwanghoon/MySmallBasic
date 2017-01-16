@@ -1,0 +1,7 @@
+TextWindow.WriteLine("GetPictureOfMoment")
+TextWindow.WriteLine(Flickr.GetPictureOfMoment())
+
+TextWindow.WriteLine("")
+TextWindow.WriteLine("GetRandomPicture")
+TextWindow.WriteLine(Flickr.GetRandomPicture("korea"))
+TextWindow.WriteLine(Flickr.GetRandomPicture(555))
