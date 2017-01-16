@@ -237,7 +237,6 @@ public class Controls {
 			} else
 				throw new InterpretException("Unexpected type " + args.get(2));
 			
-			
 		} else
 			throw new InterpretException("Unexpected # of args " + args.size());
 	}
@@ -246,25 +245,30 @@ public class Controls {
 		// control, width, height
 		// control의 너비와 높이를 width와 height로 설정
 		if (args.size() == 3) {
-
+			String control;
+			int width, height;
+			
 			if (args.get(0) instanceof StrV) {
-
+				control = ((StrV) args.get(0)).getValue();
 			} else
 				throw new InterpretException("Unexpected type " + args.get(0));
 
 			if (args.get(1) instanceof DoubleV) {
-
+				width = (int) ((DoubleV) args.get(1)).getValue();
 			} else if (args.get(1) instanceof StrV && ((StrV) args.get(1)).isNumber()) {
-
+				width = (int) ((StrV) args.get(1)).parseDouble();
 			} else
 				throw new InterpretException("Unexpected type " + args.get(1));
 
 			if (args.get(2) instanceof DoubleV) {
-
+				height = (int) ((DoubleV) args.get(2)).getValue();
 			} else if (args.get(2) instanceof StrV && ((StrV) args.get(2)).isNumber()) {
-
+				height = (int) ((StrV) args.get(2)).parseDouble();
 			} else
 				throw new InterpretException("Unexpected type " + args.get(2));
+			
+			
+			
 		} else
 			throw new InterpretException("Unexpected # of args " + args.size());
 	}
@@ -295,6 +299,9 @@ public class Controls {
 
 	public static Value LastClickedButton;
 	public static Value LastTypedTextBox;
+	
+	public static Value ButtonClicked;
+	public static Value TextTyped;
 
 	public static void notifyFieldAssign(String fieldName) {
 

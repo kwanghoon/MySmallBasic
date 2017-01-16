@@ -170,7 +170,7 @@ public class Shapes {
 			if (args.get(0) instanceof StrV) {
 				String shape = ((StrV) args.get(0)).getValue();
 				
-				GraphicsWindow.Remove(shape);
+				GraphicsWindow.ShapesRemove(shape);
 			} else
 				throw new InterpretException("Unexpected type " + args.get(0));
 		} else
@@ -206,7 +206,7 @@ public class Shapes {
 			} else
 				throw new InterpretException("Unexpected type " + args.get(2));
 			
-			GraphicsWindow.Move(shape, x, y);
+			GraphicsWindow.ShapesMove(shape, x, y);
 			
 		} else
 			throw new InterpretException("Unexpected # of args " + args.size());
