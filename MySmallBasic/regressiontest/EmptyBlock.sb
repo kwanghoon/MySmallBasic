@@ -1,0 +1,5 @@
+GraphicsWindow.MouseDown = OnMouseDown
+
+Sub OnMouseDown
+
+EndSub
