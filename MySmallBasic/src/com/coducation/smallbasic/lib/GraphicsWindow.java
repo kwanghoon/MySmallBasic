@@ -274,7 +274,6 @@ public class GraphicsWindow {
 		public Panel(int width, int height) {
 			this.setOpaque(true);
 			this.setLayout(null);
-			requestFocus();
 
 			cmdList = new ArrayList<>();
 			pixelList = new ArrayList<>();
@@ -290,9 +289,19 @@ public class GraphicsWindow {
 			String backColor = ((StrV) BackgroundColor).getValue();
 			setBackground(new Color(Integer.parseInt(backColor.substring(1), 16)));
 			String color;
+			double zoomX = 1;
+			double zoomY = 1;
+			double rotate = 1;
 
 			for (Cmd cmd : cmdList) {
 				if (cmd.show) {
+					if(cmd.scaleX != 1)
+						zoomX = cmd.scaleX;
+					if(cmd.scaleY != 1)
+						zoomY = cmd.scaleY;
+					if(cmd.degree != 0)
+						rotate = cmd.degree;
+					
 					switch (cmd.cmd) {
 					case NOCOMMAND:
 						break;
@@ -402,6 +411,18 @@ public class GraphicsWindow {
 						g2.setColor(new Color(Integer.parseInt(color.substring(1), 16)));
 						g2.fillPolygon(ftc.xs, ftc.ys, 3);
 						break;
+					}
+					if(zoomX != 1) {
+						g2.scale((double) 1/zoomX, 1);
+						zoomX = 1;
+					}
+					if(zoomY != 1) {
+						g2.scale(1, (double) 1/zoomY);
+						zoomY = 1;
+					}
+					if(rotate != 0) {
+						g2.rotate(java.lang.Math.toRadians(360 - rotate));
+						rotate = 0;
 					}
 				}
 			}
@@ -1578,6 +1599,7 @@ public class GraphicsWindow {
 			for(Cmd cmd : cmds) {
 				cmd.degree = angle;
 			}
+			panel.repaint();
 		}
 	}
 	
@@ -1589,6 +1611,7 @@ public class GraphicsWindow {
 				cmd.scaleX = scaleX;
 				cmd.scaleY = scaleY;
 			}
+			panel.repaint();
 		}
 	}
 	

@@ -12,10 +12,10 @@ Shapes.SetText(third, "hello world")
 'TextWindow.Read()
 Shapes.SetText(third, 3)
 
-fourth = Shapes.AddLine(10, 10, 50, 50)
+fourth = Shapes.AddLine(150, 150, 250, 150)
 Shapes.SetOpacity(fourth, 30)
 
-For i = 10 To 90 Step 5
-	Shapes.Rotate(first, i)
+For i = 0 To 180 Step 45
+	Shapes.Rotate(fourth, i)
 	TextWindow.Read()
 EndFor
