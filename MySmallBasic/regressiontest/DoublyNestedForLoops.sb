@@ -1,0 +1,7 @@
+
+For i = 0 To 10
+  TextWindow.WriteLine("breakPoint 1")
+  For j = 0 To 5
+    TextWindow.WriteLine("breakPoint 2")
+  EndFor
+EndFor
