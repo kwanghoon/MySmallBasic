@@ -181,12 +181,15 @@ public class Shapes {
 		// shapeName, x, y
 		// shapeName에 해당하는 shape를 새로운 x, y로 이동
 		if (args.size() == 3) {
-			String shape;
+			String shape = "";
 			int x, y;
 			
 			if (args.get(0) instanceof StrV) {
 				shape = ((StrV) args.get(0)).getValue();
-			} else
+			} else if(args.get(0) == null) {
+				
+			}
+			else
 				throw new InterpretException("Unexpected type " + args.get(0));
 
 			if (args.get(1) instanceof DoubleV) {
