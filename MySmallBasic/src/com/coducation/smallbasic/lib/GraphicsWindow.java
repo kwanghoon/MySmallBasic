@@ -47,7 +47,7 @@ public class GraphicsWindow {
 		// 그래픽 창의 지정한 위치에 지정한 길이 범위 안에서 글자를 표시함
 		// x, y, text
 		if (frame == null)
-			Show(args);
+			Show(new ArrayList<Value>());
 		panel.DrawBoundText(args);
 	}
 
@@ -55,7 +55,7 @@ public class GraphicsWindow {
 		// 그래픽 창의 지정한 위치에 지정한 펜으로 타원형을 그림
 		// x, y, width, height
 		if (frame == null)
-			Show(args);
+			Show(new ArrayList<Value>());
 		panel.DrawEllipse(args);
 	}
 
@@ -63,7 +63,7 @@ public class GraphicsWindow {
 		// 지정한 위치의 그림 파일을 불러와 그래픽 창의 지정한 위치에 표시함
 		// imageName, x, y
 		if (frame == null)
-			Show(args);
+			Show(new ArrayList<Value>());
 		panel.DrawImage(args);
 	}
 
@@ -71,7 +71,7 @@ public class GraphicsWindow {
 		// 한 지점에서 다른 지점으로 직선을 그림
 		// x1, y1, x2, y2
 		if (frame == null)
-			Show(args);
+			Show(new ArrayList<Value>());
 		panel.DrawLine(args);
 	}
 
@@ -79,7 +79,7 @@ public class GraphicsWindow {
 		// 그래픽 창의 지정한 위치에 지정한 펜으로 사각형을 그림
 		// x, y, width, height
 		if (frame == null)
-			Show(args);
+			Show(new ArrayList<Value>());
 		panel.DrawRectangle(args);
 	}
 
@@ -87,7 +87,7 @@ public class GraphicsWindow {
 		// 지정한 위치의 그림 파일을 불러와 지정한 크기로 바꿔 그래픽 창의 지정한 위치에 표시
 		// imageName, x, y, width, height
 		if (frame == null)
-			Show(args);
+			Show(new ArrayList<Value>());
 		panel.DrawResizedImage(args);
 	}
 
@@ -95,7 +95,7 @@ public class GraphicsWindow {
 		// 그래픽 창의 지정한 위치에 지정한 길이의 범위 안에서 글자를 표시함
 		// x, y, text
 		if (frame == null)
-			Show(args);
+			Show(new ArrayList<Value>());
 		panel.DrawText(args);
 	}
 
@@ -103,7 +103,7 @@ public class GraphicsWindow {
 		// 그래픽 창의 지정한 위치에 지정된 펜으로 삼각형을 그림
 		// x1, y1, x2, y2, x3, y3
 		if (frame == null)
-			Show(args);
+			Show(new ArrayList<Value>());
 		panel.DrawTriangle(args);
 	}
 
@@ -111,7 +111,7 @@ public class GraphicsWindow {
 		// 그래픽 창의 지정한 위치에 색이 채워진 타원형을 그림
 		// x, y, width, height
 		if (frame == null)
-			Show(args);
+			Show(new ArrayList<Value>());
 		panel.FillEllipse(args);
 	}
 
@@ -119,7 +119,7 @@ public class GraphicsWindow {
 		// 그래픽 창의 지정한 위치에 색이 채워진 사각형을 그림
 		// x, y, width, height
 		if (frame == null)
-			Show(args);
+			Show(new ArrayList<Value>());
 		panel.FillRectangle(args);
 	}
 
@@ -127,7 +127,7 @@ public class GraphicsWindow {
 		// 그래픽 창의 지정한 위치에 색이 채워진 삼각형을 그림
 		// x1, y1, x2, y2, x3, y3
 		if (frame == null)
-			Show(args);
+			Show(new ArrayList<Value>());
 		panel.FillTriangle(args);
 	}
 
@@ -170,7 +170,7 @@ public class GraphicsWindow {
 		// 지정한 x와 y 좌표의 픽셀 색상값을 rgb 형식으로 가져옴
 		// x, y
 		if (frame == null)
-			Show(args);
+			Show(new ArrayList<Value>());
 		StrV color = (StrV) panel.GetPixel(args);
 
 		return color;
@@ -180,7 +180,7 @@ public class GraphicsWindow {
 		// 표현 가능한 임의의 색을 가져옴
 		if (args.size() == 0) {
 			if (frame == null)
-				Show(args);
+				Show(new ArrayList<Value>());
 			Random r = new Random(Calendar.getInstance().get(Calendar.MILLISECOND));
 			int i = r.nextInt(colorInfo.length);
 			return hexColor(new StrV(colorInfo[i]), defaultPenColor);
@@ -192,7 +192,7 @@ public class GraphicsWindow {
 		// 그래픽 창을 숨김
 		if (args.size() == 0) {
 			if (frame == null)
-				Show(args);
+				Show(new ArrayList<Value>());
 			frame.setVisible(false);
 		} else
 			throw new InterpretException("Unexpected # of args " + args.size());
@@ -203,7 +203,7 @@ public class GraphicsWindow {
 		// x, y, color
 		if (args.size() == 3) {
 			if (frame == null)
-				Show(args);
+				Show(new ArrayList<Value>());
 			panel.SetPixel(args);
 		} else
 			throw new InterpretException("Unexpected # of args " + args.size());
@@ -224,7 +224,7 @@ public class GraphicsWindow {
 		// 메시지 상자를 표시함
 		// text, title
 		if (frame == null)
-			Show(args);
+			Show(new ArrayList<Value>());
 
 		String title = "", text = "";
 		if (args.size() == 2) {

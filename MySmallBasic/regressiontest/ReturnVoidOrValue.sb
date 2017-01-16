@@ -1,0 +1,5 @@
+a = GraphicsWindow.DrawRectangle(10, 10, 50, 50)
+TextWindow.WriteLine(a)
+
+b = Math.Abs(-10)
+TextWindow.WriteLine(b)

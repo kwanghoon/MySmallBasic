@@ -41,6 +41,8 @@ public class Eval {
 
 		// Value v1 = eval(env, lhs);
 		Value v2 = eval(env, rhs);
+		if (v2 == null) 
+			throw new InterpretException("Assign : No Return Value in RHS.");
 
 		if (lhs instanceof Var) {
 			env.put(((Var) lhs).getVarName(), v2);
@@ -395,8 +397,13 @@ public class Eval {
 		try {
 			Class c = getClass(clzName);
 			Method m = c.getMethod(mthName, ArrayList.class);
-			return (Value) m.invoke(null, argValues);
-
+			String retTypeName = m.getReturnType().getName();
+			if ("void".equals(retTypeName) ==  false)
+				return (Value) m.invoke(null, argValues);
+			else {
+				m.invoke(null, argValues);
+				return null;
+			}
 		} catch (NoSuchMethodException e) {
 			throw new InterpretException(e.toString() + mthName);
 		} catch (IllegalAccessException e) {
