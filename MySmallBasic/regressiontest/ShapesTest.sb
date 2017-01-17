@@ -15,7 +15,7 @@ Shapes.SetText(third, 3)
 fourth = Shapes.AddLine(150, 150, 250, 150)
 Shapes.SetOpacity(fourth, 30)
 
-For i = 0 To 180 Step 45
+For i = 0 To 180 Step 10
 	Shapes.Rotate(fourth, i)
 	TextWindow.Read()
 EndFor
