@@ -511,7 +511,6 @@ public class Text {
 
 			throw new InterpretException("NaturalLog: Unexpected # of args: " + args.size());
 		
-		//return new StrV((char)(dbl_arg) + "");
 		return new StrV(String.valueOf((char)(dbl_arg)));
 		
 	}

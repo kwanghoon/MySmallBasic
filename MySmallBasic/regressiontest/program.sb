@@ -1,0 +1,12 @@
+TextWindow.Write("Program.Directory : ")
+TextWindow.WriteLine(Program.Directory)
+TextWindow.WriteLine("")
+
+TextWindow.WriteLine("Program.Delay & Program.End Operation Test")
+For i = 1 To 1000
+  TextWindow.Write( i + " ")
+  Program.Delay(1000)
+  If i = 10 Then 
+    Program.End()
+  EndIf
+EndFor
