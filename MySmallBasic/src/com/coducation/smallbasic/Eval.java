@@ -310,7 +310,7 @@ public class Eval {
 			if (v1 instanceof StrV && v2 instanceof StrV) {
 				StrV s1 = (StrV) v1;
 				StrV s2 = (StrV) v2;
-				if (s1.getValue() == s2.getValue())
+				if (s1.getValue().equals(s2.getValue()))
 					return new StrV("true"); // v1.equals(v2);
 			} else if (v1 instanceof DoubleV && v2 instanceof DoubleV) {
 				DoubleV d1 = (DoubleV) v1;
