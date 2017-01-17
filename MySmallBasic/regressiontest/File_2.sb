@@ -1,9 +1,9 @@
-'µð·ºÅä¸®°¡  Á¸ÀçÇÒ °æ¿ì ¿øº»ÆÄÀÏÀÇ ÀÌ¸§À¸·Î »ý¼º
+'ï¿½ï¿½ï¿½ä¸®ï¿½ï¿½  ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¸ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 TextWindow.WriteLine("CopyFile")
 TextWindow.WriteLine(File.CopyFile("555.txt", "C:\Users\Administrator\Desktop\dir\444.txt"))
 
-'µð·ºÅä¸®»èÁ¦ ½Ã ½ÇÆÐ
-'¾ø´ÂÆÄÀÏ»èÁ¦ ½Ã ¼º°ø
+'ï¿½ï¿½ï¿½ä¸®ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+'ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï»ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 TextWindow.WriteLine("")
 TextWindow.WriteLine("DeleteFile")
 TextWindow.WriteLine(File.DeleteFile("C:\Users\Administrator\Desktop\dir\444.txt"))
@@ -14,22 +14,22 @@ TextWindow.WriteLine("CreateDirectory")
 TextWindow.WriteLine(File.CreateDirectory("C:\Users\Administrator\Desktop\dir\444.txt"))
 TextWindow.WriteLine(File.CreateDirectory("C:\Users\Administrator\Desktop\dir\4441.txt"))
 
-'¾ø´Âµð·ºÅä¸®»èÁ¦ ½Ã ½ÇÆÐ
+'ï¿½ï¿½ï¿½Âµï¿½ï¿½ä¸®ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 TextWindow.WriteLine("")
 TextWindow.WriteLine("DeleteDirectory")
 TextWindow.WriteLine(File.DeleteDirectory("C:\Users\Administrator\Desktop\dir\4441.txt"))
 TextWindow.WriteLine(File.DeleteDirectory("C:\Users\Administrator\Desktop\dir\11"))
 
-'¾ø´Âµð·ºÅä¸® ½ÇÆÐ
-'°æ·Î¿¡ \\»ç¿ë
+'ï¿½ï¿½ï¿½Âµï¿½ï¿½ä¸® ï¿½ï¿½ï¿½ï¿½
+'ï¿½ï¿½Î¿ï¿½ \\ï¿½ï¿½ï¿½
 TextWindow.WriteLine("")
 TextWindow.WriteLine("GetFiles")
 TextWindow.WriteLine(File.GetFiles("C:\Users\Administrator\Desktop\dir\444.txt"))
 TextWindow.WriteLine(File.GetFiles("C:\Users\Administrator\Desktop\dirs"))
 
-'¾ø´Âµð·ºÅä¸® ½ÇÆÐ
-'°æ·Î¿¡ \\»ç¿ë
-'ºóÆú´õÀÌ¸é °ø¹é¹ÝÈ¯
+'ï¿½ï¿½ï¿½Âµï¿½ï¿½ä¸® ï¿½ï¿½ï¿½ï¿½
+'ï¿½ï¿½Î¿ï¿½ \\ï¿½ï¿½ï¿½
+'ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½È¯
 TextWindow.WriteLine("")
 TextWindow.WriteLine("GetFiles")
 TextWindow.WriteLine(File.GetDirectories("C:\Users\Administrator\Desktop\dir\444.txt"))
