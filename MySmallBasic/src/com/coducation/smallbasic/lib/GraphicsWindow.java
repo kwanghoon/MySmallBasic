@@ -4,6 +4,7 @@ import java.awt.AWTException;
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -271,13 +272,15 @@ public class GraphicsWindow {
 	}
 
 	private static class Panel extends JPanel implements MouseListener, KeyListener, MouseMotionListener {
+		Container contentPane;
+		
 		public Panel(int width, int height) {
 			this.setOpaque(true);
 			this.setLayout(null);
 
 			cmdList = new ArrayList<>();
 			pixelList = new ArrayList<>();
-
+			
 			addMouseListener(this);
 			addKeyListener(this);
 			setPreferredSize(new Dimension(width, height));
@@ -1700,9 +1703,13 @@ public class GraphicsWindow {
 		if(frame == null)
 			Show(new ArrayList<Value>());
 		
+		if(caption.equals(""))
+			caption = " ";
+		
 		JButton btn = new JButton(caption);
 		
 		btn.setFont(settingFont());
+		btn.setForeground(new Color(Integer.parseInt(BrushColor.toString().substring(1), 16)));
 		btn.setSize(btn.getPreferredSize());
 		btn.setLocation(left, top);
 		panel.add(btn);
@@ -1722,6 +1729,7 @@ public class GraphicsWindow {
 		JTextField tf = new JTextField();
 		
 		tf.setFont(settingFont());
+		tf.setForeground(new Color(Integer.parseInt(BrushColor.toString().substring(1), 16)));
 		tf.setSize(tf.getPreferredSize());
 		tf.setLocation(left, top);
 		
@@ -1743,6 +1751,7 @@ public class GraphicsWindow {
 		JScrollPane scroll = new JScrollPane(ta);
 		
 		scroll.setFont(settingFont());
+		scroll.setForeground(new Color(Integer.parseInt(BrushColor.toString().substring(1), 16)));
 		scroll.setSize(scroll.getPreferredSize());
 		scroll.setLocation(left, top);
 		
@@ -2068,7 +2077,7 @@ public class GraphicsWindow {
 	public static Value BackgroundColor = GraphicsWindow.defaultBackgroundColor; // white
 	public static Value BrushColor = GraphicsWindow.defaultBrushColor;
 	public static Value CanResize = new StrV("True");
-	public static Value FontBold = new StrV("False");
+	public static Value FontBold = new StrV("True");
 	public static Value FontItalic = new StrV("False");
 	public static Value FontName = new StrV("Tahoma");
 	public static Value FontSize = new DoubleV(12);
