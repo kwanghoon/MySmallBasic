@@ -1,4 +1,4 @@
-TextWindow.Write("Program.Directory : ")
+TextWindow.Write("Properties - Program.Directory : ")
 TextWindow.WriteLine(Program.Directory)
 TextWindow.WriteLine("")
 

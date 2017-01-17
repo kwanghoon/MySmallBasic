@@ -60,6 +60,8 @@ public class Program {
 
 	}
 
+	//Program.End()
+	//Ends the program. 
 	public static Value End(ArrayList<Value> args) {
 		
 		if (args.size() == 0) {
