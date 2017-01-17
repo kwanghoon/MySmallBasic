@@ -80,10 +80,10 @@ public class Continuous {
 
 				return new GotoStmt(((Label) head).getLabel());
 			} else {
-				Stmt stmt = transform(head, new BlockStmt(new ArrayList<Stmt>()));
-				Stmt stmt1 = transform(new BlockStmt(stmts), stmtk);
+				Stmt stmtsStmtk = transform(new BlockStmt(stmts), stmtk);			
+				Stmt stmt = transform(head, stmtsStmtk);
 
-				return merge(stmt, stmt1);
+				return stmt;
 			}
 		}
 	}
@@ -93,11 +93,18 @@ public class Continuous {
 	}
 
 	public Stmt transform(ForStmt forStmt, Stmt stmtk) {
-		String linit = fresh();
 		String ltest = fresh();
 
-		// Stmt stmt = transform(forStmt.getBlock(), new BlockStmt(new ArrayList<Stmt>()));
-
+		// i = init value;
+		// Goto ltest;
+		
+		ArrayList<Stmt> init = new ArrayList<>();
+		init.add(new Assign(forStmt.getVar(), forStmt.getInit()));
+		init.add(new GotoStmt(ltest));
+		
+		Stmt linitStmt = new BlockStmt(init);
+		
+		// step
 		Expr step;
 
 		if (forStmt.getStep() == null) {
@@ -107,15 +114,17 @@ public class Continuous {
 			step = forStmt.getStep();
 		}
 
+		// i = i + step;
+		// Goto ltest;
 		Stmt update = new Assign(forStmt.getVar(), new ArithExpr(forStmt.getVar(), ArithExpr.PLUS, step));
-
-		//Stmt body = merge(stmt, update, new GotoStmt(ltest));
 		
 		ArrayList<Stmt> blockstmts = new ArrayList<Stmt>();
 		blockstmts.add(update);
 		blockstmts.add(new GotoStmt(ltest));
+		
 		Stmt blockstmtk = new BlockStmt(blockstmts);
 		
+		// for body
 		Stmt body = transform(forStmt.getBlock(), blockstmtk);
 
 		Expr ltestCond = new LogicalExpr(
@@ -125,15 +134,9 @@ public class Continuous {
 						LogicalExpr.AND, new CompExpr(forStmt.getVar(), CompExpr.GREATER_EQUAL, forStmt.getEnd())));
 		Stmt ltestStmt = newIfStmt(ltestCond, body, stmtk);
 
-		ArrayList<Stmt> init = new ArrayList<>();
-		init.add(new Assign(forStmt.getVar(), forStmt.getInit()));
-		init.add(new GotoStmt(ltest));
-		Stmt linitStmt = new BlockStmt(init);
-
-		kMap.put(linit, linitStmt);
 		kMap.put(ltest, ltestStmt);
 
-		return new GotoStmt(linit);
+		return linitStmt;
 	}
 
 	public Stmt transform(GotoStmt gotoStmt, Stmt stmtk) {
@@ -145,16 +148,15 @@ public class Continuous {
 	}
 
 	public Stmt transform(IfStmt ifStmt, Stmt stmtk) {
-		Stmt thenStmt = transform(ifStmt.getThen(), stmtk);
+		Stmt thenStmt = transform(ifStmt.getThen(), new BlockStmt(new ArrayList()));
 		Stmt elseStmt;
 
 		if (ifStmt.getElse() != null) {
-			elseStmt = transform(ifStmt.getElse(), stmtk);
+			elseStmt = transform(ifStmt.getElse(), new BlockStmt(new ArrayList()));
+			return merge(newIfStmt(ifStmt.getCond(), thenStmt, elseStmt), stmtk);
 		} else {
-			elseStmt = stmtk;
+			return merge(newIfStmt(ifStmt.getCond(), thenStmt, null), stmtk);
 		}
-
-		return newIfStmt(ifStmt.getCond(), thenStmt, elseStmt);
 	}
 
 	public Stmt transform(Label labelStmt, Stmt stmtk) {
