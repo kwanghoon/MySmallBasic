@@ -23,6 +23,7 @@ public class Eval {
 		this.eval= this;
 	}
 
+	// For GetArgument, ArgumentCount in Program Library:
 	private static String[] programArgs;
 	
 	public String[] getProgramArgs() { return programArgs; }
@@ -420,6 +421,15 @@ public class Eval {
 		} catch (IllegalArgumentException e) {
 			throw new InterpretException(e.toString());
 		} catch (InvocationTargetException e) {
+			Throwable exn = e.getCause();
+			if (exn instanceof InterpretException) {
+				InterpretException ie = (InterpretException)exn;
+				if (ie.getProgramEnd())
+					throw ie;
+				else
+					throw new InterpretException(e.toString() + clzName + ", " + mthName 
+							+ "\n" + "Caused By\n" + ie.getStackTrace());
+			}
 			throw new InterpretException(e.toString() + clzName + ", " + mthName);
 		} catch (ClassNotFoundException e) {
 			throw new InterpretException("Class Not Found " + e.toString());
