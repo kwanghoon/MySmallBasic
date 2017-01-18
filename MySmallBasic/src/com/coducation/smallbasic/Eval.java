@@ -7,7 +7,6 @@ import java.util.ArrayList;
 
 public class Eval {
 	int numberOfIndent;
-	static String label;
 	static BasicBlockEnv bbEnv;
 	static Env env;
 	static final String lib = "com.coducation.smallbasic.lib.";
@@ -34,12 +33,12 @@ public class Eval {
 	}
 	
 	public void eval() {
-		label = "$main";
 		env = new Env();
+		env.label("$main");
 
-		while (label != null) {
-			Stmt stmt = bbEnv.get(label);
-			label = null;
+		while (env.label() != null) {
+			Stmt stmt = bbEnv.get(env.label());
+			env.label(null);
 			eval(bbEnv, env, stmt);
 		}
 		// End
@@ -135,7 +134,7 @@ public class Eval {
 	}
 
 	public void eval(BasicBlockEnv bbEnv, Env env, GotoStmt gotoStmt) {
-		label = gotoStmt.getTargetLabel();
+		env.label( gotoStmt.getTargetLabel() );
 	}
 
 	public void eval(BasicBlockEnv bbEnv, Env env, IfStmt ifStmt) {
@@ -164,10 +163,10 @@ public class Eval {
 	public void eval(BasicBlockEnv bbEnv, Env env, SubCallExpr subCallExpr) {
 		// 1. Let label be the label of the Sub call
 		// 2. evalBlock(label)
-		label = subCallExpr.getName();
-		while (label != null) {
-			Stmt stmt = bbEnv.get(label);
-			label = null;
+		env.label( subCallExpr.getName() );
+		while (env.label() != null) {
+			Stmt stmt = bbEnv.get(env.label());
+			env.label(null);
 			eval(bbEnv, env, stmt);
 		}
 	}
@@ -510,10 +509,10 @@ public class Eval {
 	}
 	
 	public static void eval(Value labelV) {
-		label = ((StrV)labelV).getValue();
-		while (label != null) {
-			Stmt stmt = bbEnv.get(label);
-			label = null;
+		env.label( ((StrV)labelV).getValue() );
+		while (env.label() != null) {
+			Stmt stmt = bbEnv.get(env.label());
+			env.label(null);
 			eval.eval(bbEnv, env, stmt);
 		}
 	}

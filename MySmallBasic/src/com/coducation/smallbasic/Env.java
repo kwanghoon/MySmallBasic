@@ -5,6 +5,7 @@ import java.util.HashMap;
 public class Env {
 	public Env() {
 		map = new HashMap<String, Value>();
+		labels = new HashMap<String,String>();
 	}
 
 	public void put(String varName, Value val) {
@@ -47,5 +48,18 @@ public class Env {
 	private HashMap<String, Value> map; // variables { var |-> Value }
 	// private HashMap<String,BlockStmt> labels; // labels { label |-> BlockStmt
 	// }
-
+	
+	
+	// Multiple Labels for Multiple Threads 
+	private HashMap<String,String> labels;
+	
+	private static final String label = "$label";
+	
+	public String label() {
+		return labels.get(label + Thread.currentThread().getId());
+	}
+	
+	public void label(String _label) {
+		labels.put(label + Thread.currentThread().getId(), _label);
+	}
 }
