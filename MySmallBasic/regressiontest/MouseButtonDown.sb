@@ -1,0 +1,12 @@
+GraphicsWindow.Show()
+
+GraphicsWindow.MouseDown = OnMouseDown
+
+Sub OnMouseDown
+  TextWindow.WriteLine("왼쪽 마우스 클릭 : " + Mouse.IsLeftButtonDown)
+  TextWindow.WriteLine("오른쪽 마우스 클릭 : " + Mouse.IsRightButtonDown)
+  TextWindow.Write("Mouse.MouseX : " + Mouse.MouseX + ", ")
+  TextWindow.WriteLine("Mouse.MouseY : " + Mouse.MouseY)
+  TextWindow.Write("GraphicsWindow.MouseX : " + GraphicsWindow.MouseX + ", ")
+  TextWindow.WriteLine("GraphicsWindow.MouseY : " + GraphicsWindow.MouseY)
+EndSub

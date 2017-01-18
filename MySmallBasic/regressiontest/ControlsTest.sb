@@ -1,7 +1,8 @@
 first = Controls.AddButton("first button", 10, 50)
 second = Controls.AddTextBox("10", "80")
 third = Controls.AddMultiLineTextBox("10", "120")
-fourth = Controls.AddButton("second button", 100, 50)
+fourth = Controls.AddButton("second button", 150, 50)
+fifth = Controls.AddButton("", 300, 50)
 
 Controls.ButtonClicked = displayPopUp
 

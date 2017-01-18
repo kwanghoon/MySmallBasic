@@ -1,0 +1,4 @@
+GraphicsWindow.KeyUp = OnKeyUp
+Sub OnKeyUp
+  TextWindow.WriteLine(GraphicsWindow.LastText)
+EndSub

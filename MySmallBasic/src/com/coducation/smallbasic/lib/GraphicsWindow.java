@@ -4,12 +4,15 @@ import java.awt.AWTException;
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.Point;
 import java.awt.Robot;
+import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -248,8 +251,8 @@ public class GraphicsWindow {
 		Frame() {
 			setTitle(Title.toString());
 			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-			
-			if(((StrV) CanResize).getValue().equalsIgnoreCase("true"))
+
+			if (((StrV) CanResize).getValue().equalsIgnoreCase("true"))
 				setResizable(true);
 			else
 				setResizable(false);
@@ -289,9 +292,19 @@ public class GraphicsWindow {
 			String backColor = ((StrV) BackgroundColor).getValue();
 			setBackground(new Color(Integer.parseInt(backColor.substring(1), 16)));
 			String color;
+			double zoomX = 1;
+			double zoomY = 1;
+			double rotate = 1;
 
 			for (Cmd cmd : cmdList) {
 				if (cmd.show) {
+					if (cmd.scaleX != 1)
+						zoomX = cmd.scaleX;
+					if (cmd.scaleY != 1)
+						zoomY = cmd.scaleY;
+					if (cmd.degree != 0)
+						rotate = cmd.degree;
+
 					switch (cmd.cmd) {
 					case NOCOMMAND:
 						break;
@@ -303,7 +316,7 @@ public class GraphicsWindow {
 						g2.scale(dbtc.scaleX, dbtc.scaleY);
 						g2.setFont(dbtc.font);
 						g2.setColor(new Color(Integer.parseInt(color.substring(1), 16)));
-						
+
 						break;
 					case DRAWELLIPSE:
 						DrawEllipseCmd dec = (DrawEllipseCmd) cmd;
@@ -401,6 +414,18 @@ public class GraphicsWindow {
 						g2.setColor(new Color(Integer.parseInt(color.substring(1), 16)));
 						g2.fillPolygon(ftc.xs, ftc.ys, 3);
 						break;
+					}
+					if (zoomX != 1) {
+						g2.scale((double) 1 / zoomX, 1);
+						zoomX = 1;
+					}
+					if (zoomY != 1) {
+						g2.scale(1, (double) 1 / zoomY);
+						zoomY = 1;
+					}
+					if (rotate != 0) {
+						g2.rotate(java.lang.Math.toRadians(360 - rotate));
+						rotate = 0;
 					}
 				}
 			}
@@ -611,7 +636,7 @@ public class GraphicsWindow {
 					cmd.degree = 0;
 					cmd.scaleX = 1;
 					cmd.scaleY = 1;
-					
+
 					cmdList.add(cmd);
 
 					repaint();
@@ -655,7 +680,7 @@ public class GraphicsWindow {
 					cmd.degree = 0;
 					cmd.scaleX = 1;
 					cmd.scaleY = 1;
-					
+
 					cmdList.add(cmd);
 
 					repaint();
@@ -701,7 +726,7 @@ public class GraphicsWindow {
 					cmd.degree = 0;
 					cmd.scaleX = 1;
 					cmd.scaleY = 1;
-					
+
 					cmdList.add(cmd);
 
 					repaint();
@@ -748,7 +773,7 @@ public class GraphicsWindow {
 					cmd.degree = 0;
 					cmd.scaleX = 1;
 					cmd.scaleY = 1;
-					
+
 					cmdList.add(cmd);
 
 					repaint();
@@ -794,7 +819,7 @@ public class GraphicsWindow {
 					cmd.degree = 0;
 					cmd.scaleX = 1;
 					cmd.scaleY = 1;
-					
+
 					cmdList.add(cmd);
 
 					repaint();
@@ -840,7 +865,7 @@ public class GraphicsWindow {
 					cmd.degree = 0;
 					cmd.scaleX = 1;
 					cmd.scaleY = 1;
-					
+
 					cmdList.add(cmd);
 
 					repaint();
@@ -888,7 +913,7 @@ public class GraphicsWindow {
 					cmd.degree = 0;
 					cmd.scaleX = 1;
 					cmd.scaleY = 1;
-					
+
 					cmdList.add(cmd);
 
 					repaint();
@@ -935,7 +960,7 @@ public class GraphicsWindow {
 					cmd.degree = 0;
 					cmd.scaleX = 1;
 					cmd.scaleY = 1;
-					
+
 					cmdList.add(cmd);
 
 					repaint();
@@ -979,7 +1004,7 @@ public class GraphicsWindow {
 					cmd.degree = 0;
 					cmd.scaleX = 1;
 					cmd.scaleY = 1;
-					
+
 					cmdList.add(cmd);
 
 					repaint();
@@ -1025,7 +1050,7 @@ public class GraphicsWindow {
 					cmd.degree = 0;
 					cmd.scaleX = 1;
 					cmd.scaleY = 1;
-					
+
 					cmdList.add(cmd);
 
 					repaint();
@@ -1057,14 +1082,23 @@ public class GraphicsWindow {
 			if (MouseDown != null) {
 				MouseX = new DoubleV(e.getX());
 				MouseY = new DoubleV(e.getY());
-
+				
+				MouseButtonDown(e.getButton());
+				
 				Eval.eval(MouseDown);
 			}
 		}
 
 		@Override
 		public void mouseReleased(MouseEvent e) {
-
+			if (MouseUp != null) {
+				MouseX = new DoubleV(e.getX());
+				MouseY = new DoubleV(e.getY());
+				
+				MouseButtonDown(e.getButton());
+				
+				Eval.eval(MouseUp);
+			}
 		}
 
 		@Override
@@ -1074,7 +1108,14 @@ public class GraphicsWindow {
 
 		@Override
 		public void mouseMoved(MouseEvent e) {
-
+			if (MouseMove != null) {
+				MouseX = new DoubleV(e.getX());
+				MouseY = new DoubleV(e.getY());
+			
+				MouseButtonDown(e.getButton());
+				
+				Eval.eval(MouseMove);
+			}
 		}
 
 		public void addNotify() {
@@ -1090,7 +1131,10 @@ public class GraphicsWindow {
 		@Override
 		public void keyPressed(KeyEvent e) {
 			if (KeyDown != null) {
-				LastKey = new StrV(e.getKeyChar());
+				String lastKey = keyMap.get(e.getKeyCode());
+				
+				lastKey = SetLastKey(e.getKeyLocation(), lastKey);				
+				LastKey = new StrV(lastKey);
 
 				Eval.eval(KeyDown);
 			}
@@ -1099,7 +1143,14 @@ public class GraphicsWindow {
 
 		@Override
 		public void keyReleased(KeyEvent e) {
-
+			if (KeyUp != null) {
+				String lastKey = keyMap.get(e.getKeyCode());
+				
+				lastKey = SetLastKey(e.getKeyLocation(), lastKey);				
+				LastKey = new StrV(lastKey);
+				
+				Eval.eval(KeyUp);
+			}
 		}
 
 	}
@@ -1284,7 +1335,7 @@ public class GraphicsWindow {
 		panel.repaint();
 	}
 
-	public static void Remove(String shape) {
+	public static void ShapesRemove(String shape) {
 		ArrayList<Cmd> cmds = shapeMap.remove(shape);
 		if (cmds != null) {
 			for (Cmd cmd : cmds) {
@@ -1294,7 +1345,7 @@ public class GraphicsWindow {
 		}
 	}
 
-	public static void Move(String shape, double x, double y) {
+	public static void ShapesMove(String shape, double x, double y) {
 		ArrayList<Cmd> cmds = shapeMap.get(shape);
 
 		if (cmds != null) {
@@ -1304,77 +1355,79 @@ public class GraphicsWindow {
 			panel.repaint();
 		}
 	}
-	
+
 	public static void Rotate(String shapeName, double angle) {
 		ArrayList<Cmd> cmds = shapeMap.get(shapeName);
-		
-		if(cmds != null) {
-			for(Cmd cmd : cmds) {
+
+		if (cmds != null) {
+			for (Cmd cmd : cmds) {
 				cmd.degree = angle;
 			}
+			panel.repaint();
 		}
 	}
-	
+
 	public static void Zoom(String shapeName, double scaleX, double scaleY) {
 		ArrayList<Cmd> cmds = shapeMap.get(shapeName);
-		
-		if(cmds != null) {
-			for(Cmd cmd : cmds) {
+
+		if (cmds != null) {
+			for (Cmd cmd : cmds) {
 				cmd.scaleX = scaleX;
 				cmd.scaleY = scaleY;
 			}
+			panel.repaint();
 		}
 	}
-	
+
 	public static void Animate(String shapeName, double x, double y, int duration) {
-		
+
 	}
 
 	public static double GetLeft(String shapeName) {
 		ArrayList<Cmd> cmds = shapeMap.get(shapeName);
-		
-		if(cmds != null) {
+
+		if (cmds != null) {
 			return cmds.get(0).x;
 		}
-		
+
 		return 0;
 	}
-	
+
 	public static double GetTop(String shapeName) {
 		ArrayList<Cmd> cmds = shapeMap.get(shapeName);
-		
-		if(cmds != null) {
+
+		if (cmds != null) {
 			return cmds.get(0).x;
 		}
-		
+
 		return 0;
 	}
-	
+
 	public static double GetOpacity(String shapeName) {
 		ArrayList<Cmd> cmds = shapeMap.get(shapeName);
-		
-		if(cmds != null) {
+
+		if (cmds != null) {
 			return cmds.get(0).opacity * 100;
 		}
-		
+
 		return 0;
 	}
-	
+
 	public static void SetOpacity(String shapeName, double opacity) {
 		ArrayList<Cmd> cmds = shapeMap.get(shapeName);
-		
-		if(cmds != null) {
-			for(Cmd cmd : cmds) {
-				if(opacity >= 0 && opacity <= 100)
+
+		if (cmds != null) {
+			for (Cmd cmd : cmds) {
+				if (opacity >= 0 && opacity <= 100)
 					cmd.opacity = (float) (opacity / 100);
-				else if(opacity < 0)
+				else if (opacity < 0)
 					cmd.opacity = 0;
-				else if(opacity > 100)
+				else if (opacity > 100)
 					cmd.opacity = 1;
 			}
 		}
 	}
-	
+
 	public static void HideShape(String shapeName) {
 		ArrayList<Cmd> cmds = shapeMap.get(shapeName);
 
@@ -1397,119 +1450,211 @@ public class GraphicsWindow {
 		}
 	}
 	// End Shapes Library
-	
+
 	// Controls Library
 	private static final String btnIdLabel = "Button";
 	private static final String txtBoxIdLabel = "TextBox";
-	
+
 	private static int btnId = 1;
 	private static int txtBoxId = 1;
-	
+
 	private static HashMap<String, JComponent> controlMap = new HashMap<>();
-	
+
 	public static String AddButton(String caption, int left, int top) {
+		if (frame == null)
+			Show(new ArrayList<Value>());
+
+		if (caption.equals(""))
+			caption = " ";
+
 		JButton btn = new JButton(caption);
-		
+
 		btn.setFont(settingFont());
+		btn.setForeground(new Color(Integer.parseInt(BrushColor.toString().substring(1), 16)));
 		btn.setSize(btn.getPreferredSize());
 		btn.setLocation(left, top);
 		panel.add(btn);
-			
+
 		String id = btnIdLabel + btnId;
 		btnId++;
-		
+
 		controlMap.put(id, btn);
-		
+
 		return id;
 	}
-	
+
 	public static String AddTextBox(int left, int top) {
+		if (frame == null)
+			Show(new ArrayList<Value>());
+
 		JTextField tf = new JTextField();
-		
+
 		tf.setFont(settingFont());
+		tf.setForeground(new Color(Integer.parseInt(BrushColor.toString().substring(1), 16)));
 		tf.setSize(tf.getPreferredSize());
 		tf.setLocation(left, top);
-		
+
 		panel.add(tf);
-		
+
 		String id = txtBoxIdLabel + txtBoxId;
 		txtBoxId++;
-		
+
 		controlMap.put(id, tf);
-		
+
 		return id;
 	}
-	
+
 	public static String AddMultiLineTextBox(int left, int top) {
+		if (frame == null)
+			Show(new ArrayList<Value>());
+
 		JTextArea ta = new JTextArea();
 		JScrollPane scroll = new JScrollPane(ta);
-		
+
 		scroll.setFont(settingFont());
+		scroll.setForeground(new Color(Integer.parseInt(BrushColor.toString().substring(1), 16)));
 		scroll.setSize(scroll.getPreferredSize());
 		scroll.setLocation(left, top);
-		
+
 		panel.add(scroll);
-		
+
 		String id = txtBoxIdLabel + txtBoxId;
 		txtBoxId++;
-		
+
 		controlMap.put(id, ta);
-		
+
 		return id;
 	}
-	
+
 	public static String GetButtonCaption(String buttonName) {
 		JComponent comp = controlMap.get(buttonName);
 		String caption = "";
-		
-		if(comp != null && comp instanceof JButton) {
+
+		if (comp != null && comp instanceof JButton) {
 			caption = ((JButton) comp).getText();
 		}
-		
+
 		return caption;
 	}
-	
+
 	public static void SetButtonCaption(String buttonName, String caption) {
 		JComponent comp = controlMap.get(buttonName);
-		
-		if(comp != null && comp instanceof JButton) {
+
+		if (comp != null && comp instanceof JButton) {
 			JButton btn = (JButton) comp;
 			btn.setText(caption);
 			btn.setSize(btn.getPreferredSize());
 		}
 	}
-	
+
 	public static String GetTextBoxText(String textBoxName) {
 		JComponent comp = controlMap.get(textBoxName);
 		String text = "";
-		
-		if(comp != null) {
-			if(comp instanceof JTextField) {
+
+		if (comp != null) {
+			if (comp instanceof JTextField) {
 				text = ((JTextField) comp).getText();
-			}
-			else if(comp instanceof JTextArea) {
+			} else if (comp instanceof JTextArea) {
 				text = ((JTextArea) comp).getText();
 			}
 		}
-		
+
 		return text;
 	}
 
 	public static void SetTextBoxText(String textBoxName, String text) {
 		JComponent comp = controlMap.get(textBoxName);
-		
-		if(comp != null) {
-			if(comp instanceof JTextField) {
+
+		if (comp != null) {
+			if (comp instanceof JTextField) {
 				JTextField tf = (JTextField) comp;
 				tf.setText(text);
-			}
-			else if(comp instanceof JTextArea) {
+			} else if (comp instanceof JTextArea) {
 				JTextArea ta = (JTextArea) comp;
 				ta.setText(text);
 			}
 		}
 	}
+
+	public static void ContorlsRemove(String control) {
+		JComponent comp = controlMap.get(control);
+
+		if (comp != null) {
+			controlMap.remove(control);
+			panel.remove(comp);
+			panel.validate();
+			panel.repaint();
+		}
+	}
+
+	public static void ControlsMove(String control, int x, int y) {
+		JComponent comp = controlMap.get(control);
+
+		if (comp != null) {
+			comp.setLocation(x, y);
+		}
+	}
+
+	public static void SetSize(String control, int width, int height) {
+		JComponent comp = controlMap.get(control);
+
+		if (comp != null) {
+			comp.setSize(width, height);
+		}
+	}
+
+	public static void HideControl(String control) {
+		JComponent comp = controlMap.get(control);
+
+		if (comp != null) {
+			comp.setVisible(false);
+		}
+	}
+
+	public static void ShowControl(String control) {
+		JComponent comp = controlMap.get(control);
+
+		if (comp != null) {
+			comp.setVisible(true);
+		}
+	}
 	// End Controls Library
+
+	// Mouse Library
+	static Toolkit tk = Toolkit.getDefaultToolkit();
+	static Cursor cursor;
+	
+	public static void HideCursor() {
+		if(frame == null)
+			Show(new ArrayList<Value>());
+		
+		cursor = tk.createCustomCursor(tk.createImage(""), new Point(), null);
+		panel.setCursor(cursor);
+	}
+	
+	public static void ShowCursor() {
+		if(frame == null)
+			Show(new ArrayList<Value>());
+		
+		cursor = new Cursor(Cursor.DEFAULT_CURSOR);
+		panel.setCursor(cursor);
+	}
+	
+	private static void MouseButtonDown(int button) {
+		String right = "False";
+		String left = "False";
+		
+		if(button == MouseEvent.BUTTON1) {
+			left = "True";
+		}
+		if(button == MouseEvent.BUTTON3) {
+			right = "True";
+		}
+		
+		Mouse.IsLeftButtonDown = new StrV(left);
+		Mouse.IsRightButtonDown = new StrV(right);
+	}
+	// End Mouse Library
 	
 	// font
 	private static boolean fontBold() {
@@ -1584,6 +1729,29 @@ public class GraphicsWindow {
 
 		return top;
 	}
+	
+	private static String SetLastKey(int location, String lastKey) {
+		if(lastKey.equals("Win")) {
+			if(location == 2)
+				return "L" + lastKey;
+			else if(location == 3)
+				return "R" + lastKey;
+		}
+		else if(lastKey.equals("Shift")) {
+			if(location == 2)
+				return "Left" + lastKey;
+			else if(location == 3)
+				return "Right" + lastKey;
+		}
+		else if(lastKey.equals("Ctrl")) {
+			if(location == 2)
+				return "Left" + lastKey;
+			else if(location == 1)
+				return "Right" + lastKey;
+		}
+		
+		return lastKey;
+	}
 
 	private static abstract class Cmd {
 		boolean show;
@@ -1628,7 +1796,7 @@ public class GraphicsWindow {
 		void Move(double x, double y) {
 			this.x = x;
 			this.y = y;
-			
+
 			int dx = x1 - (int) x;
 			int dy = y1 - (int) y;
 
@@ -1669,10 +1837,10 @@ public class GraphicsWindow {
 		void Move(double x, double y) {
 			this.x = x;
 			this.y = y;
-			
+
 			int dx = xs[0] - (int) x;
 			int dy = ys[0] - (int) y;
-			
+
 			xs[0] = (int) x;
 			ys[0] = (int) y;
 			xs[1] = xs[1] - dx;
@@ -1704,10 +1872,10 @@ public class GraphicsWindow {
 		void Move(double x, double y) {
 			this.x = x;
 			this.y = y;
-			
+
 			int dx = xs[0] - (int) x;
 			int dy = ys[0] - (int) y;
-			
+
 			xs[0] = (int) x;
 			ys[0] = (int) y;
 			xs[1] = xs[1] - dx;
@@ -1727,10 +1895,10 @@ public class GraphicsWindow {
 	public static Value BackgroundColor = GraphicsWindow.defaultBackgroundColor; // white
 	public static Value BrushColor = GraphicsWindow.defaultBrushColor;
 	public static Value CanResize = new StrV("True");
-	public static Value FontBold = new StrV("False");
+	public static Value FontBold = new StrV("True");
 	public static Value FontItalic = new StrV("False");
 	public static Value FontName = new StrV("Tahoma");
-	public static Value FontSize = new DoubleV(20);
+	public static Value FontSize = new DoubleV(12);
 	public static Value Height = new DoubleV(480);
 	public static Value LastKey;
 	public static Value LastText;
@@ -1785,12 +1953,50 @@ public class GraphicsWindow {
 			"#808080", "DimGray", "#696969", "LightSlateGray", "#778899", "SlateGray", "#708090", "DarkSlateGray",
 			"#2F4F4F", "Black", "#000000" };
 
+	private static int[] int_keyInfo = { KeyEvent.VK_0, KeyEvent.VK_RIGHT_PARENTHESIS, KeyEvent.VK_1,
+			KeyEvent.VK_EXCLAMATION_MARK, KeyEvent.VK_2, KeyEvent.VK_AT, KeyEvent.VK_3, KeyEvent.VK_NUMBER_SIGN,
+			KeyEvent.VK_4, KeyEvent.VK_DOLLAR, KeyEvent.VK_5, KeyEvent.VK_6, KeyEvent.VK_CIRCUMFLEX, KeyEvent.VK_7,
+			KeyEvent.VK_8, KeyEvent.VK_9, KeyEvent.VK_LEFT_PARENTHESIS, KeyEvent.VK_F1, KeyEvent.VK_F2, KeyEvent.VK_F3,
+			KeyEvent.VK_F4, KeyEvent.VK_F5, KeyEvent.VK_F6, KeyEvent.VK_F7, KeyEvent.VK_F8, KeyEvent.VK_F9,
+			KeyEvent.VK_F10, KeyEvent.VK_F11, KeyEvent.VK_F12, KeyEvent.VK_A, KeyEvent.VK_B, KeyEvent.VK_C,
+			KeyEvent.VK_D, KeyEvent.VK_E, KeyEvent.VK_F, KeyEvent.VK_G, KeyEvent.VK_H, KeyEvent.VK_I, KeyEvent.VK_J,
+			KeyEvent.VK_K, KeyEvent.VK_L, KeyEvent.VK_M, KeyEvent.VK_N, KeyEvent.VK_O, KeyEvent.VK_P, KeyEvent.VK_Q,
+			KeyEvent.VK_R, KeyEvent.VK_S, KeyEvent.VK_T, KeyEvent.VK_U, KeyEvent.VK_V, KeyEvent.VK_W, KeyEvent.VK_X,
+			KeyEvent.VK_Y, KeyEvent.VK_Z, KeyEvent.VK_NUMPAD0, KeyEvent.VK_NUMPAD1, KeyEvent.VK_NUMPAD2,
+			KeyEvent.VK_NUMPAD3, KeyEvent.VK_NUMPAD4, KeyEvent.VK_NUMPAD5, KeyEvent.VK_NUMPAD6, KeyEvent.VK_NUMPAD7,
+			KeyEvent.VK_NUMPAD8, KeyEvent.VK_NUMPAD9, KeyEvent.VK_NUM_LOCK, KeyEvent.VK_ADD, KeyEvent.VK_SUBTRACT,
+			KeyEvent.VK_MULTIPLY, KeyEvent.VK_DIVIDE, KeyEvent.VK_DECIMAL, KeyEvent.VK_TAB, KeyEvent.VK_CAPS_LOCK,
+			KeyEvent.VK_SHIFT, KeyEvent.VK_CONTROL, KeyEvent.VK_WINDOWS, KeyEvent.VK_ALT,
+			KeyEvent.VK_INPUT_METHOD_ON_OFF, KeyEvent.VK_SPACE, KeyEvent.VK_CONTEXT_MENU, KeyEvent.VK_BACK_SPACE,
+			KeyEvent.VK_BACK_SLASH, KeyEvent.VK_ENTER, KeyEvent.VK_BACK_QUOTE, KeyEvent.VK_UP, KeyEvent.VK_DOWN,
+			KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT, KeyEvent.VK_KP_UP, KeyEvent.VK_KP_DOWN, KeyEvent.VK_KP_LEFT,
+			KeyEvent.VK_KP_RIGHT, KeyEvent.VK_INSERT, KeyEvent.VK_HOME, KeyEvent.VK_PAGE_UP, KeyEvent.VK_DELETE,
+			KeyEvent.VK_END, KeyEvent.VK_PAGE_DOWN, KeyEvent.VK_COMMA, KeyEvent.VK_PERIOD, KeyEvent.VK_SLASH,
+			KeyEvent.VK_SEMICOLON, KeyEvent.VK_COLON, KeyEvent.VK_OPEN_BRACKET, KeyEvent.VK_CLOSE_BRACKET,
+			KeyEvent.VK_ESCAPE, KeyEvent.VK_SCROLL_LOCK, KeyEvent.VK_PAUSE, KeyEvent.VK_EQUALS, KeyEvent.VK_MINUS,
+			KeyEvent.VK_CLEAR };
+
+	private static String[] keyInfo = { "D0", "D0", "D1", "D1", "D2", "D2", "D3", "D3", "D4", "D4", "D5", "D6", "D6",
+			"D7", "D8", "D9", "D9", "F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "System", "F11", "F12", "A",
+			"B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V",
+			"W", "X", "Y", "Z", "NumPad0", "NumPad1", "NumPad2", "NumPad3", "NumPad4", "NumPad5", "NumPad6", "NumPad7",
+			"NumPad8", "NumPad9", "NumLock", "Add", "Subtract", "Multiply", "Divide", "Decimal", "Tab", "Capital",
+			"Shift", "Ctrl", "Win", "Alt", "HanjaMode", "Space", "Apps", "Back", "Oem5", "Return", "Oem3", "Up", "Down",
+			"Left", "Right", "Up", "Down", "Left", "Right", "Insert", "Home", "PageUp", "Delete", "End", "PageDown",
+			"OemComma", "OemPeriod", "OemQuestion", "Oem1", "Oem1", "OemOpenBrackets", "Oem6", "Escape", "Scroll",
+			"Pause", "OemPlus", "OemMinus", "Clear" };
+
 	private static HashMap<String, String> colorMap;
+	private static HashMap<Integer, String> keyMap;
 
 	static {
 		colorMap = new HashMap<String, String>();
+		keyMap = new HashMap<Integer, String>();
 		for (int i = 0; i < colorInfo.length; i += 2) {
 			colorMap.put(colorInfo[i].toUpperCase(), colorInfo[i + 1]);
+		}
+		for (int i = 0; i < keyInfo.length; i++) {
+			keyMap.put(int_keyInfo[i], keyInfo[i]);
 		}
 	}
 

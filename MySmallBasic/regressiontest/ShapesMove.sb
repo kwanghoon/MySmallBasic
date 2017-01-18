@@ -4,8 +4,6 @@ third = Shapes.AddRectangle(50, 50)
 fourth = Shapes.AddTriangle(30, 30, 30, 10, 50, 10)
 fifth = Shapes.AddText("test")
 
-shape = first
-
 GraphicsWindow.KeyDown = OnKeyPressed
 GraphicsWindow.MouseDown = OnMouseClicked
 
