@@ -1116,13 +1116,27 @@ public class GraphicsWindow {
 		public void keyPressed(KeyEvent e) {
 			if (KeyDown != null) {
 				String lastKey = keyMap.get(e.getKeyCode());
-				LastKey = new StrV(lastKey);
-
-				String lastText = String.valueOf(e.getKeyChar());
-
-				if (lastText != " ") {
-					LastText = new StrV(String.valueOf(e.getKeyChar()));
+				
+				if(lastKey.equals("Win")) {
+					if(e.getKeyLocation() == 2)
+						lastKey = "L" + lastKey;
+					else if(e.getKeyLocation() == 3)
+						lastKey = "R" + lastKey;
 				}
+				else if(lastKey.equals("Shift")) {
+					if(e.getKeyLocation() == 2)
+						lastKey = "Left" + lastKey;
+					else if(e.getKeyLocation() == 3)
+						lastKey = "Right" + lastKey;
+				}
+				else if(lastKey.equals("Ctrl")) {
+					if(e.getKeyLocation() == 2)
+						lastKey = "Left" + lastKey;
+					else if(e.getKeyLocation() == 1)
+						lastKey = "Right" + lastKey;
+				}
+				
+				LastKey = new StrV(lastKey);
 
 				Eval.eval(KeyDown);
 			}
@@ -1133,14 +1147,28 @@ public class GraphicsWindow {
 		public void keyReleased(KeyEvent e) {
 			if (KeyUp != null) {
 				String lastKey = keyMap.get(e.getKeyCode());
+				
+				if(lastKey.equals("Win")) {
+					if(e.getKeyLocation() == 2)
+						lastKey = "L" + lastKey;
+					else if(e.getKeyLocation() == 3)
+						lastKey = "R" + lastKey;
+				}
+				else if(lastKey.equals("Shift")) {
+					if(e.getKeyLocation() == 2)
+						lastKey = "Left" + lastKey;
+					else if(e.getKeyLocation() == 3)
+						lastKey = "Right" + lastKey;
+				}
+				else if(lastKey.equals("Ctrl")) {
+					if(e.getKeyLocation() == 2)
+						lastKey = "Left" + lastKey;
+					else if(e.getKeyLocation() == 1)
+						lastKey = "Right" + lastKey;
+				}
+				
 				LastKey = new StrV(lastKey);
 				
-				String lastText = String.valueOf(e.getKeyChar());
-				System.out.println(e.getKeyChar());
-				if (lastText != null) {
-					LastText = new StrV(String.valueOf(e.getKeyChar()));
-				}
-
 				Eval.eval(KeyUp);
 			}
 		}
