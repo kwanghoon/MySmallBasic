@@ -1,0 +1,6 @@
+For i = 0 To 10
+  Mouse.HideCursor()
+  TextWindow.Read()
+  Mouse.ShowCursor()
+  TextWindow.Read()
+EndFor

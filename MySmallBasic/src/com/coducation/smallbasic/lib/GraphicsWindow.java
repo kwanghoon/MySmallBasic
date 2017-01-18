@@ -4,13 +4,15 @@ import java.awt.AWTException;
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Container;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.Point;
 import java.awt.Robot;
+import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -272,8 +274,6 @@ public class GraphicsWindow {
 	}
 
 	private static class Panel extends JPanel implements MouseListener, KeyListener, MouseMotionListener {
-		Container contentPane;
-
 		public Panel(int width, int height) {
 			this.setOpaque(true);
 			this.setLayout(null);
@@ -1082,14 +1082,23 @@ public class GraphicsWindow {
 			if (MouseDown != null) {
 				MouseX = new DoubleV(e.getX());
 				MouseY = new DoubleV(e.getY());
-
+				
+				MouseButtonDown(e.getButton());
+				
 				Eval.eval(MouseDown);
 			}
 		}
 
 		@Override
 		public void mouseReleased(MouseEvent e) {
-
+			if (MouseUp != null) {
+				MouseX = new DoubleV(e.getX());
+				MouseY = new DoubleV(e.getY());
+				
+				MouseButtonDown(e.getButton());
+				
+				Eval.eval(MouseUp);
+			}
 		}
 
 		@Override
@@ -1099,7 +1108,14 @@ public class GraphicsWindow {
 
 		@Override
 		public void mouseMoved(MouseEvent e) {
-
+			if (MouseMove != null) {
+				MouseX = new DoubleV(e.getX());
+				MouseY = new DoubleV(e.getY());
+			
+				MouseButtonDown(e.getButton());
+				
+				Eval.eval(MouseMove);
+			}
 		}
 
 		public void addNotify() {
@@ -1117,25 +1133,7 @@ public class GraphicsWindow {
 			if (KeyDown != null) {
 				String lastKey = keyMap.get(e.getKeyCode());
 				
-				if(lastKey.equals("Win")) {
-					if(e.getKeyLocation() == 2)
-						lastKey = "L" + lastKey;
-					else if(e.getKeyLocation() == 3)
-						lastKey = "R" + lastKey;
-				}
-				else if(lastKey.equals("Shift")) {
-					if(e.getKeyLocation() == 2)
-						lastKey = "Left" + lastKey;
-					else if(e.getKeyLocation() == 3)
-						lastKey = "Right" + lastKey;
-				}
-				else if(lastKey.equals("Ctrl")) {
-					if(e.getKeyLocation() == 2)
-						lastKey = "Left" + lastKey;
-					else if(e.getKeyLocation() == 1)
-						lastKey = "Right" + lastKey;
-				}
-				
+				lastKey = SetLastKey(e.getKeyLocation(), lastKey);				
 				LastKey = new StrV(lastKey);
 
 				Eval.eval(KeyDown);
@@ -1148,25 +1146,7 @@ public class GraphicsWindow {
 			if (KeyUp != null) {
 				String lastKey = keyMap.get(e.getKeyCode());
 				
-				if(lastKey.equals("Win")) {
-					if(e.getKeyLocation() == 2)
-						lastKey = "L" + lastKey;
-					else if(e.getKeyLocation() == 3)
-						lastKey = "R" + lastKey;
-				}
-				else if(lastKey.equals("Shift")) {
-					if(e.getKeyLocation() == 2)
-						lastKey = "Left" + lastKey;
-					else if(e.getKeyLocation() == 3)
-						lastKey = "Right" + lastKey;
-				}
-				else if(lastKey.equals("Ctrl")) {
-					if(e.getKeyLocation() == 2)
-						lastKey = "Left" + lastKey;
-					else if(e.getKeyLocation() == 1)
-						lastKey = "Right" + lastKey;
-				}
-				
+				lastKey = SetLastKey(e.getKeyLocation(), lastKey);				
 				LastKey = new StrV(lastKey);
 				
 				Eval.eval(KeyUp);
@@ -1640,6 +1620,42 @@ public class GraphicsWindow {
 	}
 	// End Controls Library
 
+	// Mouse Library
+	static Toolkit tk = Toolkit.getDefaultToolkit();
+	static Cursor cursor;
+	
+	public static void HideCursor() {
+		if(frame == null)
+			Show(new ArrayList<Value>());
+		
+		cursor = tk.createCustomCursor(tk.createImage(""), new Point(), null);
+		panel.setCursor(cursor);
+	}
+	
+	public static void ShowCursor() {
+		if(frame == null)
+			Show(new ArrayList<Value>());
+		
+		cursor = new Cursor(Cursor.DEFAULT_CURSOR);
+		panel.setCursor(cursor);
+	}
+	
+	private static void MouseButtonDown(int button) {
+		String right = "False";
+		String left = "False";
+		
+		if(button == MouseEvent.BUTTON1) {
+			left = "True";
+		}
+		if(button == MouseEvent.BUTTON3) {
+			right = "True";
+		}
+		
+		Mouse.IsLeftButtonDown = new StrV(left);
+		Mouse.IsRightButtonDown = new StrV(right);
+	}
+	// End Mouse Library
+	
 	// font
 	private static boolean fontBold() {
 		StrV bold = (StrV) FontBold;
@@ -1712,6 +1728,29 @@ public class GraphicsWindow {
 			throw new InterpretException("Unexpected type " + Top);
 
 		return top;
+	}
+	
+	private static String SetLastKey(int location, String lastKey) {
+		if(lastKey.equals("Win")) {
+			if(location == 2)
+				return "L" + lastKey;
+			else if(location == 3)
+				return "R" + lastKey;
+		}
+		else if(lastKey.equals("Shift")) {
+			if(location == 2)
+				return "Left" + lastKey;
+			else if(location == 3)
+				return "Right" + lastKey;
+		}
+		else if(lastKey.equals("Ctrl")) {
+			if(location == 2)
+				return "Left" + lastKey;
+			else if(location == 1)
+				return "Right" + lastKey;
+		}
+		
+		return lastKey;
 	}
 
 	private static abstract class Cmd {
