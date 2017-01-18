@@ -23,6 +23,15 @@ public class Eval {
 		this.eval= this;
 	}
 
+	private static String[] programArgs;
+	
+	public String[] getProgramArgs() { return programArgs; }
+	
+	public void eval(String[] args) {
+		programArgs = args;
+		eval();
+	}
+	
 	public void eval() {
 		label = "$main";
 		env = new Env();

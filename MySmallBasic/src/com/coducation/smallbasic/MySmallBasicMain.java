@@ -40,7 +40,7 @@ public class MySmallBasicMain {
 			System.out.println();
 			
 			System.out.println("Excution");
-			new Eval(new BasicBlockEnv(map)).eval();
+			new Eval(new BasicBlockEnv(map)).eval(args);
 		} else {
 			System.err.println("Tree is not BlockStmt.");
 		}
