@@ -13,6 +13,8 @@ import java.awt.Image;
 import java.awt.Point;
 import java.awt.Robot;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -32,6 +34,9 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.text.Document;
 
 import com.coducation.smallbasic.DoubleV;
 import com.coducation.smallbasic.Eval;
@@ -1473,6 +1478,7 @@ public class GraphicsWindow {
 		btn.setForeground(new Color(Integer.parseInt(BrushColor.toString().substring(1), 16)));
 		btn.setSize(btn.getPreferredSize());
 		btn.setLocation(left, top);
+		btn.addActionListener(new mActionListener());
 		panel.add(btn);
 
 		String id = btnIdLabel + btnId;
@@ -1493,6 +1499,7 @@ public class GraphicsWindow {
 		tf.setForeground(new Color(Integer.parseInt(BrushColor.toString().substring(1), 16)));
 		tf.setSize(tf.getPreferredSize());
 		tf.setLocation(left, top);
+		tf.getDocument().addDocumentListener(new mDocumentListener());
 
 		panel.add(tf);
 
@@ -1515,6 +1522,7 @@ public class GraphicsWindow {
 		scroll.setForeground(new Color(Integer.parseInt(BrushColor.toString().substring(1), 16)));
 		scroll.setSize(scroll.getPreferredSize());
 		scroll.setLocation(left, top);
+		ta.getDocument().addDocumentListener(new mDocumentListener());
 
 		panel.add(scroll);
 
@@ -1655,6 +1663,81 @@ public class GraphicsWindow {
 		Mouse.IsRightButtonDown = new StrV(right);
 	}
 	// End Mouse Library
+	
+	private static class mActionListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if(Controls.ButtonClicked != null) {
+				JButton button = (JButton) e.getSource();
+				
+				if(controlMap.containsValue(button)) {
+					Controls.LastClickedButton = new StrV(getKeyFromValue(button));
+				}
+				Eval.eval(Controls.ButtonClicked);
+			}
+		}
+	}
+	
+	private static class mDocumentListener implements DocumentListener {
+
+		@Override
+		public void changedUpdate(DocumentEvent e) {
+			
+		}
+
+		@Override
+		public void insertUpdate(DocumentEvent e) {
+			if(Controls.TextTyped != null) {
+				JComponent comp = getCompFromDoc(e.getDocument());
+				if(comp != null) {
+					Controls.LastTypedTextBox = new StrV(getKeyFromValue(comp));
+				}
+				Eval.eval(Controls.TextTyped);
+			}
+		}
+
+		@Override
+		public void removeUpdate(DocumentEvent e) {
+			if(Controls.TextTyped != null) {
+				JComponent comp = getCompFromDoc(e.getDocument());
+				if(comp != null) {
+					Controls.LastTypedTextBox = new StrV(getKeyFromValue(comp));
+				}
+				Eval.eval(Controls.TextTyped);
+			}
+		}
+		
+	}
+	
+	private static String getKeyFromValue(JComponent comp) {
+		if(comp instanceof JButton || comp instanceof JTextField || comp instanceof JTextArea) {			
+			for(String str : controlMap.keySet()) {
+				if(controlMap.get(str).equals(comp))
+					return str;
+			}
+		}
+		
+		return "";
+	}
+	
+	private static JComponent getCompFromDoc(Document doc) {
+		for(JComponent comp : controlMap.values()) {
+			if(comp instanceof JTextField) {
+				JTextField tf = (JTextField) comp;
+				
+				if(tf.getDocument().equals(doc))
+					return tf;
+			}
+			else if(comp instanceof JTextArea) {
+				JTextArea ta = (JTextArea) comp;
+				
+				if(ta.getDocument().equals(doc))
+					return ta;
+			}
+		}
+		return null;
+	}
 	
 	// font
 	private static boolean fontBold() {
