@@ -1,5 +1,6 @@
 package com.coducation.smallbasic.lib;
 
+import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.FileInputStream;
@@ -7,7 +8,9 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 
 import com.coducation.smallbasic.ArrayV;
@@ -26,11 +29,11 @@ public class File {
 		if (args.size() == 1) {
 			try {
 				if(args.get(0) instanceof StrV) {
-					FileInputStream fos = new FileInputStream(args.get(0).toString());
+					InputStreamReader isr = new InputStreamReader(new FileInputStream(args.get(0).toString()), "UTF-8");
 					int b;
-					while((b=fos.read())!=-1) 
+					while((b=isr.read())!=-1)
 						s.append((char)b);
-					fos.close();
+					isr.close();
 				}
 				else throw new InterpretException("ReadContents: Unexpected arg");
 			} 
@@ -53,10 +56,10 @@ public class File {
 			try {
 				if(args.get(0) instanceof StrV) {
 					if(args.get(1) instanceof StrV || args.get(1) instanceof DoubleV) {
-						DataOutputStream dos = new DataOutputStream(new FileOutputStream(args.get(0).toString()));
-						dos.writeBytes(args.get(1).toString());
-						dos.flush();
-						dos.close();
+						OutputStreamWriter osr = new OutputStreamWriter(new FileOutputStream(args.get(0).toString()), "UTF-8");
+						osr.write(args.get(1).toString());
+						osr.flush();
+						osr.close();
 						return new StrV("SUCCESS");
 					}
 					else { /*
@@ -95,15 +98,15 @@ public class File {
 					else arg1="1";
 					if(arg1.equals("0")) arg1="1"; // 라인번호 0과 1은 처음을 의미
 
-					DataInputStream dis = new DataInputStream(new FileInputStream(args.get(0).toString()));
+					BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(args.get(0).toString()), "UTF-8"));
 					String b;
 					int n = 0; // 라인수를 의미
-					while((b=dis.readLine())!=null) {
+					while((b=br.readLine())!=null) {
 						n++;
 						if((n+"").equals(arg1))
-							s.append(b);
+							s.append(b+"\r\n");
 					}
-					dis.close();
+					br.close();
 				}
 				else throw new InterpretException("ReadLine: Unexpected arg(0)");
 			}
@@ -128,23 +131,32 @@ public class File {
 				if(args.get(0) instanceof StrV) {
 					if(args.get(1) instanceof StrV || args.get(1) instanceof DoubleV) {
 						if(args.get(2) instanceof StrV || args.get(2) instanceof DoubleV) {
-							DataInputStream dis = new DataInputStream(new FileInputStream(args.get(0).toString()));
-							String b;
-							int n = 0; // 라인수를 의미
-							while((b=dis.readLine())!=null) {
-								n++;
-								if((n+"").equals(args.get(1).toString()))
-									s.append(args.get(2).toString()+"\r\n");
-								else s.append(b+"\r\n");
+							java.io.File f = new java.io.File(args.get(0).toString());
+							if(!f.exists()) {
+								OutputStreamWriter osr = new OutputStreamWriter(new FileOutputStream(args.get(0).toString()), "UTF-8");
+								osr.write(args.get(2).toString()+"\r\n");
+								osr.flush();
+								osr.close();
 							}
-							if(Integer.parseInt(args.get(1).toString())>=n+1)
-								s.append(args.get(2).toString()+"\r\n");
-							dis.close();
+							else {
+								BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(args.get(0).toString()), "UTF-8"));
+								String b;
+								int n = 0; // 라인수를 의미
+								while((b=br.readLine())!=null) {
+									n++;
+									if((n+"").equals(args.get(1).toString()))
+										s.append(args.get(2).toString()+"\r\n");
+									else s.append(b+"\r\n");
+								}
+								if(Integer.parseInt(args.get(1).toString())>=n+1)
+									s.append(args.get(2).toString()+"\r\n");
+								br.close();
 
-							DataOutputStream dos = new DataOutputStream(new FileOutputStream(args.get(0).toString()));
-							dos.writeBytes(s.toString());
-							dos.flush();
-							dos.close();
+								OutputStreamWriter osr = new OutputStreamWriter(new FileOutputStream(args.get(0).toString()), "UTF-8");
+								osr.write(s.toString());
+								osr.flush();
+								osr.close();
+							}
 							return new StrV("SUCCESS");
 						}
 						else System.out.print("args(2) : 배열 인자입니다."); // 가능
@@ -174,23 +186,32 @@ public class File {
 				if(args.get(0) instanceof StrV) {
 					if(args.get(1) instanceof StrV || args.get(1) instanceof DoubleV) {
 						if(args.get(2) instanceof StrV || args.get(2) instanceof DoubleV) {
-							DataInputStream dis = new DataInputStream(new FileInputStream(args.get(0).toString()));
-							String b;
-							int n = 0; // 라인수를 의미
-							while((b=dis.readLine())!=null) {
-								n++;
-								if((n+"").equals(args.get(1).toString()))
-									s.append(args.get(2).toString()+"\r\n");
-								s.append(b+"\r\n");
+							java.io.File f = new java.io.File(args.get(0).toString());
+							if(!f.exists()) {
+								OutputStreamWriter osr = new OutputStreamWriter(new FileOutputStream(args.get(0).toString()), "UTF-8");
+								osr.write(args.get(2).toString()+"\r\n");
+								osr.flush();
+								osr.close();
 							}
-							if(Integer.parseInt(args.get(1).toString())>=n+1)
-								s.append(args.get(2).toString()+"\r\n");
-							dis.close();
+							else {
+								BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(args.get(0).toString()), "UTF-8"));
+								String b;
+								int n = 0; // 라인수를 의미
+								while((b=br.readLine())!=null) {
+									n++;
+									if((n+"").equals(args.get(1).toString()))
+										s.append(args.get(2).toString()+"\r\n");
+									s.append(b+"\r\n");
+								}
+								if(Integer.parseInt(args.get(1).toString())>=n+1)
+									s.append(args.get(2).toString()+"\r\n");
+								br.close();
 
-							DataOutputStream dos = new DataOutputStream(new FileOutputStream(args.get(0).toString()));
-							dos.writeBytes(s.toString());
-							dos.flush();
-							dos.close();
+								OutputStreamWriter osr = new OutputStreamWriter(new FileOutputStream(args.get(0).toString()), "UTF-8");
+								osr.write(s.toString());
+								osr.flush();
+								osr.close();
+							}
 							return new StrV("SUCCESS");
 						}
 						else System.out.print("args(2) : 배열 인자입니다."); // 가능
@@ -219,10 +240,12 @@ public class File {
 			try {
 				if(args.get(0) instanceof StrV) {
 					if(args.get(1) instanceof StrV || args.get(1) instanceof DoubleV) {
-						DataOutputStream dos = new DataOutputStream(new FileOutputStream(args.get(0).toString(),true));
-						dos.writeBytes(args.get(1).toString()+"\r\n");
-						dos.flush();
-						dos.close();
+				
+							OutputStreamWriter osr = new OutputStreamWriter(new FileOutputStream(args.get(0).toString(), true), "UTF-8");
+							osr.write(args.get(1).toString()+"\r\n");
+							osr.flush();
+							osr.close();
+						
 						return new StrV("SUCCESS");
 					}
 					else System.out.print("배열 인자입니다.");
@@ -249,7 +272,7 @@ public class File {
 					java.io.File f = new java.io.File(args.get(0).toString());
 					java.io.File cf = new java.io.File(args.get(1).toString());
 
-					String s = args.get(1).toString().substring(0,args.get(1).toString().lastIndexOf("/")); // 디렉토리경로
+					String s = args.get(1).toString().substring(0,args.get(1).toString().lastIndexOf("\\")); // 디렉토리경로
 					java.io.File directory = new java.io.File(s);
 					if(!directory.exists()) directory.mkdirs(); 
 
