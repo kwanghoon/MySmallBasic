@@ -1,0 +1,12 @@
+TextWindow.WriteLine("로컬 이미지")
+GraphicsWindow.DrawResizedImage("C:\Users\user\Desktop\ㅁ.png", 10, 10, 100, 100)
+TextWindow.Read()
+
+GraphicsWindow.Clear()
+TextWindow.WriteLine("로컬 원본 이미지")
+GraphicsWindow.DrawImage("C:/Users/user/Desktop/ㅁ.png", 10, 10)
+TextWindow.Read()
+
+GraphicsWindow.Clear()
+TextWindow.WriteLine("네트워크 원본 이미지")
+GraphicsWindow.DrawImage("https://www.google.co.kr/images/branding/googlelogo/2x/googlelogo_color_120x44dp.png", 10, 10)

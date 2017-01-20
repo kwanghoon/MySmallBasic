@@ -336,8 +336,7 @@ public class GraphicsWindow {
 						break;
 					case DRAWIMAGE:
 						DrawImageCmd dic = (DrawImageCmd) cmd;
-						ImageIcon icon = new ImageIcon(dic.imageName);
-						Image img = icon.getImage();
+						Image img = getImage(dic.imageName);
 						g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) dic.opacity));
 						g2.rotate(java.lang.Math.toRadians(dic.degree));
 						g2.scale(dic.scaleX, dic.scaleY);
@@ -365,8 +364,7 @@ public class GraphicsWindow {
 						break;
 					case DRAWRESIZEDIMAGE:
 						DrawResizedImageCmd dric = (DrawResizedImageCmd) cmd;
-						ImageIcon iconResized = new ImageIcon(dric.imageName);
-						Image imgResized = iconResized.getImage();
+						Image imgResized = getImage(dric.imageName);
 						g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) dric.opacity));
 						g2.rotate(java.lang.Math.toRadians(dric.degree));
 						g2.scale(dric.scaleX, dric.scaleY);
@@ -677,7 +675,11 @@ public class GraphicsWindow {
 				}
 
 				if (args.get(0) instanceof StrV && isInteger[0] && isInteger[1]) {
-					cmd.imageName = ((StrV) args.get(0)).getValue();
+					String imageName = ((StrV) args.get(0)).getValue();
+
+					imageName = isUrlOrPath(imageName);
+					
+					cmd.imageName = imageName;
 					cmd.x = values[0];
 					cmd.y = values[1];
 
@@ -814,7 +816,11 @@ public class GraphicsWindow {
 				}
 
 				if (args.get(0) instanceof StrV && isInteger[0] && isInteger[1] && isInteger[2] && isInteger[3]) {
-					cmd.imageName = ((StrV) args.get(0)).getValue();
+					String imageName = ((StrV) args.get(0)).getValue();
+
+					imageName = isUrlOrPath(imageName);
+
+					cmd.imageName = imageName;
 					cmd.x = values[0];
 					cmd.y = values[1];
 					cmd.w = values[2];
@@ -1088,9 +1094,9 @@ public class GraphicsWindow {
 			if (MouseDown != null) {
 				MouseX = new DoubleV(e.getX());
 				MouseY = new DoubleV(e.getY());
-				
+
 				MouseButtonDown(e.getButton());
-				
+
 				Eval.eval(MouseDown);
 			}
 		}
@@ -1100,9 +1106,9 @@ public class GraphicsWindow {
 			if (MouseUp != null) {
 				MouseX = new DoubleV(e.getX());
 				MouseY = new DoubleV(e.getY());
-				
+
 				MouseButtonDown(e.getButton());
-				
+
 				Eval.eval(MouseUp);
 			}
 		}
@@ -1117,9 +1123,9 @@ public class GraphicsWindow {
 			if (MouseMove != null) {
 				MouseX = new DoubleV(e.getX());
 				MouseY = new DoubleV(e.getY());
-			
+
 				MouseButtonDown(e.getButton());
-				
+
 				Eval.eval(MouseMove);
 			}
 		}
@@ -1138,8 +1144,8 @@ public class GraphicsWindow {
 		public void keyPressed(KeyEvent e) {
 			if (KeyDown != null) {
 				String lastKey = keyMap.get(e.getKeyCode());
-				
-				lastKey = SetLastKey(e.getKeyLocation(), lastKey);				
+
+				lastKey = SetLastKey(e.getKeyLocation(), lastKey);
 				LastKey = new StrV(lastKey);
 
 				Eval.eval(KeyDown);
@@ -1151,10 +1157,10 @@ public class GraphicsWindow {
 		public void keyReleased(KeyEvent e) {
 			if (KeyUp != null) {
 				String lastKey = keyMap.get(e.getKeyCode());
-				
-				lastKey = SetLastKey(e.getKeyLocation(), lastKey);				
+
+				lastKey = SetLastKey(e.getKeyLocation(), lastKey);
 				LastKey = new StrV(lastKey);
-				
+
 				Eval.eval(KeyUp);
 			}
 		}
@@ -1632,66 +1638,66 @@ public class GraphicsWindow {
 	// Mouse Library
 	static Toolkit tk = Toolkit.getDefaultToolkit();
 	static Cursor cursor;
-	
+
 	public static void HideCursor() {
-		if(frame == null)
+		if (frame == null)
 			Show(new ArrayList<Value>());
-		
+
 		cursor = tk.createCustomCursor(tk.createImage(""), new Point(), null);
 		panel.setCursor(cursor);
 	}
-	
+
 	public static void ShowCursor() {
-		if(frame == null)
+		if (frame == null)
 			Show(new ArrayList<Value>());
-		
+
 		cursor = new Cursor(Cursor.DEFAULT_CURSOR);
 		panel.setCursor(cursor);
 	}
-	
+
 	private static void MouseButtonDown(int button) {
 		String right = "False";
 		String left = "False";
-		
-		if(button == MouseEvent.BUTTON1) {
+
+		if (button == MouseEvent.BUTTON1) {
 			left = "True";
 		}
-		if(button == MouseEvent.BUTTON3) {
+		if (button == MouseEvent.BUTTON3) {
 			right = "True";
 		}
-		
+
 		Mouse.IsLeftButtonDown = new StrV(left);
 		Mouse.IsRightButtonDown = new StrV(right);
 	}
 	// End Mouse Library
-	
+
 	private static class mActionListener implements ActionListener {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			if(Controls.ButtonClicked != null) {
+			if (Controls.ButtonClicked != null) {
 				JButton button = (JButton) e.getSource();
-				
-				if(controlMap.containsValue(button)) {
+
+				if (controlMap.containsValue(button)) {
 					Controls.LastClickedButton = new StrV(getKeyFromValue(button));
 				}
 				Eval.eval(Controls.ButtonClicked);
 			}
 		}
 	}
-	
+
 	private static class mDocumentListener implements DocumentListener {
 
 		@Override
 		public void changedUpdate(DocumentEvent e) {
-			
+
 		}
 
 		@Override
 		public void insertUpdate(DocumentEvent e) {
-			if(Controls.TextTyped != null) {
+			if (Controls.TextTyped != null) {
 				JComponent comp = getCompFromDoc(e.getDocument());
-				if(comp != null) {
+				if (comp != null) {
 					Controls.LastTypedTextBox = new StrV(getKeyFromValue(comp));
 				}
 				Eval.eval(Controls.TextTyped);
@@ -1700,46 +1706,68 @@ public class GraphicsWindow {
 
 		@Override
 		public void removeUpdate(DocumentEvent e) {
-			if(Controls.TextTyped != null) {
+			if (Controls.TextTyped != null) {
 				JComponent comp = getCompFromDoc(e.getDocument());
-				if(comp != null) {
+				if (comp != null) {
 					Controls.LastTypedTextBox = new StrV(getKeyFromValue(comp));
 				}
 				Eval.eval(Controls.TextTyped);
 			}
 		}
-		
+
 	}
-	
+
 	private static String getKeyFromValue(JComponent comp) {
-		if(comp instanceof JButton || comp instanceof JTextField || comp instanceof JTextArea) {			
-			for(String str : controlMap.keySet()) {
-				if(controlMap.get(str).equals(comp))
+		if (comp instanceof JButton || comp instanceof JTextField || comp instanceof JTextArea) {
+			for (String str : controlMap.keySet()) {
+				if (controlMap.get(str).equals(comp))
 					return str;
 			}
 		}
-		
+
 		return "";
 	}
-	
+
 	private static JComponent getCompFromDoc(Document doc) {
-		for(JComponent comp : controlMap.values()) {
-			if(comp instanceof JTextField) {
+		for (JComponent comp : controlMap.values()) {
+			if (comp instanceof JTextField) {
 				JTextField tf = (JTextField) comp;
-				
-				if(tf.getDocument().equals(doc))
+
+				if (tf.getDocument().equals(doc))
 					return tf;
-			}
-			else if(comp instanceof JTextArea) {
+			} else if (comp instanceof JTextArea) {
 				JTextArea ta = (JTextArea) comp;
-				
-				if(ta.getDocument().equals(doc))
+
+				if (ta.getDocument().equals(doc))
 					return ta;
 			}
 		}
 		return null;
 	}
 	
+	private static String isUrlOrPath(String imageName) {
+		if(imageName.contains("http")) {
+			ArrayList<Value> tmp = new ArrayList<>();
+			tmp.add(new StrV(imageName));
+			
+			imageName = ((StrV) ImageList.LoadImage(tmp)).getValue();
+		}
+		
+		return imageName;
+	}
+	private static Image getImage(String image) {
+		Image img = null;
+		if(image.contains(".")) {
+			ImageIcon icon = new ImageIcon(image);
+			img = icon.getImage();
+		}
+		else {
+			// imageList에서 image를 가져오는 과정
+		}
+		
+		return img;
+	}
+
 	// font
 	private static boolean fontBold() {
 		StrV bold = (StrV) FontBold;
@@ -1813,27 +1841,25 @@ public class GraphicsWindow {
 
 		return top;
 	}
-	
+
 	private static String SetLastKey(int location, String lastKey) {
-		if(lastKey.equals("Win")) {
-			if(location == 2)
+		if (lastKey.equals("Win")) {
+			if (location == 2)
 				return "L" + lastKey;
-			else if(location == 3)
+			else if (location == 3)
 				return "R" + lastKey;
-		}
-		else if(lastKey.equals("Shift")) {
-			if(location == 2)
+		} else if (lastKey.equals("Shift")) {
+			if (location == 2)
 				return "Left" + lastKey;
-			else if(location == 3)
+			else if (location == 3)
+				return "Right" + lastKey;
+		} else if (lastKey.equals("Ctrl")) {
+			if (location == 2)
+				return "Left" + lastKey;
+			else if (location == 1)
 				return "Right" + lastKey;
 		}
-		else if(lastKey.equals("Ctrl")) {
-			if(location == 2)
-				return "Left" + lastKey;
-			else if(location == 1)
-				return "Right" + lastKey;
-		}
-		
+
 		return lastKey;
 	}
 
