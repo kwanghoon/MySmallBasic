@@ -288,6 +288,7 @@ public class GraphicsWindow {
 
 			addMouseListener(this);
 			addKeyListener(this);
+			setFocusTraversalKeysEnabled(false);
 			setPreferredSize(new Dimension(width, height));
 		}
 
