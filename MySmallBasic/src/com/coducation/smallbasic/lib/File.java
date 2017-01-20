@@ -1,8 +1,6 @@
 package com.coducation.smallbasic.lib;
 
 import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -20,7 +18,7 @@ import com.coducation.smallbasic.StrV;
 import com.coducation.smallbasic.Value;
 
 public class File {
-
+// small basic 기본문자인코딩 UTF-8
 	public static Value ReadContents(ArrayList<Value> args) {
 		// 파일의 전체내용을 읽어서 반환
 
@@ -234,7 +232,6 @@ public class File {
 
 	public static Value AppendContents(ArrayList<Value> args) {
 		// 지정 파일을 열고 파일의 끝에 내용을 추가
-		StringBuilder s = new StringBuilder("");
 
 		if (args.size() == 2) {
 			try {
