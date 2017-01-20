@@ -25,7 +25,7 @@ public class Eval {
 	// For GetArgument, ArgumentCount in Program Library:
 	private static String[] programArgs;
 	
-	public String[] getProgramArgs() { return programArgs; }
+	public static String[] getProgramArgs() { return programArgs; }
 	
 	public void eval(String[] args) {
 		programArgs = args;
