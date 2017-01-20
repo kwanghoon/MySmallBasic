@@ -300,7 +300,7 @@ public class GraphicsWindow {
 			String color;
 			double zoomX = 1;
 			double zoomY = 1;
-			double rotate = 1;
+			double rotate = 0;
 
 			for (Cmd cmd : cmdList) {
 				if (cmd.show) {
