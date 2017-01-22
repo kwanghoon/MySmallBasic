@@ -1,37 +1,37 @@
-'ï¿½ï¿½ï¿½ä¸®ï¿½ï¿½  ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¸ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+'ÆÄÀÏÁ¸ÀçÇÏÁö¾ÊÀ¸¸é ½ÇÆÐ
 TextWindow.WriteLine("CopyFile")
 TextWindow.WriteLine(File.CopyFile("555.txt", "C:\Users\Administrator\Desktop\dir\444.txt"))
 
-'ï¿½ï¿½ï¿½ä¸®ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
-'ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï»ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+'µð·ºÅä¸®»èÁ¦½Ã ½ÇÆÐ
+'¾ø´ÂÆÄÀÏ»èÁ¦½Ã ¼º°ø
 TextWindow.WriteLine("")
 TextWindow.WriteLine("DeleteFile")
 TextWindow.WriteLine(File.DeleteFile("C:\Users\Administrator\Desktop\dir\444.txt"))
 TextWindow.WriteLine(File.DeleteFile("C:\Users\Administrator\Desktop\dir\222.txt"))
 
+'ÇÏÀ§°æ·Î±îÁö »ý¼º
 TextWindow.WriteLine("")
 TextWindow.WriteLine("CreateDirectory")
 TextWindow.WriteLine(File.CreateDirectory("C:\Users\Administrator\Desktop\dir\444.txt"))
 TextWindow.WriteLine(File.CreateDirectory("C:\Users\Administrator\Desktop\dir\4441.txt"))
 
-'ï¿½ï¿½ï¿½Âµï¿½ï¿½ä¸®ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+'ÆÄÀÏ»èÁ¦½Ã ½ÇÆÐ
 TextWindow.WriteLine("")
 TextWindow.WriteLine("DeleteDirectory")
 TextWindow.WriteLine(File.DeleteDirectory("C:\Users\Administrator\Desktop\dir\4441.txt"))
-TextWindow.WriteLine(File.DeleteDirectory("C:\Users\Administrator\Desktop\dir\11"))
+TextWindow.WriteLine(File.DeleteDirectory("C:\Users\Administrator\Desktop\dir\11.txt"))
 
-'ï¿½ï¿½ï¿½Âµï¿½ï¿½ä¸® ï¿½ï¿½ï¿½ï¿½
-'ï¿½ï¿½Î¿ï¿½ \\ï¿½ï¿½ï¿½
+'ÁöÁ¤ÇÑ °æ·Î°¡ Á¸ÀçÇÏÁö¾ÊÀ¸¸é ½ÇÆÐ
+'ÁöÁ¤ÇÑ °æ·Î°¡ Á¸ÀçÇÏ³ª ±× Æú´õ¾È¿¡ ÆÄÀÏÀÌ Á¸ÀçÇÏÁö¾ÊÀ¸¸é ""
+'»õ·ÎºÙ´Â °æ·Î´Â \\
+'±âÁ¸¿¡ ÀÖ´ø °æ·Î´Â ±âÁ¸ µð·ºÅä¸® Âü°í \´Â \\·Î ¹ÝÈ¯, /´Â /·Î ¹ÝÈ¯
 TextWindow.WriteLine("")
 TextWindow.WriteLine("GetFiles")
 TextWindow.WriteLine(File.GetFiles("C:\Users\Administrator\Desktop\dir\444.txt"))
 TextWindow.WriteLine(File.GetFiles("C:\Users\Administrator\Desktop\dirs"))
 
-'ï¿½ï¿½ï¿½Âµï¿½ï¿½ä¸® ï¿½ï¿½ï¿½ï¿½
-'ï¿½ï¿½Î¿ï¿½ \\ï¿½ï¿½ï¿½
-'ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½È¯
 TextWindow.WriteLine("")
-TextWindow.WriteLine("GetFiles")
+TextWindow.WriteLine("GetDirectories")
 TextWindow.WriteLine(File.GetDirectories("C:\Users\Administrator\Desktop\dir\444.txt"))
 TextWindow.WriteLine(File.GetDirectories("C:\Users\Administrator\Desktop\dir"))
 

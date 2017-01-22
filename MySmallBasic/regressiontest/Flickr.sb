@@ -1,7 +1,12 @@
 TextWindow.WriteLine("GetPictureOfMoment")
-TextWindow.WriteLine(Flickr.GetPictureOfMoment())
+a = Flickr.GetPictureOfMoment()
+TextWindow.WriteLine(a)
+GraphicsWindow.DrawImage(a,10,10)
 
 TextWindow.WriteLine("")
 TextWindow.WriteLine("GetRandomPicture")
-TextWindow.WriteLine(Flickr.GetRandomPicture("korea"))
+b = Flickr.GetRandomPicture("korea")
+TextWindow.WriteLine(b)
+GraphicsWindow.DrawImage(b,10,10)
+
 TextWindow.WriteLine(Flickr.GetRandomPicture(555))
