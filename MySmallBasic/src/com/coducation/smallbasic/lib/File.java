@@ -18,7 +18,7 @@ import com.coducation.smallbasic.StrV;
 import com.coducation.smallbasic.Value;
 
 public class File {
-// small basic 기본문자인코딩 UTF-8
+	// small basic 기본문자인코딩 UTF-8
 	public static Value ReadContents(ArrayList<Value> args) {
 		// 파일의 전체내용을 읽어서 반환
 
@@ -237,12 +237,12 @@ public class File {
 			try {
 				if(args.get(0) instanceof StrV) {
 					if(args.get(1) instanceof StrV || args.get(1) instanceof DoubleV) {
-				
-							OutputStreamWriter osr = new OutputStreamWriter(new FileOutputStream(args.get(0).toString(), true), "UTF-8");
-							osr.write(args.get(1).toString()+"\r\n");
-							osr.flush();
-							osr.close();
-						
+
+						OutputStreamWriter osr = new OutputStreamWriter(new FileOutputStream(args.get(0).toString(), true), "UTF-8");
+						osr.write(args.get(1).toString()+"\r\n");
+						osr.flush();
+						osr.close();
+
 						return new StrV("SUCCESS");
 					}
 					else System.out.print("배열 인자입니다.");
@@ -308,7 +308,7 @@ public class File {
 		if (args.size() == 1) {
 			if(args.get(0) instanceof StrV) {
 				java.io.File f = new java.io.File(args.get(0).toString());
-				if(f.delete()) return new StrV("SUCCESS");
+				if( (f.delete() && f.isFile()) || !f.exists() ) return new StrV("SUCCESS");
 				else return new StrV("FAILED");
 			}
 			else throw new InterpretException("DeleteFile: Unexpected arg(0)");
@@ -334,7 +334,7 @@ public class File {
 		if (args.size() == 1) {
 			if(args.get(0) instanceof StrV) {
 				java.io.File directory = new java.io.File(args.get(0).toString());
-				if(directory.delete()) return new StrV("SUCCESS");
+				if(directory.delete() && directory.isDirectory()) return new StrV("SUCCESS");
 				else return new StrV("FAILED");
 			}
 			else throw new InterpretException("DeleteDirectory: Unexpected arg(0)");
@@ -348,13 +348,19 @@ public class File {
 			if (args.size() == 1) {
 				if(args.get(0) instanceof StrV) {
 					java.io.File directory = new java.io.File(args.get(0).toString());
-					java.io.File[] files = directory.listFiles();
-					ArrayV v = new ArrayV();
-					for(int i=0;i<files.length;i++) {
-						if(files[i].isFile())
-							v.put(i+"",new StrV(files[i].getCanonicalPath()));
+					if(directory.isDirectory()) {
+						java.io.File[] files = directory.listFiles();
+						if(files.length!=0) {
+							ArrayV v = new ArrayV();
+							for(int i=0;i<files.length;i++) {
+								int j=0;
+								if(files[i].isFile())
+									v.put(j++ + "",new StrV(files[i].getCanonicalPath()));
+							}
+							return v;
+						}
+						return new StrV("");
 					}
-					return v;
 				}
 				else throw new InterpretException("GetFiles: Unexpected arg(0)");
 			}
@@ -373,13 +379,19 @@ public class File {
 			if (args.size() == 1) {
 				if(args.get(0) instanceof StrV) {
 					java.io.File directory = new java.io.File(args.get(0).toString());
-					java.io.File[] files = directory.listFiles();
-					ArrayV v = new ArrayV();
-					for(int i=0;i<files.length;i++) {
-						if(files[i].isDirectory())
-							v.put(i+"",new StrV(files[i].getCanonicalPath()));
+					if(directory.isDirectory()) {
+						java.io.File[] files = directory.listFiles();
+						if(files.length!=0) {
+							ArrayV v = new ArrayV();
+							for(int i=0;i<files.length;i++) {
+								int j=0;
+								if(files[i].isDirectory())
+									v.put(j++ + "",new StrV(files[i].getCanonicalPath()));
+							}
+							return v;
+						}
+						return new StrV("");
 					}
-					return v;
 				}
 				else throw new InterpretException("GetDirectories: Unexpected arg(0)");
 			}
@@ -392,13 +404,16 @@ public class File {
 		return new StrV("FAILED");
 	}
 
-	public static Value GetTemporaryFilePath() {
+	public static Value GetTemporaryFilePath(ArrayList<Value> args) {
 		// 새로운 임시 파일을 임시 디렉터리에 생성하고 전체 파일 경로값을 반환
 		java.io.File tmp;
 		String path = null;
 		try {
-			tmp = java.io.File.createTempFile("tmp", null);
-			path = tmp.getCanonicalPath();
+			if (args.size() == 0) {
+				tmp = java.io.File.createTempFile("tmp", null);
+				path = tmp.getCanonicalPath();
+			}
+			else throw new InterpretException("GetDirectories: Unexpected # of args: " + args.size());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
