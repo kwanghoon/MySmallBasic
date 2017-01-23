@@ -4,6 +4,7 @@ import java.awt.AWTException;
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Container;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -678,7 +679,7 @@ public class GraphicsWindow {
 					String imageName = ((StrV) args.get(0)).getValue();
 
 					imageName = isUrlOrPath(imageName);
-					
+
 					cmd.imageName = imageName;
 					cmd.x = values[0];
 					cmd.y = values[1];
@@ -1472,6 +1473,8 @@ public class GraphicsWindow {
 
 	private static HashMap<String, JComponent> controlMap = new HashMap<>();
 
+	private static Container container;
+
 	public static String AddButton(String caption, int left, int top) {
 		if (frame == null)
 			Show(new ArrayList<Value>());
@@ -1488,6 +1491,10 @@ public class GraphicsWindow {
 		btn.addActionListener(new mActionListener());
 		panel.add(btn);
 
+		container = btn.getParent();
+		container.revalidate();
+		container.repaint();
+
 		String id = btnIdLabel + btnId;
 		btnId++;
 
@@ -1500,7 +1507,7 @@ public class GraphicsWindow {
 		if (frame == null)
 			Show(new ArrayList<Value>());
 
-		JTextField tf = new JTextField();
+		JTextField tf = new JTextField(13);
 
 		tf.setFont(settingFont());
 		tf.setForeground(new Color(Integer.parseInt(BrushColor.toString().substring(1), 16)));
@@ -1509,6 +1516,10 @@ public class GraphicsWindow {
 		tf.getDocument().addDocumentListener(new mDocumentListener());
 
 		panel.add(tf);
+
+		container = tf.getParent();
+		container.revalidate();
+		container.repaint();
 
 		String id = txtBoxIdLabel + txtBoxId;
 		txtBoxId++;
@@ -1522,7 +1533,8 @@ public class GraphicsWindow {
 		if (frame == null)
 			Show(new ArrayList<Value>());
 
-		JTextArea ta = new JTextArea();
+		JTextArea ta = new JTextArea(5, 18);
+
 		JScrollPane scroll = new JScrollPane(ta);
 
 		scroll.setFont(settingFont());
@@ -1532,6 +1544,10 @@ public class GraphicsWindow {
 		ta.getDocument().addDocumentListener(new mDocumentListener());
 
 		panel.add(scroll);
+
+		container = ta.getParent();
+		container.revalidate();
+		container.repaint();
 
 		String id = txtBoxIdLabel + txtBoxId;
 		txtBoxId++;
@@ -1595,10 +1611,12 @@ public class GraphicsWindow {
 		JComponent comp = controlMap.get(control);
 
 		if (comp != null) {
-			controlMap.remove(control);
-			panel.remove(comp);
-			panel.validate();
-			panel.repaint();
+			controlMap.remove(comp);
+
+			container = comp.getParent();
+			container.remove(comp);
+			container.revalidate();
+			container.repaint();
 		}
 	}
 
@@ -1607,6 +1625,7 @@ public class GraphicsWindow {
 
 		if (comp != null) {
 			comp.setLocation(x, y);
+
 		}
 	}
 
@@ -1615,6 +1634,9 @@ public class GraphicsWindow {
 
 		if (comp != null) {
 			comp.setSize(width, height);
+			
+			container = comp.getParent();
+			container.repaint();
 		}
 	}
 
@@ -1744,27 +1766,27 @@ public class GraphicsWindow {
 		}
 		return null;
 	}
-	
+
 	private static String isUrlOrPath(String imageName) {
-		if(imageName.contains("http")) {
+		if (imageName.contains("http")) {
 			ArrayList<Value> tmp = new ArrayList<>();
 			tmp.add(new StrV(imageName));
-			
+
 			imageName = ((StrV) ImageList.LoadImage(tmp)).getValue();
 		}
-		
+
 		return imageName;
 	}
+
 	private static Image getImage(String image) {
 		Image img = null;
-		if(image.contains(".")) {
+		if (image.contains(".")) {
 			ImageIcon icon = new ImageIcon(image);
 			img = icon.getImage();
-		}
-		else {
+		} else {
 			// imageList에서 image를 가져오는 과정
 		}
-		
+
 		return img;
 	}
 
