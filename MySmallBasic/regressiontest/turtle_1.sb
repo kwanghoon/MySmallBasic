@@ -1,13 +1,24 @@
-GraphicsWindow.PenColor = "Black" 
+Turtle.Angle = 370
+Turtle.Move(100)
+Turtle.Turn(-500)
+TextWindow.WriteLine(Turtle.Angle)
 
+Turtle.PenUp()
 Turtle.Move(100)
 Turtle.Angle = 45
  
-Turtle.Speed = 9
+Turtle.PenDown()
+Turtle.Hide()
+Turtle.Speed = 6
 Turtle.Move(50)
+
+Turtle.Show()
 Turtle.Angle = 90 + 45
 Turtle.Move(50)
 
 Turtle.Speed = 3
 Turtle.Angle = 180
 Turtle.Move(100)
+
+Turtle.TurnRight()
+Turtle.Move(300)

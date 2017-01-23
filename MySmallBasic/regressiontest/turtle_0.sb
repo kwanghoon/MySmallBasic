@@ -3,15 +3,16 @@
 angle = 30
 delta = 10
 distance = 60
-Turtle.Speed = 9
+Turtle.Speed = 10
 GraphicsWindow.BackgroundColor = "Black"
 GraphicsWindow.PenColor = "LightGreen"
 DrawTree()
 Sub DrawTree
-  If (distance > 0) Then
+  If (distance > 0) Then 
     Turtle.Move(distance)
-    Turtle.Turn(angle)
+    'TextWindow.WriteLine("wait")
     
+    Turtle.Turn(angle)
     Stack.PushValue("distance", distance)
     distance = distance - delta
     DrawTree()
@@ -21,5 +22,6 @@ Sub DrawTree
     distance = Stack.PopValue("distance")
     
     Turtle.Move(-distance)
+    'TextWindow.WriteLine("wait")
   EndIf
 EndSub
