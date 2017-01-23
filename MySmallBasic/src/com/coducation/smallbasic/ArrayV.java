@@ -37,10 +37,9 @@ public class ArrayV extends Value {
 	
 	//추가
 	public boolean containsV(String v){
-		Iterator iterator = arrmap.entrySet().iterator();
+		Iterator<Entry<String, Value>> iterator = arrmap.entrySet().iterator();
 		  while (iterator.hasNext()) {
-		   Entry entry = (Entry)iterator.next();
-		  // System.out.println(entry.getValue());
+		   Entry<String, Value> entry = (Entry<String, Value>)iterator.next();
 		   String sk = entry.getValue().toString();
 		   if(sk.equals(v))
 			   return true;
@@ -53,18 +52,17 @@ public class ArrayV extends Value {
 		arrmap.remove(index);
 	}
 
-	//추가(미완성)
+	//추가
 	public ArrayV getKey(){
-		Iterator iterator = arrmap.entrySet().iterator();
+		Iterator<Entry<String, Value>> iterator = arrmap.entrySet().iterator();
 		int i = 1;
 		ArrayV arr = new ArrayV();
 		  while (iterator.hasNext()) {
-		   Entry entry = (Entry)iterator.next();
+		   Entry<String, Value> entry = (Entry<String, Value>)iterator.next();
 			String i_s = Integer.toString(i);
-			Object key = entry.getKey();
-			Value value = (Value)key;
-			System.out.println(value);
-			arr.put(i_s, (Value) key);
+			String key = entry.getKey().toString();
+			StrV key_s = new StrV(key);
+			arr.put(i_s, key_s);
 			i++;
 		}
 		return arr;
