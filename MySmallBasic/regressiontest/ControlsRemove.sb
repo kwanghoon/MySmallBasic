@@ -1,0 +1,7 @@
+btn = Controls.AddButton("test1", 10, 10)
+tf = Controls.AddTextBox(10, 50)
+ta = Controls.AddMultiLineTextBox(10, 100)
+
+TextWindow.Read()
+
+Controls.Remove(btn)
