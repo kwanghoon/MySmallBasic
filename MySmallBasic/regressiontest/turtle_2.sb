@@ -1,0 +1,11 @@
+Turtle.X = 0
+Turtle.Y = 0
+Turtle.Speed = 5
+Turtle.Angle = 180 -45
+Turtle.Move(400)
+
+Turtle.Speed = 11
+TextWindow.WriteLine(Turtle.Speed)
+
+Turtle.Speed = -1
+TextWindow.WriteLine(Turtle.Speed)
