@@ -1,0 +1,2 @@
+TextWindow.WriteLine(arr)
+arr[0] = 123
