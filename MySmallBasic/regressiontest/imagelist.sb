@@ -1,0 +1,15 @@
+TextWindow.WriteLine("--- ImageList Operation Test ---")
+TextWindow.WriteLine("")
+
+img1 = ImageList.LoadImage("http://smallbasic.com/drop\soko\sokocuteff.png")
+GraphicsWindow.DrawImage(img1,0,0)
+TextWindow.WriteLine(img1 + " is loaded from URL")
+TextWindow.WriteLine(img1 + "'s Height : " + ImageList.GetHeightOfImage(img1))
+TextWindow.WriteLine(img1 + "'s width : " + ImageList.GetWidthOfImage(img1))
+TextWindow.WriteLine("")
+
+img2 = ImageList.LoadImage("C:\Users\Ji Yong\Desktop\picture.jpg")
+GraphicsWindow.DrawImage(img2,0,0)
+TextWindow.WriteLine(img2 + " is loaded from File Path")
+TextWindow.WriteLine(img2 + "'s Height : " + ImageList.GetHeightOfImage(img2))
+TextWindow.WriteLine(img2 + "'s Width : " + ImageList.GetWidthOfImage(img2))
