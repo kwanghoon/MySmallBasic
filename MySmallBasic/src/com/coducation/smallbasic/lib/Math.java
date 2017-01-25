@@ -14,12 +14,8 @@ public class Math {
 	// Gets the absolute value of the given number.
 	// For example, -32.233 will return 32.233. 
 	public static Value Abs(ArrayList<Value> args) {
-
-		// asdfasdf
 		
 		double dbl_arg;
-
-		double ret;
 
 		if (args.size() == 1) {
 
@@ -51,9 +47,7 @@ public class Math {
 
 			throw new InterpretException("Abs : Unexpected # of args: " + args.size());
 
-		ret = java.lang.Math.abs(dbl_arg);
-
-		return new DoubleV(ret);
+		return new DoubleV(java.lang.Math.abs(dbl_arg));
 
 	}
 
@@ -62,8 +56,6 @@ public class Math {
 	public static Value Ceiling(ArrayList<Value> args) {
 
 		double dbl_arg;
-
-		double ret;
 
 		if (args.size() == 1) {
 
@@ -99,9 +91,7 @@ public class Math {
 
 			throw new InterpretException("Ceiling : Unexpected # of args: " + args.size());
 
-		ret = java.lang.Math.ceil(dbl_arg);
-
-		return new DoubleV(ret);
+		return new DoubleV(java.lang.Math.ceil(dbl_arg));
 
 	}
 
@@ -110,8 +100,6 @@ public class Math {
 	public static Value Floor(ArrayList<Value> args) {
 
 		double dbl_arg;
-
-		double ret;
 
 		if (args.size() == 1) {
 
@@ -145,9 +133,7 @@ public class Math {
 
 			throw new InterpretException("Floor : Unexpected # of args: " + args.size());
 
-		ret = java.lang.Math.floor(dbl_arg);
-
-		return new DoubleV(ret);
+		return new DoubleV(java.lang.Math.floor(dbl_arg));
 
 	}
 
@@ -155,8 +141,6 @@ public class Math {
 	public static Value NaturalLog(ArrayList<Value> args) {
 
 		double dbl_arg;
-
-		double ret;
 
 		if (args.size() == 1) {
 
@@ -188,9 +172,7 @@ public class Math {
 
 			throw new InterpretException("NaturalLog: Unexpected # of args: " + args.size());
 
-		ret = java.lang.Math.log(dbl_arg);
-
-		return new DoubleV(ret);
+		return new DoubleV(java.lang.Math.log(dbl_arg));
 
 	}
 
@@ -198,8 +180,6 @@ public class Math {
 	public static Value Log(ArrayList<Value> args) {
 
 		double dbl_arg;
-
-		double ret;
 
 		if (args.size() == 1) {
 
@@ -230,10 +210,8 @@ public class Math {
 		} else
 
 			throw new InterpretException("Log : Unexpected # of args: " + args.size());
-
-		ret = java.lang.Math.log10(dbl_arg);
-
-		return new DoubleV(ret);
+		
+		return new DoubleV(java.lang.Math.log10(dbl_arg));
 
 	}
 	
@@ -241,8 +219,6 @@ public class Math {
 	public static Value Cos(ArrayList<Value> args) {
 
 		double dbl_arg;
-
-		double ret;
 
 		if (args.size() == 1) {
 
@@ -276,17 +252,13 @@ public class Math {
 
 			throw new InterpretException("Cos : Unexpected # of args: " + args.size());
 
-		ret = java.lang.Math.cos(dbl_arg);
-
-		return new DoubleV(ret);
+		return new DoubleV(java.lang.Math.cos(dbl_arg));
 	}
 	
 	// Gets the sine of the given angle in radians. 
 	public static Value Sin(ArrayList<Value> args) {
 
 		double dbl_arg;
-
-		double ret;
 
 		if (args.size() == 1) {
 
@@ -318,9 +290,7 @@ public class Math {
 
 			throw new InterpretException("Sin : Unexpected # of args: " + args.size());
 
-		ret = java.lang.Math.sin(dbl_arg);
-
-		return new DoubleV(ret);
+		return new DoubleV(java.lang.Math.sin(dbl_arg));
 
 	}
 	
@@ -328,8 +298,6 @@ public class Math {
 	public static Value Tan(ArrayList<Value> args) {
 
 		double dbl_arg;
-
-		double ret;
 
 		if (args.size() == 1) {
 
@@ -361,9 +329,7 @@ public class Math {
 
 			throw new InterpretException("Tan : Unexpected # of args: " + args.size());
 
-		ret = java.lang.Math.tan(dbl_arg);
-
-		return new DoubleV(ret);
+		return new DoubleV(java.lang.Math.tan(dbl_arg));
 
 	}
 	
@@ -371,8 +337,6 @@ public class Math {
 	public static Value ArcSin(ArrayList<Value> args) {
 
 		double dbl_arg;
-
-		double ret;
 
 		if (args.size() == 1) {
 
@@ -406,9 +370,7 @@ public class Math {
 
 			throw new InterpretException("ArcSin : Unexpected # of args: " + args.size());
 
-		ret = java.lang.Math.asin(dbl_arg);
-
-		return new DoubleV(ret);
+		return new DoubleV(java.lang.Math.asin(dbl_arg));
 
 	}
 	
@@ -416,8 +378,6 @@ public class Math {
 	public static Value ArcCos(ArrayList<Value> args) {
 
 		double dbl_arg;
-
-		double ret;
 
 		if (args.size() == 1) {
 
@@ -449,9 +409,7 @@ public class Math {
 
 			throw new InterpretException("ArcCos : Unexpected # of args: " + args.size());
 
-		ret = java.lang.Math.acos(dbl_arg);
-
-		return new DoubleV(ret);
+		return new DoubleV(java.lang.Math.acos(dbl_arg));
 
 	}
 
@@ -459,9 +417,7 @@ public class Math {
 	public static Value ArcTan(ArrayList<Value> args) {
 
 		double dbl_arg;
-
-		double ret;
-
+		
 		if (args.size() == 1) {
 
 			if (args.get(0) instanceof DoubleV) {
@@ -494,9 +450,7 @@ public class Math {
 
 			throw new InterpretException("ArcTan : Unexpected # of args: " + args.size());
 
-		ret = java.lang.Math.atan(dbl_arg);
-
-		return new DoubleV(ret);
+		return new DoubleV(java.lang.Math.atan(dbl_arg));
 
 	}
 
@@ -504,8 +458,6 @@ public class Math {
 	public static Value GetDegrees(ArrayList<Value> args) {
 
 		double dbl_arg;
-
-		double ret;
 
 		if (args.size() == 1) {
 
@@ -539,9 +491,7 @@ public class Math {
 
 			throw new InterpretException("GetDegrees : Unexpected # of args: " + args.size());
 
-		ret = java.lang.Math.toDegrees(dbl_arg);
-
-		return new DoubleV(ret);
+		return new DoubleV(java.lang.Math.toDegrees(dbl_arg));
 
 	}
 
@@ -549,8 +499,6 @@ public class Math {
 	public static Value GetRadians(ArrayList<Value> args) {
 
 		double dbl_arg;
-
-		double ret;
 
 		if (args.size() == 1) {
 
@@ -584,9 +532,7 @@ public class Math {
 
 			throw new InterpretException("GetRadians : Unexpected # of args: " + args.size());
 
-		ret = java.lang.Math.toRadians(dbl_arg);
-
-		return new DoubleV(ret);
+		return new DoubleV(java.lang.Math.toRadians(dbl_arg));
 
 	}
 	
@@ -594,8 +540,6 @@ public class Math {
 	public static Value SquareRoot(ArrayList<Value> args) {
 
 		double dbl_arg;
-
-		double ret;
 
 		if (args.size() == 1) {
 
@@ -627,9 +571,7 @@ public class Math {
 
 			throw new InterpretException("SquareRoot : Unexpected # of args: " + args.size());
 
-		ret = java.lang.Math.sqrt(dbl_arg);
-
-		return new DoubleV(ret);
+		return new DoubleV(java.lang.Math.sqrt(dbl_arg));
 
 	}
 	
@@ -638,8 +580,6 @@ public class Math {
 
 		double dbl_arg0;
 		double dbl_arg1;
-
-		double ret;
 
 		if (args.size() == 2) {
 
@@ -673,7 +613,7 @@ public class Math {
 
 			} else if (args.get(1) instanceof StrV) {
 
-				String arg = ((StrV) args.get(0)).getValue();
+				String arg = ((StrV) args.get(1)).getValue();
 
 				try {
 
@@ -695,9 +635,7 @@ public class Math {
 
 			throw new InterpretException("Power : Unexpected # of args: " + args.size());
 
-		ret = java.lang.Math.pow(dbl_arg0, dbl_arg1);
-
-		return new DoubleV(ret);
+		return new DoubleV(java.lang.Math.pow(dbl_arg0, dbl_arg1));
 
 	}
 	
@@ -706,8 +644,6 @@ public class Math {
 	public static Value Round(ArrayList<Value> args) {
 
 		double dbl_arg;
-
-		double ret;
 
 		if (args.size() == 1) {
 
@@ -741,9 +677,7 @@ public class Math {
 
 			throw new InterpretException("Round : Unexpected # of args: " + args.size());
 
-		ret = java.lang.Math.round(dbl_arg);
-
-		return new DoubleV(ret);
+		return new DoubleV(java.lang.Math.round(dbl_arg));
 
 	}
 
@@ -752,8 +686,6 @@ public class Math {
 
 		double dbl_arg0;
 		double dbl_arg1;
-
-		double ret;
 
 		if (args.size() == 2) {
 
@@ -787,7 +719,7 @@ public class Math {
 
 			} else if (args.get(1) instanceof StrV) {
 
-				String arg = ((StrV) args.get(0)).getValue();
+				String arg = ((StrV) args.get(1)).getValue();
 
 				try {
 
@@ -811,9 +743,7 @@ public class Math {
 
 			throw new InterpretException("Max : Unexpected # of args: " + args.size());
 
-		ret = java.lang.Math.max(dbl_arg0, dbl_arg1);
-
-		return new DoubleV(ret);
+		return new DoubleV(java.lang.Math.max(dbl_arg0, dbl_arg1));
 
 	}
 
@@ -822,8 +752,6 @@ public class Math {
 
 		double dbl_arg0;
 		double dbl_arg1;
-
-		double ret;
 
 		if (args.size() == 2) {
 
@@ -857,7 +785,7 @@ public class Math {
 
 			} else if (args.get(1) instanceof StrV) {
 
-				String arg = ((StrV) args.get(0)).getValue();
+				String arg = ((StrV) args.get(1)).getValue();
 
 				try {
 
@@ -879,9 +807,7 @@ public class Math {
 
 			throw new InterpretException("Max : Unexpected # of args: " + args.size());
 
-		ret = java.lang.Math.min(dbl_arg0, dbl_arg1);
-
-		return new DoubleV(ret);
+		return new DoubleV(java.lang.Math.min(dbl_arg0, dbl_arg1));
 
 	}
 
@@ -890,8 +816,6 @@ public class Math {
 
 		double dbl_arg0;
 		double dbl_arg1;
-
-		double ret;
 
 		if (args.size() == 2) {
 
@@ -925,7 +849,7 @@ public class Math {
 
 			} else if (args.get(1) instanceof StrV) {
 
-				String arg = ((StrV) args.get(0)).getValue();
+				String arg = ((StrV) args.get(1)).getValue();
 
 				try {
 
@@ -947,9 +871,7 @@ public class Math {
 
 			throw new InterpretException("Remainder : Unexpected # of args: " + args.size());
 
-		ret = dbl_arg0 % dbl_arg1;
-
-		return new DoubleV(ret);
+		return new DoubleV(dbl_arg0 % dbl_arg1);
 
 	}
 	
@@ -957,8 +879,6 @@ public class Math {
 	public static Value GetRandomNumber(ArrayList<Value> args) {
 
 		double dbl_arg;
-
-		double ret;
 
 		if (args.size() == 1) {
 
@@ -994,9 +914,7 @@ public class Math {
 
 			throw new InterpretException("GetRandomNumber : Unexpected # of args: " + args.size());
 
-		ret = (int) (dbl_arg * java.lang.Math.random() + 1);
-
-		return new DoubleV(ret);
+		return new DoubleV((int)(dbl_arg * java.lang.Math.random() + 1));
 
 	}
 

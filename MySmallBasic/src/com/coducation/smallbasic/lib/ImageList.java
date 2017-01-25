@@ -34,32 +34,35 @@ public class ImageList {
 
 			}
 
-		} else
+		} else {
 
 			throw new InterpretException("LoadImage : Unexpected # of args: " + args.size());
-		
-		if ( str_arg.contains("/") ) {
-			
-			URL url = null ;
-			
-			try {
-				url = new URL(str_arg);
-			} catch (MalformedURLException e) {
-				e.printStackTrace();
-			}
-			
-			Image img = new ImageIcon(url).getImage();
-			
-			image_list.put("ImageList" + key, img);
-			
-		} else if (str_arg.contains("\\")) {
-			
-			Image img = new ImageIcon(str_arg).getImage();
-			
-			image_list.put("ImageList" + key, img);
 			
 		}
 		
+		URL url = null;
+		Image img = null;
+		boolean isURL = false;
+
+		try {
+			
+			url = new URL(str_arg);
+			isURL = true;
+			
+		} catch (MalformedURLException e) { /* Ignore */ } 
+		
+		if (isURL) {
+			
+			img = new ImageIcon(url).getImage();
+			image_list.put("ImageList" + key, img);
+			
+		} else {
+			
+			img = new ImageIcon(str_arg).getImage();
+			image_list.put("ImageList" + key, img);
+			
+		}
+			
 		return new StrV("ImageList" + key++);
 
 	}
@@ -85,6 +88,7 @@ public class ImageList {
 			throw new InterpretException("GetWidthOfImage : Unexpected # of args: " + args.size());
 		
 		return new DoubleV(image_list.get(str_arg).getWidth(null));
+		
 	}
 	
 	public static Value GetHeightOfImage(ArrayList<Value> args){
@@ -108,6 +112,12 @@ public class ImageList {
 			throw new InterpretException("GetWidthOfImage : Unexpected # of args: " + args.size());
 		
 		return new DoubleV(image_list.get(str_arg).getHeight(null));
+		
+	}
+	
+	public static Image getImage(String image_key) {
+		
+		return image_list.get(image_key);
 		
 	}
 	

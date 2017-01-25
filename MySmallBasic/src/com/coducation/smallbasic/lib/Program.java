@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 import com.coducation.smallbasic.DoubleV;
+import com.coducation.smallbasic.Eval;
 import com.coducation.smallbasic.InterpretException;
 import com.coducation.smallbasic.StrV;
 import com.coducation.smallbasic.Value;
@@ -78,7 +79,41 @@ public class Program {
 
 	public static Value GetArgument(ArrayList<Value> args) {
 		
-		return null;
+		double dbl_arg;
+
+		if (args.size() == 1) {
+
+			if (args.get(0) instanceof DoubleV) {
+
+				dbl_arg = ((DoubleV) args.get(0)).getValue();
+
+			} else if (args.get(0) instanceof StrV) {
+
+				String arg = ((StrV) args.get(0)).getValue();
+
+				try {
+
+					dbl_arg = Double.parseDouble(arg);
+
+				} catch (NumberFormatException e) {
+
+					throw new InterpretException("GetArgument : Unexpected StrV arg : " + arg);
+
+				}
+
+			} else {
+
+				throw new InterpretException("GetArgument : Unexpected arg");
+
+			}
+
+		} else
+
+			throw new InterpretException("GetArgument : Unexpected # of args: " + args.size());
+		
+		String[] argument = Eval.getProgramArgs();
+		
+		return new StrV(argument[(int)dbl_arg]);
 		
 	}
 	
@@ -88,7 +123,11 @@ public class Program {
 
 	public static void notifyFieldRead(String fieldName) {
 
-		if ("Directory".equalsIgnoreCase(fieldName)) {
+		if ("ArgumentCount".equalsIgnoreCase(fieldName)){
+			
+			ArgumentCount = new DoubleV(Eval.getProgramArgs().length);
+			
+		} else if ("Directory".equalsIgnoreCase(fieldName)) {
 			
 			Directory = new StrV(System.getProperty("user.dir"));
 		

@@ -30,7 +30,7 @@ public class Text {
 
 			} else {
 
-				throw new InterpretException("Append: Unexpected 1st argument");
+				throw new InterpretException("Append : Unexpected 1st argument");
 
 			}
 
@@ -44,15 +44,18 @@ public class Text {
 
 			} else {
 
-				throw new InterpretException("Append: Unexpected 2nd argument");
+				throw new InterpretException("Append : Unexpected 2nd argument");
 
 			}
 
-		} else
+		} else {
 
-			throw new InterpretException("Append: Unexpected # of args: " + args.size());
+			throw new InterpretException("Append : Unexpected # of args: " + args.size());
 
+		}
+		
 		return new StrV(str_arg0.concat(str_arg1));
+		
 	}
 
 	// Text.GetLength(text)
@@ -77,11 +80,14 @@ public class Text {
 
 			}
 
-		} else
+		} else {
 
 			throw new InterpretException("GetLength: Unexpected # of args: " + args.size());
 
+		}
+		
 		return new DoubleV(str_arg.length());
+		
 	}
 
 	// Text.IsSubText(text, subText)
@@ -121,13 +127,17 @@ public class Text {
 
 			}
 
-		} else
+		} else {
 
 			throw new InterpretException("IsSubText : Unexpected # of args: " + args.size());
 
+		}
+			
 		for (int i = 0; i < str_arg0.length() - str_arg1.length() + 1; i++) {
 
-			if (str_arg0.substring(i, str_arg1.length() + i).equals(str_arg1)) return new StrV("True");
+			if (str_arg0.substring(i, str_arg1.length() + i).equals(str_arg1))
+				
+				return new StrV("True");
 
 		}
 
@@ -172,13 +182,20 @@ public class Text {
 
 			}
 
-		} else
+		} else {
 
 			throw new InterpretException("EndsWith : Unexpected # of args: " + args.size());
 
-		if (str_arg0.endsWith(str_arg1)) return new StrV("True");
+		}
+			
+		if (str_arg0.endsWith(str_arg1)) 
+			
+			return new StrV("True");
 
-		else return new StrV("False");
+		else 
+			
+			return new StrV("False");
+		
 	}
 
 	// Text.StartsWith(text, subText)
@@ -218,13 +235,19 @@ public class Text {
 
 			}
 
-		} else
+		} else {
 
 			throw new InterpretException("StartsWith : Unexpected # of args: " + args.size());
 
-		if (str_arg0.startsWith(str_arg1)) return new StrV("True");
+		}
+			
+		if (str_arg0.startsWith(str_arg1)) 
+			
+			return new StrV("True");
 
-		else return new StrV("False");
+		else 
+			
+			return new StrV("False");
 
 	}
 	
@@ -232,7 +255,7 @@ public class Text {
 	//Gets a sub-text from the given text.
 	public static Value GetSubText(ArrayList<Value> args) {
 
-		String str_arg0 = new String();
+		String str_arg0;
 		double dbl_arg1;
 		double dbl_arg2;
 
@@ -300,9 +323,11 @@ public class Text {
 
 			}
 
-		} else
+		} else {
 
 			throw new InterpretException("GetSubText : Unexpected # of args: " + args.size());
+			
+		}
 		
 		return new StrV(str_arg0.substring((int)(dbl_arg1 - 1), (int)(dbl_arg1 + dbl_arg2 - 1))) ;
 
@@ -312,7 +337,7 @@ public class Text {
 	//Gets a sub-text from the given text from a specified position to the end.
 	public static Value GetSubTextToEnd(ArrayList<Value> args) {
 
-		String str_arg0 = new String();
+		String str_arg0;
 		double dbl_arg1;
 
 		if (args.size() == 2) {
@@ -355,10 +380,12 @@ public class Text {
 
 			}
 
-		} else
+		} else {
 
 			throw new InterpretException("GetSubText : Unexpected # of args: " + args.size());
 		
+		}
+			
 		return new StrV(str_arg0.substring((int)(dbl_arg1 - 1))) ;
 		
 	}
@@ -367,16 +394,14 @@ public class Text {
 	//Finds the position where a sub-text appears in the specified text. 
 	public static Value GetIndexOf(ArrayList<Value> args) {
 		
-		String str_arg0 = new String();
-		String str_arg1 = new String();
+		String str_arg0;
+		String str_arg1;
 
 		if (args.size() == 2) {
 
 			if (args.get(0) instanceof DoubleV) {
 
-				Double arg = ((DoubleV) args.get(0)).getValue();
-
-				str_arg0 = arg.toString();
+				str_arg0 = args.get(0).toString();
 
 			} else if (args.get(0) instanceof StrV) {
 
@@ -390,9 +415,7 @@ public class Text {
 
 			if (args.get(1) instanceof DoubleV) {
 
-				Double arg = ((DoubleV) args.get(1)).getValue();
-
-				str_arg1 = arg.toString();
+				str_arg1 = args.get(1).toString();
 
 			} else if (args.get(1) instanceof StrV) {
 
@@ -404,10 +427,12 @@ public class Text {
 
 			}
 
-		} else
+		} else {
 
 			throw new InterpretException("GetIndexOf : Unexpected # of args: " + args.size());
 		
+		}
+			
 		return new DoubleV(str_arg0.indexOf(str_arg1) + 1);
 		
 	}
@@ -416,7 +441,7 @@ public class Text {
 	//Converts the given text to lower case. 
 	public static Value ConvertToLowerCase(ArrayList<Value> args) {
 		
-		String str_arg = new String();
+		String str_arg;
 
 		if (args.size() == 1) {
 
@@ -434,10 +459,12 @@ public class Text {
 
 			}
 
-		} else
+		} else {
 
 			throw new InterpretException("ConvertToLowerCase : Unexpected # of args: " + args.size());
 
+		}
+			
 		return new StrV(str_arg.toLowerCase());
 		
 	}
@@ -464,10 +491,12 @@ public class Text {
 
 			}
 
-		} else 
+		} else {
 
 			throw new InterpretException("ConvertToUpperCase : Unexpected # of args: " + args.size());
 
+		}
+			
 		return new StrV(str_arg.toUpperCase());
 		
 	}
@@ -507,10 +536,12 @@ public class Text {
 
 			}
 
-		} else 
+		} else {
 
-			throw new InterpretException("NaturalLog: Unexpected # of args: " + args.size());
+			throw new InterpretException("GetCharacter : Unexpected # of args: " + args.size());
 		
+		}
+			
 		return new StrV(String.valueOf((char)(dbl_arg)));
 		
 	}
@@ -537,10 +568,12 @@ public class Text {
 
 			}
 
-		} else 
+		} else {
 
 			throw new InterpretException("GetCharacterCode : Unexpected # of args: " + args.size());
 
+		}
+			
 		return new DoubleV(str_arg.charAt(0));
 		
 	}
