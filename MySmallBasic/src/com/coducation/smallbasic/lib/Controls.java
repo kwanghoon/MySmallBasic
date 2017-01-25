@@ -311,8 +311,8 @@ public class Controls {
 			throw new InterpretException("Unexpected # of args " + args.size());
 	}
 
-	public static Value LastClickedButton;
-	public static Value LastTypedTextBox;
+	public static Value LastClickedButton = new StrV("");
+	public static Value LastTypedTextBox = new StrV("");
 	
 	public static Value ButtonClicked;
 	public static Value TextTyped;

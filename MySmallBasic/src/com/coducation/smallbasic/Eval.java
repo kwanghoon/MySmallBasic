@@ -50,8 +50,10 @@ public class Eval {
 
 		// Value v1 = eval(env, lhs);
 		Value v2 = eval(env, rhs);
-		if (v2 == null) 
-			throw new InterpretException("Assign : No Return Value in RHS.");
+		if (v2 == null)  {
+			new PrettyPrinter().prettyPrint(assignStmt);
+			throw new InterpretException("Assign : No Return Value in RHS " );
+		}
 
 		if (lhs instanceof Var) {
 			env.put(((Var) lhs).getVarName(), v2);
@@ -425,9 +427,11 @@ public class Eval {
 				InterpretException ie = (InterpretException)exn;
 				if (ie.getProgramEnd())
 					throw ie;
-				else
+				else {
+					ie.printStackTrace();
 					throw new InterpretException(e.toString() + clzName + ", " + mthName 
 							+ "\n" + "Caused By\n" + ie.getStackTrace());
+				}
 			}
 			throw new InterpretException(e.toString() + clzName + ", " + mthName);
 		} catch (ClassNotFoundException e) {

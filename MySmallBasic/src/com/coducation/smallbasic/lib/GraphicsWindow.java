@@ -4,6 +4,7 @@ import java.awt.AWTException;
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Container;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -13,6 +14,8 @@ import java.awt.Image;
 import java.awt.Point;
 import java.awt.Robot;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -32,6 +35,9 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.text.Document;
 
 import com.coducation.smallbasic.DoubleV;
 import com.coducation.smallbasic.Eval;
@@ -283,6 +289,7 @@ public class GraphicsWindow {
 
 			addMouseListener(this);
 			addKeyListener(this);
+			setFocusTraversalKeysEnabled(false);
 			setPreferredSize(new Dimension(width, height));
 		}
 
@@ -294,7 +301,7 @@ public class GraphicsWindow {
 			String color;
 			double zoomX = 1;
 			double zoomY = 1;
-			double rotate = 1;
+			double rotate = 0;
 
 			for (Cmd cmd : cmdList) {
 				if (cmd.show) {
@@ -330,8 +337,7 @@ public class GraphicsWindow {
 						break;
 					case DRAWIMAGE:
 						DrawImageCmd dic = (DrawImageCmd) cmd;
-						ImageIcon icon = new ImageIcon(dic.imageName);
-						Image img = icon.getImage();
+						Image img = getImage(dic.imageName);
 						g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) dic.opacity));
 						g2.rotate(java.lang.Math.toRadians(dic.degree));
 						g2.scale(dic.scaleX, dic.scaleY);
@@ -359,8 +365,7 @@ public class GraphicsWindow {
 						break;
 					case DRAWRESIZEDIMAGE:
 						DrawResizedImageCmd dric = (DrawResizedImageCmd) cmd;
-						ImageIcon iconResized = new ImageIcon(dric.imageName);
-						Image imgResized = iconResized.getImage();
+						Image imgResized = getImage(dric.imageName);
 						g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) dric.opacity));
 						g2.rotate(java.lang.Math.toRadians(dric.degree));
 						g2.scale(dric.scaleX, dric.scaleY);
@@ -671,7 +676,11 @@ public class GraphicsWindow {
 				}
 
 				if (args.get(0) instanceof StrV && isInteger[0] && isInteger[1]) {
-					cmd.imageName = ((StrV) args.get(0)).getValue();
+					String imageName = ((StrV) args.get(0)).getValue();
+
+					imageName = isUrlOrPath(imageName);
+
+					cmd.imageName = imageName;
 					cmd.x = values[0];
 					cmd.y = values[1];
 
@@ -808,7 +817,11 @@ public class GraphicsWindow {
 				}
 
 				if (args.get(0) instanceof StrV && isInteger[0] && isInteger[1] && isInteger[2] && isInteger[3]) {
-					cmd.imageName = ((StrV) args.get(0)).getValue();
+					String imageName = ((StrV) args.get(0)).getValue();
+
+					imageName = isUrlOrPath(imageName);
+
+					cmd.imageName = imageName;
 					cmd.x = values[0];
 					cmd.y = values[1];
 					cmd.w = values[2];
@@ -1082,9 +1095,9 @@ public class GraphicsWindow {
 			if (MouseDown != null) {
 				MouseX = new DoubleV(e.getX());
 				MouseY = new DoubleV(e.getY());
-				
+
 				MouseButtonDown(e.getButton());
-				
+
 				Eval.eval(MouseDown);
 			}
 		}
@@ -1094,9 +1107,9 @@ public class GraphicsWindow {
 			if (MouseUp != null) {
 				MouseX = new DoubleV(e.getX());
 				MouseY = new DoubleV(e.getY());
-				
+
 				MouseButtonDown(e.getButton());
-				
+
 				Eval.eval(MouseUp);
 			}
 		}
@@ -1111,9 +1124,9 @@ public class GraphicsWindow {
 			if (MouseMove != null) {
 				MouseX = new DoubleV(e.getX());
 				MouseY = new DoubleV(e.getY());
-			
+
 				MouseButtonDown(e.getButton());
-				
+
 				Eval.eval(MouseMove);
 			}
 		}
@@ -1132,8 +1145,8 @@ public class GraphicsWindow {
 		public void keyPressed(KeyEvent e) {
 			if (KeyDown != null) {
 				String lastKey = keyMap.get(e.getKeyCode());
-				
-				lastKey = SetLastKey(e.getKeyLocation(), lastKey);				
+
+				lastKey = SetLastKey(e.getKeyLocation(), lastKey);
 				LastKey = new StrV(lastKey);
 
 				Eval.eval(KeyDown);
@@ -1145,10 +1158,10 @@ public class GraphicsWindow {
 		public void keyReleased(KeyEvent e) {
 			if (KeyUp != null) {
 				String lastKey = keyMap.get(e.getKeyCode());
-				
-				lastKey = SetLastKey(e.getKeyLocation(), lastKey);				
+
+				lastKey = SetLastKey(e.getKeyLocation(), lastKey);
 				LastKey = new StrV(lastKey);
-				
+
 				Eval.eval(KeyUp);
 			}
 		}
@@ -1460,6 +1473,8 @@ public class GraphicsWindow {
 
 	private static HashMap<String, JComponent> controlMap = new HashMap<>();
 
+	private static Container container;
+
 	public static String AddButton(String caption, int left, int top) {
 		if (frame == null)
 			Show(new ArrayList<Value>());
@@ -1473,7 +1488,12 @@ public class GraphicsWindow {
 		btn.setForeground(new Color(Integer.parseInt(BrushColor.toString().substring(1), 16)));
 		btn.setSize(btn.getPreferredSize());
 		btn.setLocation(left, top);
+		btn.addActionListener(new mActionListener());
 		panel.add(btn);
+
+		container = btn.getParent();
+		container.revalidate();
+		container.repaint();
 
 		String id = btnIdLabel + btnId;
 		btnId++;
@@ -1487,14 +1507,19 @@ public class GraphicsWindow {
 		if (frame == null)
 			Show(new ArrayList<Value>());
 
-		JTextField tf = new JTextField();
+		JTextField tf = new JTextField(13);
 
 		tf.setFont(settingFont());
 		tf.setForeground(new Color(Integer.parseInt(BrushColor.toString().substring(1), 16)));
 		tf.setSize(tf.getPreferredSize());
 		tf.setLocation(left, top);
+		tf.getDocument().addDocumentListener(new mDocumentListener());
 
 		panel.add(tf);
+
+		container = tf.getParent();
+		container.revalidate();
+		container.repaint();
 
 		String id = txtBoxIdLabel + txtBoxId;
 		txtBoxId++;
@@ -1508,15 +1533,21 @@ public class GraphicsWindow {
 		if (frame == null)
 			Show(new ArrayList<Value>());
 
-		JTextArea ta = new JTextArea();
+		JTextArea ta = new JTextArea(5, 18);
+
 		JScrollPane scroll = new JScrollPane(ta);
 
 		scroll.setFont(settingFont());
 		scroll.setForeground(new Color(Integer.parseInt(BrushColor.toString().substring(1), 16)));
 		scroll.setSize(scroll.getPreferredSize());
 		scroll.setLocation(left, top);
+		ta.getDocument().addDocumentListener(new mDocumentListener());
 
 		panel.add(scroll);
+
+		container = ta.getParent();
+		container.revalidate();
+		container.repaint();
 
 		String id = txtBoxIdLabel + txtBoxId;
 		txtBoxId++;
@@ -1580,10 +1611,12 @@ public class GraphicsWindow {
 		JComponent comp = controlMap.get(control);
 
 		if (comp != null) {
-			controlMap.remove(control);
-			panel.remove(comp);
-			panel.validate();
-			panel.repaint();
+			controlMap.remove(comp);
+
+			container = comp.getParent();
+			container.remove(comp);
+			container.revalidate();
+			container.repaint();
 		}
 	}
 
@@ -1592,6 +1625,7 @@ public class GraphicsWindow {
 
 		if (comp != null) {
 			comp.setLocation(x, y);
+
 		}
 	}
 
@@ -1600,6 +1634,9 @@ public class GraphicsWindow {
 
 		if (comp != null) {
 			comp.setSize(width, height);
+			
+			container = comp.getParent();
+			container.repaint();
 		}
 	}
 
@@ -1623,39 +1660,136 @@ public class GraphicsWindow {
 	// Mouse Library
 	static Toolkit tk = Toolkit.getDefaultToolkit();
 	static Cursor cursor;
-	
+
 	public static void HideCursor() {
-		if(frame == null)
+		if (frame == null)
 			Show(new ArrayList<Value>());
-		
+
 		cursor = tk.createCustomCursor(tk.createImage(""), new Point(), null);
 		panel.setCursor(cursor);
 	}
-	
+
 	public static void ShowCursor() {
-		if(frame == null)
+		if (frame == null)
 			Show(new ArrayList<Value>());
-		
+
 		cursor = new Cursor(Cursor.DEFAULT_CURSOR);
 		panel.setCursor(cursor);
 	}
-	
+
 	private static void MouseButtonDown(int button) {
 		String right = "False";
 		String left = "False";
-		
-		if(button == MouseEvent.BUTTON1) {
+
+		if (button == MouseEvent.BUTTON1) {
 			left = "True";
 		}
-		if(button == MouseEvent.BUTTON3) {
+		if (button == MouseEvent.BUTTON3) {
 			right = "True";
 		}
-		
+
 		Mouse.IsLeftButtonDown = new StrV(left);
 		Mouse.IsRightButtonDown = new StrV(right);
 	}
 	// End Mouse Library
-	
+
+	private static class mActionListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if (Controls.ButtonClicked != null) {
+				JButton button = (JButton) e.getSource();
+
+				if (controlMap.containsValue(button)) {
+					Controls.LastClickedButton = new StrV(getKeyFromValue(button));
+				}
+				Eval.eval(Controls.ButtonClicked);
+			}
+		}
+	}
+
+	private static class mDocumentListener implements DocumentListener {
+
+		@Override
+		public void changedUpdate(DocumentEvent e) {
+
+		}
+
+		@Override
+		public void insertUpdate(DocumentEvent e) {
+			if (Controls.TextTyped != null) {
+				JComponent comp = getCompFromDoc(e.getDocument());
+				if (comp != null) {
+					Controls.LastTypedTextBox = new StrV(getKeyFromValue(comp));
+				}
+				Eval.eval(Controls.TextTyped);
+			}
+		}
+
+		@Override
+		public void removeUpdate(DocumentEvent e) {
+			if (Controls.TextTyped != null) {
+				JComponent comp = getCompFromDoc(e.getDocument());
+				if (comp != null) {
+					Controls.LastTypedTextBox = new StrV(getKeyFromValue(comp));
+				}
+				Eval.eval(Controls.TextTyped);
+			}
+		}
+
+	}
+
+	private static String getKeyFromValue(JComponent comp) {
+		if (comp instanceof JButton || comp instanceof JTextField || comp instanceof JTextArea) {
+			for (String str : controlMap.keySet()) {
+				if (controlMap.get(str).equals(comp))
+					return str;
+			}
+		}
+
+		return "";
+	}
+
+	private static JComponent getCompFromDoc(Document doc) {
+		for (JComponent comp : controlMap.values()) {
+			if (comp instanceof JTextField) {
+				JTextField tf = (JTextField) comp;
+
+				if (tf.getDocument().equals(doc))
+					return tf;
+			} else if (comp instanceof JTextArea) {
+				JTextArea ta = (JTextArea) comp;
+
+				if (ta.getDocument().equals(doc))
+					return ta;
+			}
+		}
+		return null;
+	}
+
+	private static String isUrlOrPath(String imageName) {
+		if (imageName.contains("http")) {
+			ArrayList<Value> tmp = new ArrayList<>();
+			tmp.add(new StrV(imageName));
+
+			imageName = ((StrV) ImageList.LoadImage(tmp)).getValue();
+		}
+
+		return imageName;
+	}
+
+	private static Image getImage(String image) {
+		Image img = null;
+		if (image.contains(".")) {
+			ImageIcon icon = new ImageIcon(image);
+			img = icon.getImage();
+		} else {
+			// imageList에서 image를 가져오는 과정
+		}
+
+		return img;
+	}
+
 	// font
 	private static boolean fontBold() {
 		StrV bold = (StrV) FontBold;
@@ -1729,27 +1863,25 @@ public class GraphicsWindow {
 
 		return top;
 	}
-	
+
 	private static String SetLastKey(int location, String lastKey) {
-		if(lastKey.equals("Win")) {
-			if(location == 2)
+		if (lastKey.equals("Win")) {
+			if (location == 2)
 				return "L" + lastKey;
-			else if(location == 3)
+			else if (location == 3)
 				return "R" + lastKey;
-		}
-		else if(lastKey.equals("Shift")) {
-			if(location == 2)
+		} else if (lastKey.equals("Shift")) {
+			if (location == 2)
 				return "Left" + lastKey;
-			else if(location == 3)
+			else if (location == 3)
+				return "Right" + lastKey;
+		} else if (lastKey.equals("Ctrl")) {
+			if (location == 2)
+				return "Left" + lastKey;
+			else if (location == 1)
 				return "Right" + lastKey;
 		}
-		else if(lastKey.equals("Ctrl")) {
-			if(location == 2)
-				return "Left" + lastKey;
-			else if(location == 1)
-				return "Right" + lastKey;
-		}
-		
+
 		return lastKey;
 	}
 

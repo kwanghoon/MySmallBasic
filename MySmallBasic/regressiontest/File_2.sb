@@ -1,37 +1,37 @@
-'디렉토리가  존재할 경우 원본파일의 이름으로 생성
+'파일존재하지않으면 실패
 TextWindow.WriteLine("CopyFile")
 TextWindow.WriteLine(File.CopyFile("555.txt", "C:\Users\Administrator\Desktop\dir\444.txt"))
 
-'디렉토리삭제 시 실패
-'없는파일삭제 시 성공
+'디렉토리삭제시 실패
+'없는파일삭제시 성공
 TextWindow.WriteLine("")
 TextWindow.WriteLine("DeleteFile")
 TextWindow.WriteLine(File.DeleteFile("C:\Users\Administrator\Desktop\dir\444.txt"))
 TextWindow.WriteLine(File.DeleteFile("C:\Users\Administrator\Desktop\dir\222.txt"))
 
+'하위경로까지 생성
 TextWindow.WriteLine("")
 TextWindow.WriteLine("CreateDirectory")
 TextWindow.WriteLine(File.CreateDirectory("C:\Users\Administrator\Desktop\dir\444.txt"))
 TextWindow.WriteLine(File.CreateDirectory("C:\Users\Administrator\Desktop\dir\4441.txt"))
 
-'없는디렉토리삭제 시 실패
+'파일삭제시 실패
 TextWindow.WriteLine("")
 TextWindow.WriteLine("DeleteDirectory")
 TextWindow.WriteLine(File.DeleteDirectory("C:\Users\Administrator\Desktop\dir\4441.txt"))
-TextWindow.WriteLine(File.DeleteDirectory("C:\Users\Administrator\Desktop\dir\11"))
+TextWindow.WriteLine(File.DeleteDirectory("C:\Users\Administrator\Desktop\dir\11.txt"))
 
-'없는디렉토리 실패
-'경로에 \\사용
+'지정한 경로가 존재하지않으면 실패
+'지정한 경로가 존재하나 그 폴더안에 파일이 존재하지않으면 ""
+'새로붙는 경로는 \\
+'기존에 있던 경로는 기존 디렉토리 참고 \는 \\로 반환, /는 /로 반환
 TextWindow.WriteLine("")
 TextWindow.WriteLine("GetFiles")
 TextWindow.WriteLine(File.GetFiles("C:\Users\Administrator\Desktop\dir\444.txt"))
 TextWindow.WriteLine(File.GetFiles("C:\Users\Administrator\Desktop\dirs"))
 
-'없는디렉토리 실패
-'경로에 \\사용
-'빈폴더이면 공백반환
 TextWindow.WriteLine("")
-TextWindow.WriteLine("GetFiles")
+TextWindow.WriteLine("GetDirectories")
 TextWindow.WriteLine(File.GetDirectories("C:\Users\Administrator\Desktop\dir\444.txt"))
 TextWindow.WriteLine(File.GetDirectories("C:\Users\Administrator\Desktop\dir"))
 

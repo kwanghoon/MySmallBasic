@@ -1,0 +1,21 @@
+first = Controls.AddButton("first", 10, 10)
+second = Controls.AddButton("second", 10, 50)
+third = Controls.AddButton("third", 10, 100)
+fourth = Controls.AddButton("fourth", 10, 150)
+
+TextWindow.WriteLine(Controls.LastClickedButton)
+
+Controls.ButtonClicked = OnButtonClicked
+
+Sub OnButtonClicked
+  TextWindow.Write("마지막에 텍스트가 입력된 박스 : ")
+  If Controls.LastClickedButton = first Then
+    TextWindow.WriteLine(first)
+  ElseIf Controls.LastClickedButton = second Then
+    TextWindow.WriteLine(second)
+  ElseIf Controls.LastClickedButton = third Then
+    TextWindow.WriteLine(third)
+  ElseIf Controls.LastClickedButton = fourth Then
+    TextWindow.WriteLine(fourth)
+  EndIf
+EndSub

@@ -1,0 +1,21 @@
+first = Controls.AddTextBox(10, 10)
+second = Controls.AddTextBox(10, 50)
+third = Controls.AddTextBox(10, 100)
+fourth = Controls.AddTextBox(10, 150)
+
+TextWindow.WriteLine(Controls.LastTypedTextBox)
+
+Controls.TextTyped = OnTextTyped
+
+Sub OnTextTyped
+  TextWindow.Write("마지막에 텍스트가 입력된 박스 : ")
+  If Controls.LastTypedTextBox = first Then
+    TextWindow.WriteLine(first)
+  ElseIf Controls.LastTypedTextBox = second Then
+    TextWindow.WriteLine(second)
+  ElseIf Controls.LastTypedTextBox = third Then
+    TextWindow.WriteLine(third)
+  ElseIf Controls.LastTypedTextBox = fourth Then
+    TextWindow.WriteLine(fourth)
+  EndIf
+EndSub

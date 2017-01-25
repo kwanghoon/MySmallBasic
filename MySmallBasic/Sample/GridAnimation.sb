@@ -1,0 +1,18 @@
+rows = 8
+columns = 8
+size = 40
+
+For r = 1 To rows
+  For c = 1 To columns
+    GraphicsWindow.BrushColor = GraphicsWindow.GetRandomColor()
+    boxes[r][c] = Shapes.AddRectangle(size, size)
+    Shapes.Move(boxes[r][c], c * size, r * size)
+  EndFor
+EndFor
+
+For r = 1 To rows
+  For c = 1 To columns
+    Shapes.Animate(boxes[r][c], 0, 0, 1000)
+    Program.Delay(300)
+  EndFor
+EndFor
