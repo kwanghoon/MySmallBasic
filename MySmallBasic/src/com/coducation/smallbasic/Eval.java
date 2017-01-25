@@ -433,6 +433,7 @@ public class Eval {
 							+ "\n" + "Caused By\n" + ie.getStackTrace());
 				}
 			}
+			exn.printStackTrace();
 			throw new InterpretException(e.toString() + clzName + ", " + mthName);
 		} catch (ClassNotFoundException e) {
 			throw new InterpretException("Class Not Found " + e.toString());
