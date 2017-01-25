@@ -427,9 +427,11 @@ public class Eval {
 				InterpretException ie = (InterpretException)exn;
 				if (ie.getProgramEnd())
 					throw ie;
-				else
+				else {
+					ie.printStackTrace();
 					throw new InterpretException(e.toString() + clzName + ", " + mthName 
 							+ "\n" + "Caused By\n" + ie.getStackTrace());
+				}
 			}
 			throw new InterpretException(e.toString() + clzName + ", " + mthName);
 		} catch (ClassNotFoundException e) {
