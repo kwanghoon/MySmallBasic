@@ -7,6 +7,8 @@ import java.util.ArrayList;
 
 public class LexerAnalyzer
 {
+	private int lineno;
+	
 	public LexerAnalyzer(FileReader fr)
 	{
 		this.br = new BufferedReader(fr);
@@ -17,6 +19,7 @@ public class LexerAnalyzer
 	public ArrayList<ArrayList<Terminal>> Lexing() throws IOException
 	{
 		boolean Skip_CR = true; // Add, if Skip_CR is true and Next Line Token Only <CR>, then ignore it.
+		
 		String read_string = br.readLine();		
 		while(true)
 		{
@@ -33,7 +36,7 @@ public class LexerAnalyzer
 			}
 		}
 		
-		
+		lineno=1;
 		for(int index = 0; index < strarr.size(); index++) // Lexing Routine, START_FILE TO END_FILE
 		{
 			String line = strarr.get(index);
@@ -104,8 +107,9 @@ public class LexerAnalyzer
 							break;
 						default:
 						{
-							System.err.println("Unexpected Token : " + I);
-							System.exit(0);
+//							System.err.println("Unexpected Token : " + I);
+//							System.exit(0);
+							throw new LexerException("Line " + lineno + " : " + "Unexpected Token : " + I);
 						}
 					}
 					i_index++;
@@ -197,8 +201,9 @@ public class LexerAnalyzer
 								
 								if(dotonce == true && ch == '.')
 								{
-									System.err.println("Overlapped dot error.");
-									System.exit(0);	
+//									System.err.println("Overlapped dot error.");
+//									System.exit(0);	
+									throw new LexerException("Line " + lineno + " : " + "Overlapped dot error.");
 								}
 							}while(ch >= '0' && ch <= '9');
 							
@@ -228,8 +233,9 @@ public class LexerAnalyzer
 									}
 									else
 									{
-										System.err.println("Overlapped dot error.");
-										System.exit(0);
+//										System.err.println("Overlapped dot error.");
+//										System.exit(0);
+										throw new LexerException("Line " + lineno + " : " + "Overlapped dot error.");
 									}
 								}
 							}
@@ -336,8 +342,9 @@ public class LexerAnalyzer
 
 				else
 				{
-					System.err.println("Lexing Error.");
-					System.exit(0);
+//					System.err.println("Lexing Error.");
+//					System.exit(0);
+					throw new LexerException("Line " + lineno + " : " + "Lexing Error.");
 				}
 				Skip_CR = false; // Added.
 
@@ -348,6 +355,8 @@ public class LexerAnalyzer
 			// Condition Statement Added.
 			if(!Skip_CR) Lexer.add(Tokenized_word);
 			Skip_CR = true; // Because, Every statements have <CR> at last.
+			
+			lineno++;
 		}
 		
 		// By K. Choi: Remove the trailing CRs in the end.
