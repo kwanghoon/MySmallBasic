@@ -23,7 +23,7 @@ public class Array {
 			 if(arg1 instanceof ArrayV){
 				arr = (ArrayV)arg1;
 			}
-			 else if(arg1 instanceof StrV){
+			 else if(arg1 instanceof StrV || arg1 == null){
 				 return new StrV("false");
 			 }
 			else
@@ -52,7 +52,7 @@ public class Array {
 			if(arg1 instanceof ArrayV){
 				arr = (ArrayV)arg1;
 			}
-			else if(arg1 instanceof StrV){
+			else if(arg1 instanceof StrV || arg1 == null){
 				return new StrV("false");
 			}
 			else 
@@ -79,7 +79,7 @@ public class Array {
 			if(arg instanceof ArrayV){
 				arr = (ArrayV)arg;
 			}
-			else if(arg instanceof StrV){
+			else if(arg instanceof StrV || arg == null){
 				return null;
 			}
 			else 
@@ -102,7 +102,7 @@ public class Array {
 			if(arg instanceof ArrayV){
 				arr = (ArrayV)arg;
 			}
-			else if(arg instanceof StrV){
+			else if(arg instanceof StrV || arg == null){
 				return new DoubleV(0);
 			}
 			else 
