@@ -303,7 +303,9 @@ public class GraphicsWindow {
 			double zoomY = 1;
 			double rotate = 0;
 
-			for (Cmd cmd : cmdList) {
+			ArrayList<Cmd> _cmdList = (ArrayList<Cmd>)cmdList.clone();
+			
+			for (Cmd cmd : _cmdList) {
 				if (cmd.show) {
 					if (cmd.scaleX != 1)
 						zoomX = cmd.scaleX;
@@ -554,13 +556,13 @@ public class GraphicsWindow {
 		public void DrawBoundText(ArrayList<Value> args) {
 			DrawBoundTextCmd cmd = new DrawBoundTextCmd();
 
-			if (args.size() == 3) {
+			if (args.size() == 4) {
 				cmd.cmd = DRAWBOUNDTEXT;
 
-				int[] values = new int[2];
-				boolean[] isInteger = new boolean[2];
+				int[] values = new int[3];
+				boolean[] isInteger = new boolean[3];
 
-				for (int i = 0; i < 2; i++) {
+				for (int i = 0; i < 3; i++) {
 					if (args.get(i) instanceof DoubleV) {
 						isInteger[i] = true;
 						values[i] = (int) ((DoubleV) args.get(i)).getValue();
@@ -591,10 +593,10 @@ public class GraphicsWindow {
 					cmd.scaleY = 1;
 				}
 
-				if (args.get(2) instanceof StrV)
-					cmd.text = ((StrV) args.get(2)).getValue();
-				else if (args.get(2) instanceof DoubleV)
-					cmd.text = ((DoubleV) args.get(2)).toString();
+				if (args.get(3) instanceof StrV)
+					cmd.text = ((StrV) args.get(3)).getValue();
+				else if (args.get(3) instanceof DoubleV)
+					cmd.text = ((DoubleV) args.get(3)).toString();
 
 				cmdList.add(cmd);
 
