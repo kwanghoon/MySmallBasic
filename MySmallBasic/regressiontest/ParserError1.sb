@@ -1,0 +1,3 @@
+For i = 1 To 24   
+	TextWindow.WriteLine(i) 
+EndFor
