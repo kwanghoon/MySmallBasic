@@ -35,7 +35,6 @@ Sub MainLoop
   end = 0
   sessionDelay = STARTDELAY
   While end = 0
-  	TextWindow.WriteLine("MainLoop - OuterLoop")
     If sessionDelay > ENDDELAY Then
       sessionDelay = sessionDelay - 1
     EndIf
@@ -62,7 +61,6 @@ Sub MainLoop
 
     yposdelta = 0
     While done = 0 Or yposdelta > 0
-    TextWindow.WriteLine("MainLoop - InnerLoop")
       MovePiece()  'in: ypos, xpos, h
 
       ' Delay, but break if the delay get set to 0 if the piece gets dropped
@@ -288,7 +286,6 @@ Sub CheckStop ' in: ypos, xpos, h ret: done
     y = Math.Remainder(v, 10)
 
     If y + ypos > CHEIGHT Or Array.GetValue("c", (x + xpos) + (y + ypos) * CWIDTH) <> "." Then
-    	TextWindow.WriteLine("CheckStop - done = 1")
       done = 1
       i = BOXES ' force getting out of the loop
     EndIf
