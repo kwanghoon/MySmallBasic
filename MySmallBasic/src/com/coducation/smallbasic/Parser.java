@@ -601,10 +601,14 @@ public class Parser
 			count++;
 			location = 0;
 		}	
-		System.err.println("Expect Trans Table content is \"" + current_state.toString() + " " + index + " <Destination State>\"");
-		System.err.println("but didn't found at Trans Table... Plz Check it");
-		System.exit(0);
-		return new ParseState("Error...");
+		StringBuilder sb = new StringBuilder();
+		
+		sb.append("Expect Trans Table content is \"" + current_state.toString() + " " + index + " <Destination State>\"");
+		sb.append("\n");
+		sb.append("but didn't found at Trans Table... Plz Check it");
+		sb.append("\n");
+		
+		throw new ParserException("Line : Char : " + "Parsing error (state not found)", sb.toString());
 	}
 
 	private String Check_state(ParseState current_state, Terminal a)
@@ -769,16 +773,27 @@ public class Parser
 			}
 			index++;
 		}
-		if(a.toString().equals("\n"))
-			System.err.println("Expect Parsing table content is \"" + current_state.toString() + " CR"+ " <Shift/Reduce/Accecpt>\"");
-		else if(a.getTokenInfo() == Token.STR)
-			System.err.println("Expect Parsing table content is \"" + current_state.toString() + " " + a.getTokenInfo() + " <Shift/Reduce/Accecpt>\"");
-		else
-			System.err.println("Expect Parsing table content is \"" + current_state.toString() + " " + a.toString() + " <Shift/Reduce/Accecpt>\"");
-		System.err.println("but didn't found at Parsing Table... Plz Check it");
-		System.err.println("[" + a.getLine_index() + "," + a.getCh_index() + "]");
-		System.exit(0);
-		return "Dummy";
+		StringBuilder sb = new StringBuilder();
+		
+		if(a.toString().equals("\n")) {
+			sb.append("Expect Parsing table content is \"" + current_state.toString() + " CR"+ " <Shift/Reduce/Accecpt>\"");
+			sb.append("\n");
+		}
+		else if(a.getTokenInfo() == Token.STR) {
+			sb.append("Expect Parsing table content is \"" + current_state.toString() + " " + a.getTokenInfo() + " <Shift/Reduce/Accecpt>\"");
+			sb.append("\n");
+		}
+		else {
+			sb.append("Expect Parsing table content is \"" + current_state.toString() + " " + a.toString() + " <Shift/Reduce/Accecpt>\"");
+			sb.append("\n");
+		}
+		
+		sb.append("but didn't found at Parsing Table... Plz Check it");
+		sb.append("\n");
+		sb.append("[" + a.getLine_index() + "," + a.getCh_index() + "]");
+		sb.append("\n");
+		
+		throw new ParserException("Line " + a.getLine_index() + " : Char " + a.getCh_index() + " : " + "Parsing error", sb.toString());
 	}
 	
 	private int atoi(String a) // this method only use Parser, So set "private".
