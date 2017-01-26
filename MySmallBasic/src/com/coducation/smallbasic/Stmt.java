@@ -10,6 +10,32 @@ public class Stmt
 		return new Result(env , null);
 	}
 	
+	private int lineno;
+	private int charat;
+	
+	public void at(int lineno, int charat) {
+		this.lineno = lineno;
+		this.charat = charat;
+	}
+	
+	public int lineno() {
+		return lineno;
+	}
+	
+	public int charat() {
+		return charat;
+	}
+	
+	public void printWhere() {
+		System.out.println("Line " + lineno() + " Char " + charat() + " : ");
+	}
+	
+	public Stmt copyInfo(Stmt stmt) {
+		this.lineno = stmt.lineno;
+		this.charat = stmt.charat;
+		return this;
+	}
+	
     public void prettyprint()
 	{
 //		if(this instanceof ExprStmt)

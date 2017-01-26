@@ -153,9 +153,9 @@ public class Continuous {
 
 		if (ifStmt.getElse() != null) {
 			elseStmt = transform(ifStmt.getElse(), new BlockStmt(new ArrayList()));
-			return merge(newIfStmt(ifStmt.getCond(), thenStmt, elseStmt), stmtk);
+			return merge(newIfStmt(ifStmt.getCond(), thenStmt, elseStmt).copyInfo(ifStmt), stmtk);
 		} else {
-			return merge(newIfStmt(ifStmt.getCond(), thenStmt, null), stmtk);
+			return merge(newIfStmt(ifStmt.getCond(), thenStmt, null).copyInfo(ifStmt), stmtk);
 		}
 	}
 

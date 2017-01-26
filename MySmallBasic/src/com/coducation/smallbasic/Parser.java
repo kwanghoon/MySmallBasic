@@ -143,10 +143,13 @@ public class Parser
 					}
 					else if(Grammer_rule.get(state_num).equals("Stmt -> While Expr CRStmtCRs EndWhile")) // case While
 					{
-						Nonterminal sub_tree1 = (Nonterminal)stack.get(last_stack_tree_index-3); // CondExpr
-						Nonterminal sub_tree2 = (Nonterminal)stack.get(last_stack_tree_index-5); // Block
+						Nonterminal sub_tree1 = (Nonterminal)stack.get(last_stack_tree_index-3); // Block
+						Nonterminal sub_tree2 = (Nonterminal)stack.get(last_stack_tree_index-5); // CondExpr
 						
-						tree = new WhileStmt((Expr)sub_tree2.getTree(), (Stmt)sub_tree1.getTree());
+						WhileStmt whileStmt = new WhileStmt((Expr)sub_tree2.getTree(), (Stmt)sub_tree1.getTree());
+						Terminal whileKeyword = (Terminal)stack.get(last_stack_tree_index-7);
+						whileStmt.at(whileKeyword.getLine_index(), whileKeyword.getCh_index());
+						tree = whileStmt;
 			
 					}
 					else if(Grammer_rule.get(state_num).equals("Stmt -> ID :")) // case Label
@@ -183,7 +186,10 @@ public class Parser
 						Nonterminal sub_tree2 = (Nonterminal)stack.get(last_stack_tree_index-3);
 						Nonterminal sub_tree3 = (Nonterminal)stack.get(last_stack_tree_index-7);
 						
-						tree = new IfStmt((Expr)sub_tree3.getTree(), (Stmt)sub_tree2.getTree(), (Stmt)sub_tree1.getTree());
+						IfStmt ifStmt = new IfStmt((Expr)sub_tree3.getTree(), (Stmt)sub_tree2.getTree(), (Stmt)sub_tree1.getTree());
+						Terminal ifKeyword = (Terminal)stack.get(last_stack_tree_index-9);
+						ifStmt.at(ifKeyword.getLine_index(), ifKeyword.getCh_index());
+						tree = ifStmt; 
 					}
 					else if(Grammer_rule.get(state_num).equals("MoreThanZeroElseIf -> OptionalElse")) // Else, or not.
 					{
