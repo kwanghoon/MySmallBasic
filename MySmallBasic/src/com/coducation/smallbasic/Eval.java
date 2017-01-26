@@ -656,7 +656,7 @@ public class Eval {
 			String strV1 = ((StrV) v1).getValue().toString();
 			String strV2 = ((StrV) v2).getValue().toString();
 
-			if (strV1 != strV2)
+			if (strV1.equals(strV2)==false)
 				return true;
 			else
 				return false;
