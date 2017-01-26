@@ -850,8 +850,8 @@ public class GraphicsWindow {
 			if (args.size() == 3) {
 
 				cmd.cmd = DRAWTEXT;
-				int[] values = new int[2];
-				boolean[] isInteger = new boolean[2];
+				int[] values = new int[3];
+				boolean[] isInteger = new boolean[3];
 
 				for (int i = 0; i < args.size(); i++) {
 					if (args.get(i) instanceof DoubleV) {

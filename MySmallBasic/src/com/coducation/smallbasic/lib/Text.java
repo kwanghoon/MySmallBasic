@@ -329,7 +329,10 @@ public class Text {
 			
 		}
 		
-		return new StrV(str_arg0.substring((int)(dbl_arg1 - 1), (int)(dbl_arg1 + dbl_arg2 - 1))) ;
+		if (dbl_arg1 <= 0 || dbl_arg2 < 0)
+			return new StrV("");
+		else
+			return new StrV(str_arg0.substring((int)(dbl_arg1 - 1), (int)(dbl_arg1 + dbl_arg2 - 1))) ;
 
 	}
 	
