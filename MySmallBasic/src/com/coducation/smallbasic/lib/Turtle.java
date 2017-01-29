@@ -178,6 +178,7 @@ public class Turtle
 		else 		
 			throw new InterpretException("Error in # of Arguments: " + args.size());
 	}	//Turtle.Turn(angle) - if angle is positive, turn to right
+	//Turtle.Turn(angle)
 	public static void Turn(ArrayList<Value> args)
 	{
 		//check args_number
@@ -391,31 +392,31 @@ public class Turtle
 			return false;   
 		}
 	}
-	// if initial call, setting about turtle - 거북이미지로 바꿀것
+	// if initial call, setting about turtle
 	private static void initialCallCheck()
 	{
 		if(!isCalled)
 		{
 			isCalled = true;
 			
-			//laod turtle image
-			
-			//imageList와 Shapes 완료되었을 때, 할 부분
-			//이미지리스트로 이미지 가져오기.
-			//ImageList.LoadImage(경로)
-			//Shapes.AddImage( 이미지)
-			// 이미지 좌표 조절 : 좌측상단 -> 중앙
-			//ImageList.GetWidthOfImage(..)
-			
-			//임시
+			//loadImage
 			ArrayList<Value> args = new ArrayList<Value> ();
-			args.add(0, new DoubleV(10));
-			args.add(1, new DoubleV(20));
-			turtleID = (StrV) Shapes.AddEllipse(args);
-			turtleWidthDivTwo = 5;
-			turtleHeightDivTwo = 10;
+			args.add(0, new StrV("C:/Users/Administrator/git/MySmallBasic/MySmallBasic/resource/Turtle.png"));			
+			StrV turtleImageListID = (StrV)ImageList.LoadImage(args);
 			
-			repaintTurtle();		
+			//get size
+			args.clear();
+			args.add(0, turtleImageListID);
+			turtleWidthDivTwo = ((DoubleV)ImageList.GetWidthOfImage(args)).getValue() / 2;
+			turtleHeightDivTwo = ((DoubleV)ImageList.GetHeightOfImage(args)).getValue() / 2;
+			
+			//add to Shapes
+			args.clear();
+			args.add(0, new StrV("C:/Users/Administrator/git/MySmallBasic/MySmallBasic/resource/Turtle.png"));
+			turtleID = (StrV)Shapes.AddImage(args);
+			
+			repaintTurtle();
+			rotateTurtleImg();
 		}
 	}
 	// repaint Turtle image in (X, Y)
@@ -436,11 +437,13 @@ public class Turtle
 		args.add(2, new DoubleV(y - turtleHeightDivTwo));
 		Shapes.Move(args);	
 	}
-	// rotate turtle - 다른라이브러리구현 완료되면 구현할 것
+	// rotate turtle
 	private static void rotateTurtleImg()
 	{
-		//X, Y방향으로 회전
-		//그래픽윈도우 회전과 이미지리스트가 완료될때 구현하기
+		ArrayList<Value> args = new ArrayList<Value> ();
+		args.add(0, turtleID);
+		args.add(Angle);
+		Shapes.Rotate(args);	
 	}
 
 	public static void notifyFieldAssign(String fieldName) 
@@ -459,8 +462,8 @@ public class Turtle
 		// property Angle
 		else if(fieldName.equals("Angle"))
 		{
-			// Angle방향을 바라보도록 설정
-			// ImageList와 GraphicsWindow 완료되면 구현
+			if(isCalled)
+				rotateTurtleImg();
 		}
 
 	}
