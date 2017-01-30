@@ -23,7 +23,6 @@ public class Turtle
 		isPenDown = true;
 		isTurtleShow = true;
 		
-		delayTime = 4;
 		angleUnit = 1;
 		distanceUnit = 1;
 		turtleDistanceUnit = 1.05;
@@ -41,8 +40,6 @@ public class Turtle
 	// at least once called
 	private static boolean isCalled;
 	
-	// related with speed
-	private static int delayTime;
 	// rotating angle at a time
 	private static int angleUnit;
 	// move distance at a time
@@ -307,8 +304,7 @@ public class Turtle
 			// turning speed
 			try 
 			{
-				double speed = ((DoubleV)Speed).getValue();
-				Thread.sleep((long)(delayTime + ((10 - speed))));
+				Thread.sleep(getSleepTime());
 			} 
 			catch (InterruptedException e) 
 			{
@@ -363,13 +359,13 @@ public class Turtle
 			//set real angle
 			((DoubleV)Angle).setValue(curAngle);
 					
-			//turtle repaint....
+			//repaint turtle
 			rotateTurtleImg();
 				
 			// turning speed
 			try 
 			{
-				Thread.sleep( (long)(delayTime - 3 + (11 - ((DoubleV)Speed).getValue()) ) );
+				Thread.sleep(getSleepTime());
 			} 
 			catch (InterruptedException e) 
 			{
@@ -401,7 +397,7 @@ public class Turtle
 			
 			//loadImage
 			ArrayList<Value> args = new ArrayList<Value> ();
-			args.add(0, new StrV("C:/Users/Administrator/git/MySmallBasic/MySmallBasic/resource/Turtle.png"));			
+			args.add(0, new StrV(System.getProperty("user.dir") + "/resource/Turtle.png"));			
 			StrV turtleImageListID = (StrV)ImageList.LoadImage(args);
 			
 			//get size
@@ -412,7 +408,7 @@ public class Turtle
 			
 			//add to Shapes
 			args.clear();
-			args.add(0, new StrV("C:/Users/Administrator/git/MySmallBasic/MySmallBasic/resource/Turtle.png"));
+			args.add(0, new StrV(System.getProperty("user.dir") + "/resource/Turtle.png"));
 			turtleID = (StrV)Shapes.AddImage(args);
 			
 			repaintTurtle();
@@ -445,7 +441,21 @@ public class Turtle
 		args.add(Angle);
 		Shapes.Rotate(args);	
 	}
-
+	// get sleepTime
+	private static long getSleepTime()
+	{
+		int speed = (int)((DoubleV)Speed).getValue();
+		
+		//speed 10 ~ 6
+		if(speed > 5)
+			return (10 - speed) + 1;
+		//speed 5 ~ 2
+		else if(speed > 1)
+			return 10 * (int)java.lang.Math.pow(2, 5 - speed);
+		//speed 1
+		else
+			return 210;
+	}
 	public static void notifyFieldAssign(String fieldName) 
 	{
 		// property Speed
@@ -469,6 +479,5 @@ public class Turtle
 	}
 
 	public static void notifyFieldRead(String fieldName) {
-
 	}	
 }

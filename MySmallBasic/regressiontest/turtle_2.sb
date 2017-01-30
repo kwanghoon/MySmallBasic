@@ -1,11 +1,64 @@
-Turtle.X = 0
-Turtle.Y = 0
-Turtle.Speed = 5
-Turtle.Angle = 180 -45
-Turtle.Move(400)
+' import VLF523
 
-Turtle.Speed = 11
-TextWindow.WriteLine(Turtle.Speed)
+Turtle.Show()
+GraphicsWindow.Title = "Logo"
+TextWindow.Title = "Turtle commands"
+commands:
+speed = Turtle.Speed
+TextWindow.WriteLine ("What do you want the turtle?")
+TextWindow.WriteLine ("1. Move")
+TextWindow.WriteLine ("2. Turn right")
+TextWindow.WriteLine ("3. Turn left")
+TextWindow.WriteLine ("4. Move to")
+TextWindow.WriteLine ("5. Speed")
+TextWindow.WriteLine ("6. Random background color")
+TextWindow.WriteLine ("7. Color Turtle Road")
+TextWindow.WriteLine ("8. Exit")
+TextWindow.WriteLine ("Turtle speed: " + speed)
 
-Turtle.Speed = -1
-TextWindow.WriteLine(Turtle.Speed)
+i = TextWindow.Read()
+If i = "1" Then
+  TextWindow.WriteLine ("How far?")
+  o = TextWindow.Read()
+  Turtle.Move(o)
+Endif
+If i = "2" Then
+  Turtle.TurnRight()
+EndIf
+If i = "3" Then
+  Turtle.TurnLeft()
+EndIf
+If i = "4" Then
+  TextWindow.WriteLine ("Where? (X, Y)")
+  TextWindow.WriteLine ("X")
+  x = TextWindow.Read()
+  TextWindow.WriteLine ("Y")
+  y = TextWindow.Read()
+  Turtle.MoveTo(x,y)
+EndIf
+If i = "5" Then
+  TextWindow.WriteLine ("How fast?")
+  d = TextWindow.Read()
+  Turtle.Speed = d
+Endif
+If i = "6" Then
+  GraphicsWindow.BackgroundColor = GraphicsWindow.GetRandomColor()
+EndIf
+If i = "7" Then
+  TextWindow.WriteLine ("What Color?")
+  z = TextWindow.Read()
+  GraphicsWindow.PenColor = z
+Endif
+If i = "8" Then
+  TextWindow.WriteLine ("Really want to quit?")
+  TextWindow.WriteLine ("1. Yes")
+  TextWindow.WriteLine ("2. No")
+  s = TextWindow.Read()
+  If s = "1" Then
+    Program.End()
+  EndIf
+  If s = "2" Then
+    Goto commands
+  Endif
+Endif
+Goto commands

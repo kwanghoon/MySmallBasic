@@ -1,24 +1,24 @@
-Turtle.Angle = 370
-Turtle.Move(100)
-Turtle.Turn(-500)
-TextWindow.WriteLine(Turtle.Angle)
+'rainbow square and triangle
 
-Turtle.PenUp()
-Turtle.Move(100)
-Turtle.Angle = 45
- 
-Turtle.PenDown()
-Turtle.Hide()
-Turtle.Speed = 6
-Turtle.Move(50)
-
+GraphicsWindow.Title = "Turtle Graphics"
+GraphicsWindow.Height = 300
+GraphicsWindow.Width = 500
 Turtle.Show()
-Turtle.Angle = 90 + 45
-Turtle.Move(50)
-
-Turtle.Speed = 3
-Turtle.Angle = 180
-Turtle.Move(100)
-
-Turtle.TurnRight()
-Turtle.Move(300)
+Turtle.Speed = 10
+Turtle.X = 150
+Turtle.Y = 150
+For i = 0  To 200 Step 5 
+GraphicsWindow.PenColor = GraphicsWindow.GetRandomColor() 
+Turtle.Move(i)  
+Turtle.Turn(90)
+EndFor
+Turtle.PenUp()
+Turtle.Move(260)
+Turtle.Turn(60)
+Turtle.Move(120)
+Turtle.PenDown()
+For i = 0  To 200 Step 5  
+GraphicsWindow.PenColor = GraphicsWindow.GetRandomColor()
+Turtle.Move(i)  
+Turtle.Turn(120)
+EndFor
