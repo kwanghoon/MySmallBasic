@@ -1,1 +1,2 @@
 language: java
+script: "java org.eclipse.jdt.core.javabuilder"
