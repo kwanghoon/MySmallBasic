@@ -1,4 +1,4 @@
-TextWindow.WriteLine("로컬 이미지")
+﻿TextWindow.WriteLine("로컬 100*100 사이즈 이미지")
 GraphicsWindow.DrawResizedImage("C:\Users\user\Desktop\ㅁ.png", 10, 10, 100, 100)
 TextWindow.Read()
 

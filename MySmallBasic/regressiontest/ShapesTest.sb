@@ -1,4 +1,4 @@
-first = Shapes.AddRectangle(200, 20)
+﻿first = Shapes.AddRectangle(200, 20)
 Shapes.Move(first, 100, 100)
 Shapes.Animate(first, 250, 250, 3000)
 Shapes.Zoom(first, 2, 2)
@@ -16,6 +16,6 @@ fourth = Shapes.AddLine(150, 150, 250, 150)
 Shapes.SetOpacity(fourth, 30)
 
 For i = 0 To 180 Step 10
-	Shapes.Rotate(fourth, i)
+	Shapes.Rotate(first, i)
 	TextWindow.Read()
 EndFor
