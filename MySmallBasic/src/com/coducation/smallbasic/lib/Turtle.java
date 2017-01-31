@@ -63,7 +63,6 @@ public class Turtle
 			if(!isTurtleShow)
 			{
 				//repaint
-				//repaint
 				ArrayList<Value> arg = new ArrayList<Value> ();
 				arg.add(0, turtleID);
 				Shapes.ShowShape(arg);
@@ -154,28 +153,37 @@ public class Turtle
 			double x = Double.parseDouble(arg1.toString());
 			double y = Double.parseDouble(arg2.toString());
 			
-			// calculate angle			
-			
+			// calculate angle
 			double dx = x - ((DoubleV)X).getValue();
-			double dy = y - ((DoubleV)Y).getValue();			   
-			double rad= java.lang.Math.atan2(dx, dy);
-			double degree = (rad*180)/java.lang.Math.PI ;
-			if(degree < 0)
-				degree = 180 - degree;
-		
+			double dy = y - ((DoubleV)Y).getValue();
+			double degree = java.lang.Math.atan(dy/dx) * (180.0/java.lang.Math.PI);			 
+		    if(dx< 0.0)
+		        degree += 180.0;
+		    else if(dy<0.0) 
+		    	degree += 360.0;
+		    degree += 90;
+		    
+		    //calculate turnValue
+		    double turnValue = degree - ((DoubleV)Angle).getValue();
+		    if(turnValue >= 360)
+		    	turnValue = turnValue % 360;	 
+		    if(turnValue > 180)
+		    	turnValue -= 360;
+		    
+		    
 			//calculate distance
 			double distance = java.lang.Math.sqrt(
 					java.lang.Math.pow(java.lang.Math.abs(dx), 2)
 					 + java.lang.Math.pow(java.lang.Math.abs(dy), 2));
 			
 			initialCallCheck();
-			turn(degree);
+			turn(turnValue);
 			move(distance);
 		}
 		else 		
 			throw new InterpretException("Error in # of Arguments: " + args.size());
-	}	//Turtle.Turn(angle) - if angle is positive, turn to right
-	//Turtle.Turn(angle)
+	}	
+	//Turtle.Turn(angle) - if angle is positive, turn to right
 	public static void Turn(ArrayList<Value> args)
 	{
 		//check args_number
@@ -188,6 +196,7 @@ public class Turtle
 			double angle = Double.parseDouble(args.get(0).toString());
 			
 			initialCallCheck();
+			
 			turn(angle);		
 		}
 		else 		
@@ -293,9 +302,7 @@ public class Turtle
 			
 			//turtle_image move
 			if(isTurtleShow)
-			{
 				repaintTurtle(turtleX, turtleY);
-			}	
 			
 			//set cur x, y
 			((DoubleV)X).setValue(curX);
@@ -320,6 +327,7 @@ public class Turtle
 		args.add(1, Y);
 		args.add(2, new DoubleV(x));
 		args.add(3, new DoubleV(y));
+		
 		GraphicsWindow.DrawLine(args);
 	}
 	//turn right with angle
@@ -365,7 +373,7 @@ public class Turtle
 			// turning speed
 			try 
 			{
-				Thread.sleep(getSleepTime());
+				Thread.sleep(getSleepTime() / 4);
 			} 
 			catch (InterruptedException e) 
 			{
@@ -418,11 +426,7 @@ public class Turtle
 	// repaint Turtle image in (X, Y)
 	private static void repaintTurtle()
 	{
-		ArrayList<Value> args = new ArrayList<Value> ();
-		args.add(0, turtleID);
-		args.add(1, new DoubleV(((DoubleV)X).getValue() - turtleWidthDivTwo));
-		args.add(2, new DoubleV(((DoubleV)Y).getValue() - turtleHeightDivTwo));
-		Shapes.Move(args);	
+		repaintTurtle(((DoubleV)X).getValue(), ((DoubleV)Y).getValue());	
 	}
 	//repaint Turtle image in (x, y)
 	private static void repaintTurtle(double x, double y)
@@ -475,7 +479,18 @@ public class Turtle
 			if(isCalled)
 				rotateTurtleImg();
 		}
-
+		//property X
+		else if(fieldName.equals("X"))
+		{
+			if(isCalled && isTurtleShow)
+				repaintTurtle();
+		}
+		//property Y
+		else if(fieldName.equals("Y"))
+		{
+			if(isCalled && isTurtleShow)
+				repaintTurtle();
+		}
 	}
 
 	public static void notifyFieldRead(String fieldName) {
