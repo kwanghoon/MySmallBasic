@@ -1,0 +1,2 @@
+TextWindow.WriteLine("GetDefinition")
+TextWindow.WriteLine(Dictionary.GetDefinition("eye"))
