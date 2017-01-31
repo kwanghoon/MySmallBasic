@@ -5,9 +5,14 @@ Timer.Tick = OnTime
 i=0
 isPause=0
 
+While "True"
+
+EndWhile
+
 Sub OnTime
   
   TextWindow.WriteLine(i)
+  
   If i=4 Then
   Timer.Pause()
   isPause=1
@@ -15,6 +20,7 @@ Sub OnTime
 
   If isPause=1 Then
   TextWindow.WriteLine("Hello")
+  Timer.Interval=6000
   Timer.Resume()
   isPause=0
   EndIf 
