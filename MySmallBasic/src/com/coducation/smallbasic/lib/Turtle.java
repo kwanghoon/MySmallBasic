@@ -463,31 +463,75 @@ public class Turtle
 	public static void notifyFieldAssign(String fieldName) 
 	{
 		// property Speed
-		if(fieldName.equals("Speed"))
+		if(fieldName.equalsIgnoreCase("Speed"))
 		{
-			int input = (int)(((DoubleV)Speed).getValue());
-			
-			if(input > 10)
+			//input check
+			double input;
+			if(numTypeCheck(Speed))
+			{
+				input = Double.parseDouble(Speed.toString());
+				
+				if(input > 10)
+					input = 10;
+				else if(input < 1)
+					input = 1;
+			}
+			else 
 				input = 10;
-			else if(input < 1)
-				input = 1;
-			((DoubleV)Speed).setValue(input);
+			
+			Speed = new DoubleV(input);
 		}
 		// property Angle
-		else if(fieldName.equals("Angle"))
+		else if(fieldName.equalsIgnoreCase("Angle"))
 		{
+			//input check			
+			if(!(Angle instanceof DoubleV))
+			{
+				double input;
+				
+				if(numTypeCheck(Angle))
+					input = Double.parseDouble(Angle.toString());
+				else
+					input = 0;
+				Angle = new DoubleV(input);
+			}
+			
+			// change image
 			if(isCalled)
 				rotateTurtleImg();
 		}
 		//property X
-		else if(fieldName.equals("X"))
+		else if(fieldName.equalsIgnoreCase("X"))
 		{
+			//input check			
+			if(!(X instanceof DoubleV))
+			{
+				double input;
+				
+				if(numTypeCheck(X))
+					input = Double.parseDouble(X.toString());
+				else
+					input = 0;
+				X = new DoubleV(input);
+			}
+			
 			if(isCalled && isTurtleShow)
 				repaintTurtle();
 		}
 		//property Y
-		else if(fieldName.equals("Y"))
+		else if(fieldName.equalsIgnoreCase("Y"))
 		{
+			//input check			
+			if(!(Y instanceof DoubleV))
+			{
+				double input;
+				
+				if(numTypeCheck(Y))
+					input = Double.parseDouble(Y.toString());
+				else
+					input = 0;
+				Y = new DoubleV(input);
+			}
 			if(isCalled && isTurtleShow)
 				repaintTurtle();
 		}
