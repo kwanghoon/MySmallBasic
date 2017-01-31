@@ -1,5 +1,8 @@
 package com.coducation.smallbasic.lib;
 
+import java.io.BufferedInputStream;
+import java.io.DataInputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
@@ -21,8 +24,8 @@ import com.coducation.smallbasic.Value;
 public class Dictionary { // 옥스퍼드사전 이용
 
 	private static String u;
-	private static String app_id = "122c166d";
-	private static String app_key = "628d19b747a4fe64e48f0879ebc20c3a";
+	private static String app_id = "";
+	private static String app_key = "";
 	private static StringBuilder def = new StringBuilder(); // 토탈정의
 
 	public static Value GetDefinition(ArrayList<Value> args) {
@@ -35,6 +38,10 @@ public class Dictionary { // 옥스퍼드사전 이용
 				u += args.get(0).toString().toLowerCase(); // 단어설정
 				
 				try {
+					DataInputStream dis = new DataInputStream(new FileInputStream("resource/Dictionary/api_key.txt"));
+					app_id = dis.readLine(); // api_id 설정
+					app_key = dis.readLine(); // api_key 설정
+					dis.close();
 
 					URL url = new URL(u);
 					HttpsURLConnection urlConnection = (HttpsURLConnection) url.openConnection();

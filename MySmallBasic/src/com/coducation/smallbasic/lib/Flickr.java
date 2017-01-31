@@ -1,5 +1,7 @@
 package com.coducation.smallbasic.lib;
 
+import java.io.DataInputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
@@ -22,15 +24,20 @@ public class Flickr {
 
 	private static String u;
 	private static String photourl= "";
+	private static String api_key= "";
 	private final static int max = 4001;
 
 	public static Value GetPictureOfMoment(ArrayList<Value> args) {
 		// Flickr 의 현재 사진에 대한 파일 url을 가져옴
-		u = "https://api.flickr.com/services/rest/?method=flickr.photos.getRecent&api_key=264406bcdc5f0c98741b219cb5726fe7&per_page=1";
+		u = "https://api.flickr.com/services/rest/?method=flickr.photos.getRecent&api_key=";
 
 		if (args.size() == 0) {
 			try {
-
+				DataInputStream dis = new DataInputStream(new FileInputStream("resource/Flickr/api_key.txt"));
+				api_key = dis.readLine(); // api_key 설정
+				dis.close();
+				u += api_key + "&per_page=1";
+				
 				DocumentBuilderFactory f = DocumentBuilderFactory.newInstance();
 				DocumentBuilder parser = f.newDocumentBuilder();
 				Document xmlDoc = parser.parse(u);
@@ -65,16 +72,19 @@ public class Flickr {
 
 	public static Value GetRandomPicture(ArrayList<Value> args) {
 		// 지정된 태그가 있는 무작위 사진의 url 을 가져옴
-		u = "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=264406bcdc5f0c98741b219cb5726fe7&tags=";
+		u = "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=";
 
 		if (args.size() == 1) {
 
 			if(args.get(0) instanceof StrV || args.get(0) instanceof DoubleV) {
-				u += args.get(0).toString(); // tag설정
-				String page = (int)(java.lang.Math.random()*max)+"";
-				u += "&per_page=1&page="+page; // page설정
-
 				try {
+					DataInputStream dis = new DataInputStream(new FileInputStream("resource/Flickr/api_key.txt"));
+					api_key = dis.readLine(); // api_key 설정
+					dis.close();
+					u += api_key + "&tags=";
+					u += args.get(0).toString(); // tag설정
+					String page = (int)(java.lang.Math.random()*max)+"";
+					u += "&per_page=1&page="+page; // page설정
 
 					DocumentBuilderFactory f = DocumentBuilderFactory.newInstance();
 					DocumentBuilder parser = f.newDocumentBuilder();
