@@ -1,6 +1,6 @@
 ' 정상적으로 타이머가 작동하는 경우, Interval이 바뀔 때
 
-Timer.Interval = 5000
+Timer.Interval = 1000
 
 i = 0
 

@@ -83,7 +83,15 @@ public class Eval {
 			}
 		} else if (lhs instanceof Array) {
 			Array arr = (Array) lhs;
-			ArrayV elem = (ArrayV) env.get(arr.getVar());
+			Value arrValue = env.get(arr.getVar());
+			ArrayV elem;
+			if (arrValue == null)
+				elem = null;
+			else if (arrValue instanceof ArrayV)
+				elem = (ArrayV) arrValue;
+			else {
+				elem = null;
+			}
 
 			if (elem == null) {
 				elem = new ArrayV();
@@ -575,6 +583,8 @@ public class Eval {
 		// 1) StrV >= StrV
 		// 2) DoubleV >= DoubleV
 		// 3) error
+		if (v1 == null || v2 == null)
+			return false;
 		if (v1 instanceof StrV && v2 instanceof StrV) {
 			String strV1 = ((StrV) v1).getValue().toString();
 			String strV2 = ((StrV) v2).getValue().toString();

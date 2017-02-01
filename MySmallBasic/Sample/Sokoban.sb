@@ -962,7 +962,7 @@ Sub MoveStars
       starx[i] = starx[i] + starxv[i]
       stary[i] = stary[i] + staryv[i]
       Shapes.Rotate(star[i], startime[i] * 15)
-      Shapes.Zoom(star[i], math.sin(startime[i] / 32) , math.sin(startime[i] / 32) )
+      Shapes.Zoom(star[i], Math.Sin(startime[i] / 32) , Math.Sin(startime[i] / 32) )
       Shapes.Move(star[i], starx[i], stary[i])      
     EndFor  
     
@@ -982,7 +982,7 @@ Sub MoveStars
       heartx[i] = heartx[i] + heartxv[i]
       hearty[i] = hearty[i] + heartyv[i]
       Shapes.Rotate(heart[i], hearttime[i] * -10)
-      Shapes.Zoom(heart[i], math.sin(hearttime[i] / 32) , math.sin(hearttime[i] / 32) )
+      Shapes.Zoom(heart[i], Math.Sin(hearttime[i] / 32) , Math.Sin(hearttime[i] / 32) )
       Shapes.Move(heart[i], heartx[i], hearty[i])      
     EndFor  
   

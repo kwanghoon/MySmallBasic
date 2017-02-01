@@ -88,6 +88,7 @@ public class Timer {
 	public static void notifyFieldAssign(String fieldName) {
 		//Tick이 설정이 안된 경우는 TextWindow에서 해결, Tick이 설정이 안되면 Timer가 생성되면 안된다.
 		//if(Tick != null) {
+		if("Tick".equalsIgnoreCase(fieldName)) {
 			if(((DoubleV) Interval).getValue() < defaultInterval) {
 				timer = new javax.swing.Timer(getInterval(), new ActionListener() {
 					//Tick이 null인 경우, 즉 할당이 안된 경우 TextWindow에 
@@ -101,6 +102,7 @@ public class Timer {
 				timer.setDelay(getInterval());
 				timer.start();
 			}
+		}
 		//}
 	}
 
