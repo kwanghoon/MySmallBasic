@@ -1,0 +1,8 @@
+first = Shapes.AddRectangle(100, 50)
+Shapes.Move(first, 10, 10)
+Shapes.Zoom(first, 3, 3)
+
+For i = 0 To 360 Step 45
+	Shapes.Rotate(first, i)
+	TextWindow.Read()
+EndFor

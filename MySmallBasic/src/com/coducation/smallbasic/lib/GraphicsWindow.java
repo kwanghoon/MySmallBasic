@@ -1477,6 +1477,7 @@ public class GraphicsWindow {
 		if (cmds != null) {
 			for (Cmd cmd : cmds) {
 				cmd.show = false;
+				
 			}
 			panel.repaint();
 		}
