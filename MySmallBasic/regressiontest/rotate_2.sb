@@ -1,5 +1,7 @@
 localResized = Shapes.AddImage("C:\Users\user\Desktop\ㅁ.png")
+TextWindow.WriteLine(localResized)
 networkImage = Shapes.AddImage("https://www.google.co.kr/images/branding/googlelogo/2x/googlelogo_color_120x44dp.png")
+TextWindow.WriteLine(networkImage)
 
 currentImage = localResized
 i = 0

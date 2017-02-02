@@ -1342,7 +1342,7 @@ public class GraphicsWindow {
 
 		shapeMap.put(id, cmds);
 
-		return null;
+		return id;
 	}
 
 	public static String AddText(String text) {
@@ -1477,7 +1477,7 @@ public class GraphicsWindow {
 		if (cmds != null) {
 			for (Cmd cmd : cmds) {
 				cmd.show = false;
-				
+
 			}
 			panel.repaint();
 		}
