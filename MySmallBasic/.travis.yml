@@ -1,2 +1,2 @@
 language: java
-script: "javac"
+script: "find . -name \"*.java\" > sources.txt ; javac @sources.txt"
