@@ -47,6 +47,7 @@ public class Array {
 		
 		if(args.size()== 2){
 			
+		
 			Value arg1 = args.get(0); // array name
 			Value arg2 = args.get(1); // value
 			String value;

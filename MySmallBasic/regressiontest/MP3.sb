@@ -17,5 +17,3 @@ Sub button
     Sound.Stop("C:\Users\user\Desktop\sanso.mp3")
   EndIf
 EndSub
-
-

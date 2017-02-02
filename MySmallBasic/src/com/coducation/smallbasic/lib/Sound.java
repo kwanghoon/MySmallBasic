@@ -347,6 +347,7 @@ class MP3{
 		close();
 	}
 
+	
 	//종료
 	public void close() {
 		synchronized (this) {
