@@ -1,0 +1,6 @@
+language: java
+script: javac @sources.txt
+
+before_script:
+ - cd MySmallBasic
+ - find . -name "*.java" > sources.txt
