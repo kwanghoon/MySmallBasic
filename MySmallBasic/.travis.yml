@@ -1,5 +1,0 @@
-language: java
-script: javac @sources.txt
-
-before_script:
- - find . -name "*.java" > sources.txt
