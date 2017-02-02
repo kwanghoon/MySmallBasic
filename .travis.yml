@@ -1,5 +1,5 @@
 language: java
-script: javac -encoding UTF-8 @sources.txt
+script: javac -cp ./lib @sources.txt
 
 before_script:
  - cd MySmallBasic
