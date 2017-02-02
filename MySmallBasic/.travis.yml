@@ -1,2 +1,5 @@
 language: java
-script: "find . -name \"*.java\" > sources.txt ; javac @sources.txt"
+script: javac @sources.txt
+
+before_script:
+ - find . -name "*.java" > sources.txt
