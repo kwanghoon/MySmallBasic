@@ -1,5 +1,5 @@
 language: java
-script: javac -cp ./lib @sources.txt
+script: javac -cp ./lib/json_simple-1.1.jar:./lib/jl1.0.1.jar @sources.txt
 
 before_script:
  - cd MySmallBasic
