@@ -20,10 +20,13 @@ public class Array {
 			String index;
 			ArrayV arr;
 			
-			 if(arg1 instanceof ArrayV){
+			if(arg1 == null){
+				return new StrV("false");
+			}
+			else if(arg1 instanceof ArrayV){
 				arr = (ArrayV)arg1;
 			}
-			 else if(arg1 instanceof StrV || arg1 == null){
+			 else if(arg1 instanceof StrV){
 				 return new StrV("false");
 			 }
 			else
@@ -48,11 +51,13 @@ public class Array {
 			Value arg2 = args.get(1); // value
 			String value;
 			ArrayV arr ;
-			
-			if(arg1 instanceof ArrayV){
+			if(arg1 == null){
+				return new StrV("false");
+			}
+			else if(arg1 instanceof ArrayV){
 				arr = (ArrayV)arg1;
 			}
-			else if(arg1 instanceof StrV || arg1 == null){
+			else if(arg1 instanceof StrV){
 				return new StrV("false");
 			}
 			else 
@@ -75,11 +80,13 @@ public class Array {
 			
 			Value arg = args.get(0);
 			ArrayV arr;
-			
-			if(arg instanceof ArrayV){
+			if(arg == null){
+				return null;
+			}
+			else if(arg instanceof ArrayV){
 				arr = (ArrayV)arg;
 			}
-			else if(arg instanceof StrV || arg == null){
+			else if(arg instanceof StrV){
 				return null;
 			}
 			else 
@@ -98,11 +105,13 @@ public class Array {
 			
 			Value arg = args.get(0);
 			ArrayV arr;
-			
-			if(arg instanceof ArrayV){
+			if(arg == null){
+				return new DoubleV(0);
+			}
+			else if(arg instanceof ArrayV){
 				arr = (ArrayV)arg;
 			}
-			else if(arg instanceof StrV || arg == null){
+			else if(arg instanceof StrV){
 				return new DoubleV(0);
 			}
 			else 
