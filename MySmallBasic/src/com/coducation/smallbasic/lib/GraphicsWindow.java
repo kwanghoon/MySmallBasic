@@ -1176,8 +1176,19 @@ public class GraphicsWindow {
 			if (KeyDown != null) {
 				String lastKey = keyMap.get(e.getKeyCode());
 
-				lastKey = SetLastKey(e.getKeyLocation(), lastKey);
+				if (lastKey != null) {
+					lastKey = SetLastKey(e.getKeyLocation(), lastKey);
+				}
 				LastKey = new StrV(lastKey);
+
+				char text = e.getKeyChar();
+
+				if (isPrintableChar(text)) {
+					if (e.getKeyCode() == KeyEvent.VK_BACK_SPACE)
+						LastText = new StrV("");
+					else
+						LastText = new StrV(String.valueOf(text));
+				}
 
 				Eval.eval(KeyDown);
 			}
@@ -1189,8 +1200,19 @@ public class GraphicsWindow {
 			if (KeyUp != null) {
 				String lastKey = keyMap.get(e.getKeyCode());
 
-				lastKey = SetLastKey(e.getKeyLocation(), lastKey);
+				if (lastKey != null) {
+					lastKey = SetLastKey(e.getKeyLocation(), lastKey);
+				}
 				LastKey = new StrV(lastKey);
+
+				char text = e.getKeyChar();
+
+				if (isPrintableChar(text)) {
+					if (e.getKeyCode() == KeyEvent.VK_BACK_SPACE)
+						LastText = new StrV("");
+					else
+						LastText = new StrV(String.valueOf(text));
+				}
 
 				Eval.eval(KeyUp);
 			}
@@ -1937,9 +1959,14 @@ public class GraphicsWindow {
 		returnP.x = (int) x;
 		returnP.y = (int) y;
 
-		// System.out.println("x = " + x + ", y = " + y);
-
 		return returnP;
+	}
+
+	private static boolean isPrintableChar(char c) {
+		Character.UnicodeBlock block = Character.UnicodeBlock.of(c);
+
+		return c != KeyEvent.VK_DELETE && c != KeyEvent.CHAR_UNDEFINED && block != null
+				&& block != Character.UnicodeBlock.SPECIALS;
 	}
 
 	private static abstract class Cmd {
@@ -2163,7 +2190,7 @@ public class GraphicsWindow {
 			KeyEvent.VK_END, KeyEvent.VK_PAGE_DOWN, KeyEvent.VK_COMMA, KeyEvent.VK_PERIOD, KeyEvent.VK_SLASH,
 			KeyEvent.VK_SEMICOLON, KeyEvent.VK_COLON, KeyEvent.VK_OPEN_BRACKET, KeyEvent.VK_CLOSE_BRACKET,
 			KeyEvent.VK_ESCAPE, KeyEvent.VK_SCROLL_LOCK, KeyEvent.VK_PAUSE, KeyEvent.VK_EQUALS, KeyEvent.VK_MINUS,
-			KeyEvent.VK_CLEAR };
+			KeyEvent.VK_CLEAR, KeyEvent.VK_QUOTE };
 
 	private static String[] keyInfo = { "D0", "D0", "D1", "D1", "D2", "D2", "D3", "D3", "D4", "D4", "D5", "D6", "D6",
 			"D7", "D8", "D9", "D9", "F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "System", "F11", "F12", "A",
@@ -2173,7 +2200,7 @@ public class GraphicsWindow {
 			"Shift", "Ctrl", "Win", "Alt", "HanjaMode", "Space", "Apps", "Back", "Oem5", "Return", "Oem3", "Up", "Down",
 			"Left", "Right", "Up", "Down", "Left", "Right", "Insert", "Home", "PageUp", "Delete", "End", "PageDown",
 			"OemComma", "OemPeriod", "OemQuestion", "Oem1", "Oem1", "OemOpenBrackets", "Oem6", "Escape", "Scroll",
-			"Pause", "OemPlus", "OemMinus", "Clear" };
+			"Pause", "OemPlus", "OemMinus", "Clear", "OemQuotes" };
 
 	private static HashMap<String, String> colorMap;
 	private static HashMap<Integer, String> keyMap;
