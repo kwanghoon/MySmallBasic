@@ -390,7 +390,7 @@ public class GraphicsWindow {
 						break;
 					case DRAWTEXT:
 						DrawTextCmd dtc = (DrawTextCmd) cmd;
-						FontMetrics dtcMetrics = g2.getFontMetrics();
+						FontMetrics dtcMetrics = g2.getFontMetrics(dtc.font);
 						color = ((StrV) dtc.brushcolor).getValue();
 						g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) dtc.opacity));
 						g2.rotate(java.lang.Math.toRadians(dtc.degree), dtc.x + dtcMetrics.stringWidth(dtc.text) / 2,

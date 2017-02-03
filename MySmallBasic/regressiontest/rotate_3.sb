@@ -1,4 +1,6 @@
+GraphicsWindow.FontSize = 20
 text = Shapes.AddText("hello")
+Shapes.Move(text, 30, 30)
 
 For i = 0 To 360 Step 30
 	Shapes.Rotate("Text1", i)
