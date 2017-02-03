@@ -1,4 +1,4 @@
 GraphicsWindow.Show()
-Sound.Play("C:\Users\user\Desktop\sanso.mp3")
+Sound.Play("resource\sanso.mp3")
 
-'Sound.PlayAndWait("C:\Users\user\Desktop\sanso.mp3")
+'Sound.PlayAndWait("resource\sanso.mp3")
