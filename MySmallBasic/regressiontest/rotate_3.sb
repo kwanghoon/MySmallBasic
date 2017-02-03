@@ -1,0 +1,6 @@
+text = Shapes.AddText("hello")
+
+For i = 0 To 360 Step 30
+	Shapes.Rotate("Text1", i)
+	TextWindow.Read()
+EndFor

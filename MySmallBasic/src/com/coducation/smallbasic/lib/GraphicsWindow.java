@@ -390,17 +390,17 @@ public class GraphicsWindow {
 						break;
 					case DRAWTEXT:
 						DrawTextCmd dtc = (DrawTextCmd) cmd;
-						FontMetrics dtcMetrics = g2.getFontMetrics(dtc.font);
+						FontMetrics dtcMetrics = g2.getFontMetrics();
 						color = ((StrV) dtc.brushcolor).getValue();
 						g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) dtc.opacity));
 						g2.rotate(java.lang.Math.toRadians(dtc.degree), dtc.x + dtcMetrics.stringWidth(dtc.text) / 2,
-								dtc.y + dtcMetrics.getHeight() / 2);
+								dtc.y + (dtcMetrics.getHeight() * 1.5) / 2);
 						g2.scale(dtc.scaleX, dtc.scaleY);
 						g2.setFont(dtc.font);
 						g2.setColor(new Color(Integer.parseInt(color.substring(1), 16)));
-						g2.drawString(dtc.text, (int) dtc.x, (int) dtc.y);
+						g2.drawString(dtc.text, (int) dtc.x, (int) dtc.y + dtcMetrics.getHeight());
 						g2.rotate(java.lang.Math.toRadians(-dtc.degree), dtc.x + dtcMetrics.stringWidth(dtc.text) / 2,
-								dtc.y + dtcMetrics.getHeight() / 2);
+								dtc.y + (dtcMetrics.getHeight() * 1.5) / 2);
 						break;
 					case DRAWTRIANGLE:
 						DrawTriangleCmd dtrc = (DrawTriangleCmd) cmd;
