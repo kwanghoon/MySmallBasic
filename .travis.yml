@@ -2,5 +2,6 @@ language: java
 script: javac -cp ./lib/json_simple-1.1.jar:./lib/jl1.0.1.jar:../java/junit.jar @sources.txt
 
 before_script:
+ - ls -al java
  - cd MySmallBasic
  - find . -name "*.java" > sources.txt
