@@ -10,16 +10,18 @@ Timer.Resume()
 
 Timer.Resume() ' Multiple calls to Timer.Resume()
  
-TextWindow.WriteLine("Hello")
+While "True"
+
+EndWhile
 
 Sub OnTimer
 
   i = i +1
 
   TextWindow.WriteLine(i)
-
+  
   Timer.Interval = i * 1000  ' Reset timer interval on each OnTimer invocation
-
+  
   If i = 10 Then
 
     Timer.Pause()
