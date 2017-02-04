@@ -1,0 +1,55 @@
+Prog -> MoreThanOneStmt
+Stmt -> ExprStatement
+Stmt -> While ( Expr ) Then CRStmtCRs EndWhile
+Stmt -> ID :
+Stmt -> Goto ID
+Stmt -> For ID = Expr To Expr OptStep CRStmtCRs EndFor
+Stmt -> Sub ID CRStmtCRs EndSub
+Stmt -> If ( Expr ) Then CRStmtCRs MoreThanZeroElseIf
+MoreThanZeroElseIf -> OptionalElse
+MoreThanZeroElseIf -> ElseIf ( Expr ) Then CRStmtCRs MoreThanZeroElseIf
+OptionalElse -> EndIf
+OptionalElse -> Else CRStmtCRs EndIf
+ExprStatement -> ID = Expr
+ExprStatement -> ID . ID ( Exprs )
+ExprStatement -> ID ( )
+CRStmtCRs -> CR TheRest
+TheRest -> 
+TheRest -> Stmt CR TheRest
+MoreThanOneStmt -> Stmt
+MoreThanOneStmt -> Stmt CR MoreThanOneStmt
+OptStep -> 
+OptStep -> Step Expr
+Expr -> CondExpr
+Exprs -> 
+Exprs -> MoreThanOneExpr
+MoreThanOneExpr -> Expr
+MoreThanOneExpr -> Expr , MoreThanOneExpr
+CondExpr -> OrExpr
+OrExpr -> OrExpr Or AndExpr
+OrExpr -> AndExpr
+AndExpr -> AndExpr And EqNeqExpr
+AndExpr -> EqNeqExpr
+EqNeqExpr -> EqNeqExpr = CompExpr
+EqNeqExpr -> EqNeqExpr <> CompExpr
+EqNeqExpr -> CompExpr
+CompExpr -> CompExpr < AdditiveExpr
+CompExpr -> CompExpr <= AdditiveExpr
+CompExpr -> CompExpr > AdditiveExpr
+CompExpr -> CompExpr >= AdditiveExpr
+CompExpr -> AdditiveExpr
+AdditiveExpr -> AdditiveExpr + MultiplicativeExpr
+AdditiveExpr -> AdditiveExpr - MultiplicativeExpr
+AdditiveExpr -> MultiplicativeExpr
+MultiplicativeExpr -> MultiplicativeExpr * UnaryExpr
+MultiplicativeExpr -> MultiplicativeExpr / UnaryExpr
+MultiplicativeExpr -> UnaryExpr
+UnaryExpr -> - Primary
+UnaryExpr -> Primary
+Primary -> NUM
+Primary -> true
+Primary -> false
+Primary -> ( Expr )
+Primary -> ID
+Primary -> ID . ID
+Primary -> ID . ID ( Exprs )
