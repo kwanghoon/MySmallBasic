@@ -6,17 +6,63 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
+import java.util.StringTokenizer;
 
 public class MySmallBasicMain {
 	public static void main(String[] args) throws IOException {
 		Scanner scan = new Scanner(System.in);
 		
-		String Filename;
+		String Filename, option;
 		
-		System.out.print("Enter your SmallBasic file name: ");
-		Filename = scan.next();
+		String mrsbFile = Config.getMostRecentSmallBasicFile();
+		boolean debug = Config.getDebug();
+		
+		System.out.print("Enter your SmallBasic file name ");
+		System.out.flush();
+		if (mrsbFile != null) {
+			System.out.print("[" + mrsbFile + "] ");
+		}
+		else 
+			mrsbFile = "";
+		if (debug)
+			System.out.print("*debug mode* ");
+		
+		System.out.print(": ");
+		
+		String aLine = scan.nextLine();
+		StringTokenizer st = new StringTokenizer(aLine);
+		
+		Filename = mrsbFile;
+		if(st.hasMoreTokens() != false) {
+			option = st.nextToken();
+			if (option.equalsIgnoreCase("debug") == false 
+					&& option.equalsIgnoreCase("normal") == false) {
+				Filename = option;
+				Config.putMostRecentSmallBasicFile(Filename);
+			}
+			else if ("debug".equalsIgnoreCase(option)) {
+					debug = true;
+					Config.putDebug(debug);
+			}
+			else if ("normal".equalsIgnoreCase(option)) {
+					debug = false;
+					Config.putDebug(debug);
+			}
+			else if (st.hasMoreTokens()) {
+				option = st.nextToken();
+				if ("debug".equalsIgnoreCase(option)) {
+					debug = true;
+					Config.putDebug(debug);
+				}
+				else if ("normal".equalsIgnoreCase(option)) {
+					debug = false;
+					Config.putDebug(debug);
+				}
+			}
+		}
 		
 		System.out.println("Test File : " + Filename);
+		System.out.println("Debug Mode : " + debug);
 		System.out.println("-------------------------------");
 
 		FileReader fr = new FileReader(Filename);

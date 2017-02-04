@@ -36,6 +36,12 @@ public class Stmt
 		return this;
 	}
 	
+	public Stmt copyInfo(Expr expr) {
+		this.lineno = expr.lineno();
+		this.charat = expr.charat();
+		return this;
+	}
+	
     public void prettyprint()
 	{
 //		if(this instanceof ExprStmt)

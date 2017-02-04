@@ -31,6 +31,11 @@ public class Expr
 		return charat;
 	}
 	
+	public Expr copyInfo(Expr expr) {
+		this.lineno = expr.lineno;
+		this.charat = expr.charat;
+		return this;
+	}
 }
 
 

@@ -6,7 +6,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 
 public class Eval {
-	int numberOfIndent;
+	static boolean debug;
 	static BasicBlockEnv bbEnv;
 	static Env env;
 	static final String lib = "com.coducation.smallbasic.lib.";
@@ -28,6 +28,8 @@ public class Eval {
 	public static String[] getProgramArgs() { return programArgs; }
 	
 	public void eval(String[] args) {
+		debug = Config.getDebug();
+		
 		programArgs = args;
 		eval();
 	}
@@ -186,6 +188,8 @@ public class Eval {
 	}
 
 	public void eval(BasicBlockEnv bbEnv, Env env, Stmt stmt) {
+		if (debug) printLog(stmt);
+		
 		if (stmt instanceof Assign)
 			eval(bbEnv, env, (Assign) stmt);
 		else if (stmt instanceof BlockStmt)
@@ -539,6 +543,8 @@ public class Eval {
 	}
 
 	public Value eval(Env env, Expr expr) {
+		if(debug) printLog(expr);
+		
 		if (expr instanceof ArithExpr)
 			return eval(env, (ArithExpr) expr);
 		else if (expr instanceof Array)
@@ -684,5 +690,20 @@ public class Eval {
 
 	public static Class getClass(String name) throws ClassNotFoundException {
 		return Class.forName(lib + name);
+	}
+	
+	// Log
+	public static void printLog(Stmt stmt) {
+		int lineno = stmt.lineno();
+		int charat = stmt.charat();
+		if (lineno != 0 && charat != 0)
+			System.out.println("Line " + lineno + " : " + charat);
+	}
+	
+	public static void printLog(Expr expr) {
+		int lineno = expr.lineno();
+		int charat = expr.charat();
+		if (lineno != 0 && charat != 0)
+			System.out.println("Line " + lineno + " : " + charat);
 	}
 }

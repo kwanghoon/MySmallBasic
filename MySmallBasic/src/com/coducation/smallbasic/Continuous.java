@@ -70,17 +70,17 @@ public class Continuous {
 			stmts.remove(0);
 
 			if (head instanceof GotoStmt) {
-				transform(new BlockStmt(stmts), stmtk);
+				transform(new BlockStmt(stmts).copyInfo(head), stmtk);
 
-				return new GotoStmt(((GotoStmt) head).getTargetLabel());
+				return new GotoStmt(((GotoStmt) head).getTargetLabel()).copyInfo(head);
 			} else if (head instanceof Label) {
-				Stmt stmt = transform(new BlockStmt(stmts), stmtk);
+				Stmt stmt = transform(new BlockStmt(stmts).copyInfo(head), stmtk);
 
 				kMap.put(((Label) head).getLabel(), stmt);
 
-				return new GotoStmt(((Label) head).getLabel());
+				return new GotoStmt(((Label) head).getLabel()).copyInfo(head);
 			} else {
-				Stmt stmtsStmtk = transform(new BlockStmt(stmts), stmtk);			
+				Stmt stmtsStmtk = transform(new BlockStmt(stmts).copyInfo(head), stmtk);			
 				Stmt stmt = transform(head, stmtsStmtk);
 
 				return stmt;
@@ -99,10 +99,10 @@ public class Continuous {
 		// Goto ltest;
 		
 		ArrayList<Stmt> init = new ArrayList<>();
-		init.add(new Assign(forStmt.getVar(), forStmt.getInit()));
-		init.add(new GotoStmt(ltest));
+		init.add(new Assign(forStmt.getVar(), forStmt.getInit()).copyInfo(forStmt.getInit()));
+		init.add(new GotoStmt(ltest).copyInfo(forStmt.getInit()));
 		
-		Stmt linitStmt = new BlockStmt(init);
+		Stmt linitStmt = new BlockStmt(init).copyInfo(forStmt.getInit());
 		
 		// step
 		Expr step;
@@ -116,23 +116,39 @@ public class Continuous {
 
 		// i = i + step;
 		// Goto ltest;
-		Stmt update = new Assign(forStmt.getVar(), new ArithExpr(forStmt.getVar(), ArithExpr.PLUS, step));
+		Stmt update = new Assign(forStmt.getVar(), 
+						new ArithExpr(forStmt.getVar(), ArithExpr.PLUS, step).copyInfo(step)).copyInfo(step);
 		
 		ArrayList<Stmt> blockstmts = new ArrayList<Stmt>();
 		blockstmts.add(update);
-		blockstmts.add(new GotoStmt(ltest));
+		blockstmts.add(new GotoStmt(ltest).copyInfo(step));
 		
-		Stmt blockstmtk = new BlockStmt(blockstmts);
+		Stmt blockstmtk = new BlockStmt(blockstmts).copyInfo(step);
 		
 		// for body
 		Stmt body = transform(forStmt.getBlock(), blockstmtk);
 
-		Expr ltestCond = new LogicalExpr(
-				new LogicalExpr(new CompExpr(forStmt.getStep(), CompExpr.GREATER_THAN, new Lit(0)), LogicalExpr.AND,
-						new CompExpr(forStmt.getVar(), CompExpr.LESS_EQUAL, forStmt.getEnd())),
-				LogicalExpr.OR, new LogicalExpr(new CompExpr(forStmt.getStep(), CompExpr.LESS_THAN, new Lit(0)),
-						LogicalExpr.AND, new CompExpr(forStmt.getVar(), CompExpr.GREATER_EQUAL, forStmt.getEnd())));
-		Stmt ltestStmt = newIfStmt(ltestCond, body, stmtk);
+		Expr ltestCond = 
+				new LogicalExpr(
+					new LogicalExpr(
+						new CompExpr(forStmt.getStep(), 
+								CompExpr.GREATER_THAN, 
+								new Lit(0)).copyInfo(forStmt.getEnd()), 
+						LogicalExpr.AND,
+						new CompExpr(forStmt.getVar(), 
+								CompExpr.LESS_EQUAL, 
+								forStmt.getEnd()).copyInfo(forStmt.getEnd())).copyInfo(forStmt.getEnd()),
+				LogicalExpr.OR, 
+					new LogicalExpr(
+						new CompExpr(forStmt.getStep(), 
+								CompExpr.LESS_THAN, 
+								new Lit(0)).copyInfo(forStmt.getEnd()),
+						LogicalExpr.AND, 
+						new CompExpr(forStmt.getVar(), 
+								CompExpr.GREATER_EQUAL, 
+								forStmt.getEnd()).copyInfo(forStmt.getEnd())).copyInfo(forStmt.getEnd()))
+				.copyInfo(forStmt.getEnd());
+		Stmt ltestStmt = newIfStmt(ltestCond, body, stmtk).copyInfo(forStmt.getEnd());
 
 		kMap.put(ltest, ltestStmt);
 
@@ -144,7 +160,7 @@ public class Continuous {
 
 		String l = gotoStmt.getTargetLabel();
 
-		return new GotoStmt(l);
+		return new GotoStmt(l).copyInfo(gotoStmt);
 	}
 
 	public Stmt transform(IfStmt ifStmt, Stmt stmtk) {
@@ -162,7 +178,7 @@ public class Continuous {
 	public Stmt transform(Label labelStmt, Stmt stmtk) {
 		kMap.put(labelStmt.getLabel(), stmtk);
 
-		return new GotoStmt(labelStmt.getLabel());
+		return new GotoStmt(labelStmt.getLabel()).copyInfo(labelStmt);
 	}
 
 	public Stmt transform(SubDef subdefStmt, Stmt stmtk) {
@@ -174,7 +190,7 @@ public class Continuous {
 
 		array.add(stmt);
 
-		kMap.put(l, new BlockStmt(array));
+		kMap.put(l, new BlockStmt(array).copyInfo(subdefStmt));
 
 		return stmtk;
 	}
@@ -186,12 +202,12 @@ public class Continuous {
 		String l = fresh();
 
 		ArrayList<Stmt> array = new ArrayList<>();
-		Stmt stmt = transform(whileStmt.getBlock(), new GotoStmt(l));
+		Stmt stmt = transform(whileStmt.getBlock(), new GotoStmt(l).copyInfo(whileStmt));
 
-		array.add(newIfStmt(whileStmt.getCond(), stmt, stmtk));
-		kMap.put(l, new BlockStmt(array));
+		array.add(newIfStmt(whileStmt.getCond(), stmt, stmtk).copyInfo(whileStmt.getCond()));
+		kMap.put(l, new BlockStmt(array).copyInfo(whileStmt.getCond()));
 
-		return new GotoStmt(l);
+		return new GotoStmt(l).copyInfo(whileStmt);
 	}
 
 	private Stmt merge(Stmt... stmts) {
@@ -250,6 +266,6 @@ public class Continuous {
 	private IfStmt newIfStmt(Expr cond, Stmt thenstmt, Stmt elsestmt) {
 		if (isEmpty(elsestmt))
 			elsestmt = null;
-		return new IfStmt(cond, thenstmt, elsestmt);
+		return new IfStmt(cond, thenstmt, elsestmt); // Attach copyInfo(...) to newIfStmt(...)!
 	}
 }
