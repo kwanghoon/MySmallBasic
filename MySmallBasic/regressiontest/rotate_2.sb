@@ -1,0 +1,26 @@
+localResized = Shapes.AddImage("C:\Users\user\Desktop\ㅁ.png")
+TextWindow.WriteLine(localResized)
+networkImage = Shapes.AddImage("https://www.google.co.kr/images/branding/googlelogo/2x/googlelogo_color_120x44dp.png")
+TextWindow.WriteLine(networkImage)
+
+currentImage = localResized
+i = 0
+
+GraphicsWindow.KeyDown = OnKeyPressed
+
+Sub OnKeyPressed
+  If GraphicsWindow.LastKey = "D1" Then
+    Shapes.ShowShape(localResized)
+    Shapes.HideShape(networkImage)
+    currentImage = localResized
+    i = 0
+  ElseIf GraphicsWindow.LastKey = "D2" Then
+    Shapes.HideShape(localResized)
+    Shapes.ShowShape(networkImage)
+    currentImage = networkImage
+    i = 0
+  Else
+    i = i + 10
+    Shapes.Rotate(currentImage, i)
+  EndIf
+EndSub

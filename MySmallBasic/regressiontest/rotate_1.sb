@@ -1,0 +1,7 @@
+first = Shapes.AddTriangle(10, 10, 50, 10, 10, 50)
+Shapes.Move("Triangle1", 200, 100)
+
+For i = 0 To 360 Step 30
+	Shapes.Rotate(first, i)
+	TextWindow.Read()
+EndFor

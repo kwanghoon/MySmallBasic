@@ -50,8 +50,10 @@ public class Eval {
 
 		// Value v1 = eval(env, lhs);
 		Value v2 = eval(env, rhs);
-		if (v2 == null) 
-			throw new InterpretException("Assign : No Return Value in RHS.");
+		if (v2 == null)  {
+			new PrettyPrinter().prettyPrint(assignStmt);
+			throw new InterpretException("Assign : No Return Value in RHS " );
+		}
 
 		if (lhs instanceof Var) {
 			env.put(((Var) lhs).getVarName(), v2);
@@ -81,7 +83,15 @@ public class Eval {
 			}
 		} else if (lhs instanceof Array) {
 			Array arr = (Array) lhs;
-			ArrayV elem = (ArrayV) env.get(arr.getVar());
+			Value arrValue = env.get(arr.getVar());
+			ArrayV elem;
+			if (arrValue == null)
+				elem = null;
+			else if (arrValue instanceof ArrayV)
+				elem = (ArrayV) arrValue;
+			else {
+				elem = null;
+			}
 
 			if (elem == null) {
 				elem = new ArrayV();
@@ -221,13 +231,15 @@ public class Eval {
 
 			StrV s1, s2;
 			DoubleV d1, d2;
-
+			Double dv1 = 0.0, dv2 = 0.0;
+			
 			switch (arithExpr.GetOp()) {
 			case ArithExpr.PLUS:
-				Double dv1 = 0.0, dv2 = 0.0;
 				boolean numplus = true; // numplus == false => concatenation
 
-				if (v1 instanceof DoubleV)
+				if (v1 == null) 
+					dv1 = 0.0;
+				else if (v1 instanceof DoubleV)
 					dv1 = ((DoubleV) v1).getValue();
 
 				else if (v1 instanceof StrV && ((StrV) v1).isNumber())
@@ -237,7 +249,9 @@ public class Eval {
 				else
 					throw new InterpretException("PLUS 1st operand unexpected" + v1);
 
-				if (v2 instanceof DoubleV)
+				if (v2 == null)
+					dv2 = 0.0;
+				else if (v2 instanceof DoubleV)
 					dv2 = ((DoubleV) v2).getValue();
 				else if (v2 instanceof StrV && ((StrV) v2).isNumber())
 					dv2 = ((StrV) v2).parseDouble();
@@ -252,32 +266,69 @@ public class Eval {
 					return new StrV(v1.toString() + v2.toString());
 
 			case ArithExpr.MINUS:
-				if (v1 instanceof DoubleV && v2 instanceof DoubleV) {
-					d1 = (DoubleV) v1;
-					d2 = (DoubleV) v2;
+				if (v1 == null) 
+					dv1 = 0.0;
+				else if (v1 instanceof DoubleV)
+					dv1 = ((DoubleV) v1).getValue();
 
-					return new DoubleV(d1.getValue() - d2.getValue());
-				} else {
-					throw new InterpretException("Syntax Error! " + arithExpr);
-				}
+				else if (v1 instanceof StrV && ((StrV) v1).isNumber())
+					dv1 = ((StrV) v1).parseDouble();
+				else
+					throw new InterpretException("MINUS 1st operand unexpected" + v1);
+				
+				if (v2 == null)
+					dv2 = 0.0;
+				else if (v2 instanceof DoubleV)
+					dv2 = ((DoubleV) v2).getValue();
+				else if (v2 instanceof StrV && ((StrV) v2).isNumber())
+					dv2 = ((StrV) v2).parseDouble();
+				else
+					throw new InterpretException("MINUS 2nd operand unexpected" + v2);
+				
+				return new DoubleV(dv1 - dv2);
+				
 			case ArithExpr.MULTIFLY:
-				if (v1 instanceof DoubleV && v2 instanceof DoubleV) {
-					d1 = (DoubleV) v1;
-					d2 = (DoubleV) v2;
+				if (v1 == null) 
+					dv1 = 0.0;
+				else if (v1 instanceof DoubleV)
+					dv1 = ((DoubleV) v1).getValue();
 
-					return new DoubleV(d1.getValue() * d2.getValue());
-				} else {
-					throw new InterpretException("Syntax Error! " + arithExpr);
-				}
+				else if (v1 instanceof StrV && ((StrV) v1).isNumber())
+					dv1 = ((StrV) v1).parseDouble();
+				else
+					throw new InterpretException("MULTIFLY 1st operand unexpected" + v1);
+				
+				if (v2 == null)
+					dv2 = 0.0;
+				else if (v2 instanceof DoubleV)
+					dv2 = ((DoubleV) v2).getValue();
+				else if (v2 instanceof StrV && ((StrV) v2).isNumber())
+					dv2 = ((StrV) v2).parseDouble();
+				else
+					throw new InterpretException("MULTIFLY 2nd operand unexpected" + v2);
+				
+				return new DoubleV(dv1 * dv2);
 			case ArithExpr.DIVIDE:
-				if (v1 instanceof DoubleV && v2 instanceof DoubleV) {
-					d1 = (DoubleV) v1;
-					d2 = (DoubleV) v2;
+				if (v1 == null) 
+					dv1 = 0.0;
+				else if (v1 instanceof DoubleV)
+					dv1 = ((DoubleV) v1).getValue();
 
-					return new DoubleV(d1.getValue() / d2.getValue());
-				} else {
-					throw new InterpretException("Syntax Error! " + arithExpr);
-				}
+				else if (v1 instanceof StrV && ((StrV) v1).isNumber())
+					dv1 = ((StrV) v1).parseDouble();
+				else
+					throw new InterpretException("DIVIDE 1st operand unexpected" + v1);
+				
+				if (v2 == null)
+					dv2 = 0.0;
+				else if (v2 instanceof DoubleV)
+					dv2 = ((DoubleV) v2).getValue();
+				else if (v2 instanceof StrV && ((StrV) v2).isNumber())
+					dv2 = ((StrV) v2).parseDouble();
+				else
+					throw new InterpretException("DIVIDE 2nd operand unexpected" + v2);
+				
+				return new DoubleV(dv1 / dv2);
 			case ArithExpr.UNARY_MINUS:
 			default:
 				throw new InterpretException("Unexpected Op Code " + arithExpr.GetOp());
@@ -425,10 +476,13 @@ public class Eval {
 				InterpretException ie = (InterpretException)exn;
 				if (ie.getProgramEnd())
 					throw ie;
-				else
+				else {
+					ie.printStackTrace();
 					throw new InterpretException(e.toString() + clzName + ", " + mthName 
 							+ "\n" + "Caused By\n" + ie.getStackTrace());
+				}
 			}
+			exn.printStackTrace();
 			throw new InterpretException(e.toString() + clzName + ", " + mthName);
 		} catch (ClassNotFoundException e) {
 			throw new InterpretException("Class Not Found " + e.toString());
@@ -529,6 +583,8 @@ public class Eval {
 		// 1) StrV >= StrV
 		// 2) DoubleV >= DoubleV
 		// 3) error
+		if (v1 == null || v2 == null)
+			return false;
 		if (v1 instanceof StrV && v2 instanceof StrV) {
 			String strV1 = ((StrV) v1).getValue().toString();
 			String strV2 = ((StrV) v2).getValue().toString();
@@ -610,7 +666,7 @@ public class Eval {
 			String strV1 = ((StrV) v1).getValue().toString();
 			String strV2 = ((StrV) v2).getValue().toString();
 
-			if (strV1 != strV2)
+			if (strV1.equals(strV2)==false)
 				return true;
 			else
 				return false;

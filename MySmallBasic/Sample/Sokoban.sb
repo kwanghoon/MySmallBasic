@@ -1,0 +1,1165 @@
+'-----------------------------------------------------------------------------------------
+'To-Do
+'-----------------------------------------------------------------------------------------
+
+'-----------------------------------------------------------------------------------------
+'initialize the window first
+'-----------------------------------------------------------------------------------------
+GraphicsWindow.Hide()
+GraphicsWindow.CanResize  = "false"
+GraphicsWindow.Width = 1024 
+GraphicsWindow.Height = 768
+GraphicsWindow.Title = "SOkoCUTE"
+GraphicsWindow.Left = (Desktop.Width - 1024) / 2
+GraphicsWindow.Top  = (Desktop.Height - 768) / 2
+
+'-----------------------------------------------------------------------------------------
+'preload some gfx
+'-----------------------------------------------------------------------------------------
+Path = "http://smallbasic.com/drop/soko"
+background = ImageList.LoadImage( Path + "/sokocuteff.png")
+image["A"] = ImageList.LoadImage( Path + "/sokocute0a.png")
+image["B"] = ImageList.LoadImage( Path + "/sokocute0b.png")
+image["7"] = ImageList.LoadImage( Path + "/sokocute07.png")
+image["6"] = ImageList.LoadImage( Path + "/sokocute06.png")
+image["5"] = ImageList.LoadImage( Path + "/sokocute05.png")
+image["4"] = ImageList.LoadImage( Path + "/sokocute04.png")
+image["3"] = ImageList.LoadImage( Path + "/sokocute03.png")
+image["2"] = ImageList.LoadImage( Path + "/sokocutegg.png")
+image["1"] = ImageList.LoadImage( Path + "/sokocutess.png")
+image["0"] = ImageList.LoadImage( Path + "/sokocute00.png")
+star       = ImageList.LoadImage( Path + "/sokocutels.png")
+heart      = ImageList.LoadImage( Path + "/sokocutelh.png")
+'GraphicsWindow.DrawText(100,100, Program.Directory)
+GraphicsWindow.DrawImage(background, 0, 0)
+'-----------------------------------------------------------------------------------------
+'init the keys
+'-----------------------------------------------------------------------------------------
+leftKey  = "Left"
+rightKey = "Right"
+forwardKey = "Up"
+backKey = "Down"
+fireKey = "Space"
+returnKey = "Return"
+escapeKey = "Escape"
+pauseKey = "P"
+resetKey = "R"
+pluskey = "F1"
+minusKey = "F2"
+'important var for moving the crystals
+korrx = 36
+'init any other var
+animtime = 1500
+status = "start"
+game="gamearray"
+block = "blockArray"
+true = 1
+false = 0
+stage = 0
+
+'init level data
+InitLevels()
+'init stars and hearts
+InitStars()
+ResetStars()
+
+' animate title at first
+titleshape = Shapes.AddImage(Path + "/sokocute.png")
+Shapes.Move(titleshape, 140,-350)
+Shapes.Animate(titleshape, 140,170, 2500)
+
+txtstart = Shapes.AddImage(Path + "/sokocutetx.png")
+Shapes.Move(txtstart, 305,1800)
+Shapes.Animate(txtstart, 305,420, 3000)
+
+'calculate delay (higher number means more precision)
+timestart = Clock.ElapsedMilliseconds
+i = 0
+while (i < 500000)
+i = i + 1
+Endwhile  
+timeloop = Clock.ElapsedMilliseconds - timestart
+mssec = timeloop / 500000
+loopmssec = 1 / mssec
+
+KeyUp()
+Main()
+
+Sub Main
+  GraphicsWindow.Show()
+  GraphicsWindow.KeyDown = KeyDown
+  GraphicsWindow.KeyUp   = KeyUp  
+  endtime = Clock.ElapsedMilliseconds
+  starttime = Clock.ElapsedMilliseconds
+  blinktime = Clock.ElapsedMilliseconds
+  gamestarttime = Clock.ElapsedMilliseconds
+  
+  gemfall = false
+  freecells = 1
+  blink     = 0
+  fps = 0
+  looptime = 0  
+  play = 1
+  pause = 0
+  rot = 0
+  
+  While(play = 1)
+    
+    fps = fps + 1
+         
+    Input()
+    if status = "game" then
+
+
+      'try fixed fps - 60 might be enough
+      loopdelay = (1000/60) * loopmssec 
+      num = 0
+      While(num < loopdelay)
+        num = num + 1
+      endwhile
+      
+      
+      If gemfall = false and gemwater <> 99 and Clock.ElapsedMilliseconds - watertime > 550 then
+        Shapes.Animate(crystalimg[gemwater],Shapes.GetLeft(crystalimg[gemwater]), Shapes.GetTop(crystalimg[gemwater]) + 35, 650)
+        gemfall = true
+      EndIf
+      If gemfall = true and gemwater <> 99 and Clock.ElapsedMilliseconds - watertime > 550 and Clock.ElapsedMilliseconds - watertime < 1400 then
+        gemzoom = gemzoom - gemmove
+        gemmove = gemmove + 0.001
+        Sound.Stop(Path + "/sokocute02.wav")
+        Sound.Play(Path + "/sokocute02.wav")
+        Shapes.Zoom(crystalimg[gemwater], gemzoom, gemzoom)  
+      EndIf
+      If gemwater <> 99 and Clock.ElapsedMilliseconds - watertime > 1400 then
+        Shapes.move(crystalimg[gemwater], 1000, 1000)
+        Shapes.move(crystalbnk[gemwater], 1000, 1000)
+        gemwater = 99
+        gemmove = 0
+        gemfall = false
+      EndIf
+                 
+         
+      
+        If (gemchng <> 99) And (Clock.ElapsedMilliseconds - gemtime > 400) Then
+          if ground[gemy][gemx] = 1 then
+            Shapes.Move(crystalbnk[gemchng], Shapes.GetLeft(crystalimg[gemchng]), Shapes.GetTop(crystalimg[gemchng]))
+            Shapes.Move(crystalimg[gemchng], gemchng * 52, -100)        
+            freecells = 0
+            For y = 0 To 15
+               For x = 0 To 19
+                  if level[y][x] = 1 then 
+                    freecells = freecells + 1               
+                  EndIF
+               EndFor
+            EndFor
+            If freecells = 0 then
+               Sound.Stop(Path + "/sokocute03.wav")
+               Sound.Play(Path + "/sokocute03.wav") 
+            EndIf
+          else
+            Shapes.Move(crystalimg[gemchng], Shapes.GetLeft(crystalbnk[gemchng]), Shapes.GetTop(crystalbnk[gemchng]))
+            Shapes.Move(crystalbnk[gemchng], gemchng * 52, -100)          
+          endif
+          gemchng = 99
+        EndIf
+    
+        'move the player
+        If newmove < 25 Then
+          newmove = newmove + 1
+          xplayer = xplayer + movex 
+          yplayer = yplayer + movey     
+          Shapes.Move(player1, xplayer, yplayer) 
+          Shapes.Move(player2, xplayer, yplayer) 
+        EndIf
+    
+    
+        'blinking crystals when level is done
+        If freecells = 0 And Clock.ElapsedMilliseconds - blinktime > 350 then  
+          For i = 0 to (cryst - 1)
+            x1 = Shapes.GetLeft(crystalimg[i])
+            y1 = Shapes.GetTop(crystalimg[i])
+            x2 = Shapes.GetLeft(crystalbnk[i])
+            y2 = Shapes.GetTop(crystalbnk[i])     
+            Shapes.Move(crystalimg[i], x2, y2)
+            Shapes.Move(crystalbnk[i], x1, y1)       
+          EndFor 
+          blink = blink + 1
+          blinktime = Clock.ElapsedMilliseconds
+        EndIf
+        
+      ' end level if crystals changed color 10 times  
+      If blink = 10 then
+         LevelExplosion()
+         stage = stage + 1
+         if stage <> 10 then
+           status = "reset"
+           resettime = Clock.ElapsedMilliseconds
+           GraphicsWindow.BrushColor = "#3975e5"
+           GraphicsWindow.FillRectangle(70,690,170,80)
+           GraphicsWindow.FillRectangle(800,690,224,85)
+         endif
+         
+         'load title sceen when finished level 10
+         If stage = 10 then
+           LevelExplosion()
+           stage = 0
+           Shapes.Animate(titleshape, 140,170, 2500)
+           Shapes.Animate(txtstart, 305,420, 3000)
+           GraphicsWindow.BrushColor = "#3975e5"
+           GraphicsWindow.FillRectangle(70,690,170,80)
+           GraphicsWindow.FillRectangle(800,690,224,85)
+           status = "start"
+           ResetStars()
+           resettime = Clock.ElapsedMilliseconds         
+         endif
+       EndIf
+       
+       ' show time and fps
+       If Clock.ElapsedMilliseconds - endtime > 1000 And status = "game" Then
+          gametime = Clock.ElapsedMilliseconds - starttime
+          GraphicsWindow.BrushColor = "#3975e5"
+          GraphicsWindow.FontName = "COMIC SANS MS"
+          GraphicsWindow.FontSize = 25
+          GraphicsWindow.FillRectangle(800,690,224,85)
+          GraphicsWindow.BrushColor = "white"
+          tsecgesamt = Math.Round(gametime/ 1000)  
+          tsec       = Math.Remainder(tsecgesamt , 60)
+          tmingesamt = Math.Floor(tsecgesamt/ 60) 
+          tmin       = Math.Remainder(tmingesamt , 60)
+          thour      = Math.Floor(tmingesamt / 60)
+          If tsec < 10 then 
+            strSec = Text.Append( ":0", tsec) 
+          Else
+            strSec = Text.Append( ":", tsec)   
+          EndIf  
+          If tmin < 10 then 
+            strMin = Text.Append( "0", tmin) 
+          Else
+            strMin = Text.Append( "", tmin) 
+          EndIf       
+               
+          GraphicsWindow.DrawText(800, 690, " time "+ thour + ":" + Text.Append( strMin, strSec))
+          GraphicsWindow.DrawText(800, 725, " fps "+ fps )
+          GraphicsWindow.FontSize = 10
+          endtime = Clock.ElapsedMilliseconds  
+          fps = 0
+        EndIf
+    EndIf  'of Status = game
+  
+    'reset level after a short delay  
+    If status ="reset" And (Clock.ElapsedMilliseconds - resettime > 2500) Then
+      GraphicsWindow.BrushColor = "#3975e5"
+      GraphicsWindow.FillRectangle(70,690,170,80)
+      GraphicsWindow.FillRectangle(800,690,224,80)
+      freecells = 1
+      blink = 0
+      LevelRelease()
+      LevelLoad()
+      wait1 = Clock.ElapsedMilliseconds
+      While Clock.ElapsedMilliseconds - wait1 < 3000
+      EndWhile  
+      starttime = Clock.ElapsedMilliseconds   
+      status = "game" 
+      GraphicsWindow.BrushColor = "#3975e5"
+      GraphicsWindow.FontName = "COMIC SANS MS"
+      GraphicsWindow.FontSize = 25
+      GraphicsWindow.FillRectangle(70,690,170,80)
+      GraphicsWindow.BrushColor = "white"
+      GraphicsWindow.DrawText(70, 690, "moves "+ moves)
+      GraphicsWindow.DrawText(70, 725, " level "+ (stage + 1) )
+    EndIf
+    If status = "start" then   
+      MoveStars()        
+    endif
+    
+  EndWhile
+EndSub
+
+
+Sub KeyDown
+  
+  bleftKey    = false
+  brightKey   = false
+  bforwardKey = false
+  bbackKey    = false
+  bescapeKey  = false
+  
+  
+  If GraphicsWindow.LastKey = leftKey then
+    bleftKey = true
+  elseif GraphicsWindow.LastKey = rightKey then
+    brightKey = true   
+  elseif GraphicsWindow.LastKey = forwardKey then
+    bforwardKey = true
+  elseif GraphicsWindow.LastKey = backKey then
+    bbackKey = true
+  elseif GraphicsWindow.LastKey = returnKey then
+    breturnKey = true
+  elseif GraphicsWindow.LastKey = escapeKey then
+    bescapeKey = true
+  endif
+  
+endSub
+
+Sub KeyUp
+  ' reset every key first
+  bleftKey    = false
+  brightKey   = false
+  bforwardKey = false
+  bbackKey    = false
+  breturnKey  = false
+  
+  If GraphicsWindow.LastKey = pauseKey then 
+    LevelExplosion()
+  EndIf
+ 
+ 
+  If GraphicsWindow.LastKey = escapeKey and status = "start" then
+    Program.End()
+  EndIf
+
+  
+  If GraphicsWindow.LastKey = escapeKey And status = "game" then 
+    LevelExplosion()
+    stage = 0
+    Shapes.Animate(titleshape, 140,170, 2500)
+    Shapes.Animate(txtstart, 305,420, 3000)
+    GraphicsWindow.BrushColor = "#3975e5"
+    GraphicsWindow.FillRectangle(70,690,170,80)
+    GraphicsWindow.FillRectangle(800,690,224,85)
+    status = "start"
+    ResetStars()
+    resettime = Clock.ElapsedMilliseconds
+  EndIf
+  
+  If GraphicsWindow.LastKey = resetKey then 
+    LevelExplosion()
+    status = "reset"
+    resettime = Clock.ElapsedMilliseconds
+  EndIf
+  
+  If GraphicsWindow.LastKey = pluskey then 
+    LevelExplosion()
+    'stage = stage + 1   'uncomment this line to cheat with F1
+    status = "reset"
+    resettime = Clock.ElapsedMilliseconds
+  EndIf
+
+  If GraphicsWindow.LastKey = minuskey then 
+    'KeyUp()
+    LevelExplosion()
+    'stage = stage - 1  'uncomment this line to cheat with F2
+    status = "reset"
+    resettime = Clock.ElapsedMilliseconds
+  EndIf
+  
+  'reload title after <escape>
+  If GraphicsWindow.LastKey = returnKey and status = "start" then 
+    Shapes.Animate(titleshape, 140,-350, 2000)
+    Shapes.Animate(txtstart, 305, 1220, 1600)
+    status = "reset"
+    resettime = Clock.ElapsedMilliseconds
+  EndIf
+  
+EndSub
+
+
+
+Sub Input
+   
+  If newmove >= 25  and blink = 0 then   
+  
+    'move right  
+    If(brightKey   = true) and (level[posy][posx+1] <= 2) Then   
+      'move crystal
+      if level[posy][posx+1] = 2 and ground[posy][posx+1] <= 1 And (level[posy][posx+2] <= 1 or ground[posy][posx+2] = 3) Then
+        chestarray[posy][posx+2] = chestarray[posy][posx+1]
+        chestarray[posy][posx+1] = 99 
+        level[posy][posx+1] = ground[posy][posx+1]
+        level[posy][posx+2] = 2   
+        Sound.Stop(Path + "/sokocute01.wav")
+        Sound.Play(Path + "/sokocute01.wav")
+        'move crystal into water
+        If ground[posy][posx+2] = 3 then
+          watertime = Clock.ElapsedMilliseconds
+          gemwater = chestarray[posy][posx+2]
+          gemzoom = 1
+        EndIf
+        If (ground[posy][posx+2] = 1 and ground[posy][posx+1] <= 0) Or (ground[posy][posx+2] <= 0 and ground[posy][posx+1] = 1) then
+          gemtime = Clock.ElapsedMilliseconds
+          gemchng = chestarray[posy][posx+2]
+          gemy    = posy
+          gemx    = posx+2
+        EndIf
+        'animate crystal
+        if ground[posy][posx+1] = 1 then
+          Shapes.Animate(crystalbnk[chestarray[posy][posx+2]] , (posx+2) * 50 + korrx, (posy) * 40 - 0, 400)  
+        elseif ground[posy][posx+2] = 3 then
+          Shapes.Animate(crystalimg[chestarray[posy][posx+2]] , (posx+2) * 50 + korrx, (posy) * 40 - 0, 400)  
+        else
+          Shapes.Animate(crystalimg[chestarray[posy][posx+2]] , (posx+2) * 50 + korrx, (posy) * 40 - 0, 400)  
+        endif    
+      EndIf
+      'move player right      
+      If level[posy][posx+1] <= 1 then
+        moves   = moves + 1
+        newmove = 0
+        movex   = 2
+        movey   = 0  
+        posx = posx + 1
+        gametime = Clock.ElapsedMilliseconds
+        GraphicsWindow.BrushColor = "#3975e5"
+        GraphicsWindow.FontName = "COMIC SANS MS"
+        GraphicsWindow.FontSize = 25
+        GraphicsWindow.FillRectangle(70,690,170,40)
+        GraphicsWindow.BrushColor = "white"
+        GraphicsWindow.DrawText(70, 690, "moves "+ moves)
+      Endif
+  'move left  
+  ElseIf( bleftKey    = true) and (level[posy][posx-1]<= 2) Then
+      'move crystal
+      if level[posy][posx-1] = 2 And ground[posy][posx-1] <= 1 and (level[posy][posx-2] <= 1 or ground[posy][posx-2] = 3) Then
+        chestarray[posy][posx-2] = chestarray[posy][posx-1]
+        chestarray[posy][posx-1] = 99 
+        level[posy][posx-1] = ground[posy][posx-1]
+        level[posy][posx-2] = 2   
+        Sound.Stop(Path + "/sokocute01.wav")
+        Sound.Play(Path + "/sokocute01.wav")
+        'move crystal into water
+        If ground[posy][posx-2] = 3 then
+          watertime = Clock.ElapsedMilliseconds
+          gemwater = chestarray[posy][posx-2]
+          gemzoom = 1
+        EndIf
+        If (ground[posy][posx-2] = 1 and ground[posy][posx-1] <= 0) Or (ground[posy][posx-2] <= 0 and ground[posy][posx-1] = 1) then
+          gemtime = Clock.ElapsedMilliseconds
+          gemchng = chestarray[posy][posx-2]
+          gemy    = posy
+          gemx    = posx-2
+        EndIf   
+        'animate crystal     
+        If ground[posy][posx-1] = 1 then   
+          Shapes.Animate(crystalbnk[chestarray[posy][posx-2]] , (posx-2) * 50 + korrx, (posy) * 40 - 0, 400)  
+        elseif ground[posy][posx-2] = 3 then
+          Shapes.Animate(crystalimg[chestarray[posy][posx-2]] , (posx-2) * 50 + korrx, (posy) * 40 + 0, 400)  
+        else
+          Shapes.Animate(crystalimg[chestarray[posy][posx-2]] , (posx-2) * 50 + korrx, (posy) * 40 - 0, 400)  
+        endif           
+      EndIf
+      'move player left      
+      If level[posy][posx-1] <= 1 then
+        moves   = moves + 1        
+        newmove = 0
+        movex   =-2
+        movey   = 0
+        posx = posx - 1
+        gametime = Clock.ElapsedMilliseconds
+        GraphicsWindow.BrushColor = "#3975e5"
+        GraphicsWindow.FontName = "COMIC SANS MS"
+        GraphicsWindow.FontSize = 25
+        GraphicsWindow.FillRectangle(70,690,170,40)
+        GraphicsWindow.BrushColor = "white"
+        GraphicsWindow.DrawText(70, 690, "moves "+ moves)
+      Endif 
+    'move down  
+    ElseIf(bbackKey    = true) and (level[posy+1][posx]<= 2) Then
+      'move crystal
+      if level[posy+1][posx] = 2 And ground[posy+1][posx] <= 1 and (level[posy+2][posx] <= 1 or ground[posy+2][posx] = 3) Then
+        chestarray[posy+2][posx] = chestarray[posy+1][posx]
+        chestarray[posy+1][posx] = 99 
+        level[posy+1][posx] = ground[posy+1][posx]
+        level[posy+2][posx] = 2   
+        Sound.Stop(Path + "/sokocute01.wav")
+        Sound.Play(Path + "/sokocute01.wav")
+        'move crystal into water
+        If ground[posy+2][posx] = 3 then
+          watertime = Clock.ElapsedMilliseconds
+          gemwater = chestarray[posy+2][posx]
+          gemzoom = 1
+        EndIf
+        If (ground[posy+2][posx] = 1 and ground[posy+1][posx] <= 0) Or (ground[posy+2][posx] <= 0 and ground[posy+1][posx] = 1) then
+          gemtime = Clock.ElapsedMilliseconds
+          gemchng = chestarray[posy+2][posx]
+          gemy    = posy+2
+          gemx    = posx
+        EndIf
+        'animate crystal
+        if ground[posy+1][posx] = 1 then
+          Shapes.Animate(crystalbnk[chestarray[posy+2][posx]] , (posx) * 50 + korrx, (posy+2) * 40 - 0, 400)  
+        elseif ground[posy+2][posx] = 3 then
+          Shapes.Animate(crystalimg[chestarray[posy+2][posx]] , (posx) * 50 + korrx, (posy+2) * 40 + 0, 400)  
+        else
+          Shapes.Animate(crystalimg[chestarray[posy+2][posx]] , (posx) * 50 + korrx, (posy+2) * 40 - 0, 400)  
+        endif        
+      EndIf
+      'move player down      
+      If level[posy+1][posx] <= 1 then
+        moves   = moves + 1
+        newmove = 0
+        movex   = 0
+        movey   = 1.6
+        posy = posy + 1
+        gametime = Clock.ElapsedMilliseconds
+        GraphicsWindow.BrushColor = "#3975e5"
+        GraphicsWindow.FontName = "COMIC SANS MS"
+        GraphicsWindow.FontSize = 25
+        GraphicsWindow.FillRectangle(70,690,170,40)
+        GraphicsWindow.BrushColor = "white"
+        GraphicsWindow.DrawText(70, 690, "moves "+ moves)    
+      Endif
+    'move up
+    ElseIf(bforwardKey = true) and (level[posy-1][posx]<= 2) Then
+      'move crystal
+      if level[posy-1][posx] = 2 And ground[posy-1][posx] <= 1 And (level[posy-2][posx] <= 1 or ground[posy-2][posx] = 3) Then
+        chestarray[posy-2][posx] = chestarray[posy-1][posx]
+        chestarray[posy-1][posx] = 99 
+        level[posy-1][posx] = ground[posy-1][posx]
+        level[posy-2][posx] = 2   
+        Sound.Stop(Path + "/sokocute01.wav")
+        Sound.Play(Path + "/sokocute01.wav")
+        'move crystal into water
+        If ground[posy-2][posx] = 3 then
+          watertime = Clock.ElapsedMilliseconds
+          gemwater = chestarray[posy-2][posx]
+          gemzoom = 1
+        EndIf
+        If (ground[posy-2][posx] = 1 and ground[posy-1][posx] <= 0) Or (ground[posy-2][posx] <= 0 and ground[posy-1][posx] = 1) then
+          gemtime = Clock.ElapsedMilliseconds
+          gemchng = chestarray[posy-2][posx]
+          gemy    = posy-2
+          gemx    = posx
+        EndIf
+        'animate crystal
+        if ground[posy-1][posx] = 1 then
+          Shapes.Animate(crystalbnk[chestarray[posy-2][posx]] , (posx) * 50 + korrx, (posy-2) * 40 - 0, 400)  
+        elseif ground[posy-2][posx] = 3 then
+          Shapes.Animate(crystalimg[chestarray[posy-2][posx]] , (posx) * 50 + korrx, (posy-2) * 40 + 0, 400)            
+        else
+          Shapes.Animate(crystalimg[chestarray[posy-2][posx]] , (posx) * 50 + korrx, (posy-2) * 40 - 0, 400)  
+        endif             
+      EndIf
+      'move player up
+      if level[posy-1][posx] <= 1 then
+        moves   = moves + 1
+        newmove = 0
+        movex   = 0
+        movey   =-1.6
+        posy = posy - 1
+        gametime = Clock.ElapsedMilliseconds
+        GraphicsWindow.BrushColor = "#3975e5"
+        GraphicsWindow.FontName = "COMIC SANS MS"
+        GraphicsWindow.FontSize = 25
+        GraphicsWindow.FillRectangle(70,690,170,40)
+        GraphicsWindow.BrushColor = "white"
+        GraphicsWindow.DrawText(70, 690, "moves "+ moves)     
+      EndIf 
+    EndIf          
+  EndIf
+EndSub
+
+
+
+
+Sub Sort  
+   For y = 0 To 15
+     For x = 0 To 15
+       If level[y][x] = 3 Then
+          Shapes.Remove(levelshapes[y][x])
+          levelshapes[y][x] = Shapes.AddImage(image["3"])
+          Shapes.Move(levelshapes[y][x], (x) * 50 + korrx, (y) * 40 - 0)   
+       endif
+      'GraphicsWindow.DrawText(11*i+520,11*p+30,level[p][i])
+    EndFor
+  EndFor  
+EndSub
+  
+  
+Sub LevelExplosion  
+  
+  Shapes.Animate(player1, Shapes.GetLeft(player1), 1500, 4000)
+  Shapes.Animate(player2, Shapes.GetLeft(player2), 1500, 4000)  
+
+  For i = 0 To shade
+      angle = Math.GetRandomNumber(360) 
+      xv = Math.Cos(angle * 0.0174) * 1200
+      yv = Math.Sin(angle * 0.0174) * 600            
+      Shapes.Animate(Shadow[i], xv + 512, yv + 350, 1500)
+  EndFor  
+  
+  For i = 0 To cryst
+      angle = Math.GetRandomNumber(360) 
+      xv = Math.Cos(angle * 0.0174) * 1200
+      yv = Math.Sin(angle * 0.0174) * 600            
+      If Shapes.GetTop(crystalimg[i]) > 0 then
+        Shapes.Animate(crystalimg[i], xv + 512, yv + 350, 1500)
+      EndIf
+      If Shapes.GetTop(crystalbnk[i]) > 0 then
+        Shapes.Animate(crystalbnk[i], xv + 512, yv + 350, 1500)
+      EndIf
+    EndFor  
+  
+    For y = 0 To 15
+     For x = 0 To 19
+         angle = Math.GetRandomNumber(360) 
+         xv = Math.Cos(angle * 0.0174) * 1200
+         yv = Math.Sin(angle * 0.0174) * 600            
+         Shapes.Animate(levelshapes[y][x], xv + 512, yv + 350, 1500)
+    EndFor
+  EndFor      
+EndSub
+
+
+Sub LevelRelease  
+   For y = 0 To 15
+     For x = 0 To 19         
+       Shapes.Remove(levelshapes[y][x])
+    EndFor
+  EndFor  
+  For i = 0 To shade         
+      Shapes.Remove(Shadow[i])
+  EndFor  
+  
+  For i = 0 To cryst
+        Shapes.Remove(crystalimg[i])
+        Shapes.Remove(crystalbnk[i])
+  EndFor   
+  For i = 0 To 20
+    Shapes.Remove(star)  
+  endFor
+EndSub
+
+Sub LevelLoad
+  cryst = 0
+  posx  = 4
+  posy  = 4
+  moves = 0
+  
+  For i = 0 To 15
+    For p = 1 To Text.GetLength(block[stage][i])
+      blockcode = Text.GetSubText(block[stage][i], p, 1) 
+      If blockcode = "X" then 
+        posy = i  
+        posx = p-1
+        blockcode = 0
+      EndIf
+        
+      if blockcode = 2 then 
+        ground[i][p-1] = 0
+      elseif blockcode = "C" then 'crystal on gras
+        ground[i][p-1] = "A"
+      elseif blockcode = "D" then 'crystal on wood 
+        ground[i][p-1] = "B"        
+      else 
+        ground[i][p-1] = blockcode
+      endif
+  
+      
+      
+    EndFor
+  EndFor
+         
+  
+  'load the water first
+  For i = 0 To 15
+    For p = 1 To Text.GetLength(block[stage][i])
+      blockcode = Text.GetSubText(block[stage][i], p, 1) 
+      If blockcode = 3 Then
+        levelshapes[i][p-1] = Shapes.AddImage(image[blockcode])  
+        angle = Math.GetRandomNumber(360)
+        xv = Math.Cos(angle * 0.0174) * 1000
+        yv = Math.Sin(angle * 0.0174) * 550  
+        Shapes.Move(levelshapes[i][p-1], xv + 512, yv + 350)
+        Shapes.animate(levelshapes[i][p-1], (p-1) * 50 + korrx, (i) * 40 - 0, animtime)    
+      Endif      
+    EndFor  
+  EndFor
+  
+  'shadows for the water
+  LoadShadowWater()
+  
+  
+  For i = 0 To 15
+    For p = 1 To Text.GetLength(block[stage][i])
+      blockcode = Text.GetSubText(block[stage][i], p, 1) 
+      If blockcode = "X" then 
+        posy = i  
+        posx = p-1
+        blockcode = 0
+      elseIf blockcode = "Y" then 
+        posy = i  
+        posx = p-1
+        blockcode = "A"     
+      elseIf blockcode = "Z" then 
+        posy = i  
+        posx = p-1
+        blockcode = "B"
+      EndIf
+        
+      if blockcode = 2 then 
+        ground[i][p-1] = 0
+      elseif blockcode = "C" then 
+        ground[i][p-1] = "A"
+      elseif blockcode = "D" then 
+        ground[i][p-1] = "B"
+      else  
+        ground[i][p-1] = blockcode
+      endif
+        
+      if blockcode = "C" then
+        level[i][p-1] = 2  
+      elseif blockcode = "D" then
+        level[i][p-1] = 2  
+      else
+         level[i][p-1] = blockcode      
+      endif   
+      If blockcode = "C" Then 'crystal on gras
+        levelshapes[i][p-1] = Shapes.AddImage(image["A"])
+        angle = Math.GetRandomNumber(360)
+        xv = Math.Cos(angle * 0.0174) * 1200
+        yv = Math.Sin(angle * 0.0174) * 600  
+        Shapes.Move(levelshapes[i][p-1], xv + 512, yv + 350)
+        Shapes.animate(levelshapes[i][p-1], (p-1) * 50 + korrx, (i) * 40 - 0, animtime)   
+      elseIf blockcode = "D" Then 'crystal on wood
+        levelshapes[i][p-1] = Shapes.AddImage(image["B"])
+        angle = Math.GetRandomNumber(360)
+        xv = Math.Cos(angle * 0.0174) * 1200
+        yv = Math.Sin(angle * 0.0174) * 600  
+        Shapes.Move(levelshapes[i][p-1], xv + 512, yv + 350)
+        Shapes.animate(levelshapes[i][p-1], (p-1) * 50 + korrx, (i) * 40 - 0, animtime)            
+     elseIf blockcode < 2  Then
+        levelshapes[i][p-1] = Shapes.AddImage(image[blockcode])
+        angle = Math.GetRandomNumber(360)
+        xv = Math.Cos(angle * 0.0174) * 1200
+        yv = Math.Sin(angle * 0.0174) * 600              
+        Shapes.Move(levelshapes[i][p-1], xv + 512, yv + 350)
+        Shapes.Animate(levelshapes[i][p-1], (p-1) * 50 + korrx, (i) * 40 - 0, animtime) 
+      ElseIf blockcode = 2 Then
+        levelshapes[i][p-1] = Shapes.AddImage(image["0"])
+        angle = Math.GetRandomNumber(360)
+        xv = Math.Cos(angle * 0.0174) * 1200
+        yv = Math.Sin(angle * 0.0174) * 600  
+        Shapes.Move(levelshapes[i][p-1], xv + 512, yv + 350)
+        Shapes.animate(levelshapes[i][p-1], (p-1) * 50 + korrx, (i) * 40 - 0, animtime)
+      endif   
+    EndFor  
+  EndFor   
+  
+  'tried to fix strange shapes.animate behaviors if there are too many shapes flying around - no real  success... 
+  loopdelay = (1600) * loopmssec 
+   num = 0
+   While(num < loopdelay)
+    num = num + 1
+  endwhile
+  
+  'load blocks
+  f = 0
+  For i = 0 To 15
+    For p = 1 To Text.GetLength(block[stage][i])
+      blockcode = Text.GetSubText(block[stage][i], p, 1) 
+      If blockcode = 2 or blockcode = "C" or blockcode = "D" Then
+        crystalimg[cryst] = Shapes.AddImage(image[2])
+        crystalbnk[cryst] = Shapes.AddImage(Path + "/sokocuteg2.png")
+        chestarray[i][p-1] = cryst     
+        angle = Math.GetRandomNumber(360)
+        xv = Math.Cos(angle * 0.0174) * 1200
+        yv = Math.Sin(angle * 0.0174) * 600  
+        Shapes.Move(crystalimg[cryst], xv + 512, yv + 350)
+        Shapes.animate(crystalimg[cryst] , (p-1) * 50 + korrx, (i) * 40 - 0, animtime*1.5) 
+        'Shapes.Move(crystalimg[cryst] , (p-1) * 50 + korrx, (i) * 40 - 0) 
+        Shapes.Move(crystalbnk[cryst] , cryst * 52 , -100) 
+        cryst = cryst + 1    
+      Endif      
+    EndFor  
+  EndFor
+  player1 = Shapes.AddImage(Path + "/sokocutep2.png")
+ 
+  'load lower player shape first. it has to be behind the walls 
+  Shapes.Move(player1, (posx) * 50 + korrx, (posy) * 40 - 0) 
+
+  LoadShadow()
+  '------------------------------------------------------------
+  'load the walls
+  For i = 0 To 15
+    For p = 1 To Text.GetLength(block[stage][i])
+      blockcode = Text.GetSubText(block[stage][i], p, 1) 
+      If blockcode >= 4 Then
+        levelshapes[i][p-1] = Shapes.AddImage(image[blockcode])      
+        angle = Math.GetRandomNumber(360)
+        xv = Math.Cos(angle * 0.0174) * 1000
+        yv = Math.Sin(angle * 0.0174) * 550  
+        Shapes.Move(levelshapes[i][p-1], xv + 512, yv + 350)
+        Shapes.animate(levelshapes[i][p-1], (p-1) * 50 + korrx, (i) * 40 - 0, animtime)  
+      Endif      
+    EndFor  
+  EndFor
+  
+  'load players face at last. It has always to be in front of the walls
+  player2 = Shapes.AddImage(Path + "/sokocutep1.png")
+  Shapes.Move(player2, (posx) * 50 + korrx, (posy) * 40 - 0)  
+  xplayer = Shapes.GetLeft(player1)
+  yplayer = Shapes.GetTop(player1)  
+
+EndSub
+
+sub LoadShadow
+  
+
+  For y = 0 To 15
+     For x = 0 To 19
+       If level[y][x] <= 2 and level[y][x] <> " " Then 
+          angle = Math.GetRandomNumber(360)
+          xv = Math.Cos(angle * 0.0174) * 1200
+          yv = Math.Sin(angle * 0.0174) * 600  
+          If level[y][x-1] >= 6 then
+            Shadow[shade] = Shapes.AddImage(Path + "/SW.png")
+            Shapes.Move(Shadow[shade], xv + 512, yv + 350)
+            Shapes.animate(Shadow[shade], (x) * 50 + korrx, (y) * 40 - 0, animtime*1.2)   
+            shade = shade + 1
+          EndIf 
+          If level[y][x+1] >= 6 then
+            Shadow[shade] = Shapes.AddImage(Path + "/SE.png")
+            Shapes.Move(Shadow[shade], xv + 512, yv + 350)
+            Shapes.animate(Shadow[shade], (x) * 50 + korrx, (y) * 40 - 0, animtime*1.2)   
+            shade = shade + 1
+          EndIf
+          If level[y-1][x] >= 6 then
+            Shadow[shade] = Shapes.AddImage(Path + "/SN.png")
+            Shapes.Move(Shadow[shade], xv + 512, yv + 350)
+            Shapes.animate(Shadow[shade], (x) * 50 + korrx, (y) * 40 - 0, animtime*1.2)  
+            shade = shade + 1
+          EndIf
+          If level[y][x-1] <=2 and level[y-1][x] <= 2 and level[y-1][x-1] >= 6 then
+            Shadow[shade] = Shapes.AddImage(Path + "/SNW.png")
+            Shapes.Move(Shadow[shade], xv + 512, yv + 350)
+            Shapes.animate(Shadow[shade], (x) * 50 + korrx, (y) * 40 - 0, animtime*1.2)    
+            shade = shade + 1
+          EndIf
+          If level[y][x+1] <=2 and level[y-1][x] <= 2 and level[y-1][x+1] >= 6 then
+            Shadow[shade] = Shapes.AddImage(Path + "/SNE.png")
+            Shapes.Move(Shadow[shade], xv + 512, yv + 350)
+            Shapes.animate(Shadow[shade], (x) * 50 + korrx, (y) * 40 - 0, animtime*1.2)    
+            shade = shade + 1
+          EndIf
+          If level[y][x-1] <=2 and level[y+1][x] <= 2 and level[y+1][x-1] >= 6 then
+            Shadow[shade] = Shapes.AddImage(Path + "/SSW.png")
+            Shapes.Move(Shadow[shade], xv + 512, yv + 350)
+            Shapes.animate(Shadow[shade], (x) * 50 + korrx, (y) * 40 - 0, animtime*1.2)    
+            shade = shade + 1
+          EndIf
+          If level[y][x+1] <=2 and level[y+1][x] <= 2 and level[y+1][x+1] >= 6 then
+            Shadow[shade] = Shapes.AddImage(Path + "/SSE.png")
+            Shapes.Move(Shadow[shade], xv + 512, yv + 350)
+            Shapes.animate(Shadow[shade], (x) * 50 + korrx, (y) * 40 - 0, animtime*1.2)     
+            shade = shade + 1
+          EndIf
+       endif
+    EndFor
+  EndFor   
+ 
+EndSub
+
+sub LoadShadowWater 
+  shade = 0
+ ky = 22
+  For y = 0 To 15
+     For x = 0 To 19
+       If ground[y][x] = 3 Then
+          angle = Math.GetRandomNumber(360)
+          xv = Math.Cos(angle * 0.0174) * 1200
+          yv = Math.Sin(angle * 0.0174) * 600  
+          If ground[y][x-1] <> 3 and ground[y][x-1] >= 0 and ground[y][x-1] <> " " then
+            Shadow[shade] = Shapes.AddImage(Path + "/SW.png")
+            Shapes.Move(Shadow[shade], xv + 512, yv + 350)
+            Shapes.animate(Shadow[shade], (x) * 50 + korrx, (y) * 40 + ky, animtime*1.2)   
+            shade = shade + 1
+          EndIf 
+          If ground[y][x+1] <> 3 and ground[y+1][x] >= 0 and ground[y][x+1] <> " " then
+            Shadow[shade] = Shapes.AddImage(Path + "/SE.png")
+            Shapes.Move(Shadow[shade], xv + 512, yv + 350)
+            Shapes.animate(Shadow[shade], (x) * 50 + korrx, (y) * 40 + ky, animtime*1.2)   
+            shade = shade + 1
+          EndIf
+          If ground[y-1][x] <> 3 and ground[y-1][x] >= 0 and ground[y-1][x] <> " " then
+            Shadow[shade] = Shapes.AddImage(Path + "/SN.png")
+            Shapes.Move(Shadow[shade], xv + 512, yv + 350)
+            Shapes.animate(Shadow[shade], (x) * 50 + korrx, (y) * 40 + ky, animtime*1.2)  
+            shade = shade + 1
+          EndIf
+          If ground[y][x-1] = 3 and ground[y-1][x] = 3 and ground[y-1][x-1] <> 3 and ground[y-1][x-1] >= 0 then
+            Shadow[shade] = Shapes.AddImage(Path + "/SNW.png")
+            Shapes.Move(Shadow[shade], xv + 512, yv + 350)
+            Shapes.animate(Shadow[shade], (x) * 50 + korrx, (y) * 40 + ky, animtime*1.2)    
+            shade = shade + 1
+          EndIf
+          If ground[y][x+1] = 3 and ground[y-1][x] = 3 and ground[y-1][x+1] <> 3 and ground[y-1][x+1] >= 0 then
+            Shadow[shade] = Shapes.AddImage(Path + "/SNE.png")
+            Shapes.Move(Shadow[shade], xv + 512, yv + 350)
+            Shapes.animate(Shadow[shade], (x) * 50 + korrx, (y) * 40 + ky, animtime*1.2)    
+            shade = shade + 1
+          EndIf
+          If ground[y][x-1] = 3 and ground[y+1][x] = 3 and ground[y+1][x-1] <> 3 and ground[y+1][x-1] >= 0 then
+            Shadow[shade] = Shapes.AddImage(Path + "/SSW.png")
+            Shapes.Move(Shadow[shade], xv + 512, yv + 350)
+            Shapes.animate(Shadow[shade], (x) * 50 + korrx, (y) * 40 + ky, animtime*1.2)    
+            shade = shade + 1
+          EndIf
+          If ground[y][x+1] = 3 and ground[y+1][x] = 3 and ground[y+1][x+1] <> 3 and ground[y+1][x+1] >= 0 then
+            Shadow[shade] = Shapes.AddImage(Path + "/SSE.png")
+            Shapes.Move(Shadow[shade], xv + 512, yv + 350)
+            Shapes.animate(Shadow[shade], (x) * 50 + korrx, (y) * 40 + ky, animtime*1.2)     
+            shade = shade + 1
+          EndIf
+       endif
+    EndFor
+  EndFor   
+
+EndSub
+
+Sub InitStars
+  For i = 0 To 12
+    star[i] = Shapes.AddImage(Path + "/sokocutels.png")  
+    heart[i] = Shapes.AddImage(Path + "/sokocutelh.png") 
+  endFor
+EndSub
+
+
+Sub ResetStars
+  For i = 0 To 12
+    angle = Math.GetRandomNumber(360)
+    starxv[i] = Math.Cos(angle * 0.0174) * 0.50
+    staryv[i] = Math.Sin(angle * 0.0174) * 0.50    
+    starx[i] = 1000
+    stary[i] = 1000   
+    startime[i] = Math.GetRandomNumber(100)
+    Shapes.Move(star[i], starx[i], stary[i])  
+  endFor
+  For i = 0 To 12
+   angle = Math.GetRandomNumber(360)
+   heartxv[i] = Math.Cos(angle * 0.0174) * 0.50
+   heartyv[i] = Math.Sin(angle * 0.0174) * 0.50    
+   heartx[i] = 1000
+   hearty[i] = 1000   
+   hearttime[i] = Math.GetRandomNumber(100)
+   Shapes.Move(heart[i], heartx[i], hearty[i])  
+ endFor
+EndSub
+
+' move stars and hearts
+Sub MoveStars
+  
+      For i = 0 to 12
+      If startime[i] > 100 then
+        angle = Math.GetRandomNumber(360) 
+        starxv[i] = Math.Cos(angle * 0.0174) 
+        staryv[i] = Math.Sin(angle * 0.0174)    
+        starx[i] = 500 + 20
+        stary[i] = 150
+        Shapes.Move(star[i], starx[i] , stary[i])
+        startime[i] = 0     
+      EndIf
+      startime[i] = startime[i] + 0.20
+      staryv[i] = staryv[i] + 0.005
+      starx[i] = starx[i] + starxv[i]
+      stary[i] = stary[i] + staryv[i]
+      Shapes.Rotate(star[i], startime[i] * 15)
+      Shapes.Zoom(star[i], Math.Sin(startime[i] / 32) , Math.Sin(startime[i] / 32) )
+      Shapes.Move(star[i], starx[i], stary[i])      
+    EndFor  
+    
+    
+    For i = 0 to 12
+      If hearttime[i] > 100 then
+        angle = Math.GetRandomNumber(360) 
+        heartxv[i] = Math.Cos(angle * 0.0174) 
+        heartyv[i] = Math.Sin(angle * 0.0174)    
+        heartx[i] = 500 + 20
+        hearty[i] = 150
+        Shapes.Move(heart[i], heartx[i] , hearty[i])
+        hearttime[i] = 0     
+      EndIf
+      hearttime[i] = hearttime[i] + 0.20
+      heartyv[i] = heartyv[i] + 0.005
+      heartx[i] = heartx[i] + heartxv[i]
+      hearty[i] = hearty[i] + heartyv[i]
+      Shapes.Rotate(heart[i], hearttime[i] * -10)
+      Shapes.Zoom(heart[i], Math.Sin(hearttime[i] / 32) , Math.Sin(hearttime[i] / 32) )
+      Shapes.Move(heart[i], heartx[i], hearty[i])      
+    EndFor  
+  
+EndSub
+
+
+Sub InitLevels
+  
+block[0][0] = "                    "
+block[0][1] = "                    "
+block[0][2] = "                    "
+block[0][3] = "     66666          "
+block[0][4] = "     60006          "
+block[0][5] = "     62006          "
+block[0][6] = "   66600266         "
+block[0][7] = "   60020206         "
+block[0][8] = " 6660606606AA555555 "
+block[0][9] = " 600060660666700115 "
+block[0][10]= " 60200200000X000115 "
+block[0][11]= " 666660666066700115 "
+block[0][12]= "     60000066555555 "
+block[0][13]= "     6666666        "
+block[0][14]= "                    "
+block[0][15]= "                    "
+
+block[1][0] = "                    "
+block[1][1] = "                    "
+block[1][2] = "                    "
+block[1][3] = "       6666666      "
+block[1][4] = "  76666600000667    "
+block[1][5] = "  61111602002006    "
+block[1][6] = "  61100626666006    "
+block[1][7] = "  6110000X066006    "
+block[1][8] = "  61100606002076    "
+block[1][9] = "  76666606620206    "
+block[1][10]= "    602002020206    "
+block[1][11]= "    600007000006    "
+block[1][12]= "    766666666667    "
+block[1][13]= "                    "
+block[1][14]= "                    "
+block[1][15]= "                    "
+
+block[2][0] = "                    "
+block[2][1] = "                    "
+block[2][2] = "                    "
+block[2][3] = "         76666667   "
+block[2][4] = "         600000X6   "
+block[2][5] = "         60262066   "
+block[2][6] = "         6020026    "
+block[2][7] = "         6720206    "
+block[2][8] = " 7666666 602060667  "
+block[2][9] = " 61111066602002006  "
+block[2][10]= " 61110000020020006  "
+block[2][11]= " 61111066666666667  "
+block[2][12]= " 7666666            "
+block[2][13]= "                    "
+block[2][14]= "                    "
+block[2][15]= "                    "
+
+block[3][0] = "                    "
+block[3][1] = "                    "
+block[3][2] = "6666663             "
+block[3][3] = "611166366666  66666 "
+block[3][4] = "611116360006  60006 "
+block[3][5] = "6111163607066660706 "
+block[3][6] = "600X063600200000006 "
+block[3][7] = "6606663700602260666 "
+block[3][8] = "5AAAA73A220060006   "
+block[3][9] = "5ACAABBB002666206   "
+block[3][10]= "5AA5AA3A700060006   "
+block[3][11]= "5555553A666060726   "
+block[3][12]= "AAAAAA3AAA6022006   "
+block[3][13]= "33333333336000006   "
+block[3][14]= "          6666666   "
+block[3][15]= "                    "
+
+block[4][0] = "                    "
+block[4][1] = "                    "
+block[4][2] = "          66666     "
+block[4][3] = "    666666600067    "
+block[4][4] = "   66070X6602206    "
+block[4][5] = "   6000020000006    "
+block[4][6] = "   6002006660006    "
+block[4][7] = "   6660666662666    "
+block[4][8] = "   602006660116     "
+block[4][9] = "   602020201116     "
+block[4][10]= "   600006661116     "
+block[4][11]= "   602206 61116     "
+block[4][12]= "   600666 76667     "
+block[4][13]= "   7667             "
+block[4][14]= "                    "
+block[4][15]= "                    "
+
+block[5][0] = "                    "
+block[5][1] = "           4444444  "
+block[5][2] = "           4AA1114  "
+block[5][3] = "       66667AA1114  "
+block[5][4] = "       60000AA1A14  "
+block[5][5] = "       60067AA1114  "
+block[5][6] = "       66066AA1114  "
+block[5][7] = "      666066444444  "
+block[5][8] = "      60222066AAAA  "
+block[5][9] = "  6666600202066666  "
+block[5][10]= " 66000720200070006  "
+block[5][11]= " 6X020020000200206  "
+block[5][12]= " 66666602202066666  "
+block[5][13]= "      60000006      "
+block[5][14]= "      66666666      "
+block[5][15]= "                    "
+
+block[6][0] = "                    "
+block[6][1] = "     7777777777     "
+block[6][2] = "     7110070007     "
+block[6][3] = "     7110000007     "
+block[6][4] = "     711007007777   "
+block[6][5] = "    77777770070077  "
+block[6][6] = "    70000000000007  "
+block[6][7] = "    70070077007007  "
+block[6][8] = "  7777077007777077  "
+block[6][9] = "  7002007777707007  "
+block[6][10]= "  7070200200702007  "
+block[6][11]= "  70X2002000700077  "
+block[6][12]= "  777707707777777   "
+block[6][13]= "     700007         "
+block[6][14]= "     777777         "
+block[6][15]= "                    "
+
+block[7][0] = "                    "
+block[7][1] = "                    "
+block[7][2] = "                    "
+block[7][3] = "          4444      "
+block[7][4] = "    4444444AY4      "
+block[7][5] = "    4AAAAACAA4      "
+block[7][6] = "    4AAAC77AC4      "
+block[7][7] = "    44C71117A4      "
+block[7][8] = "     4AC111AA4      "
+block[7][9] = "     4A71A17A44     "
+block[7][10]= "     4AAA7A7CA4     "
+block[7][11]= "     4CAACAAAA4     "
+block[7][12]= "     4AA4444444     "
+block[7][13]= "     4444           "
+block[7][14]= "                    "
+block[7][15]= "                    "
+
+block[8][0] = "                    "
+block[8][1] = "                    "
+block[8][2] = "          4444      "
+block[8][3] = "  444444444AA77     "
+block[8][4] = " 74AACAAAAAACA75557 "
+block[8][5] = " 4ABB77B77BBA771115 "
+block[8][6] = " 4A7DDBDBDD7C771115 "
+block[8][7] = " 4A7BBBBZBB7AAA1115 "
+block[8][8] = " 4ABD7B777DDAAA1115 "
+block[8][9] = " 4ACAACCAACA7711115 "
+block[8][10]= " 744CAAAAAAA7755557 "
+block[8][11]= "   4AA4444444       "
+block[8][12]= "   4444             "
+block[8][13]= "                    "
+block[8][14]= "                    "
+block[8][15]= "                    "
+
+block[9][0] = " AAAAA A   A AAAA   "
+block[9][1] = "   A   A   A A      "
+block[9][2] = "   A   AAAAA AAA    "
+block[9][3] = "   A   A   A A      "
+block[9][4] = "   A   A   A AAAA   "
+block[9][5] = "                    "
+block[9][6] = "  AAAA A   A AAA    "
+block[9][7] = "  A    AA  A A  A   "
+block[9][8] = "  AAA  A A A A  A   "
+block[9][9]=  "  A    A  AA A  A   "
+block[9][10]= "  AAAA A   A AAA    "
+block[9][11]= "                    "
+block[9][12]= "                    "
+block[9][13]= " 4444444444444444   "
+block[9][14]= " 40X0020000000104   "
+block[9][15]= " 4444444444444444   "
+
+EndSub
+

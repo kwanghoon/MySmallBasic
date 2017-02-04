@@ -143,10 +143,13 @@ public class Parser
 					}
 					else if(Grammer_rule.get(state_num).equals("Stmt -> While Expr CRStmtCRs EndWhile")) // case While
 					{
-						Nonterminal sub_tree1 = (Nonterminal)stack.get(last_stack_tree_index-3); // CondExpr
-						Nonterminal sub_tree2 = (Nonterminal)stack.get(last_stack_tree_index-5); // Block
+						Nonterminal sub_tree1 = (Nonterminal)stack.get(last_stack_tree_index-3); // Block
+						Nonterminal sub_tree2 = (Nonterminal)stack.get(last_stack_tree_index-5); // CondExpr
 						
-						tree = new WhileStmt((Expr)sub_tree2.getTree(), (Stmt)sub_tree1.getTree());
+						WhileStmt whileStmt = new WhileStmt((Expr)sub_tree2.getTree(), (Stmt)sub_tree1.getTree());
+						Terminal whileKeyword = (Terminal)stack.get(last_stack_tree_index-7);
+						whileStmt.at(whileKeyword.getLine_index(), whileKeyword.getCh_index());
+						tree = whileStmt;
 			
 					}
 					else if(Grammer_rule.get(state_num).equals("Stmt -> ID :")) // case Label
@@ -183,7 +186,10 @@ public class Parser
 						Nonterminal sub_tree2 = (Nonterminal)stack.get(last_stack_tree_index-3);
 						Nonterminal sub_tree3 = (Nonterminal)stack.get(last_stack_tree_index-7);
 						
-						tree = new IfStmt((Expr)sub_tree3.getTree(), (Stmt)sub_tree2.getTree(), (Stmt)sub_tree1.getTree());
+						IfStmt ifStmt = new IfStmt((Expr)sub_tree3.getTree(), (Stmt)sub_tree2.getTree(), (Stmt)sub_tree1.getTree());
+						Terminal ifKeyword = (Terminal)stack.get(last_stack_tree_index-9);
+						ifStmt.at(ifKeyword.getLine_index(), ifKeyword.getCh_index());
+						tree = ifStmt; 
 					}
 					else if(Grammer_rule.get(state_num).equals("MoreThanZeroElseIf -> OptionalElse")) // Else, or not.
 					{
@@ -601,10 +607,14 @@ public class Parser
 			count++;
 			location = 0;
 		}	
-		System.err.println("Expect Trans Table content is \"" + current_state.toString() + " " + index + " <Destination State>\"");
-		System.err.println("but didn't found at Trans Table... Plz Check it");
-		System.exit(0);
-		return new ParseState("Error...");
+		StringBuilder sb = new StringBuilder();
+		
+		sb.append("Expect Trans Table content is \"" + current_state.toString() + " " + index + " <Destination State>\"");
+		sb.append("\n");
+		sb.append("but didn't found at Trans Table... Plz Check it");
+		sb.append("\n");
+		
+		throw new ParserException("Line : Char : " + "Parsing error (state not found)", sb.toString());
 	}
 
 	private String Check_state(ParseState current_state, Terminal a)
@@ -769,16 +779,27 @@ public class Parser
 			}
 			index++;
 		}
-		if(a.toString().equals("\n"))
-			System.err.println("Expect Parsing table content is \"" + current_state.toString() + " CR"+ " <Shift/Reduce/Accecpt>\"");
-		else if(a.getTokenInfo() == Token.STR)
-			System.err.println("Expect Parsing table content is \"" + current_state.toString() + " " + a.getTokenInfo() + " <Shift/Reduce/Accecpt>\"");
-		else
-			System.err.println("Expect Parsing table content is \"" + current_state.toString() + " " + a.toString() + " <Shift/Reduce/Accecpt>\"");
-		System.err.println("but didn't found at Parsing Table... Plz Check it");
-		System.err.println("[" + a.getLine_index() + "," + a.getCh_index() + "]");
-		System.exit(0);
-		return "Dummy";
+		StringBuilder sb = new StringBuilder();
+		
+		if(a.toString().equals("\n")) {
+			sb.append("Expect Parsing table content is \"" + current_state.toString() + " CR"+ " <Shift/Reduce/Accecpt>\"");
+			sb.append("\n");
+		}
+		else if(a.getTokenInfo() == Token.STR) {
+			sb.append("Expect Parsing table content is \"" + current_state.toString() + " " + a.getTokenInfo() + " <Shift/Reduce/Accecpt>\"");
+			sb.append("\n");
+		}
+		else {
+			sb.append("Expect Parsing table content is \"" + current_state.toString() + " " + a.toString() + " <Shift/Reduce/Accecpt>\"");
+			sb.append("\n");
+		}
+		
+		sb.append("but didn't found at Parsing Table... Plz Check it");
+		sb.append("\n");
+		sb.append("[" + a.getLine_index() + "," + a.getCh_index() + "]");
+		sb.append("\n");
+		
+		throw new ParserException("Line " + a.getLine_index() + " : Char " + a.getCh_index() + " : " + "Parsing error", sb.toString());
 	}
 	
 	private int atoi(String a) // this method only use Parser, So set "private".

@@ -1,0 +1,7 @@
+language: java
+script: javac -cp ./lib/json_simple-1.1.jar:./lib/jl1.0.1.jar:./junit-4.12.jar @sources.txt
+
+before_script:
+ - cd MySmallBasic
+ - find . -name "*.java" > sources.txt
+ - wget -O junit-4.12.jar http://search.maven.org/remotecontent?filepath=junit/junit/4.12/junit-4.12.jar

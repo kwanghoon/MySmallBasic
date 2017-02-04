@@ -23,7 +23,6 @@ public class Turtle
 		isPenDown = true;
 		isTurtleShow = true;
 		
-		delayTime = 4;
 		angleUnit = 1;
 		distanceUnit = 1;
 		turtleDistanceUnit = 1.05;
@@ -41,8 +40,6 @@ public class Turtle
 	// at least once called
 	private static boolean isCalled;
 	
-	// related with speed
-	private static int delayTime;
 	// rotating angle at a time
 	private static int angleUnit;
 	// move distance at a time
@@ -65,7 +62,6 @@ public class Turtle
 			
 			if(!isTurtleShow)
 			{
-				//repaint
 				//repaint
 				ArrayList<Value> arg = new ArrayList<Value> ();
 				arg.add(0, turtleID);
@@ -157,27 +153,37 @@ public class Turtle
 			double x = Double.parseDouble(arg1.toString());
 			double y = Double.parseDouble(arg2.toString());
 			
-			// calculate angle			
-			
+			// calculate angle
 			double dx = x - ((DoubleV)X).getValue();
-			double dy = y - ((DoubleV)Y).getValue();			   
-			double rad= java.lang.Math.atan2(dx, dy);
-			double degree = (rad*180)/java.lang.Math.PI ;
-			if(degree < 0)
-				degree = 180 - degree;
-		
+			double dy = y - ((DoubleV)Y).getValue();
+			double degree = java.lang.Math.atan(dy/dx) * (180.0/java.lang.Math.PI);			 
+		    if(dx< 0.0)
+		        degree += 180.0;
+		    else if(dy<0.0) 
+		    	degree += 360.0;
+		    degree += 90;
+		    
+		    //calculate turnValue
+		    double turnValue = degree - ((DoubleV)Angle).getValue();
+		    if(turnValue >= 360)
+		    	turnValue = turnValue % 360;	 
+		    if(turnValue > 180)
+		    	turnValue -= 360;
+		    
+		    
 			//calculate distance
 			double distance = java.lang.Math.sqrt(
 					java.lang.Math.pow(java.lang.Math.abs(dx), 2)
 					 + java.lang.Math.pow(java.lang.Math.abs(dy), 2));
 			
 			initialCallCheck();
-			turn(degree);
+			turn(turnValue);
 			move(distance);
 		}
 		else 		
 			throw new InterpretException("Error in # of Arguments: " + args.size());
-	}	//Turtle.Turn(angle) - if angle is positive, turn to right
+	}	
+	//Turtle.Turn(angle) - if angle is positive, turn to right
 	public static void Turn(ArrayList<Value> args)
 	{
 		//check args_number
@@ -190,6 +196,7 @@ public class Turtle
 			double angle = Double.parseDouble(args.get(0).toString());
 			
 			initialCallCheck();
+			
 			turn(angle);		
 		}
 		else 		
@@ -295,9 +302,7 @@ public class Turtle
 			
 			//turtle_image move
 			if(isTurtleShow)
-			{
 				repaintTurtle(turtleX, turtleY);
-			}	
 			
 			//set cur x, y
 			((DoubleV)X).setValue(curX);
@@ -306,8 +311,7 @@ public class Turtle
 			// turning speed
 			try 
 			{
-				double speed = ((DoubleV)Speed).getValue();
-				Thread.sleep((long)(delayTime + ((10 - speed))));
+				Thread.sleep(getSleepTime());
 			} 
 			catch (InterruptedException e) 
 			{
@@ -323,6 +327,7 @@ public class Turtle
 		args.add(1, Y);
 		args.add(2, new DoubleV(x));
 		args.add(3, new DoubleV(y));
+		
 		GraphicsWindow.DrawLine(args);
 	}
 	//turn right with angle
@@ -362,13 +367,13 @@ public class Turtle
 			//set real angle
 			((DoubleV)Angle).setValue(curAngle);
 					
-			//turtle repaint....
+			//repaint turtle
 			rotateTurtleImg();
 				
 			// turning speed
 			try 
 			{
-				Thread.sleep( (long)(delayTime - 3 + (11 - ((DoubleV)Speed).getValue()) ) );
+				Thread.sleep(getSleepTime() / 4);
 			} 
 			catch (InterruptedException e) 
 			{
@@ -391,41 +396,37 @@ public class Turtle
 			return false;   
 		}
 	}
-	// if initial call, setting about turtle - 거북이미지로 바꿀것
+	// if initial call, setting about turtle
 	private static void initialCallCheck()
 	{
 		if(!isCalled)
 		{
 			isCalled = true;
 			
-			//laod turtle image
-			
-			//imageList와 Shapes 완료되었을 때, 할 부분
-			//이미지리스트로 이미지 가져오기.
-			//ImageList.LoadImage(경로)
-			//Shapes.AddImage( 이미지)
-			// 이미지 좌표 조절 : 좌측상단 -> 중앙
-			//ImageList.GetWidthOfImage(..)
-			
-			//임시
+			//loadImage
 			ArrayList<Value> args = new ArrayList<Value> ();
-			args.add(0, new DoubleV(10));
-			args.add(1, new DoubleV(20));
-			turtleID = (StrV) Shapes.AddEllipse(args);
-			turtleWidthDivTwo = 5;
-			turtleHeightDivTwo = 10;
+			args.add(0, new StrV(System.getProperty("user.dir") + "/resource/Turtle.png"));			
+			StrV turtleImageListID = (StrV)ImageList.LoadImage(args);
 			
-			repaintTurtle();		
+			//get size
+			args.clear();
+			args.add(0, turtleImageListID);
+			turtleWidthDivTwo = ((DoubleV)ImageList.GetWidthOfImage(args)).getValue() / 2;
+			turtleHeightDivTwo = ((DoubleV)ImageList.GetHeightOfImage(args)).getValue() / 2;
+			
+			//add to Shapes
+			args.clear();
+			args.add(0, new StrV(System.getProperty("user.dir") + "/resource/Turtle.png"));
+			turtleID = (StrV)Shapes.AddImage(args);
+			
+			repaintTurtle();
+			rotateTurtleImg();
 		}
 	}
 	// repaint Turtle image in (X, Y)
 	private static void repaintTurtle()
 	{
-		ArrayList<Value> args = new ArrayList<Value> ();
-		args.add(0, turtleID);
-		args.add(1, new DoubleV(((DoubleV)X).getValue() - turtleWidthDivTwo));
-		args.add(2, new DoubleV(((DoubleV)Y).getValue() - turtleHeightDivTwo));
-		Shapes.Move(args);	
+		repaintTurtle(((DoubleV)X).getValue(), ((DoubleV)Y).getValue());	
 	}
 	//repaint Turtle image in (x, y)
 	private static void repaintTurtle(double x, double y)
@@ -436,36 +437,106 @@ public class Turtle
 		args.add(2, new DoubleV(y - turtleHeightDivTwo));
 		Shapes.Move(args);	
 	}
-	// rotate turtle - 다른라이브러리구현 완료되면 구현할 것
+	// rotate turtle
 	private static void rotateTurtleImg()
 	{
-		//X, Y방향으로 회전
-		//그래픽윈도우 회전과 이미지리스트가 완료될때 구현하기
+		ArrayList<Value> args = new ArrayList<Value> ();
+		args.add(0, turtleID);
+		args.add(Angle);
+		Shapes.Rotate(args);	
 	}
-
+	// get sleepTime
+	private static long getSleepTime()
+	{
+		int speed = (int)((DoubleV)Speed).getValue();
+		
+		//speed 10 ~ 6
+		if(speed > 5)
+			return (10 - speed) + 1;
+		//speed 5 ~ 2
+		else if(speed > 1)
+			return 10 * (int)java.lang.Math.pow(2, 5 - speed);
+		//speed 1
+		else
+			return 210;
+	}
 	public static void notifyFieldAssign(String fieldName) 
 	{
 		// property Speed
-		if(fieldName.equals("Speed"))
+		if(fieldName.equalsIgnoreCase("Speed"))
 		{
-			int input = (int)(((DoubleV)Speed).getValue());
-			
-			if(input > 10)
+			//input check
+			double input;
+			if(numTypeCheck(Speed))
+			{
+				input = Double.parseDouble(Speed.toString());
+				
+				if(input > 10)
+					input = 10;
+				else if(input < 1)
+					input = 1;
+			}
+			else 
 				input = 10;
-			else if(input < 1)
-				input = 1;
-			((DoubleV)Speed).setValue(input);
+			
+			Speed = new DoubleV(input);
 		}
 		// property Angle
-		else if(fieldName.equals("Angle"))
+		else if(fieldName.equalsIgnoreCase("Angle"))
 		{
-			// Angle방향을 바라보도록 설정
-			// ImageList와 GraphicsWindow 완료되면 구현
+			//input check			
+			if(!(Angle instanceof DoubleV))
+			{
+				double input;
+				
+				if(numTypeCheck(Angle))
+					input = Double.parseDouble(Angle.toString());
+				else
+					input = 0;
+				Angle = new DoubleV(input);
+			}
+			
+			// change image
+			if(isCalled)
+				rotateTurtleImg();
 		}
-
+		//property X
+		else if(fieldName.equalsIgnoreCase("X"))
+		{
+			//input check			
+			if(!(X instanceof DoubleV))
+			{
+				double input;
+				
+				if(numTypeCheck(X))
+					input = Double.parseDouble(X.toString());
+				else
+					input = 0;
+				X = new DoubleV(input);
+			}
+			
+			if(isCalled && isTurtleShow)
+				repaintTurtle();
+		}
+		//property Y
+		else if(fieldName.equalsIgnoreCase("Y"))
+		{
+			//input check			
+			if(!(Y instanceof DoubleV))
+			{
+				double input;
+				
+				if(numTypeCheck(Y))
+					input = Double.parseDouble(Y.toString());
+				else
+					input = 0;
+				Y = new DoubleV(input);
+			}
+			if(isCalled && isTurtleShow)
+				repaintTurtle();
+		}
 	}
 
 	public static void notifyFieldRead(String fieldName) {
-
 	}	
 }

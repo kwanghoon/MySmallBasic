@@ -87,6 +87,7 @@ public class Timer {
 
 	public static void notifyFieldAssign(String fieldName) {
 		//Tick이 설정이 안된 경우는 TextWindow에서 해결, Tick이 설정이 안되면 Timer가 생성되면 안된다.
+
 		if(fieldName.equalsIgnoreCase("Interval")) {
 			if(timer == null) {
 				if(((DoubleV) Interval).getValue() < defaultInterval) {

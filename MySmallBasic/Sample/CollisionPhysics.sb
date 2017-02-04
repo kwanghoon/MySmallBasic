@@ -1,0 +1,448 @@
+'Initialise graphics window
+GraphicsWindow.Hide()
+gw = 800
+gh = 600
+GraphicsWindow.CanResize = "False"
+GraphicsWindow.Top = (Desktop.Height-gh)/2
+GraphicsWindow.Left = (Desktop.Width-gw)/2
+GraphicsWindow.Title = "Bouncing balls with realistic collision physics"
+GraphicsWindow.Width = gw
+GraphicsWindow.Height = gh
+GraphicsWindow.BackgroundColor = "LightBlue"
+
+'Reduce gw for options
+gw = gw-200
+GraphicsWindow.MouseDown = OnMouseDown
+
+Start:
+
+' Gravity, friction and attraction to mouse
+grav = 0.0 ' 0 for none
+fric = 0 ' 0 for none
+follow = 0 'attract to mouse
+attract = 0 'attract balls to each other
+dt = 1 'timestep (speed)
+shape = 0 '0:ball,1 square
+elastic = 1 '1 fully elastic collisions
+Colour = "Yellow"
+
+'Initialise some balls
+radius = 20
+diam = 2*radius
+nball = Math.Floor(gw/diam)
+istart = "True"
+reset()
+ireset = "False"
+istart = "False"
+iend = "False"
+iselect = "False"
+ioptions = "False"
+
+'Show window - an MS comment
+GraphicsWindow.Show()
+
+'Main loop
+While ("True")
+  If (ioptions) Then
+    options()
+    ioptions = "False"
+  EndIf
+  energy = 0.0
+  isCollision = "False"
+  If (iselect) Then
+    For i = 1 To nball
+      x = Xpos[i]
+      y = Ypos[i]
+      dist = (xm-x)*(xm-x)+(ym-y)*(ym-y)
+      If (dist < radius*radius) Then
+        u = 0
+        v = 0
+        Xvel[i] = u
+        Yvel[i] = v
+      EndIf
+    EndFor
+    iselect = "False"
+  EndIf
+  For i = 1 To nball
+    update()
+    move()
+    u = Xvel[i]
+    v = Yvel[i]
+    energy = energy+(u*u+v*v)
+  EndFor
+  energy = dt*dt*energy
+  energy = Math.Floor(energy)
+  GraphicsWindow.BrushColor = "LightBlue"
+  GraphicsWindow.FillRectangle(gw+15,560,190,20)
+  GraphicsWindow.BrushColor = "Black"
+  GraphicsWindow.DrawText(gw+65,560,"Energy "+energy)
+  If (ireset) Then
+    reset()
+    ireset = "False"
+  EndIf
+  If (istart) Then
+    Goto Start
+  EndIf
+  If (iend) Then
+    Program.End()
+  EndIf
+' If (isCollision) Then
+' Sound.PlayClick()
+' EndIf
+  Program.Delay(10)
+EndWhile
+
+'Update ball positions
+Sub update
+  u = Xvel[i]
+  v = Yvel[i]
+  u = Math.Min(100,Math.Max(u,-100))
+  v = Math.Min(100,Math.Max(v,-100))
+  x = Xpos[i]+dt*u
+  y = Ypos[i]+dt*v
+  bounce()
+  gravity()
+  collision()
+  attraction()
+  Xpos[i] = x
+  Ypos[i] = y
+EndSub
+
+'Check for edge bounces
+Sub bounce
+  If (x < radius) Then
+    Xvel[i] = -Xvel[i]
+    x = radius
+  EndIf
+  If (x > gw-radius) Then
+    Xvel[i] = -Xvel[i]
+    x = gw-radius
+  EndIf
+  If (y < radius) Then
+    Yvel[i] = -Yvel[i]
+    y = radius
+  EndIf
+  If (y > gh-radius) Then
+    Yvel[i] = -Yvel[i]
+    y = gh-radius
+  EndIf
+EndSub
+
+'Check for collisions
+Sub collision
+  'Only check each pair once
+  For j = i+1 To nball
+    xi = x
+    yi = y
+    xj = Xpos[j]
+    yj = Ypos[j]
+    dx = xi-xj
+    dy = yi-yj
+    dist = Math.SquareRoot(dx*dx+dy*dy)
+    If (dist < diam) Then
+      isCollision = "True"
+      'Get ball vectors
+      ui = Xvel[i]
+      vi = Yvel[i]
+      uj = Xvel[j]
+      vj = Yvel[j]
+      'Move backwards (forwards if dt < 0) in time until balls are just touching
+      CoefA = (ui-uj)*(ui-uj)+(vi-vj)*(vi-vj)
+      CoefB = 2*((ui-uj)*(xi-xj)+(vi-vj)*(yi-yj))
+      CoefC = (xi-xj)*(xi-xj)+(yi-yj)*(yi-yj)-diam*diam
+      If (CoefA = 0) Then
+        t = -CoefC/CoefB
+      Else
+        If (dt >= 0) Then
+          t = (-CoefB-Math.SquareRoot(CoefB*CoefB-4*CoefA*CoefC))/(2*CoefA)
+        Else
+          t = (-CoefB+Math.SquareRoot(CoefB*CoefB-4*CoefA*CoefC))/(2*CoefA)
+        EndIf
+      EndIF
+      xi = xi+t*ui
+      yi = yi+t*vi
+      xj = xj+t*uj
+      yj = yj+t*vj
+      'Centre of momentum coordinates
+      mx = (ui+uj)/2
+      my = (vi+vj)/2
+      ui = ui-mx
+      vi = vi-my
+      uj = uj-mx
+      vj = vj-my
+      'New centre to centre line
+      dx = xi-xj
+      dy = yi-yj
+      dist = Math.SquareRoot(dx*dx+dy*dy)
+      dx = dx/dist
+      dy = dy/dist
+      'Reflect balls velocity vectors in centre to centre line
+      OB = -(dx*ui+dy*vi)
+      ui = ui+2*OB*dx
+      vi = vi+2*OB*dy
+      OB = -(dx*uj+dy*vj)
+      uj = uj+2*OB*dx
+      vj = vj+2*OB*dy
+      'Back to moving coordinates with elastic velocity change
+      e = Math.SquareRoot(elastic)
+      ui = e*(ui+mx)
+      vi = e*(vi+my)
+      uj = e*(uj+mx)
+      vj = e*(vj+my)
+      'Move to new bounced position
+      xi = xi-t*ui
+      yi = yi-t*vi
+      xj = xj-t*uj
+      yj = yj-t*vj
+      'Set velocities
+      Xvel[i] = ui
+      Yvel[i] = vi
+      Xvel[j] = uj
+      Yvel[j] = vj
+      'Set position
+      Xpos[j] = xj
+      Ypos[j] = yj
+      x = xi
+      y = yi
+    EndIf
+  EndFor
+EndSub
+
+'Gravity and friction and follow mouse
+Sub gravity
+  xm = GraphicsWindow.MouseX-x
+  ym = GraphicsWindow.MouseY-y
+  dist = xm*xm+ym*ym
+  dist = Math.Max(dist,radius*radius)
+  'dist = dist*Math.SquareRoot(dist)
+  u = Xvel[i]
+  v = Yvel[i]
+  fricscale = (1-fric/Math.SquareRoot(1+u*u+v*v))
+  Xvel[i] = follow*xm/dist+fricscale*u
+  Yvel[i] = follow*ym/dist+fricscale*v+grav
+EndSub
+
+'Attract-repell balls to each other
+Sub attraction
+  If (attract <> 0) Then
+    For j = i+1 To nball
+      xm = Xpos[j]-x
+      ym = Ypos[j]-y
+      dist = xm*xm+ym*ym
+      dist = Math.Max(dist,radius*radius)
+      'dist = dist*Math.SquareRoot(dist)
+      Xvel[i] = attract*xm/dist+Xvel[i]
+      Yvel[i] = attract*ym/dist+Yvel[i]
+      Xvel[j] = attract*xm/dist+Xvel[j]
+      Yvel[j] = -attract*ym/dist+Yvel[j]
+    EndFor
+  EndIf
+EndSub
+
+'Move ball
+Sub move
+  ball = balls[i]
+  Shapes.Move(ball,x-radius,y-radius)
+EndSub
+
+'Update options display
+Sub options
+  GraphicsWindow.PenColor = "Black"
+  GraphicsWindow.DrawLine(gw,0,gw,gh)
+  GraphicsWindow.BrushColor = "LightBlue"
+  GraphicsWindow.FillRectangle(gw+10,10,190,gh-20)
+  For i = 0 To 5
+    GraphicsWindow.DrawLine(gw+10,100*i+10,gw+190,100*i+10)
+  EndFor
+  GraphicsWindow.DrawLine(gw+100,10,gw+100,510)
+
+  GraphicsWindow.BrushColor = "Black"
+  GraphicsWindow.DrawBoundText(gw+15,20,70,"Gravity")
+  GraphicsWindow.DrawBoundText(gw+15,40,70,grav)
+  GraphicsWindow.DrawBoundText(gw+15,120,70,"Friction")
+  GraphicsWindow.DrawBoundText(gw+15,140,70,fric)
+  GraphicsWindow.DrawBoundText(gw+15,220,70,"Follow")
+  GraphicsWindow.DrawBoundText(gw+15,240,70,follow)
+  GraphicsWindow.DrawBoundText(gw+15,320,70,"Size")
+  GraphicsWindow.DrawBoundText(gw+15,340,70,radius)
+  GraphicsWindow.DrawBoundText(gw+15,420,70,"Count")
+  GraphicsWindow.DrawBoundText(gw+15,440,70,nball)
+  GraphicsWindow.DrawBoundText(gw+15,520,170,"Click coloured options or a ball to stop it")
+  GraphicsWindow.BrushColor = "Red"
+  GraphicsWindow.DrawBoundText(gw+15,580,50,"RESET")
+  GraphicsWindow.DrawBoundText(gw+115,580,50,"QUIT")
+  GraphicsWindow.DrawBoundText(gw+15,60,70,"More")
+  GraphicsWindow.DrawBoundText(gw+15,160,70,"More")
+  GraphicsWindow.DrawBoundText(gw+15,260,70,"More")
+  GraphicsWindow.DrawBoundText(gw+15,360,70,"More")
+  GraphicsWindow.DrawBoundText(gw+15,460,70,"More")
+  GraphicsWindow.BrushColor = "Blue"
+  GraphicsWindow.DrawBoundText(gw+15,80,70,"Less")
+  GraphicsWindow.DrawBoundText(gw+15,180,70,"Less")
+  GraphicsWindow.DrawBoundText(gw+15,280,70,"Less")
+  GraphicsWindow.DrawBoundText(gw+15,380,70,"Less")
+  GraphicsWindow.DrawBoundText(gw+15,480,70,"Less")
+
+  GraphicsWindow.BrushColor = "Black"
+  GraphicsWindow.DrawBoundText(gw+115,20,70,"Speed")
+  GraphicsWindow.DrawBoundText(gw+115,40,70,dt)
+  GraphicsWindow.DrawBoundText(gw+115,120,70,"Attraction")
+  GraphicsWindow.DrawBoundText(gw+115,140,70,attract)
+  GraphicsWindow.DrawBoundText(gw+115,220,70,"Elastic")
+  GraphicsWindow.DrawBoundText(gw+115,240,70,elastic)
+  GraphicsWindow.DrawBoundText(gw+115,320,70,"Colour")
+  GraphicsWindow.BrushColor = "Red"
+  GraphicsWindow.DrawBoundText(gw+115,60,70,"More")
+  GraphicsWindow.DrawBoundText(gw+115,160,70,"More")
+  GraphicsWindow.DrawBoundText(gw+115,260,70,"More")
+  GraphicsWindow.BrushColor = "Blue"
+  GraphicsWindow.DrawBoundText(gw+115,80,70,"Less")
+  GraphicsWindow.DrawBoundText(gw+115,180,70,"Less")
+  GraphicsWindow.DrawBoundText(gw+115,280,70,"Less")
+  GraphicsWindow.BrushColor = "Red"
+  GraphicsWindow.DrawBoundText(gw+115,340,70,"Red")
+  GraphicsWindow.BrushColor = "Blue"
+  GraphicsWindow.DrawBoundText(gw+115,360,70,"Blue")
+  GraphicsWindow.BrushColor = "Yellow"
+  GraphicsWindow.DrawBoundText(gw+115,380,70,"Yellow")
+  GraphicsWindow.BrushColor = "Black"
+  GraphicsWindow.DrawBoundText(gw+115,420,70,"Shape")
+  GraphicsWindow.BrushColor = "Red"
+  GraphicsWindow.DrawBoundText(gw+115,440,70,"Circle")
+  GraphicsWindow.DrawBoundText(gw+115,460,70,"Square")
+EndSub
+
+'Change settings
+Sub OnMouseDown
+  xm = GraphicsWindow.MouseX
+  ym = GraphicsWindow.MouseY
+  'Left column settings
+  If (xm > gw+15 And xm < gw+85) Then
+    If (ym > 60 And ym < 75) Then
+      grav = grav+0.01
+    EndIf
+    If (ym > 80 And ym < 95) Then
+      grav = grav-0.01
+    EndIf
+    If (ym > 160 And ym < 175) Then
+      fric = fric+0.001
+    EndIf
+    If (ym > 180 And ym < 195) Then
+      fric = fric-0.001
+    EndIf
+    If (ym > 260 And ym < 275) Then
+      follow = follow+1
+    EndIf
+    If (ym > 280 And ym < 295) Then
+      follow = follow-1
+    EndIf
+    If (ym > 360 And ym < 375) Then
+      radius = radius+1
+      diam = 2*radius
+      ireset = "True"
+    EndIf
+    If (ym > 380 And ym < 395) Then
+      radius = radius-1
+      radius = Math.Max(1,radius)
+      diam = 2*radius
+      ireset = "True"
+    EndIf
+    If (ym > 460 And ym < 475) Then
+      nball = nball+1
+      ireset = "True"
+    EndIf
+    If (ym > 480 And ym < 495) Then
+      nball = nball-1
+      nball = Math.Max(1,nball)
+      ireset = "True"
+    EndIf
+    If (ym > 580 And ym < 595) Then
+      istart = "True"
+    EndIf
+  EndIf
+  'Right column settings
+  If (xm > gw+115 And xm < gw+185) Then
+    If (ym > 60 And ym < 75) Then
+      dt = dt+0.1
+    EndIf
+    If (ym > 80 And ym < 95) Then
+      dt = dt-0.1
+    EndIf
+    If (ym > 160 And ym < 175) Then
+      attract = attract+1
+    EndIf
+    If (ym > 180 And ym < 195) Then
+      attract = attract-1
+    EndIf
+    If (ym > 260 And ym < 275) Then
+      elastic = elastic+0.01
+    EndIf
+    If (ym > 280 And ym < 295) Then
+      elastic = elastic-0.01
+    EndIf
+    If (ym > 340 And ym < 355) Then
+      Colour = "Red"
+      ireset = "True"
+    EndIf
+    If (ym > 360 And ym < 375) Then
+      Colour = "Blue"
+      ireset = "True"
+    EndIf
+    If (ym > 380 And ym < 395) Then
+      Colour = "Yellow"
+      ireset = "True"
+    EndIf
+    If (ym > 440 And ym < 455) Then
+      Shape = 0
+      ireset = "True"
+    EndIf
+    If (ym > 460 And ym < 475) Then
+      Shape = 1
+      ireset = "True"
+    EndIf
+    If (ym > 580 And ym < 595) Then
+      iend = "True"
+    EndIf
+  EndIf
+  'Select a ball
+  If (xm < gw) Then
+    iselect = "True"
+  EndIf
+  ioptions = "True"
+EndSub
+
+'Reset new balls
+Sub reset
+  mball = Array.GetItemCount(balls)
+  For i = 1 To mball
+    balls[i] = ""
+    If (istart Or i > nball) Then
+      Xpos[i] = ""
+      Ypos[i] = ""
+      Xvel[i] = ""
+      Yvel[i] = ""
+    EndIf
+  EndFor
+  GraphicsWindow.Clear()
+  options()
+  GraphicsWindow.BrushColor = Colour
+  For i = 1 To nball
+    If (shape = 0) Then
+      ball = Shapes.AddEllipse(diam,diam)
+    EndIf
+    If (shape = 1) Then
+      ball = Shapes.AddRectangle(diam,diam)
+    EndIf
+    balls[i] = ball
+    If (istart Or i > mball) Then
+      x = Math.GetRandomNumber(gw)
+      y = Math.GetRandomNumber(gh)
+      u = Math.GetRandomNumber(500)/100-3
+      v = Math.GetRandomNumber(500)/100-3
+      Xpos[i] = x
+      Ypos[i] = y
+      Xvel[i] = u
+      Yvel[i] = v
+    EndIf
+  EndFor
+EndSub

@@ -1,4 +1,4 @@
-package com.coducation.smallbasic.lib;
+package com.coducation.smallbasic.lib; 
 
 import java.awt.AWTException;
 import java.awt.AlphaComposite;
@@ -8,6 +8,7 @@ import java.awt.Container;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -54,7 +55,7 @@ public class GraphicsWindow {
 
 	public static void DrawBoundText(ArrayList<Value> args) {
 		// 그래픽 창의 지정한 위치에 지정한 길이 범위 안에서 글자를 표시함
-		// x, y, text
+		// x, y, width, text
 		if (frame == null)
 			Show(new ArrayList<Value>());
 		panel.DrawBoundText(args);
@@ -303,7 +304,9 @@ public class GraphicsWindow {
 			double zoomY = 1;
 			double rotate = 0;
 
-			for (Cmd cmd : cmdList) {
+			ArrayList<Cmd> _cmdList = (ArrayList<Cmd>) cmdList.clone();
+
+			for (Cmd cmd : _cmdList) { // clone 시 오버헤드 발생할 수 있음
 				if (cmd.show) {
 					if (cmd.scaleX != 1)
 						zoomX = cmd.scaleX;
@@ -324,100 +327,127 @@ public class GraphicsWindow {
 						g2.setFont(dbtc.font);
 						g2.setColor(new Color(Integer.parseInt(color.substring(1), 16)));
 
+						g2.rotate(java.lang.Math.toRadians(-dbtc.degree));
 						break;
 					case DRAWELLIPSE:
 						DrawEllipseCmd dec = (DrawEllipseCmd) cmd;
 						color = ((StrV) dec.pencolor).getValue();
 						g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) dec.opacity));
-						g2.rotate(java.lang.Math.toRadians(dec.degree));
+						g2.rotate(java.lang.Math.toRadians(dec.degree), (dec.x + dec.w / 2) * zoomX,
+								(dec.y + dec.h / 2) * zoomY);
 						g2.scale(dec.scaleX, dec.scaleY);
 						g2.setStroke(new BasicStroke((float) ((DoubleV) dec.penwidth).getValue()));
 						g2.setColor(new Color(Integer.parseInt(color.substring(1), 16)));
 						g2.drawOval((int) dec.x, (int) dec.y, dec.w, dec.h);
+						g2.rotate(java.lang.Math.toRadians(-dec.degree), dec.x + dec.w / 2, dec.y + dec.h / 2);
 						break;
 					case DRAWIMAGE:
 						DrawImageCmd dic = (DrawImageCmd) cmd;
 						Image img = getImage(dic.imageName);
 						g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) dic.opacity));
-						g2.rotate(java.lang.Math.toRadians(dic.degree));
+						g2.rotate(java.lang.Math.toRadians(dic.degree), (dic.x + img.getWidth(this) / 2) * zoomX,
+								(dic.y + img.getHeight(this) / 2) * zoomY);
 						g2.scale(dic.scaleX, dic.scaleY);
 						g2.drawImage(img, (int) dic.x, (int) dic.y, this);
+						g2.rotate(java.lang.Math.toRadians(-dic.degree), dic.x + img.getWidth(this) / 2,
+								dic.y + img.getHeight(this) / 2);
 						break;
 					case DRAWLINE:
 						DrawLineCmd dlc = (DrawLineCmd) cmd;
 						color = ((StrV) dlc.pencolor).getValue();
 						g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) dlc.opacity));
-						g2.rotate(java.lang.Math.toRadians(dlc.degree));
+						g2.rotate(java.lang.Math.toRadians(dlc.degree), ((dlc.x1 + dlc.x2) / 2) * zoomX,
+								((dlc.y1 + dlc.y2) / 2) * zoomY);
 						g2.scale(dlc.scaleX, dlc.scaleY);
 						g2.setStroke(new BasicStroke((float) ((DoubleV) dlc.penwidth).getValue()));
 						g2.setColor(new Color(Integer.parseInt(color.substring(1), 16)));
 						g2.drawLine(dlc.x1, dlc.y1, dlc.x2, dlc.y2);
+						g2.rotate(java.lang.Math.toRadians(-dlc.degree), (dlc.x1 + dlc.x2) / 2, (dlc.y1 + dlc.y2) / 2);
 						break;
 					case DRAWRECTANGLE:
 						DrawRectangleCmd drc = (DrawRectangleCmd) cmd;
 						color = ((StrV) drc.pencolor).getValue();
 						g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) drc.opacity));
-						g2.rotate(java.lang.Math.toRadians(drc.degree));
+						g2.rotate(java.lang.Math.toRadians(drc.degree), (drc.x + drc.w / 2) * zoomX,
+								(drc.y + drc.h / 2) * zoomY);
 						g2.scale(drc.scaleX, drc.scaleY);
 						g2.setStroke(new BasicStroke((float) ((DoubleV) drc.penwidth).getValue()));
 						g2.setColor(new Color(Integer.parseInt(color.substring(1), 16)));
 						g2.drawRect((int) drc.x, (int) drc.y, drc.w, drc.h);
+						g2.rotate(java.lang.Math.toRadians(-drc.degree), drc.x + drc.w / 2, drc.y + drc.h / 2);
 						break;
 					case DRAWRESIZEDIMAGE:
 						DrawResizedImageCmd dric = (DrawResizedImageCmd) cmd;
 						Image imgResized = getImage(dric.imageName);
 						g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) dric.opacity));
-						g2.rotate(java.lang.Math.toRadians(dric.degree));
+						g2.rotate(java.lang.Math.toRadians(dric.degree),
+								(dric.x + imgResized.getWidth(this) / 2) * zoomX,
+								(dric.y + imgResized.getHeight(this) / 2) * zoomY);
 						g2.scale(dric.scaleX, dric.scaleY);
 						g2.drawImage(imgResized, (int) dric.x, (int) dric.y, dric.w, dric.h, this);
+						g2.rotate(java.lang.Math.toRadians(-dric.degree), dric.x + imgResized.getWidth(this) / 2,
+								dric.y + imgResized.getHeight(this) / 2);
 						break;
 					case DRAWTEXT:
 						DrawTextCmd dtc = (DrawTextCmd) cmd;
+						FontMetrics dtcMetrics = g2.getFontMetrics(dtc.font);
 						color = ((StrV) dtc.brushcolor).getValue();
 						g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) dtc.opacity));
-						g2.rotate(java.lang.Math.toRadians(dtc.degree));
+						g2.rotate(java.lang.Math.toRadians(dtc.degree), dtc.x + dtcMetrics.stringWidth(dtc.text) / 2,
+								dtc.y + (dtcMetrics.getHeight() * 1.5) / 2);
 						g2.scale(dtc.scaleX, dtc.scaleY);
 						g2.setFont(dtc.font);
 						g2.setColor(new Color(Integer.parseInt(color.substring(1), 16)));
-						g2.drawString(dtc.text, (int) dtc.x, (int) dtc.y);
+						g2.drawString(dtc.text, (int) dtc.x, (int) dtc.y + dtcMetrics.getHeight());
+						g2.rotate(java.lang.Math.toRadians(-dtc.degree), dtc.x + dtcMetrics.stringWidth(dtc.text) / 2,
+								dtc.y + (dtcMetrics.getHeight() * 1.5) / 2);
 						break;
 					case DRAWTRIANGLE:
 						DrawTriangleCmd dtrc = (DrawTriangleCmd) cmd;
 						color = ((StrV) dtrc.pencolor).getValue();
 						g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) dtrc.opacity));
-						g2.rotate(java.lang.Math.toRadians(dtrc.degree));
+						Point dt = getCircumcenter(dtrc.xs[0], dtrc.ys[0], dtrc.xs[1], dtrc.ys[1], dtrc.xs[2],
+								dtrc.ys[2]);
+						g2.rotate(java.lang.Math.toRadians(dtrc.degree), dt.getX() * zoomX, dt.getY() * zoomY);
 						g2.scale(dtrc.scaleX, dtrc.scaleY);
 						g2.setStroke(new BasicStroke((float) ((DoubleV) dtrc.penwidth).getValue()));
 						g2.setColor(new Color(Integer.parseInt(color.substring(1), 16)));
 						g2.drawPolygon(dtrc.xs, dtrc.ys, 3);
+						g2.rotate(java.lang.Math.toRadians(-dtrc.degree), dt.getX(), dt.getY());
 						break;
 
 					case FILLELLIPSE:
 						FillEllipseCmd fec = (FillEllipseCmd) cmd;
 						color = ((StrV) fec.brushcolor).getValue();
 						g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) fec.opacity));
-						g2.rotate(java.lang.Math.toRadians(fec.degree));
+						g2.rotate(java.lang.Math.toRadians(fec.degree), (fec.x + fec.w / 2) * zoomX,
+								(fec.y + fec.h / 2) * zoomY);
 						g2.scale(fec.scaleX, fec.scaleY);
 						g2.setColor(new Color(Integer.parseInt(color.substring(1), 16)));
 						g2.fillOval((int) fec.x, (int) fec.y, fec.w, fec.h);
+						g2.rotate(java.lang.Math.toRadians(-fec.degree), fec.x + fec.w / 2, fec.y + fec.h / 2);
 						break;
 					case FILLRECTANGLE:
 						FillRectangleCmd frc = (FillRectangleCmd) cmd;
 						color = ((StrV) frc.brushcolor).getValue();
 						g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) frc.opacity));
-						g2.rotate(java.lang.Math.toRadians(frc.degree));
+						g2.rotate(java.lang.Math.toRadians(frc.degree), (frc.x + frc.w / 2) * zoomX,
+								(frc.y + frc.h / 2) * zoomY);
 						g2.scale(frc.scaleX, frc.scaleY);
 						g2.setColor(new Color(Integer.parseInt(color.substring(1), 16)));
 						g2.fillRect((int) frc.x, (int) frc.y, frc.w, frc.h);
+						g2.rotate(java.lang.Math.toRadians(-frc.degree), frc.x + frc.w / 2, frc.y + frc.h / 2);
 						break;
 					case FILLTRIANGLE:
 						FillTriangleCmd ftc = (FillTriangleCmd) cmd;
 						color = ((StrV) ftc.brushcolor).getValue();
 						g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) ftc.opacity));
-						g2.rotate(java.lang.Math.toRadians(ftc.degree));
+						Point ft = getCircumcenter(ftc.xs[0], ftc.ys[0], ftc.xs[1], ftc.ys[1], ftc.xs[2], ftc.ys[2]);
+						g2.rotate(java.lang.Math.toRadians(ftc.degree), ft.getX() * zoomX, ft.getY() * zoomY);
 						g2.scale(ftc.scaleX, ftc.scaleY);
 						g2.setColor(new Color(Integer.parseInt(color.substring(1), 16)));
 						g2.fillPolygon(ftc.xs, ftc.ys, 3);
+						g2.rotate(java.lang.Math.toRadians(-ftc.degree), ft.getX(), ft.getY());
 						break;
 					}
 					if (zoomX != 1) {
@@ -429,7 +459,6 @@ public class GraphicsWindow {
 						zoomY = 1;
 					}
 					if (rotate != 0) {
-						g2.rotate(java.lang.Math.toRadians(360 - rotate));
 						rotate = 0;
 					}
 				}
@@ -554,13 +583,13 @@ public class GraphicsWindow {
 		public void DrawBoundText(ArrayList<Value> args) {
 			DrawBoundTextCmd cmd = new DrawBoundTextCmd();
 
-			if (args.size() == 3) {
+			if (args.size() == 4) {
 				cmd.cmd = DRAWBOUNDTEXT;
 
-				int[] values = new int[2];
-				boolean[] isInteger = new boolean[2];
+				int[] values = new int[3];
+				boolean[] isInteger = new boolean[3];
 
-				for (int i = 0; i < 2; i++) {
+				for (int i = 0; i < 3; i++) {
 					if (args.get(i) instanceof DoubleV) {
 						isInteger[i] = true;
 						values[i] = (int) ((DoubleV) args.get(i)).getValue();
@@ -578,9 +607,10 @@ public class GraphicsWindow {
 					}
 				}
 
-				if (isInteger[0] && isInteger[1]) {
+				if (isInteger[0] && isInteger[1] && isInteger[2]) {
 					cmd.x = values[0];
 					cmd.y = values[1];
+					cmd.w = values[2];
 
 					cmd.font = settingFont();
 					cmd.brushcolor = BrushColor;
@@ -591,10 +621,10 @@ public class GraphicsWindow {
 					cmd.scaleY = 1;
 				}
 
-				if (args.get(2) instanceof StrV)
-					cmd.text = ((StrV) args.get(2)).getValue();
-				else if (args.get(2) instanceof DoubleV)
-					cmd.text = ((DoubleV) args.get(2)).toString();
+				if (args.get(3) instanceof StrV)
+					cmd.text = ((StrV) args.get(3)).getValue();
+				else if (args.get(3) instanceof DoubleV)
+					cmd.text = ((DoubleV) args.get(3)).toString();
 
 				cmdList.add(cmd);
 
@@ -848,8 +878,8 @@ public class GraphicsWindow {
 			if (args.size() == 3) {
 
 				cmd.cmd = DRAWTEXT;
-				int[] values = new int[2];
-				boolean[] isInteger = new boolean[2];
+				int[] values = new int[3];
+				boolean[] isInteger = new boolean[3];
 
 				for (int i = 0; i < args.size(); i++) {
 					if (args.get(i) instanceof DoubleV) {
@@ -1146,8 +1176,19 @@ public class GraphicsWindow {
 			if (KeyDown != null) {
 				String lastKey = keyMap.get(e.getKeyCode());
 
-				lastKey = SetLastKey(e.getKeyLocation(), lastKey);
+				if (lastKey != null) {
+					lastKey = SetLastKey(e.getKeyLocation(), lastKey);
+				}
 				LastKey = new StrV(lastKey);
+
+				char text = e.getKeyChar();
+
+				if (isPrintableChar(text)) {
+					if (e.getKeyCode() == KeyEvent.VK_BACK_SPACE)
+						LastText = new StrV("");
+					else
+						LastText = new StrV(String.valueOf(text));
+				}
 
 				Eval.eval(KeyDown);
 			}
@@ -1159,8 +1200,19 @@ public class GraphicsWindow {
 			if (KeyUp != null) {
 				String lastKey = keyMap.get(e.getKeyCode());
 
-				lastKey = SetLastKey(e.getKeyLocation(), lastKey);
+				if (lastKey != null) {
+					lastKey = SetLastKey(e.getKeyLocation(), lastKey);
+				}
 				LastKey = new StrV(lastKey);
+
+				char text = e.getKeyChar();
+
+				if (isPrintableChar(text)) {
+					if (e.getKeyCode() == KeyEvent.VK_BACK_SPACE)
+						LastText = new StrV("");
+					else
+						LastText = new StrV(String.valueOf(text));
+				}
 
 				Eval.eval(KeyUp);
 			}
@@ -1312,7 +1364,7 @@ public class GraphicsWindow {
 
 		shapeMap.put(id, cmds);
 
-		return null;
+		return id;
 	}
 
 	public static String AddText(String text) {
@@ -1447,6 +1499,7 @@ public class GraphicsWindow {
 		if (cmds != null) {
 			for (Cmd cmd : cmds) {
 				cmd.show = false;
+
 			}
 			panel.repaint();
 		}
@@ -1634,7 +1687,7 @@ public class GraphicsWindow {
 
 		if (comp != null) {
 			comp.setSize(width, height);
-			
+
 			container = comp.getParent();
 			container.repaint();
 		}
@@ -1784,7 +1837,7 @@ public class GraphicsWindow {
 			ImageIcon icon = new ImageIcon(image);
 			img = icon.getImage();
 		} else {
-			// imageList에서 image를 가져오는 과정
+			img = ImageList.getImage(image);
 		}
 
 		return img;
@@ -1883,6 +1936,37 @@ public class GraphicsWindow {
 		}
 
 		return lastKey;
+	}
+
+	private static Point getCircumcenter(double x1, double y1, double x2, double y2, double x3, double y3) {
+		double x, y;
+
+		double midX1 = (x2 + x3) / 2.0;
+		double midY1 = (y2 + y3) / 2.0;
+		double midX3 = (x2 + x1) / 2.0;
+		double midY3 = (y2 + y1) / 2.0;
+
+		double slope12 = -1 / ((x2 - x1) / (y2 - y1));
+		double slope23 = -1 / ((x3 - x2) / (y3 - y1));
+
+		double b12 = midY1 - slope12 * midX1;
+		double b23 = midY3 - slope23 * midX3;
+
+		x = ((b12 - b23) / (slope23 - slope12));
+		y = ((slope12 * x) + b12);
+
+		Point returnP = new Point();
+		returnP.x = (int) x;
+		returnP.y = (int) y;
+
+		return returnP;
+	}
+
+	private static boolean isPrintableChar(char c) {
+		Character.UnicodeBlock block = Character.UnicodeBlock.of(c);
+
+		return c != KeyEvent.VK_DELETE && c != KeyEvent.CHAR_UNDEFINED && block != null
+				&& block != Character.UnicodeBlock.SPECIALS;
 	}
 
 	private static abstract class Cmd {
@@ -2106,7 +2190,7 @@ public class GraphicsWindow {
 			KeyEvent.VK_END, KeyEvent.VK_PAGE_DOWN, KeyEvent.VK_COMMA, KeyEvent.VK_PERIOD, KeyEvent.VK_SLASH,
 			KeyEvent.VK_SEMICOLON, KeyEvent.VK_COLON, KeyEvent.VK_OPEN_BRACKET, KeyEvent.VK_CLOSE_BRACKET,
 			KeyEvent.VK_ESCAPE, KeyEvent.VK_SCROLL_LOCK, KeyEvent.VK_PAUSE, KeyEvent.VK_EQUALS, KeyEvent.VK_MINUS,
-			KeyEvent.VK_CLEAR };
+			KeyEvent.VK_CLEAR, KeyEvent.VK_QUOTE };
 
 	private static String[] keyInfo = { "D0", "D0", "D1", "D1", "D2", "D2", "D3", "D3", "D4", "D4", "D5", "D6", "D6",
 			"D7", "D8", "D9", "D9", "F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "System", "F11", "F12", "A",
@@ -2116,7 +2200,7 @@ public class GraphicsWindow {
 			"Shift", "Ctrl", "Win", "Alt", "HanjaMode", "Space", "Apps", "Back", "Oem5", "Return", "Oem3", "Up", "Down",
 			"Left", "Right", "Up", "Down", "Left", "Right", "Insert", "Home", "PageUp", "Delete", "End", "PageDown",
 			"OemComma", "OemPeriod", "OemQuestion", "Oem1", "Oem1", "OemOpenBrackets", "Oem6", "Escape", "Scroll",
-			"Pause", "OemPlus", "OemMinus", "Clear" };
+			"Pause", "OemPlus", "OemMinus", "Clear", "OemQuotes" };
 
 	private static HashMap<String, String> colorMap;
 	private static HashMap<Integer, String> keyMap;
