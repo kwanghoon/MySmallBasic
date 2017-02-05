@@ -100,9 +100,9 @@ public class Continuous {
 		
 		ArrayList<Stmt> init = new ArrayList<>();
 		init.add(new Assign(forStmt.getVar(), forStmt.getInit()).copyInfo(forStmt.getInit()));
-		init.add(new GotoStmt(ltest).copyInfo(forStmt.getInit()));
+		init.add(new GotoStmt(ltest) /* .copyInfo(forStmt.getInit()) */ );
 		
-		Stmt linitStmt = new BlockStmt(init).copyInfo(forStmt.getInit());
+		Stmt linitStmt = new BlockStmt(init) /* .copyInfo(forStmt.getInit()) */;
 		
 		// step
 		Expr step;

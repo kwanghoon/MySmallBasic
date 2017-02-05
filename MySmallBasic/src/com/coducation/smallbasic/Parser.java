@@ -155,13 +155,17 @@ public class Parser
 					else if(Grammer_rule.get(state_num).equals("Stmt -> ID :")) // case Label
 					{
 						Terminal sub_tree1 = (Terminal)stack.get(last_stack_tree_index-3);
-						tree = new Label(sub_tree1.getSyntax());
+						Label label = new Label(sub_tree1.getSyntax());
+						label.at(sub_tree1.getLine_index(), sub_tree1.getCh_index());
+						tree = label;
 						
 					}
 					else if(Grammer_rule.get(state_num).equals("Stmt -> Goto ID")) // case Goto
 					{
 						Terminal sub_tree1 = (Terminal)stack.get(last_stack_tree_index-1);
-						tree = new GotoStmt(sub_tree1.getSyntax());
+						GotoStmt gotostmt = new GotoStmt(sub_tree1.getSyntax());
+						gotostmt.at(sub_tree1.getLine_index(), sub_tree1.getCh_index());
+						tree = gotostmt;
 					}
 					else if(Grammer_rule.get(state_num).equals("Stmt -> For ID = Expr To Expr OptStep CRStmtCRs EndFor")) // case For
 					{
@@ -171,23 +175,37 @@ public class Parser
 						Nonterminal sub_tree4 = (Nonterminal)stack.get(last_stack_tree_index-11);
 						Terminal sub_tree5 = (Terminal)stack.get(last_stack_tree_index-15);
 						
-						tree = new ForStmt(new Var(sub_tree5.getSyntax()), (Expr)sub_tree4.getTree(), (Expr)sub_tree3.getTree(), (Expr)sub_tree2.getTree(), (Stmt)sub_tree1.getTree());					
+						Terminal sub_tree6 = (Terminal)stack.get(last_stack_tree_index-17);
+						
+						ForStmt forstmt = new ForStmt(
+												new Var(sub_tree5.getSyntax()), 
+												(Expr)sub_tree4.getTree(), 
+												(Expr)sub_tree3.getTree(), 
+												(Expr)sub_tree2.getTree(), 
+												(Stmt)sub_tree1.getTree());
+						
+						forstmt.at(sub_tree6.getLine_index(), sub_tree6.getCh_index());
+						
+						tree = forstmt;
 					}
 					else if(Grammer_rule.get(state_num).equals("Stmt -> Sub ID CRStmtCRs EndSub")) // case SubRoutine Definition.
 					{
 						Nonterminal sub_tree1 = (Nonterminal)stack.get(last_stack_tree_index-3);
 						Terminal sub_tree2 = (Terminal)stack.get(last_stack_tree_index-5);
+						Terminal sub_tree3 = (Terminal)stack.get(last_stack_tree_index-7);
 						
-						tree = new SubDef(sub_tree2.getSyntax(), (Stmt)sub_tree1.getTree());
+						SubDef subdef = new SubDef(sub_tree2.getSyntax(), (Stmt)sub_tree1.getTree());
+						subdef.at(sub_tree3.getLine_index(), sub_tree3.getCh_index());
+						tree = subdef;
 					}
 					else if(Grammer_rule.get(state_num).equals("Stmt -> If Expr Then CRStmtCRs MoreThanZeroElseIf")) // case If
 					{
 						Nonterminal sub_tree1 = (Nonterminal)stack.get(last_stack_tree_index-1);
 						Nonterminal sub_tree2 = (Nonterminal)stack.get(last_stack_tree_index-3);
 						Nonterminal sub_tree3 = (Nonterminal)stack.get(last_stack_tree_index-7);
+						Terminal ifKeyword = (Terminal)stack.get(last_stack_tree_index-9);
 						
 						IfStmt ifStmt = new IfStmt((Expr)sub_tree3.getTree(), (Stmt)sub_tree2.getTree(), (Stmt)sub_tree1.getTree());
-						Terminal ifKeyword = (Terminal)stack.get(last_stack_tree_index-9);
 						ifStmt.at(ifKeyword.getLine_index(), ifKeyword.getCh_index());
 						tree = ifStmt; 
 					}
@@ -203,8 +221,11 @@ public class Parser
 						Nonterminal sub_tree1 = (Nonterminal)stack.get(last_stack_tree_index-1);
 						Nonterminal sub_tree2 = (Nonterminal)stack.get(last_stack_tree_index-3);
 						Nonterminal sub_tree3 = (Nonterminal)stack.get(last_stack_tree_index-7);
+						Terminal sub_tree4 = (Terminal)stack.get(last_stack_tree_index-9);
 						
-						tree = new IfStmt((Expr)sub_tree3.getTree(), (Stmt)sub_tree2.getTree(), (Stmt)sub_tree1.getTree());
+						IfStmt ifstmt = new IfStmt((Expr)sub_tree3.getTree(), (Stmt)sub_tree2.getTree(), (Stmt)sub_tree1.getTree());
+						ifstmt.at(sub_tree4.getLine_index(), sub_tree4.getCh_index());
+						tree = ifstmt;
 					}
 					else if(Grammer_rule.get(state_num).equals("OptionalElse -> EndIf")) // not Else
 					{
@@ -221,7 +242,9 @@ public class Parser
 						Nonterminal sub_tree1 = (Nonterminal)stack.get(last_stack_tree_index-1);
 						Terminal sub_tree2 = (Terminal)stack.get(last_stack_tree_index-5);
 						
-						tree = new Assign(new Var(sub_tree2.getSyntax()), (Expr)sub_tree1.getTree());					
+						Assign assign = new Assign(new Var(sub_tree2.getSyntax()), (Expr)sub_tree1.getTree());	
+						assign.at(sub_tree2.getLine_index(), sub_tree2.getCh_index());
+						tree = assign;
 					}
 					else if(Grammer_rule.get(state_num).equals("ExprStatement -> ID . ID = Expr")) // Property Assign
 					{
@@ -229,8 +252,9 @@ public class Parser
 						Terminal sub_tree2 = (Terminal)stack.get(last_stack_tree_index-5);
 						Terminal sub_tree3 = (Terminal)stack.get(last_stack_tree_index-9);
 						
-						tree = new Assign(new PropertyExpr(sub_tree3.getSyntax(), sub_tree2.getSyntax()), (Expr)sub_tree1.getTree());
-
+						Assign assign = new Assign(new PropertyExpr(sub_tree3.getSyntax(), sub_tree2.getSyntax()), (Expr)sub_tree1.getTree());
+						assign.at(sub_tree3.getLine_index(), sub_tree3.getCh_index());
+						tree = assign;
 					}
 					else if(Grammer_rule.get(state_num).equals("ExprStatement -> ID . ID ( Exprs )")) // MethodCallExprStmt
 					{
@@ -238,12 +262,16 @@ public class Parser
 						Terminal sub_tree2 = (Terminal)stack.get(last_stack_tree_index-7);
 						Terminal sub_tree3 = (Terminal)stack.get(last_stack_tree_index-11);
 		
-						tree = new ExprStmt(new MethodCallExpr(sub_tree3.getSyntax(), sub_tree2.getSyntax(),(ArrayList<Expr>)sub_tree1.getTree()));
+						ExprStmt exprstmt = new ExprStmt(new MethodCallExpr(sub_tree3.getSyntax(), sub_tree2.getSyntax(),(ArrayList<Expr>)sub_tree1.getTree()));
+						exprstmt.at(sub_tree3.getLine_index(), sub_tree3.getCh_index());
+						tree = exprstmt;
 					}
 					else if(Grammer_rule.get(state_num).equals("ExprStatement -> ID ( )")) // SubRoutineCallExprStmt
 					{
 						Terminal sub_tree1 = (Terminal)stack.get(last_stack_tree_index-5);
-						tree = new SubCallExpr(sub_tree1.getSyntax());
+						SubCallExpr subcallexpr = new SubCallExpr(sub_tree1.getSyntax());
+						subcallexpr.at(sub_tree1.getLine_index(), sub_tree1.getCh_index());
+						tree = subcallexpr;
 					}
 					else if(Grammer_rule.get(state_num).equals("ExprStatement -> ID Idxs = Expr")) // Array Assign
 					{
@@ -251,15 +279,25 @@ public class Parser
 						Terminal sub_tree2 = (Terminal)stack.get(last_stack_tree_index-7);
 						Array array = new Array( sub_tree2.getSyntax(), index_list);
 						
-						tree =  new Assign((Expr)array, (Expr)sub_tree1.getTree());	
+						Assign assign =  new Assign((Expr)array, (Expr)sub_tree1.getTree());
+						assign.at(sub_tree2.getLine_index(), sub_tree2.getCh_index());
+						tree = assign;
 					}
 					else if(Grammer_rule.get(state_num).equals("CRStmtCRs -> CR TheRest")) // CRStmt => blockStmt
 					{
 						Nonterminal sub_tree1 = (Nonterminal)stack.get(last_stack_tree_index-1);
 						
 						ArrayList<Stmt> ALStmt = (ArrayList<Stmt>)sub_tree1.getTree();
-						if (ALStmt == null) ALStmt = new ArrayList<Stmt>();
-						tree = new BlockStmt(ALStmt);
+						if (ALStmt == null) {
+							ALStmt = new ArrayList<Stmt>();
+							tree = new BlockStmt(ALStmt);  // No line no & char pos because of the empty block
+						}
+						else {
+							BlockStmt blockstmt = new BlockStmt(ALStmt);
+							Stmt fststmt = ALStmt.get(0);
+							blockstmt.at(fststmt.lineno(), fststmt.charat());
+							tree = blockstmt;
+						}
 					}
 					else if(Grammer_rule.get(state_num).equals("TheRest ->")) // empty
 					{
@@ -286,8 +324,11 @@ public class Parser
 							
 						
 						ArrayList<Stmt> ALStmt = new ArrayList<Stmt>();
-						ALStmt.add((Stmt)sub_tree1.getTree());
-						tree = new BlockStmt(ALStmt);
+						Stmt fststmt = (Stmt)sub_tree1.getTree();
+						ALStmt.add(fststmt);
+						BlockStmt blockstmt = new BlockStmt(ALStmt);
+						blockstmt.at(fststmt.lineno(), fststmt.charat());
+						tree = blockstmt;
 					}
 					else if(Grammer_rule.get(state_num).equals("MoreThanOneStmt -> Stmt CR MoreThanOneStmt"))
 					{
@@ -296,9 +337,12 @@ public class Parser
 						
 						BlockStmt block = (BlockStmt)sub_tree1.getTree();
 						ArrayList<Stmt> ALStmt = block.getAL();
-						ALStmt.add(0, (Stmt)sub_tree2.getTree());
+						Stmt fststmt = (Stmt)sub_tree2.getTree();
+						ALStmt.add(0, fststmt);
 
-						tree = new BlockStmt(ALStmt);
+						BlockStmt blockstmt = new BlockStmt(ALStmt);
+						blockstmt.at(fststmt.lineno(), fststmt.charat());
+						tree = blockstmt;
 					}
 					else if(Grammer_rule.get(state_num).equals("OptStep ->"))
 					{
@@ -362,7 +406,11 @@ public class Parser
 						Nonterminal sub_tree1 = (Nonterminal)stack.get(last_stack_tree_index-1);
 						Nonterminal sub_tree2 = (Nonterminal)stack.get(last_stack_tree_index-5);
 						
-						tree = new LogicalExpr((Expr)sub_tree2.getTree(), 2, (Expr)sub_tree1.getTree());
+						Expr leftexpr = (Expr)sub_tree2.getTree();
+						Expr rightexpr = (Expr)sub_tree1.getTree();
+						LogicalExpr logicalexpr = new LogicalExpr(leftexpr, 2, rightexpr);
+						logicalexpr.at(leftexpr.lineno(), leftexpr.charat());
+						tree = logicalexpr;
 					}
 					else if(Grammer_rule.get(state_num).equals("OrExpr -> AndExpr"))
 					{
@@ -376,7 +424,11 @@ public class Parser
 						Nonterminal sub_tree1 = (Nonterminal)stack.get(last_stack_tree_index-1);
 						Nonterminal sub_tree2 = (Nonterminal)stack.get(last_stack_tree_index-5);
 						
-						tree = new LogicalExpr((Expr)sub_tree2.getTree(), 1, (Expr)sub_tree1.getTree());
+						Expr leftexpr = (Expr)sub_tree2.getTree();
+						Expr rightexpr = (Expr)sub_tree1.getTree();
+						LogicalExpr logicalexpr = new LogicalExpr(leftexpr, 1, rightexpr);
+						logicalexpr.at(leftexpr.lineno(), leftexpr.charat());
+						tree = logicalexpr;
 					}
 					else if(Grammer_rule.get(state_num).equals("AndExpr -> EqNeqExpr"))
 					{
@@ -390,14 +442,22 @@ public class Parser
 						Nonterminal sub_tree1 = (Nonterminal)stack.get(last_stack_tree_index-1);
 						Nonterminal sub_tree2 = (Nonterminal)stack.get(last_stack_tree_index-5);
 						
-						tree = new CompExpr((Expr)sub_tree2.getTree(), 5, (Expr)sub_tree1.getTree());
+						Expr leftexpr = (Expr)sub_tree2.getTree();
+						Expr rightexpr = (Expr)sub_tree1.getTree();
+						CompExpr compexpr = new CompExpr(leftexpr, 5, rightexpr);
+						compexpr.at(leftexpr.lineno(), leftexpr.charat());
+						tree = compexpr;
 					}
 					else if(Grammer_rule.get(state_num).equals("EqNeqExpr -> EqNeqExpr <> CompExpr"))
 					{
 						Nonterminal sub_tree1 = (Nonterminal)stack.get(last_stack_tree_index-1);
 						Nonterminal sub_tree2 = (Nonterminal)stack.get(last_stack_tree_index-5);
 						
-						tree = new CompExpr((Expr)sub_tree2.getTree(), 6, (Expr)sub_tree1.getTree());						
+						Expr leftexpr = (Expr)sub_tree2.getTree();
+						Expr rightexpr = (Expr)sub_tree1.getTree();
+						CompExpr compexpr = new CompExpr(leftexpr, 6, rightexpr);
+						compexpr.at(leftexpr.lineno(), leftexpr.charat());
+						tree = compexpr;
 					}
 					else if(Grammer_rule.get(state_num).equals("EqNeqExpr -> CompExpr"))
 					{
@@ -411,28 +471,44 @@ public class Parser
 						Nonterminal sub_tree1 = (Nonterminal)stack.get(last_stack_tree_index-1);
 						Nonterminal sub_tree2 = (Nonterminal)stack.get(last_stack_tree_index-5);
 						
-						tree = new CompExpr((Expr)sub_tree2.getTree(), 1, (Expr)sub_tree1.getTree());
+						Expr leftexpr = (Expr)sub_tree2.getTree();
+						Expr rightexpr = (Expr)sub_tree1.getTree();
+						CompExpr compexpr = new CompExpr(leftexpr, 1, rightexpr);
+						compexpr.at(leftexpr.lineno(), leftexpr.charat());
+						tree = compexpr;
 					}
 					else if(Grammer_rule.get(state_num).equals("CompExpr -> CompExpr <= AdditiveExpr"))
 					{
 						Nonterminal sub_tree1 = (Nonterminal)stack.get(last_stack_tree_index-1);
 						Nonterminal sub_tree2 = (Nonterminal)stack.get(last_stack_tree_index-5);
 						
-						tree = new CompExpr((Expr)sub_tree2.getTree(), 2, (Expr)sub_tree1.getTree());						
+						Expr leftexpr = (Expr)sub_tree2.getTree();
+						Expr rightexpr = (Expr)sub_tree1.getTree();
+						CompExpr compexpr = new CompExpr(leftexpr, 2, rightexpr);
+						compexpr.at(leftexpr.lineno(), leftexpr.charat());
+						tree = compexpr;
 					}
 					else if(Grammer_rule.get(state_num).equals("CompExpr -> CompExpr > AdditiveExpr"))
 					{
 						Nonterminal sub_tree1 = (Nonterminal)stack.get(last_stack_tree_index-1);
 						Nonterminal sub_tree2 = (Nonterminal)stack.get(last_stack_tree_index-5);
 						
-						tree = new CompExpr((Expr)sub_tree2.getTree(), 3, (Expr)sub_tree1.getTree());						
+						Expr leftexpr = (Expr)sub_tree2.getTree();
+						Expr rightexpr = (Expr)sub_tree1.getTree();
+						CompExpr compexpr = new CompExpr(leftexpr, 3, rightexpr);
+						compexpr.at(leftexpr.lineno(), leftexpr.charat());
+						tree = compexpr;
 					}
 					else if(Grammer_rule.get(state_num).equals("CompExpr -> CompExpr >= AdditiveExpr"))
 					{
 						Nonterminal sub_tree1 = (Nonterminal)stack.get(last_stack_tree_index-1);
 						Nonterminal sub_tree2 = (Nonterminal)stack.get(last_stack_tree_index-5);
 						
-						tree = new CompExpr((Expr)sub_tree2.getTree(), 4, (Expr)sub_tree1.getTree());						
+						Expr leftexpr = (Expr)sub_tree2.getTree();
+						Expr rightexpr = (Expr)sub_tree1.getTree();
+						CompExpr compexpr = new CompExpr(leftexpr, 4, rightexpr);
+						compexpr.at(leftexpr.lineno(), leftexpr.charat());
+						tree = compexpr;
 					}
 					else if(Grammer_rule.get(state_num).equals("CompExpr -> AdditiveExpr"))
 					{
@@ -446,14 +522,22 @@ public class Parser
 						Nonterminal sub_tree1 = (Nonterminal)stack.get(last_stack_tree_index-1);
 						Nonterminal sub_tree2 = (Nonterminal)stack.get(last_stack_tree_index-5);
 						
-						tree = new ArithExpr((Expr)sub_tree2.getTree(), 1, (Expr)sub_tree1.getTree());						
+						Expr leftexpr = (Expr)sub_tree2.getTree();
+						Expr rightexpr = (Expr)sub_tree1.getTree();
+						ArithExpr arithexpr = new ArithExpr(leftexpr, 1, rightexpr);
+						arithexpr.at(leftexpr.lineno(), leftexpr.charat());
+						tree = arithexpr;
 					}
 					else if(Grammer_rule.get(state_num).equals("AdditiveExpr -> AdditiveExpr - MultiplicativeExpr"))
 					{
 						Nonterminal sub_tree1 = (Nonterminal)stack.get(last_stack_tree_index-1);
 						Nonterminal sub_tree2 = (Nonterminal)stack.get(last_stack_tree_index-5);
 						
-						tree = new ArithExpr((Expr)sub_tree2.getTree(), 2, (Expr)sub_tree1.getTree());								
+						Expr leftexpr = (Expr)sub_tree2.getTree();
+						Expr rightexpr = (Expr)sub_tree1.getTree();
+						ArithExpr arithexpr = new ArithExpr(leftexpr, 2, rightexpr);
+						arithexpr.at(leftexpr.lineno(), leftexpr.charat());
+						tree = arithexpr;
 					}
 					else if(Grammer_rule.get(state_num).equals("AdditiveExpr -> MultiplicativeExpr"))
 					{
@@ -467,14 +551,22 @@ public class Parser
 						Nonterminal sub_tree1 = (Nonterminal)stack.get(last_stack_tree_index-1);
 						Nonterminal sub_tree2 = (Nonterminal)stack.get(last_stack_tree_index-5);
 						
-						tree = new ArithExpr((Expr)sub_tree2.getTree(), 3, (Expr)sub_tree1.getTree());								
+						Expr leftexpr = (Expr)sub_tree2.getTree();
+						Expr rightexpr = (Expr)sub_tree1.getTree();
+						ArithExpr arithexpr = new ArithExpr((Expr)sub_tree2.getTree(), 3, (Expr)sub_tree1.getTree());	
+						arithexpr.at(leftexpr.lineno(), leftexpr.charat());
+						tree = arithexpr;
 					}
 					else if(Grammer_rule.get(state_num).equals("MultiplicativeExpr -> MultiplicativeExpr / UnaryExpr"))
 					{
 						Nonterminal sub_tree1 = (Nonterminal)stack.get(last_stack_tree_index-1);
 						Nonterminal sub_tree2 = (Nonterminal)stack.get(last_stack_tree_index-5);
 						
-						tree = new ArithExpr((Expr)sub_tree2.getTree(), 4, (Expr)sub_tree1.getTree());								
+						Expr leftexpr = (Expr)sub_tree2.getTree();
+						Expr rightexpr = (Expr)sub_tree1.getTree();
+						ArithExpr arithexpr = new ArithExpr(leftexpr, 4, rightexpr);	
+						arithexpr.at(leftexpr.lineno(), leftexpr.charat());
+						tree = arithexpr;
 					}
 					else if(Grammer_rule.get(state_num).equals("MultiplicativeExpr -> UnaryExpr"))
 					{
@@ -486,7 +578,11 @@ public class Parser
 					else if(Grammer_rule.get(state_num).equals("UnaryExpr -> - Primary"))
 					{
 						Nonterminal temp = (Nonterminal) stack.get(last_stack_tree_index-1);
-						tree = new ArithExpr(5, (Expr)temp.getTree());
+						Terminal minus = (Terminal) stack.get(last_stack_tree_index-3);
+						Expr expr = (Expr)temp.getTree();
+						ArithExpr arithexpr = new ArithExpr(5, expr);
+						arithexpr.at(minus.getLine_index(), minus.getCh_index());
+						tree = arithexpr;
 					}
 					else if(Grammer_rule.get(state_num).equals("UnaryExpr -> Primary"))
 					{
@@ -498,29 +594,41 @@ public class Parser
 					else if(Grammer_rule.get(state_num).equals("Primary -> NUM"))
 					{
 						Terminal temp = (Terminal) stack.get(last_stack_tree_index-1);
-						tree = new Lit(temp.getSyntax(), Lit.NUM);
+						Lit lit = new Lit(temp.getSyntax(), Lit.NUM);
+						lit.at(temp.getLine_index(), temp.getCh_index());
+						tree = lit;
 					}
 					else if(Grammer_rule.get(state_num).equals("Primary -> STR"))
 					{
 						Terminal temp = (Terminal) stack.get(last_stack_tree_index-1);
 						String str = temp.getSyntax();
-						tree = new Lit(str.substring(1, str.length()-1), Lit.STRING);
+						Lit lit = new Lit(str.substring(1, str.length()-1), Lit.STRING);
+						lit.at(temp.getLine_index(), temp.getCh_index());
+						tree = lit;
 					}
 					else if(Grammer_rule.get(state_num).equals("Primary -> ( Expr )"))
 					{
 						Nonterminal temp = (Nonterminal) stack.get(last_stack_tree_index-3);
-						tree = new ParenExpr ((Expr) temp.getTree());
+						Terminal openparen = (Terminal) stack.get(last_stack_tree_index-5);
+						ParenExpr parenexpr = new ParenExpr ((Expr) temp.getTree());
+						parenexpr.at(openparen.getLine_index(), openparen.getCh_index());
+						tree = parenexpr;
 					}
 					else if(Grammer_rule.get(state_num).equals("Primary -> ID"))
 					{
 						Terminal temp = (Terminal) stack.get(last_stack_tree_index-1);
-						tree = new Var(temp.getSyntax());
+						Var var = new Var(temp.getSyntax());
+						var.at(temp.getLine_index(), temp.getCh_index());
+						tree = var;
 					}
 					else if(Grammer_rule.get(state_num).equals("Primary -> ID . ID"))
 					{
 						Terminal temp1 = (Terminal) stack.get(last_stack_tree_index-1);
 						Terminal temp2 = (Terminal) stack.get(last_stack_tree_index-5);
-						tree = new PropertyExpr(temp2.getSyntax(), temp1.getSyntax());
+						
+						PropertyExpr propertyexpr = new PropertyExpr(temp2.getSyntax(), temp1.getSyntax());
+						propertyexpr.at(temp2.getLine_index(), temp2.getCh_index());
+						tree = propertyexpr;
 					}
 					else if(Grammer_rule.get(state_num).equals("Primary -> ID . ID ( Exprs )"))
 					{
@@ -528,13 +636,18 @@ public class Parser
 						Terminal sub_tree2 = (Terminal)stack.get(last_stack_tree_index-7);
 						Terminal sub_tree3 = (Terminal)stack.get(last_stack_tree_index-11);
 		
-						tree = new MethodCallExpr(sub_tree3.getSyntax(), sub_tree2.getSyntax(),(ArrayList<Expr>)sub_tree1.getTree());
+						MethodCallExpr  methodcallexpr = new MethodCallExpr(
+								sub_tree3.getSyntax(), sub_tree2.getSyntax(),(ArrayList<Expr>)sub_tree1.getTree());
+						methodcallexpr.at(sub_tree3.getLine_index(), sub_tree3.getCh_index());
+						tree = methodcallexpr;
 					}
 					else if(Grammer_rule.get(state_num).equals("Primary -> ID Idxs"))
 					{
 						Terminal sub_tree1 = (Terminal)stack.get(last_stack_tree_index-3);
 
-						tree = new Array( sub_tree1.getSyntax(), index_list);
+						Array array = new Array( sub_tree1.getSyntax(), index_list);
+						array.at(sub_tree1.getLine_index(), sub_tree1.getCh_index());
+						tree = array;
 					}
 					else if(Grammer_rule.get(state_num).equals("Idxs -> [ Expr ]"))
 					{

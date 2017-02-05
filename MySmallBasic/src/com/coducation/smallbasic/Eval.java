@@ -7,6 +7,7 @@ import java.util.ArrayList;
 
 public class Eval {
 	static boolean debug;
+	static boolean debugexpr = false;
 	static BasicBlockEnv bbEnv;
 	static Env env;
 	static final String lib = "com.coducation.smallbasic.lib.";
@@ -543,7 +544,7 @@ public class Eval {
 	}
 
 	public Value eval(Env env, Expr expr) {
-		if(debug) printLog(expr);
+		if(debug && debugexpr) printLog(expr);
 		
 		if (expr instanceof ArithExpr)
 			return eval(env, (ArithExpr) expr);
@@ -697,13 +698,13 @@ public class Eval {
 		int lineno = stmt.lineno();
 		int charat = stmt.charat();
 		if (lineno != 0 && charat != 0)
-			System.out.println("Line " + lineno + " : " + charat);
+			System.out.println("[Stmt] Line " + lineno + " : " + charat);
 	}
 	
 	public static void printLog(Expr expr) {
 		int lineno = expr.lineno();
 		int charat = expr.charat();
 		if (lineno != 0 && charat != 0)
-			System.out.println("Line " + lineno + " : " + charat);
+			System.out.println("[Expr] Line " + lineno + " : " + charat);
 	}
 }
