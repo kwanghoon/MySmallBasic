@@ -49,7 +49,7 @@ TextWindow.WriteLine("")
 
 TextWindow.WriteLine("Text.GetSubText Operation test")
 TextWindow.Write("ABCDEFG, 1, 3 : ")
-TextWindow.WriteLine(Text.GetSubText("ABCDEFG","1",3))
+TextWindow.WriteLine(Text.GetSubText("ABCDEFG",0,3))
 TextWindow.WriteLine("")
 
 TextWindow.WriteLine("Text.GetSubTextToEnd Operation test")

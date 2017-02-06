@@ -253,84 +253,93 @@ public class Text {
 	
 	//Text.GetSubText(text, start, length)
 	//Gets a sub-text from the given text.
-	public static Value GetSubText(ArrayList<Value> args) {
+	public static Value GetSubText(ArrayList<Value> args) throws Throwable {
 
-		String str_arg0;
-		double dbl_arg1;
-		double dbl_arg2;
+		try {
+			
+			String str_arg0;
+			double dbl_arg1;
+			double dbl_arg2;
 
-		if (args.size() == 3) {
+			if (args.size() == 3) {
 
-			if (args.get(0) instanceof DoubleV) {
+				if (args.get(0) instanceof DoubleV) {
 
-				str_arg0 = args.get(0).toString();
+					str_arg0 = args.get(0).toString();
 
-			} else if (args.get(0) instanceof StrV) {
+				} else if (args.get(0) instanceof StrV) {
 
-				str_arg0 = ((StrV) args.get(0)).getValue();
+					str_arg0 = ((StrV) args.get(0)).getValue();
 
-			} else {
+				} else {
 
-				throw new InterpretException("GetSubText : Unexpected 1st argument");
+					throw new InterpretException("GetSubText : Unexpected 1st argument");
 
-			}
+				}
 
-			if (args.get(1) instanceof DoubleV) {
+				if (args.get(1) instanceof DoubleV) {
 
-				dbl_arg1 = ((DoubleV) args.get(1)).getValue();
+					dbl_arg1 = ((DoubleV) args.get(1)).getValue();
 
-			} else if (args.get(1) instanceof StrV) {
+				} else if (args.get(1) instanceof StrV) {
 
-				String arg = ((StrV) args.get(1)).getValue();
+					String arg = ((StrV) args.get(1)).getValue();
 
-				try {
+					try {
 
-					dbl_arg1 = Double.parseDouble(arg);
+						dbl_arg1 = Double.parseDouble(arg);
 
-				} catch (NumberFormatException e) {
+					} catch (NumberFormatException e) {
 
-					throw new InterpretException(" GetSubText : Unexpected StrV arg : " + arg);
+						throw new InterpretException(" GetSubText : Unexpected StrV arg : " + arg);
+
+					}
+
+				} else {
+
+					throw new InterpretException("GetSubText : Unexpected 2nd arg");
+
+				}
+
+				if (args.get(2) instanceof DoubleV) {
+
+					dbl_arg2 = ((DoubleV) args.get(2)).getValue();
+
+				} else if (args.get(2) instanceof StrV) {
+
+					String arg = ((StrV) args.get(2)).getValue();
+
+					try {
+
+						dbl_arg2 = Double.parseDouble(arg);
+
+					} catch (NumberFormatException e) {
+
+						throw new InterpretException("GetSubText : Unexpected StrV arg : " + arg);
+
+					}
+
+				} else {
+
+					throw new InterpretException("GetSubText : Unexpected 3rd arg");
 
 				}
 
 			} else {
 
-				throw new InterpretException("GetSubText : Unexpected 2nd arg");
-
+				throw new InterpretException("GetSubText : Unexpected # of args: " + args.size());
+				
 			}
+			
+			return new StrV(str_arg0.substring((int)(dbl_arg1 - 1), (int)(dbl_arg1 + dbl_arg2 - 1))) ;
 
-			if (args.get(2) instanceof DoubleV) {
-
-				dbl_arg2 = ((DoubleV) args.get(2)).getValue();
-
-			} else if (args.get(2) instanceof StrV) {
-
-				String arg = ((StrV) args.get(2)).getValue();
-
-				try {
-
-					dbl_arg2 = Double.parseDouble(arg);
-
-				} catch (NumberFormatException e) {
-
-					throw new InterpretException("GetSubText : Unexpected StrV arg : " + arg);
-
-				}
-
-			} else {
-
-				throw new InterpretException("GetSubText : Unexpected 3rd arg");
-
-			}
-
-		} else {
-
-			throw new InterpretException("GetSubText : Unexpected # of args: " + args.size());
+			
+		} catch ( Throwable e ) {
+			
+			return null ;
 			
 		}
 		
-		return new StrV(str_arg0.substring((int)(dbl_arg1 - 1), (int)(dbl_arg1 + dbl_arg2 - 1))) ;
-
 	}
 	
 	//Text.GetSubTextToEnd(text, start)
