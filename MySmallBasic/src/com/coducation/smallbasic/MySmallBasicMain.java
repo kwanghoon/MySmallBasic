@@ -96,5 +96,8 @@ public class MySmallBasicMain {
 		} else {
 			System.err.println("Tree is not BlockStmt.");
 		}
+		
+		System.out.print("Press any key to continue...");
+		new Scanner(System.in).nextLine();
 	}
 }
