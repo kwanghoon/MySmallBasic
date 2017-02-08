@@ -7,6 +7,8 @@ TextWindow.Write("123 + 456 : ")
 TextWindow.WriteLine(Text.Append(123,456))
 TextWindow.Write("123456789 + 11 : ")
 TextWindow.WriteLine(Text.Append(123456789,11))
+TextWindow.Write("123456789123456789 + 11 : ")
+TextWindow.WriteLine(Text.Append(123456789123456789,11))
 TextWindow.WriteLine("")
 
 TextWindow.WriteLine("Text.GetLength Operation test")
@@ -49,7 +51,7 @@ TextWindow.WriteLine("")
 
 TextWindow.WriteLine("Text.GetSubText Operation test")
 TextWindow.Write("ABCDEFG, 1, 3 : ")
-TextWindow.WriteLine(Text.GetSubText("ABCDEFG",0,3))
+TextWindow.WriteLine(Text.GetSubText("ABCDEFG",1,3))
 TextWindow.WriteLine("")
 
 TextWindow.WriteLine("Text.GetSubTextToEnd Operation test")

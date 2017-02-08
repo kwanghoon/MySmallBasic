@@ -67,11 +67,11 @@ public class Program {
 		
 		if (args.size() == 0) {
 			
-			System.exit(0);
+			throw new InterpretException("Program End", true);
 
-		} else
+		} /*else
 
-			throw new InterpretException("End : Unexpected # of args : " + args.size());
+			throw new InterpretException("End : Unexpected # of args : " + args.size());*/
 		
 		return null;
 		
