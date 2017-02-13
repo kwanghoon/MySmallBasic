@@ -1,4 +1,4 @@
-﻿package com.coducation.smallbasic.lib;
+package com.coducation.smallbasic.lib;
 
 import java.util.ArrayList;
 import java.awt.event.ActionEvent;
