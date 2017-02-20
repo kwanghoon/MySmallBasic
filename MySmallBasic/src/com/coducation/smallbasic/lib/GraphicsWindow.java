@@ -1,4 +1,4 @@
-package com.coducation.smallbasic.lib; 
+package com.coducation.smallbasic.lib;
 
 import java.awt.AWTException;
 import java.awt.AlphaComposite;
@@ -1436,6 +1436,11 @@ public class GraphicsWindow {
 		ArrayList<Cmd> cmds = shapeMap.get(shapeName);
 
 		if (cmds != null) {
+			if (scaleX < 0.1 || scaleX > 20)
+				throw new InterpretException("Not a valid number : " + scaleX);
+			if (scaleY < 0.1 || scaleY > 20)
+				throw new InterpretException("Not a valid number : " + scaleY);
+
 			for (Cmd cmd : cmds) {
 				cmd.scaleX = scaleX;
 				cmd.scaleY = scaleY;
@@ -1445,7 +1450,48 @@ public class GraphicsWindow {
 	}
 
 	public static void Animate(String shapeName, double x, double y, int duration) {
+		ArrayList<Cmd> cmds = shapeMap.get(shapeName);
 
+		if (cmds != null) {
+			if (duration < 0 || duration > 100000000)
+				throw new InterpretException("Not a valid number : " + duration);
+
+			if (x != 0 && y != 0) {
+				if (duration == 0) {
+					for (Cmd cmd : cmds) {
+						if (cmd instanceof DrawLineCmd) {
+							DrawLineCmd lineCmd = (DrawLineCmd) cmd;
+							lineCmd.Move(lineCmd.x1 + x, lineCmd.y1 + y);
+							lineCmd.x = x;
+							lineCmd.y = y;
+						} else if (cmd instanceof DrawTriangleCmd) {
+							DrawTriangleCmd triCmd = (DrawTriangleCmd) cmd;
+							triCmd.Move(triCmd.xs[0] + x, triCmd.ys[0] + y);
+							triCmd.x = x;
+							triCmd.y = y;
+						} else if (cmd instanceof FillTriangleCmd) {
+							FillTriangleCmd triCmd = (FillTriangleCmd) cmd;
+							triCmd.Move(triCmd.xs[0] + x, triCmd.ys[0] + y);
+							triCmd.x = x;
+							triCmd.y = y;
+						} else
+							cmd.Move(x, y);
+						panel.repaint();
+					}
+				} else {
+					for (int i = 1; i <= duration / 100; i++) {
+						for (Cmd cmd : cmds) {
+							double a_x = x / duration;
+							double a_y = y / duration;
+
+							cmd.Move(a_x * i, a_y * i);
+						}
+						panel.repaint();
+						// 100 millisecond delay
+					}
+				}
+			}
+		}
 	}
 
 	public static double GetLeft(String shapeName) {
@@ -1462,7 +1508,7 @@ public class GraphicsWindow {
 		ArrayList<Cmd> cmds = shapeMap.get(shapeName);
 
 		if (cmds != null) {
-			return cmds.get(0).x;
+			return cmds.get(0).y;
 		}
 
 		return 0;
@@ -2107,10 +2153,11 @@ public class GraphicsWindow {
 	private static final Value defaultBrushColor = new StrV("#6A5ACD");
 	private static final Value defaultPenColor = new StrV("#000000");
 	private static final Value defaultBackgroundColor = new StrV("#FFFFFF");
+	private static final Value defaultCanResize = new StrV("True");
 
 	public static Value BackgroundColor = GraphicsWindow.defaultBackgroundColor; // white
 	public static Value BrushColor = GraphicsWindow.defaultBrushColor;
-	public static Value CanResize = new StrV("True");
+	public static Value CanResize = GraphicsWindow.defaultCanResize;
 	public static Value FontBold = new StrV("True");
 	public static Value FontItalic = new StrV("False");
 	public static Value FontName = new StrV("Tahoma");
@@ -2238,6 +2285,8 @@ public class GraphicsWindow {
 				BackgroundColor = hexColor((StrV) BackgroundColor, GraphicsWindow.defaultBackgroundColor);
 			} else
 				throw new InterpretException("BackgroundColor: Unexpected value" + BrushColor.toString());
+		} else if ("CanResize".equalsIgnoreCase(fieldName)) {
+			
 		} else {
 		}
 	}
