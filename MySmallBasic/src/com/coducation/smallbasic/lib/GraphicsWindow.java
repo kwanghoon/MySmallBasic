@@ -1479,16 +1479,38 @@ public class GraphicsWindow {
 						panel.repaint();
 					}
 				} else {
-					for (int i = 1; i <= duration / 100; i++) {
-						for (Cmd cmd : cmds) {
-							double a_x = x / duration;
-							double a_y = y / duration;
+					ActionListener animate_action = new ActionListener() {
+						public int i = 1;
+						@Override
+						public void actionPerformed(ActionEvent e) {
+							for (Cmd cmd : cmds) {
+								double a_x = x / duration;
+								double a_y = y / duration;
 
-							cmd.Move(a_x * i, a_y * i);
+								if (cmd instanceof DrawLineCmd) {
+									DrawLineCmd lineCmd = (DrawLineCmd) cmd;
+									lineCmd.Move(lineCmd.x1 + a_x * i, lineCmd.y1 + a_y * i);
+									lineCmd.x = a_x * i;
+									lineCmd.y = a_y * i;
+								} else if (cmd instanceof DrawTriangleCmd) {
+									DrawTriangleCmd triCmd = (DrawTriangleCmd) cmd;
+									triCmd.Move(triCmd.xs[0] + a_x * i, triCmd.ys[0] + a_y * i);
+									triCmd.x = a_x * i;
+									triCmd.y = a_y * i;
+								} else if (cmd instanceof FillTriangleCmd) {
+									FillTriangleCmd triCmd = (FillTriangleCmd) cmd;
+									triCmd.Move(triCmd.xs[0] + a_x * i, triCmd.ys[0] + a_y * i);
+									triCmd.x = a_x * i;
+									triCmd.y = a_y * i;
+								} else
+									cmd.Move(x, y);
+							}
+							panel.repaint();
+							i++;
 						}
-						panel.repaint();
-						// 100 millisecond delay
-					}
+					};
+					javax.swing.Timer animate = new javax.swing.Timer(50, animate_action);
+					animate.start();
 				}
 			}
 		}
