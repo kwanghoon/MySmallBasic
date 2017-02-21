@@ -1529,7 +1529,7 @@ public class GraphicsWindow {
 					}
 
 					lineCmd.Move(lineCmd.x1 + a_x, lineCmd.y1 + a_y);
-					lineCmd.x  = x;
+					lineCmd.x = x;
 					lineCmd.y = y;
 				} else if (cmd instanceof DrawTriangleCmd) {
 					DrawTriangleCmd triCmd = (DrawTriangleCmd) cmd;
@@ -2387,6 +2387,12 @@ public class GraphicsWindow {
 				throw new InterpretException("BackgroundColor: Unexpected value" + BrushColor.toString());
 		} else if ("CanResize".equalsIgnoreCase(fieldName)) {
 
+		} else if ("Title".equalsIgnoreCase(fieldName)) {
+
+		} else if ("Heigt".equalsIgnoreCase(fieldName)) {
+			
+		} else if ("Width".equalsIgnoreCase(fieldName)) {
+			
 		} else {
 		}
 	}
