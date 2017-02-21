@@ -46,6 +46,8 @@ import com.coducation.smallbasic.InterpretException;
 import com.coducation.smallbasic.StrV;
 import com.coducation.smallbasic.Value;
 
+import javafx.util.Pair;
+
 public class GraphicsWindow {
 	public static void Clear(ArrayList<Value> args) {
 		// 그래픽 창에 표시된 모든 것을 지움
@@ -1436,10 +1438,15 @@ public class GraphicsWindow {
 		ArrayList<Cmd> cmds = shapeMap.get(shapeName);
 
 		if (cmds != null) {
-			if (scaleX < 0.1 || scaleX > 20)
-				throw new InterpretException("Not a valid number : " + scaleX);
-			if (scaleY < 0.1 || scaleY > 20)
-				throw new InterpretException("Not a valid number : " + scaleY);
+			if (scaleX < 0.1)
+				scaleX = 0.1;
+			else if (scaleX > 20)
+				scaleX = 20;
+
+			if (scaleY < 0.1)
+				scaleY = 0.1;
+			else if (scaleY > 20)
+				scaleY = 20;
 
 			for (Cmd cmd : cmds) {
 				cmd.scaleX = scaleX;
@@ -1456,62 +1463,133 @@ public class GraphicsWindow {
 			if (duration < 0 || duration > 100000000)
 				throw new InterpretException("Not a valid number : " + duration);
 
-			if (x != 0 && y != 0) {
-				if (duration == 0) {
-					for (Cmd cmd : cmds) {
-						if (cmd instanceof DrawLineCmd) {
-							DrawLineCmd lineCmd = (DrawLineCmd) cmd;
-							lineCmd.Move(lineCmd.x1 + x, lineCmd.y1 + y);
-							lineCmd.x = x;
-							lineCmd.y = y;
-						} else if (cmd instanceof DrawTriangleCmd) {
-							DrawTriangleCmd triCmd = (DrawTriangleCmd) cmd;
-							triCmd.Move(triCmd.xs[0] + x, triCmd.ys[0] + y);
-							triCmd.x = x;
-							triCmd.y = y;
-						} else if (cmd instanceof FillTriangleCmd) {
-							FillTriangleCmd triCmd = (FillTriangleCmd) cmd;
-							triCmd.Move(triCmd.xs[0] + x, triCmd.ys[0] + y);
-							triCmd.x = x;
-							triCmd.y = y;
-						} else
-							cmd.Move(x, y);
-						panel.repaint();
-					}
-				} else {
-					ActionListener animate_action = new ActionListener() {
-						public int i = 1;
-						@Override
-						public void actionPerformed(ActionEvent e) {
-							for (Cmd cmd : cmds) {
-								double a_x = x / duration;
-								double a_y = y / duration;
-
-								if (cmd instanceof DrawLineCmd) {
-									DrawLineCmd lineCmd = (DrawLineCmd) cmd;
-									lineCmd.Move(lineCmd.x1 + a_x * i, lineCmd.y1 + a_y * i);
-									lineCmd.x = a_x * i;
-									lineCmd.y = a_y * i;
-								} else if (cmd instanceof DrawTriangleCmd) {
-									DrawTriangleCmd triCmd = (DrawTriangleCmd) cmd;
-									triCmd.Move(triCmd.xs[0] + a_x * i, triCmd.ys[0] + a_y * i);
-									triCmd.x = a_x * i;
-									triCmd.y = a_y * i;
-								} else if (cmd instanceof FillTriangleCmd) {
-									FillTriangleCmd triCmd = (FillTriangleCmd) cmd;
-									triCmd.Move(triCmd.xs[0] + a_x * i, triCmd.ys[0] + a_y * i);
-									triCmd.x = a_x * i;
-									triCmd.y = a_y * i;
-								} else
-									cmd.Move(x, y);
-							}
-							panel.repaint();
-							i++;
-						}
-					};
-					javax.swing.Timer animate = new javax.swing.Timer(50, animate_action);
-					animate.start();
+			if (duration == 0) {
+				for (Cmd cmd : cmds) {
+					if (cmd instanceof DrawLineCmd) {
+						DrawLineCmd lineCmd = (DrawLineCmd) cmd;
+						lineCmd.Move(lineCmd.x1 + x, lineCmd.y1 + y);
+						lineCmd.x = x;
+						lineCmd.y = y;
+					} else if (cmd instanceof DrawTriangleCmd) {
+						DrawTriangleCmd triCmd = (DrawTriangleCmd) cmd;
+						triCmd.Move(triCmd.xs[0] + x, triCmd.ys[0] + y);
+						triCmd.x = x;
+						triCmd.y = y;
+					} else if (cmd instanceof FillTriangleCmd) {
+						FillTriangleCmd triCmd = (FillTriangleCmd) cmd;
+						triCmd.Move(triCmd.xs[0] + x, triCmd.ys[0] + y);
+						triCmd.x = x;
+						triCmd.y = y;
+					} else
+						cmd.Move(x, y);
+					panel.repaint();
 				}
+			} else {
+				MyActionListener animate_action = new MyActionListener(cmds, x, y, duration);
+				javax.swing.Timer animate = new javax.swing.Timer(100, animate_action);
+				animate_action.timer = animate;
+				animate.start();
+			}
+		}
+	}
+
+	static class MyActionListener implements ActionListener {
+		int i = 1;
+		ArrayList<Cmd> cmds;
+		int times;
+		double x, y;
+		public javax.swing.Timer timer;
+
+		public MyActionListener(ArrayList<Cmd> cmds, double x, double y, int duration) {
+			this.cmds = cmds;
+			this.x = x;
+			this.y = y;
+			this.times = duration / 100;
+		}
+
+		ArrayList<Pair<Double, Double>> a_pair = new ArrayList<>();
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			int n = 0;
+			for (Cmd cmd : cmds) {
+				if (cmd instanceof DrawLineCmd) {
+					DrawLineCmd lineCmd = (DrawLineCmd) cmd;
+					double a_x;
+					double a_y;
+
+					if (i == 1) {
+						a_x = (x - lineCmd.x) / times;
+						a_y = (y - lineCmd.y) / times;
+						Pair<Double, Double> pair = new Pair<>(a_x, a_y);
+						a_pair.add(pair);
+					} else {
+						a_x = a_pair.get(n).getKey();
+						a_y = a_pair.get(n).getValue();
+					}
+
+					lineCmd.Move(lineCmd.x1 + a_x, lineCmd.y1 + a_y);
+					lineCmd.x  = x;
+					lineCmd.y = y;
+				} else if (cmd instanceof DrawTriangleCmd) {
+					DrawTriangleCmd triCmd = (DrawTriangleCmd) cmd;
+					double a_x;
+					double a_y;
+
+					if (i == 1) {
+						a_x = (x - triCmd.x) / times;
+						a_y = (y - triCmd.y) / times;
+						Pair<Double, Double> pair = new Pair<>(a_x, a_y);
+						a_pair.add(pair);
+					} else {
+						a_x = a_pair.get(n).getKey();
+						a_y = a_pair.get(n).getValue();
+					}
+
+					triCmd.Move(triCmd.xs[0] + a_x, triCmd.ys[0] + a_y);
+					triCmd.x = x;
+					triCmd.y = y;
+				} else if (cmd instanceof FillTriangleCmd) {
+					FillTriangleCmd triCmd = (FillTriangleCmd) cmd;
+					double a_x;
+					double a_y;
+
+					if (i == 1) {
+						a_x = (x - triCmd.x) / times;
+						a_y = (y - triCmd.y) / times;
+						Pair<Double, Double> pair = new Pair<>(a_x, a_y);
+						a_pair.add(pair);
+					} else {
+						a_x = a_pair.get(n).getKey();
+						a_y = a_pair.get(n).getValue();
+					}
+
+					triCmd.Move(triCmd.xs[0] + a_x, triCmd.ys[0] + a_y);
+					triCmd.x = x;
+					triCmd.y = y;
+				} else {
+					double a_x;
+					double a_y;
+
+					if (i == 1) {
+						a_x = (x - cmd.x) / times;
+						a_y = (y - cmd.y) / times;
+						Pair<Double, Double> pair = new Pair<>(a_x, a_y);
+						a_pair.add(pair);
+					} else {
+						a_x = a_pair.get(n).getKey();
+						a_y = a_pair.get(n).getValue();
+					}
+
+					cmd.Move(cmd.x + a_x, cmd.y + a_y);
+				}
+				n++;
+			}
+			panel.repaint();
+			i++;
+
+			if (i > times) {
+				timer.stop();
 			}
 		}
 	}
@@ -2308,7 +2386,7 @@ public class GraphicsWindow {
 			} else
 				throw new InterpretException("BackgroundColor: Unexpected value" + BrushColor.toString());
 		} else if ("CanResize".equalsIgnoreCase(fieldName)) {
-			
+
 		} else {
 		}
 	}

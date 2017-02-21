@@ -1,7 +1,7 @@
 first = Shapes.AddTriangle(200, 200, 100, 150, 50, 150)
 
 TextWindow.Read()
-Shapes.Animate(first, 400, 100, 1000)
+Shapes.Animate(first, 0, 0, 1000)
 
 TextWindow.Read()
 TextWindow.WriteLine(Shapes.GetLeft(first))
