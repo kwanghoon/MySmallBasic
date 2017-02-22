@@ -45,8 +45,7 @@ import com.coducation.smallbasic.Eval;
 import com.coducation.smallbasic.InterpretException;
 import com.coducation.smallbasic.StrV;
 import com.coducation.smallbasic.Value;
-
-import javafx.util.Pair;
+import com.coducation.smallbasic.util.Pair;
 
 public class GraphicsWindow {
 	public static void Clear(ArrayList<Value> args) {
@@ -1524,8 +1523,8 @@ public class GraphicsWindow {
 						Pair<Double, Double> pair = new Pair<>(a_x, a_y);
 						a_pair.add(pair);
 					} else {
-						a_x = a_pair.get(n).getKey();
-						a_y = a_pair.get(n).getValue();
+						a_x = a_pair.get(n).getFst();
+						a_y = a_pair.get(n).getSec();
 					}
 
 					lineCmd.Move(lineCmd.x1 + a_x, lineCmd.y1 + a_y);
@@ -1542,8 +1541,8 @@ public class GraphicsWindow {
 						Pair<Double, Double> pair = new Pair<>(a_x, a_y);
 						a_pair.add(pair);
 					} else {
-						a_x = a_pair.get(n).getKey();
-						a_y = a_pair.get(n).getValue();
+						a_x = a_pair.get(n).getFst();
+						a_y = a_pair.get(n).getSec();
 					}
 
 					triCmd.Move(triCmd.xs[0] + a_x, triCmd.ys[0] + a_y);
@@ -1560,8 +1559,8 @@ public class GraphicsWindow {
 						Pair<Double, Double> pair = new Pair<>(a_x, a_y);
 						a_pair.add(pair);
 					} else {
-						a_x = a_pair.get(n).getKey();
-						a_y = a_pair.get(n).getValue();
+						a_x = a_pair.get(n).getFst();
+						a_y = a_pair.get(n).getSec();
 					}
 
 					triCmd.Move(triCmd.xs[0] + a_x, triCmd.ys[0] + a_y);
@@ -1577,8 +1576,8 @@ public class GraphicsWindow {
 						Pair<Double, Double> pair = new Pair<>(a_x, a_y);
 						a_pair.add(pair);
 					} else {
-						a_x = a_pair.get(n).getKey();
-						a_y = a_pair.get(n).getValue();
+						a_x = a_pair.get(n).getFst();
+						a_y = a_pair.get(n).getSec();
 					}
 
 					cmd.Move(cmd.x + a_x, cmd.y + a_y);
@@ -2254,25 +2253,35 @@ public class GraphicsWindow {
 	private static final Value defaultPenColor = new StrV("#000000");
 	private static final Value defaultBackgroundColor = new StrV("#FFFFFF");
 	private static final Value defaultCanResize = new StrV("True");
+	private static final Value defaultTitle = new StrV("Small Basic Graphics Window");
+	private static final Value defaultHeight = new DoubleV(480);
+	private static final Value defaultWidth = new DoubleV(640);
+	private static final Value defaultLeft = new DoubleV(51.2);
+	private static final Value defaultTop = new DoubleV(51.2);
+	private static final Value defaultFontBold = new StrV("True");
+	private static final Value defaultFontItalic = new StrV("False");
+	private static final Value defaultFontName = new StrV("Tahoma");
+	private static final Value defaultFontSize = new DoubleV(12);
+	private static final Value defaultPenWidth = new DoubleV(2);
 
 	public static Value BackgroundColor = GraphicsWindow.defaultBackgroundColor; // white
 	public static Value BrushColor = GraphicsWindow.defaultBrushColor;
 	public static Value CanResize = GraphicsWindow.defaultCanResize;
-	public static Value FontBold = new StrV("True");
-	public static Value FontItalic = new StrV("False");
-	public static Value FontName = new StrV("Tahoma");
-	public static Value FontSize = new DoubleV(12);
-	public static Value Height = new DoubleV(480);
+	public static Value FontBold = GraphicsWindow.defaultFontBold;
+	public static Value FontItalic = GraphicsWindow.defaultFontItalic;
+	public static Value FontName = GraphicsWindow.defaultFontName;
+	public static Value FontSize = GraphicsWindow.defaultFontSize;
+	public static Value Height = GraphicsWindow.defaultHeight;
 	public static Value LastKey;
 	public static Value LastText;
-	public static Value Left = new DoubleV(51.2);
+	public static Value Left = GraphicsWindow.defaultLeft;
 	public static Value MouseX;
 	public static Value MouseY;
-	public static Value PenColor = defaultPenColor; // black
-	public static Value PenWidth = new DoubleV(2);
-	public static Value Title = new StrV("Small Basic Graphics Window");
-	public static Value Top = new DoubleV(51.2);
-	public static Value Width = new DoubleV(640);
+	public static Value PenColor = GraphicsWindow.defaultPenColor; // black
+	public static Value PenWidth = GraphicsWindow.defaultPenWidth;
+	public static Value Title = GraphicsWindow.defaultTitle;
+	public static Value Top = GraphicsWindow.defaultTop;
+	public static Value Width = GraphicsWindow.defaultWidth;
 
 	public static Value KeyDown;
 	public static Value KeyUp;
@@ -2385,14 +2394,6 @@ public class GraphicsWindow {
 				BackgroundColor = hexColor((StrV) BackgroundColor, GraphicsWindow.defaultBackgroundColor);
 			} else
 				throw new InterpretException("BackgroundColor: Unexpected value" + BrushColor.toString());
-		} else if ("CanResize".equalsIgnoreCase(fieldName)) {
-
-		} else if ("Title".equalsIgnoreCase(fieldName)) {
-
-		} else if ("Heigt".equalsIgnoreCase(fieldName)) {
-			
-		} else if ("Width".equalsIgnoreCase(fieldName)) {
-			
 		} else {
 		}
 	}
