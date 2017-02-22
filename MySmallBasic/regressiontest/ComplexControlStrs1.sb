@@ -1,0 +1,21 @@
+y = 0
+If 1.0 > 0.0 And y <= 2 Or 1.0 < 0.0 And y >= 2 Then
+  TextWindow.WriteLine("Yes")
+EndIf
+
+x = 0
+While x = 0
+  If x = 0 Then
+    TextWindow.WriteLine("checkPoint 1")
+    
+    For y = 0 To 2
+      TextWindow.WriteLine("checkPoint 2")
+    EndFor
+  
+    TextWindow.WriteLine("checkPoint 3")
+  EndIf
+  
+  TextWindow.WriteLine("checkPoint 4")
+  TextWindow.WriteLine("y : " + y)
+  x = 1
+EndWhile
