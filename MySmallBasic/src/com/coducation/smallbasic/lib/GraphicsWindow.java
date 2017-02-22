@@ -270,8 +270,22 @@ public class GraphicsWindow {
 
 			setLocation(left, top);
 
-			int width = (int) ((DoubleV) Width).getValue();
-			int height = (int) ((DoubleV) Height).getValue();
+			int width;
+			int height;
+
+			if (Width instanceof DoubleV)
+				width = (int) ((DoubleV) Width).getValue();
+			else if (Width instanceof StrV && ((StrV) Width).isNumber())
+				width = (int) ((StrV) Width).parseDouble();
+			else
+				width = 0;
+
+			if (Height instanceof DoubleV)
+				height = (int) ((DoubleV) Height).getValue();
+			else if (Height instanceof StrV && ((StrV) Height).isNumber())
+				height = (int) ((StrV) Height).parseDouble();
+			else
+				height = 0;
 
 			panel = new Panel(width, height);
 			getContentPane().add(panel);
@@ -2394,6 +2408,32 @@ public class GraphicsWindow {
 				BackgroundColor = hexColor((StrV) BackgroundColor, GraphicsWindow.defaultBackgroundColor);
 			} else
 				throw new InterpretException("BackgroundColor: Unexpected value" + BrushColor.toString());
+		} else if ("CanResize".equalsIgnoreCase(fieldName)) {
+			if (CanResize instanceof StrV && CanResize.toString().equalsIgnoreCase("True"))
+				frame.setResizable(true);
+			else
+				frame.setResizable(false);
+		} else if ("Height".equalsIgnoreCase(fieldName) || "Width".equalsIgnoreCase(fieldName)) {
+			int width;
+			int height;
+
+			if (Width instanceof DoubleV)
+				width = (int) ((DoubleV) Width).getValue();
+			else if (Width instanceof StrV && ((StrV) Width).isNumber())
+				width = (int) ((StrV) Width).parseDouble();
+			else
+				width = 0;
+
+			if (Height instanceof DoubleV)
+				height = (int) ((DoubleV) Height).getValue();
+			else if (Height instanceof StrV && ((StrV) Height).isNumber())
+				height = (int) ((StrV) Height).parseDouble();
+			else
+				height = 0;
+
+			frame.setSize(new Dimension(width, height));
+		} else if ("Title".equalsIgnoreCase(fieldName)) {
+			frame.setTitle(Title.toString());
 		} else {
 		}
 	}
