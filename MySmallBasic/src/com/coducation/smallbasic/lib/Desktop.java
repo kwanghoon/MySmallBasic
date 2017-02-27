@@ -27,6 +27,12 @@ public class Desktop {
 	}
 
 	public static void notifyFieldRead(String fieldName) {
-		//비어두기 
+		if ("Width".equalsIgnoreCase(fieldName)) {
+			Width = new DoubleV(
+					Toolkit.getDefaultToolkit().getScreenSize().getWidth());
+		} else if("Height".equalsIgnoreCase(fieldName)) {
+			Height = new DoubleV(
+					Toolkit.getDefaultToolkit().getScreenSize().getHeight());
+		}
 	}
 }
