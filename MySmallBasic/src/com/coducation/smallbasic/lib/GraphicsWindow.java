@@ -337,12 +337,12 @@ public class GraphicsWindow {
 						DrawBoundTextCmd dbtc = (DrawBoundTextCmd) cmd;
 						color = ((StrV) dbtc.brushcolor).getValue();
 						g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) dbtc.opacity));
-						g2.rotate(java.lang.Math.toRadians(dbtc.degree));
+						//g2.rotate(java.lang.Math.toRadians(dbtc.degree));
 						g2.scale(dbtc.scaleX, dbtc.scaleY);
 						g2.setFont(dbtc.font);
 						g2.setColor(new Color(Integer.parseInt(color.substring(1), 16)));
 
-						g2.rotate(java.lang.Math.toRadians(-dbtc.degree));
+						//g2.rotate(java.lang.Math.toRadians(-dbtc.degree));
 						break;
 					case DRAWELLIPSE:
 						DrawEllipseCmd dec = (DrawEllipseCmd) cmd;
@@ -2434,6 +2434,25 @@ public class GraphicsWindow {
 			frame.setSize(new Dimension(width, height));
 		} else if ("Title".equalsIgnoreCase(fieldName)) {
 			frame.setTitle(Title.toString());
+		} else if("Left".equalsIgnoreCase(fieldName) || "Top".equalsIgnoreCase(fieldName)) {
+			int left;
+			int top;
+			
+			if(Left instanceof DoubleV)
+				left = (int) ((DoubleV) Left).getValue();
+			else if(Left instanceof StrV && ((StrV) Left).isNumber())
+				left = (int) ((StrV) Left).parseDouble();
+			else
+				left = (int) ((DoubleV) defaultLeft).getValue();
+			
+			if(Top instanceof DoubleV)
+				top = (int) ((DoubleV) Top).getValue();
+			else if(Top instanceof StrV && ((StrV) Top).isNumber())
+				top = (int) ((StrV) Top).parseDouble();
+			else
+				top = (int) ((DoubleV) Top).getValue();
+			
+			frame.setLocation(left, top);
 		} else {
 		}
 	}
