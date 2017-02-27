@@ -1,8 +1,3 @@
-y = 0
-If 1.0 > 0.0 And y <= 2 Or 1.0 < 0.0 And y >= 2 Then
-  TextWindow.WriteLine("Yes")
-EndIf
-
 x = 0
 While x = 0
   If x = 0 Then
