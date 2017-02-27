@@ -1,0 +1,18 @@
+x = 0
+For x = 0 to 0
+  If x = 0 Then
+    TextWindow.WriteLine("checkPoint 1")
+    
+    y = 0
+    While y <= 2
+      TextWindow.WriteLine("checkPoint 2")
+      y = y + 1
+    EndWhile
+  
+    TextWindow.WriteLine("checkPoint 3")
+  EndIf
+  
+  TextWindow.WriteLine("checkPoint 4")
+  TextWindow.WriteLine("y : " + y)
+  x = 1
+EndFor
