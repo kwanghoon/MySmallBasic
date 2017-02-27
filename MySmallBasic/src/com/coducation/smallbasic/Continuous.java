@@ -94,6 +94,7 @@ public class Continuous {
 
 	public Stmt transform(ForStmt forStmt, Stmt stmtk) {
 		String ltest = fresh();
+		String lstmtk = fresh();
 
 		// i = init value;
 		// Goto ltest;
@@ -148,9 +149,10 @@ public class Continuous {
 								CompExpr.GREATER_EQUAL, 
 								forStmt.getEnd()).copyInfo(forStmt.getEnd())).copyInfo(forStmt.getEnd()))
 				.copyInfo(forStmt.getEnd());
-		Stmt ltestStmt = newIfStmt(ltestCond, body, stmtk).copyInfo(forStmt.getEnd());
+		Stmt ltestStmt = newIfStmt(ltestCond, body, new GotoStmt(lstmtk)).copyInfo(forStmt.getEnd());
 
 		kMap.put(ltest, ltestStmt);
+		kMap.put(lstmtk, stmtk);
 
 		return linitStmt;
 	}
@@ -164,14 +166,17 @@ public class Continuous {
 	}
 
 	public Stmt transform(IfStmt ifStmt, Stmt stmtk) {
-		Stmt thenStmt = transform(ifStmt.getThen(), new BlockStmt(new ArrayList()));
+		String lmerge = fresh();
+		Stmt thenStmt = transform(ifStmt.getThen(), new GotoStmt(lmerge));
 		Stmt elseStmt;
 
+		kMap.put(lmerge, stmtk);
+		
 		if (ifStmt.getElse() != null) {
-			elseStmt = transform(ifStmt.getElse(), new BlockStmt(new ArrayList()));
-			return merge(newIfStmt(ifStmt.getCond(), thenStmt, elseStmt).copyInfo(ifStmt), stmtk);
+			elseStmt = transform(ifStmt.getElse(), new GotoStmt(lmerge));
+			return newIfStmt(ifStmt.getCond(), thenStmt, elseStmt).copyInfo(ifStmt);
 		} else {
-			return merge(newIfStmt(ifStmt.getCond(), thenStmt, null).copyInfo(ifStmt), stmtk);
+			return newIfStmt(ifStmt.getCond(), thenStmt, new GotoStmt(lmerge)).copyInfo(ifStmt);
 		}
 	}
 
