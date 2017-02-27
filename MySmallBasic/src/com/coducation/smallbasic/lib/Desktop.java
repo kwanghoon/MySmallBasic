@@ -1,5 +1,6 @@
 package com.coducation.smallbasic.lib;
 
+import java.awt.Toolkit;
 import java.util.ArrayList;
 
 import com.coducation.smallbasic.DoubleV;
@@ -10,8 +11,10 @@ public class Desktop {
 	public static Value Height;
 	
 	static {
-		Width = new DoubleV(1280);  // Need to fix!!
-		Height = new DoubleV(640);
+		Width = new DoubleV(
+					Toolkit.getDefaultToolkit().getScreenSize().getWidth());
+		Height = new DoubleV(
+					Toolkit.getDefaultToolkit().getScreenSize().getHeight());
 	}
 	
 	public static void SetWallPaper(ArrayList<Value> args) {
