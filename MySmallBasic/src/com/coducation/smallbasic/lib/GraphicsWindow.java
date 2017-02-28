@@ -337,12 +337,12 @@ public class GraphicsWindow {
 						DrawBoundTextCmd dbtc = (DrawBoundTextCmd) cmd;
 						color = ((StrV) dbtc.brushcolor).getValue();
 						g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) dbtc.opacity));
-						//g2.rotate(java.lang.Math.toRadians(dbtc.degree));
+						g2.rotate(java.lang.Math.toRadians(dbtc.degree));
 						g2.scale(dbtc.scaleX, dbtc.scaleY);
 						g2.setFont(dbtc.font);
 						g2.setColor(new Color(Integer.parseInt(color.substring(1), 16)));
 
-						//g2.rotate(java.lang.Math.toRadians(-dbtc.degree));
+						g2.rotate(java.lang.Math.toRadians(-dbtc.degree));
 						break;
 					case DRAWELLIPSE:
 						DrawEllipseCmd dec = (DrawEllipseCmd) cmd;
