@@ -2,13 +2,14 @@ package com.coducation.smallbasic.lib;
 
 import java.util.ArrayList;
 
+import com.coducation.smallbasic.ArrayV;
 import com.coducation.smallbasic.DoubleV;
 import com.coducation.smallbasic.InterpretException;
 import com.coducation.smallbasic.StrV;
 import com.coducation.smallbasic.Value;
 
 public class Shapes {
-	
+
 	public static Value AddRectangle(ArrayList<Value> args) {
 		// width, height
 		// GraphicsWiindow에 사각형을 추가한 창을 반환
@@ -28,9 +29,9 @@ public class Shapes {
 				height = (int) ((StrV) args.get(1)).parseDouble();
 			} else
 				throw new InterpretException("Unexpected type " + args.get(1));
-					
+
 			String id = GraphicsWindow.AddRectangle(width, height);
-			
+
 			return new StrV(id);
 		} else
 			throw new InterpretException("Unexpected # of args " + args.size());
@@ -55,10 +56,10 @@ public class Shapes {
 				height = (int) ((StrV) args.get(1)).parseDouble();
 			} else
 				throw new InterpretException("Unexpected type " + args.get(1));
-			
+
 			String id = GraphicsWindow.AddEllipse(width, height);
-			
-			return new StrV(id);			
+
+			return new StrV(id);
 		} else
 			throw new InterpretException("Unexpected # of args " + args.size());
 	}
@@ -79,7 +80,7 @@ public class Shapes {
 			}
 
 			String id = GraphicsWindow.AddTriangle(values[0], values[1], values[2], values[3], values[4], values[5]);
-			
+
 			return new StrV(id);
 		} else
 			throw new InterpretException("Unexpected # of args " + args.size());
@@ -99,9 +100,9 @@ public class Shapes {
 				} else
 					throw new InterpretException("Unexpected type " + args.get(i));
 			}
-			
+
 			String id = GraphicsWindow.AddLine(values[0], values[1], values[2], values[3]);
-			
+
 			return new StrV(id);
 		} else
 			throw new InterpretException("Unexpected # of args " + args.size());
@@ -116,9 +117,9 @@ public class Shapes {
 				name = ((StrV) args.get(0)).getValue();
 			} else
 				throw new InterpretException("Unexpected type " + args.get(0));
-			
+
 			String id = GraphicsWindow.AddImage(name);
-			
+
 			return new StrV(id);
 		} else
 			throw new InterpretException("Unexpected # of args " + args.size());
@@ -133,9 +134,9 @@ public class Shapes {
 				text = args.get(0).toString();
 			} else
 				throw new InterpretException("Unexpected type " + args.get(0));
-			
+
 			String id = GraphicsWindow.AddText(text);
-			
+
 			return new StrV(id);
 		} else
 			throw new InterpretException("Unexpected # of args " + args.size());
@@ -156,9 +157,9 @@ public class Shapes {
 				text = args.get(1).toString();
 			} else
 				throw new InterpretException("Unexpected type " + args.get(1));
-			
+
 			GraphicsWindow.SetText(name, text);
-			
+
 		} else
 			throw new InterpretException("Unexpected # of args " + args.size());
 	}
@@ -169,8 +170,27 @@ public class Shapes {
 		if (args.size() == 1) {
 			if (args.get(0) instanceof StrV) {
 				String shape = ((StrV) args.get(0)).getValue();
-				
+
 				GraphicsWindow.ShapesRemove(shape);
+			} else if (args.get(0) instanceof ArrayV) {
+				ArrayV arr = (ArrayV) args.get(0);
+				ArrayV key = arr.getKey();
+
+				for (int i = 1; i < key.size(); i++) {
+					Value arr_value = arr.get(key.get(Integer.toString(i)).toString());
+
+					if (arr_value instanceof ArrayV) {
+						ArrayList<Value> arg = new ArrayList<>();
+						arg.add(arr_value);
+						Shapes.Remove(arg);
+					} else if (arr_value instanceof StrV) {
+						String name = ((StrV) arr_value).getValue();
+
+						GraphicsWindow.ShapesRemove(name);
+					}
+				}
+			} else if (args.get(0) == null) {
+				GraphicsWindow.ShapesRemove("");
 			} else
 				throw new InterpretException("Unexpected type " + args.get(0));
 		} else
@@ -183,13 +203,12 @@ public class Shapes {
 		if (args.size() == 3) {
 			String shape;
 			int x, y;
-			
+
 			if (args.get(0) instanceof StrV) {
 				shape = ((StrV) args.get(0)).getValue();
-			} else if(args.get(0) == null) {
+			} else if (args.get(0) == null) {
 				shape = "";
-			}
-			else
+			} else
 				throw new InterpretException("Unexpected type " + args.get(0));
 
 			if (args.get(1) instanceof DoubleV) {
@@ -205,9 +224,9 @@ public class Shapes {
 				y = (int) ((StrV) args.get(2)).parseDouble();
 			} else
 				throw new InterpretException("Unexpected type " + args.get(2));
-			
+
 			GraphicsWindow.ShapesMove(shape, x, y);
-			
+
 		} else
 			throw new InterpretException("Unexpected # of args " + args.size());
 	}
@@ -218,7 +237,7 @@ public class Shapes {
 		if (args.size() == 2) {
 			String shapeName;
 			double angle;
-			
+
 			if (args.get(0) instanceof StrV) {
 				shapeName = ((StrV) args.get(0)).getValue();
 			} else
@@ -230,7 +249,7 @@ public class Shapes {
 				angle = ((StrV) args.get(1)).parseDouble();
 			} else
 				throw new InterpretException("Unexpected type " + args.get(1));
-			
+
 			GraphicsWindow.Rotate(shapeName, angle);
 		} else
 			throw new InterpretException("Unexpected # of args " + args.size());
@@ -242,26 +261,26 @@ public class Shapes {
 		if (args.size() == 3) {
 			String shapeName;
 			double scaleX, scaleY;
-			
-			if(args.get(0) instanceof StrV) {
+
+			if (args.get(0) instanceof StrV) {
 				shapeName = ((StrV) args.get(0)).getValue();
 			} else
 				throw new InterpretException("Unexpected type " + args.get(0));
-			
-			if(args.get(1) instanceof DoubleV) {
+
+			if (args.get(1) instanceof DoubleV) {
 				scaleX = ((DoubleV) args.get(1)).getValue();
-			} else if(args.get(1) instanceof StrV && ((StrV) args.get(1)).isNumber()) {
+			} else if (args.get(1) instanceof StrV && ((StrV) args.get(1)).isNumber()) {
 				scaleX = ((StrV) args.get(1)).parseDouble();
 			} else
 				throw new InterpretException("Unexpected type " + args.get(1));
-			
-			if(args.get(2) instanceof DoubleV) {
+
+			if (args.get(2) instanceof DoubleV) {
 				scaleY = ((DoubleV) args.get(2)).getValue();
-			} else if(args.get(2) instanceof StrV && ((StrV) args.get(2)).isNumber()) {
+			} else if (args.get(2) instanceof StrV && ((StrV) args.get(2)).isNumber()) {
 				scaleY = ((StrV) args.get(2)).parseDouble();
 			} else
 				throw new InterpretException("Unexpected type " + args.get(2));
-			
+
 			GraphicsWindow.Zoom(shapeName, scaleX, scaleY);
 		} else
 			throw new InterpretException("Unexpected # of args " + args.size());
@@ -272,25 +291,25 @@ public class Shapes {
 		// shapeName에 해당하는 shape를 새로운 x, y로 움직임
 		if (args.size() == 4) {
 			String shapeName;
-			int[] values = new int[args.size()-1];
+			int[] values = new int[args.size() - 1];
 			if (args.get(0) instanceof StrV) {
 				shapeName = ((StrV) args.get(0)).getValue();
+			} else if (args.get(0) == null) {
+				shapeName = "";
 			} else
 				throw new InterpretException("Unexpected type " + args.get(0));
-			
-			for(int i = 1; i<args.size();i++) {
-				if(args.get(i) instanceof DoubleV) {
-					values[i-1] = (int) ((DoubleV) args.get(i)).getValue();
-				}
-				else if(args.get(i) instanceof StrV && ((StrV) args.get(i)).isNumber()) {
-					values[i-1] = (int) ((StrV) args.get(i)).parseDouble();
-				}
-				else
+
+			for (int i = 1; i < args.size(); i++) {
+				if (args.get(i) instanceof DoubleV) {
+					values[i - 1] = (int) ((DoubleV) args.get(i)).getValue();
+				} else if (args.get(i) instanceof StrV && ((StrV) args.get(i)).isNumber()) {
+					values[i - 1] = (int) ((StrV) args.get(i)).parseDouble();
+				} else
 					throw new InterpretException("Unexpected type " + args.get(i));
 			}
-			
+
 			GraphicsWindow.Animate(shapeName, values[0], values[1], values[2]);
-			
+
 		} else
 			throw new InterpretException("Unexpected # of args " + args.size());
 	}
@@ -304,9 +323,9 @@ public class Shapes {
 				shapeName = ((StrV) args.get(0)).getValue();
 			} else
 				throw new InterpretException("Unexpected type " + args.get(0));
-			
+
 			double left = GraphicsWindow.GetLeft(shapeName);
-			
+
 			return new DoubleV(left);
 		} else
 			throw new InterpretException("Unexpected # of args " + args.size());
@@ -321,9 +340,9 @@ public class Shapes {
 				shapeName = ((StrV) args.get(0)).getValue();
 			} else
 				throw new InterpretException("Unexpected type " + args.get(0));
-			
+
 			double top = GraphicsWindow.GetTop(shapeName);
-			
+
 			return new DoubleV(top);
 		} else
 			throw new InterpretException("Unexpected # of args " + args.size());
@@ -338,9 +357,9 @@ public class Shapes {
 				shapeName = ((StrV) args.get(0)).getValue();
 			} else
 				throw new InterpretException("Unexpected type " + args.get(0));
-			
+
 			double opacity = GraphicsWindow.GetOpacity(shapeName);
-			
+
 			return new DoubleV(opacity);
 		} else
 			throw new InterpretException("Unexpected # of args " + args.size());
@@ -352,23 +371,21 @@ public class Shapes {
 		if (args.size() == 2) {
 			String shapeName;
 			double level;
-			
+
 			if (args.get(0) instanceof StrV) {
 				shapeName = ((StrV) args.get(0)).getValue();
 			} else
 				throw new InterpretException("Unexpected type " + args.get(0));
-			
-			if(args.get(1) instanceof DoubleV) {
+
+			if (args.get(1) instanceof DoubleV) {
 				level = ((DoubleV) args.get(1)).getValue();
-			}
-			else if(args.get(1) instanceof StrV && ((StrV) args.get(1)).isNumber()) {
+			} else if (args.get(1) instanceof StrV && ((StrV) args.get(1)).isNumber()) {
 				level = ((StrV) args.get(1)).parseDouble();
-			}
-			else
+			} else
 				throw new InterpretException("Unexpected type " + args.get(1));
-			
+
 			GraphicsWindow.SetOpacity(shapeName, level);
-			
+
 		} else
 			throw new InterpretException("Unexpected # of args " + args.size());
 	}
@@ -382,7 +399,7 @@ public class Shapes {
 				name = ((StrV) args.get(0)).getValue();
 			} else
 				throw new InterpretException("Unexpected type " + args.get(0));
-			
+
 			GraphicsWindow.HideShape(name);
 		} else
 			throw new InterpretException("Unexpected # of args " + args.size());
@@ -397,7 +414,7 @@ public class Shapes {
 				name = ((StrV) args.get(0)).getValue();
 			} else
 				throw new InterpretException("Unexpected type " + args.get(0));
-			
+
 			GraphicsWindow.ShowShape(name);
 		} else
 			throw new InterpretException("Unexpected # of args " + args.size());

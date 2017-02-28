@@ -20,21 +20,23 @@ public class Eval {
 
 	public Eval(BasicBlockEnv bbEnv) {
 		this.bbEnv = bbEnv;
-		this.eval= this;
+		this.eval = this;
 	}
 
 	// For GetArgument, ArgumentCount in Program Library:
 	private static String[] programArgs;
-	
-	public static String[] getProgramArgs() { return programArgs; }
-	
+
+	public static String[] getProgramArgs() {
+		return programArgs;
+	}
+
 	public void eval(String[] args) {
 		debug = Config.getDebug();
-		
+
 		programArgs = args;
 		eval();
 	}
-	
+
 	public void eval() {
 		env = new Env();
 		env.label("$main");
@@ -53,10 +55,10 @@ public class Eval {
 
 		// Value v1 = eval(env, lhs);
 		Value v2 = eval(env, rhs);
-		if (v2 == null)  {
-			new PrettyPrinter().prettyPrint(assignStmt);
-			throw new InterpretException("Assign : No Return Value in RHS " );
-		}
+		// if (v2 == null) {
+		// new PrettyPrinter().prettyPrint(assignStmt);
+		// throw new InterpretException("Assign : No Return Value in RHS " );
+		// }
 
 		if (lhs instanceof Var) {
 			env.put(((Var) lhs).getVarName(), v2);
@@ -66,8 +68,9 @@ public class Eval {
 				Class clz = getClass(clzName);
 				Field fld = clz.getField(((PropertyExpr) lhs).getName());
 				fld.set(null, v2);
-				
-				// After any field assignment, invoke notifyFieldAssign for Library to know
+
+				// After any field assignment, invoke notifyFieldAssign for
+				// Library to know
 				// the change of the field value.
 				Method mth = clz.getMethod(notifyFieldAssign, String.class);
 				mth.invoke(null, ((PropertyExpr) lhs).getName());
@@ -114,7 +117,7 @@ public class Eval {
 
 				if (i < arr.getDim() - 1) {
 					ArrayV elem_elem = (ArrayV) elem.get(idx_s);
-					if(elem_elem == null) {
+					if (elem_elem == null) {
 						elem_elem = new ArrayV();
 						elem.put(idx_s, elem_elem);
 					}
@@ -147,7 +150,7 @@ public class Eval {
 	}
 
 	public void eval(BasicBlockEnv bbEnv, Env env, GotoStmt gotoStmt) {
-		env.label( gotoStmt.getTargetLabel() );
+		env.label(gotoStmt.getTargetLabel());
 	}
 
 	public void eval(BasicBlockEnv bbEnv, Env env, IfStmt ifStmt) {
@@ -176,7 +179,7 @@ public class Eval {
 	public void eval(BasicBlockEnv bbEnv, Env env, SubCallExpr subCallExpr) {
 		// 1. Let label be the label of the Sub call
 		// 2. evalBlock(label)
-		env.label( subCallExpr.getName() );
+		env.label(subCallExpr.getName());
 		while (env.label() != null) {
 			Stmt stmt = bbEnv.get(env.label());
 			env.label(null);
@@ -189,8 +192,9 @@ public class Eval {
 	}
 
 	public void eval(BasicBlockEnv bbEnv, Env env, Stmt stmt) {
-		if (debug) printLog(stmt);
-		
+		if (debug)
+			printLog(stmt);
+
 		if (stmt instanceof Assign)
 			eval(bbEnv, env, (Assign) stmt);
 		else if (stmt instanceof BlockStmt)
@@ -237,12 +241,12 @@ public class Eval {
 			StrV s1, s2;
 			DoubleV d1, d2;
 			Double dv1 = 0.0, dv2 = 0.0;
-			
+
 			switch (arithExpr.GetOp()) {
 			case ArithExpr.PLUS:
 				boolean numplus = true; // numplus == false => concatenation
 
-				if (v1 == null) 
+				if (v1 == null)
 					dv1 = 0.0;
 				else if (v1 instanceof DoubleV)
 					dv1 = ((DoubleV) v1).getValue();
@@ -271,7 +275,7 @@ public class Eval {
 					return new StrV(v1.toString() + v2.toString());
 
 			case ArithExpr.MINUS:
-				if (v1 == null) 
+				if (v1 == null)
 					dv1 = 0.0;
 				else if (v1 instanceof DoubleV)
 					dv1 = ((DoubleV) v1).getValue();
@@ -280,7 +284,7 @@ public class Eval {
 					dv1 = ((StrV) v1).parseDouble();
 				else
 					throw new InterpretException("MINUS 1st operand unexpected" + v1);
-				
+
 				if (v2 == null)
 					dv2 = 0.0;
 				else if (v2 instanceof DoubleV)
@@ -289,11 +293,11 @@ public class Eval {
 					dv2 = ((StrV) v2).parseDouble();
 				else
 					throw new InterpretException("MINUS 2nd operand unexpected" + v2);
-				
+
 				return new DoubleV(dv1 - dv2);
-				
+
 			case ArithExpr.MULTIFLY:
-				if (v1 == null) 
+				if (v1 == null)
 					dv1 = 0.0;
 				else if (v1 instanceof DoubleV)
 					dv1 = ((DoubleV) v1).getValue();
@@ -302,7 +306,7 @@ public class Eval {
 					dv1 = ((StrV) v1).parseDouble();
 				else
 					throw new InterpretException("MULTIFLY 1st operand unexpected" + v1);
-				
+
 				if (v2 == null)
 					dv2 = 0.0;
 				else if (v2 instanceof DoubleV)
@@ -311,10 +315,10 @@ public class Eval {
 					dv2 = ((StrV) v2).parseDouble();
 				else
 					throw new InterpretException("MULTIFLY 2nd operand unexpected" + v2);
-				
+
 				return new DoubleV(dv1 * dv2);
 			case ArithExpr.DIVIDE:
-				if (v1 == null) 
+				if (v1 == null)
 					dv1 = 0.0;
 				else if (v1 instanceof DoubleV)
 					dv1 = ((DoubleV) v1).getValue();
@@ -323,7 +327,7 @@ public class Eval {
 					dv1 = ((StrV) v1).parseDouble();
 				else
 					throw new InterpretException("DIVIDE 1st operand unexpected" + v1);
-				
+
 				if (v2 == null)
 					dv2 = 0.0;
 				else if (v2 instanceof DoubleV)
@@ -332,7 +336,7 @@ public class Eval {
 					dv2 = ((StrV) v2).parseDouble();
 				else
 					throw new InterpretException("DIVIDE 2nd operand unexpected" + v2);
-				
+
 				return new DoubleV(dv1 / dv2);
 			case ArithExpr.UNARY_MINUS:
 			default:
@@ -357,7 +361,10 @@ public class Eval {
 				throw new InterpretException("Unexpected Index" + v);
 			}
 
-			elem = ((ArrayV) elem).get(idx_s);
+			if (elem == null)
+				break;
+			else
+				elem = ((ArrayV) elem).get(idx_s);
 		}
 
 		return elem;
@@ -463,7 +470,7 @@ public class Eval {
 			Class c = getClass(clzName);
 			Method m = c.getMethod(mthName, ArrayList.class);
 			String retTypeName = m.getReturnType().getName();
-			if ("void".equals(retTypeName) ==  false)
+			if ("void".equals(retTypeName) == false)
 				return (Value) m.invoke(null, argValues);
 			else {
 				m.invoke(null, argValues);
@@ -478,13 +485,13 @@ public class Eval {
 		} catch (InvocationTargetException e) {
 			Throwable exn = e.getCause();
 			if (exn instanceof InterpretException) {
-				InterpretException ie = (InterpretException)exn;
+				InterpretException ie = (InterpretException) exn;
 				if (ie.getProgramEnd())
 					throw ie;
 				else {
 					ie.printStackTrace();
-					throw new InterpretException(e.toString() + clzName + ", " + mthName 
-							+ "\n" + "Caused By\n" + ie.getStackTrace());
+					throw new InterpretException(
+							e.toString() + clzName + ", " + mthName + "\n" + "Caused By\n" + ie.getStackTrace());
 				}
 			}
 			exn.printStackTrace();
@@ -504,12 +511,13 @@ public class Eval {
 			String clzName = propertyExpr.getObj();
 			Class clz = getClass(clzName);
 			Field fld = clz.getField(propertyExpr.getName());
-			
-			// Before any field reading, invoke notifyFieldRead for Library to prepare
+
+			// Before any field reading, invoke notifyFieldRead for Library to
+			// prepare
 			// the field value to read if necessary.
 			Method mth = clz.getMethod(notifyFieldRead, String.class);
 			mth.invoke(null, propertyExpr.getName());
-			
+
 			return (Value) fld.get(null);
 		} catch (NoSuchFieldException | SecurityException e) {
 			throw new InterpretException("PropertyExpr : " + e.toString());
@@ -536,16 +544,18 @@ public class Eval {
 
 	public Value eval(Env env, Var var) {
 		Value v = env.get(var.getVarName());
-		if (v == null && bbEnv.get(var.getVarName())!=null) // Subroutine name!!
+		if (v == null && bbEnv.get(var.getVarName()) != null) // Subroutine
+																// name!!
 			return new StrV(var.getVarName());
-			
+
 		return v;
 		// System.out.print(var.getVarName());
 	}
 
 	public Value eval(Env env, Expr expr) {
-		if(debug && debugexpr) printLog(expr);
-		
+		if (debug && debugexpr)
+			printLog(expr);
+
 		if (expr instanceof ArithExpr)
 			return eval(env, (ArithExpr) expr);
 		else if (expr instanceof Array)
@@ -568,9 +578,9 @@ public class Eval {
 			throw new InterpretException("Syntax Error! " + expr.getClass());
 
 	}
-	
+
 	public static void eval(Value labelV) {
-		env.label( ((StrV)labelV).getValue() );
+		env.label(((StrV) labelV).getValue());
 		while (env.label() != null) {
 			Stmt stmt = bbEnv.get(env.label());
 			env.label(null);
@@ -593,8 +603,8 @@ public class Eval {
 		if (v1 == null || v2 == null)
 			return false;
 		if (v1 instanceof StrV && v2 instanceof StrV) {
-			String strV1 = ((StrV) v1).getValue().toString();
-			String strV2 = ((StrV) v2).getValue().toString();
+			String strV1 = ((StrV) v1).getValue();
+			String strV2 = ((StrV) v2).getValue();
 
 			if (strV1.compareTo(strV2) >= 0) // compareTo 결과 양수가 나오면 앞의 문자열이 뒤의
 												// 문자열보다 크다는 것을 의미
@@ -605,6 +615,18 @@ public class Eval {
 
 			if (doubleV1 >= doubleV2)
 				return true;
+		} else if (v1 instanceof DoubleV && v2 instanceof StrV) {
+			String strV1 = ((DoubleV) v1).toString();
+			String strV2 = ((StrV) v2).getValue();
+
+			if (strV1.compareTo(strV2) >= 0)
+				return true;
+		} else if (v1 instanceof StrV && v2 instanceof DoubleV) {
+			String strV1 = ((StrV) v1).getValue();
+			String strV2 = ((DoubleV) v2).toString();
+
+			if (strV1.compareTo(strV2) >= 0)
+				return true;
 		} else
 			throw new InterpretException("Different Value is not comparable.");
 
@@ -612,9 +634,12 @@ public class Eval {
 	}
 
 	public static boolean greaterThan(Value v1, Value v2) {
+		if (v1 == null || v2 == null)
+			return false;
+
 		if (v1 instanceof StrV && v2 instanceof StrV) {
-			String strV1 = ((StrV) v1).getValue().toString();
-			String strV2 = ((StrV) v2).getValue().toString();
+			String strV1 = ((StrV) v1).getValue();
+			String strV2 = ((StrV) v2).getValue();
 
 			if (strV1.compareTo(strV2) > 0)
 				return true;
@@ -624,6 +649,18 @@ public class Eval {
 
 			if (doubleV1 > doubleV2)
 				return true;
+		} else if (v1 instanceof DoubleV && v2 instanceof StrV) {
+			String strV1 = ((DoubleV) v1).toString();
+			String strV2 = ((StrV) v2).getValue();
+
+			if (strV1.compareTo(strV2) > 0)
+				return true;
+		} else if (v1 instanceof StrV && v2 instanceof DoubleV) {
+			String strV1 = ((StrV) v1).getValue();
+			String strV2 = ((DoubleV) v2).toString();
+
+			if (strV1.compareTo(strV2) > 0)
+				return true;
 		} else
 			throw new InterpretException("Different Value is not comparable.");
 
@@ -631,6 +668,9 @@ public class Eval {
 	}
 
 	public static boolean lessEqual(Value v1, Value v2) {
+		if (v1 == null || v2 == null)
+			return false;
+
 		if (v1 instanceof StrV && v2 instanceof StrV) {
 			String strV1 = ((StrV) v1).getValue().toString();
 			String strV2 = ((StrV) v2).getValue().toString();
@@ -643,6 +683,18 @@ public class Eval {
 
 			if (doubleV1 <= doubleV2)
 				return true;
+		} else if (v1 instanceof DoubleV && v2 instanceof StrV) {
+			String strV1 = ((DoubleV) v1).toString();
+			String strV2 = ((StrV) v2).getValue();
+
+			if (strV1.compareTo(strV2) <= 0)
+				return true;
+		} else if (v1 instanceof StrV && v2 instanceof DoubleV) {
+			String strV1 = ((StrV) v1).getValue();
+			String strV2 = ((DoubleV) v2).toString();
+
+			if (strV1.compareTo(strV2) <= 0)
+				return true;
 		} else
 			throw new InterpretException("Different Value is not comparable.");
 
@@ -650,6 +702,11 @@ public class Eval {
 	}
 
 	public static boolean lessThan(Value v1, Value v2) {
+		if (v1 == null || v2 == null)
+			return false;
+		else if (v1.toString().trim().equals("") || v2.toString().trim().equals(""))
+			return false;
+
 		if (v1 instanceof StrV && v2 instanceof StrV) {
 			String strV1 = ((StrV) v1).getValue().toString();
 			String strV2 = ((StrV) v2).getValue().toString();
@@ -662,6 +719,18 @@ public class Eval {
 
 			if (doubleV1 < doubleV2)
 				return true;
+		} else if (v1 instanceof DoubleV && v2 instanceof StrV) {
+			String strV1 = ((DoubleV) v1).toString();
+			String strV2 = ((StrV) v2).getValue();
+
+			if (strV1.compareTo(strV2) < 0)
+				return true;
+		} else if (v1 instanceof StrV && v2 instanceof DoubleV) {
+			String strV1 = ((StrV) v1).getValue();
+			String strV2 = ((DoubleV) v2).toString();
+
+			if (strV1.compareTo(strV2) < 0)
+				return true;
 		} else
 			throw new InterpretException("Different Value is not comparable.");
 
@@ -669,19 +738,32 @@ public class Eval {
 	}
 
 	public static boolean notEqual(Value v1, Value v2) {
-		if (v1 instanceof StrV && v2 instanceof StrV) {
-			String strV1 = ((StrV) v1).getValue().toString();
-			String strV2 = ((StrV) v2).getValue().toString();
+		if (v1 == null || v2 == null)
+			return false;
 
-			if (strV1.equals(strV2)==false)
+		if (v1 instanceof StrV && v2 instanceof StrV) {
+			String strV1 = ((StrV) v1).getValue();
+			String strV2 = ((StrV) v2).getValue();
+
+			if (strV1.equals(strV2) == false)
 				return true;
-			else
-				return false;
 		} else if (v1 instanceof DoubleV && v2 instanceof DoubleV) {
 			double doubleV1 = ((DoubleV) v1).getValue();
 			double doubleV2 = ((DoubleV) v2).getValue();
 
 			if (doubleV1 != doubleV2)
+				return true;
+		} else if (v1 instanceof DoubleV && v2 instanceof StrV) {
+			String strV1 = ((DoubleV) v1).toString();
+			String strV2 = ((StrV) v2).getValue();
+
+			if (strV1.equals(strV2) == false)
+				return true;
+		} else if (v1 instanceof StrV && v2 instanceof DoubleV) {
+			String strV1 = ((StrV) v1).getValue();
+			String strV2 = ((DoubleV) v2).toString();
+
+			if (strV1.equals(strV2) == false)
 				return true;
 		} else
 			throw new InterpretException("Different Value is not comparable.");
@@ -692,7 +774,7 @@ public class Eval {
 	public static Class getClass(String name) throws ClassNotFoundException {
 		return Class.forName(lib + name);
 	}
-	
+
 	// Log
 	public static void printLog(Stmt stmt) {
 		int lineno = stmt.lineno();
@@ -700,7 +782,7 @@ public class Eval {
 		if (lineno != 0 && charat != 0)
 			System.out.println("[Stmt] Line " + lineno + " : " + charat);
 	}
-	
+
 	public static void printLog(Expr expr) {
 		int lineno = expr.lineno();
 		int charat = expr.charat();
