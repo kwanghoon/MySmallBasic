@@ -669,7 +669,7 @@ Sub LevelLoad
         xv = Math.Cos(angle * 0.0174) * 1000
         yv = Math.Sin(angle * 0.0174) * 550  
         Shapes.Move(levelshapes[i][p-1], xv + 512, yv + 350)
-        Shapes.animate(levelshapes[i][p-1], (p-1) * 50 + korrx, (i) * 40 - 0, animtime)    
+        Shapes.Animate(levelshapes[i][p-1], (p-1) * 50 + korrx, (i) * 40 - 0, animtime)    
       Endif      
     EndFor  
   EndFor
@@ -718,14 +718,14 @@ Sub LevelLoad
         xv = Math.Cos(angle * 0.0174) * 1200
         yv = Math.Sin(angle * 0.0174) * 600  
         Shapes.Move(levelshapes[i][p-1], xv + 512, yv + 350)
-        Shapes.animate(levelshapes[i][p-1], (p-1) * 50 + korrx, (i) * 40 - 0, animtime)   
+        Shapes.Animate(levelshapes[i][p-1], (p-1) * 50 + korrx, (i) * 40 - 0, animtime)   
       elseIf blockcode = "D" Then 'crystal on wood
         levelshapes[i][p-1] = Shapes.AddImage(image["B"])
         angle = Math.GetRandomNumber(360)
         xv = Math.Cos(angle * 0.0174) * 1200
         yv = Math.Sin(angle * 0.0174) * 600  
         Shapes.Move(levelshapes[i][p-1], xv + 512, yv + 350)
-        Shapes.animate(levelshapes[i][p-1], (p-1) * 50 + korrx, (i) * 40 - 0, animtime)            
+        Shapes.Animate(levelshapes[i][p-1], (p-1) * 50 + korrx, (i) * 40 - 0, animtime)            
      elseIf blockcode < 2  Then
         levelshapes[i][p-1] = Shapes.AddImage(image[blockcode])
         angle = Math.GetRandomNumber(360)
@@ -739,12 +739,12 @@ Sub LevelLoad
         xv = Math.Cos(angle * 0.0174) * 1200
         yv = Math.Sin(angle * 0.0174) * 600  
         Shapes.Move(levelshapes[i][p-1], xv + 512, yv + 350)
-        Shapes.animate(levelshapes[i][p-1], (p-1) * 50 + korrx, (i) * 40 - 0, animtime)
+        Shapes.Animate(levelshapes[i][p-1], (p-1) * 50 + korrx, (i) * 40 - 0, animtime)
       endif   
     EndFor  
   EndFor   
   
-  'tried to fix strange shapes.animate behaviors if there are too many shapes flying around - no real  success... 
+  'tried to fix strange Shapes.Animate behaviors if there are too many shapes flying around - no real  success... 
   loopdelay = (1600) * loopmssec 
    num = 0
    While(num < loopdelay)
@@ -764,7 +764,7 @@ Sub LevelLoad
         xv = Math.Cos(angle * 0.0174) * 1200
         yv = Math.Sin(angle * 0.0174) * 600  
         Shapes.Move(crystalimg[cryst], xv + 512, yv + 350)
-        Shapes.animate(crystalimg[cryst] , (p-1) * 50 + korrx, (i) * 40 - 0, animtime*1.5) 
+        Shapes.Animate(crystalimg[cryst] , (p-1) * 50 + korrx, (i) * 40 - 0, animtime*1.5) 
         'Shapes.Move(crystalimg[cryst] , (p-1) * 50 + korrx, (i) * 40 - 0) 
         Shapes.Move(crystalbnk[cryst] , cryst * 52 , -100) 
         cryst = cryst + 1    
@@ -788,7 +788,7 @@ Sub LevelLoad
         xv = Math.Cos(angle * 0.0174) * 1000
         yv = Math.Sin(angle * 0.0174) * 550  
         Shapes.Move(levelshapes[i][p-1], xv + 512, yv + 350)
-        Shapes.animate(levelshapes[i][p-1], (p-1) * 50 + korrx, (i) * 40 - 0, animtime)  
+        Shapes.Animate(levelshapes[i][p-1], (p-1) * 50 + korrx, (i) * 40 - 0, animtime)  
       Endif      
     EndFor  
   EndFor
@@ -813,43 +813,43 @@ sub LoadShadow
           If level[y][x-1] >= 6 then
             Shadow[shade] = Shapes.AddImage(Path + "/SW.png")
             Shapes.Move(Shadow[shade], xv + 512, yv + 350)
-            Shapes.animate(Shadow[shade], (x) * 50 + korrx, (y) * 40 - 0, animtime*1.2)   
+            Shapes.Animate(Shadow[shade], (x) * 50 + korrx, (y) * 40 - 0, animtime*1.2)   
             shade = shade + 1
           EndIf 
           If level[y][x+1] >= 6 then
             Shadow[shade] = Shapes.AddImage(Path + "/SE.png")
             Shapes.Move(Shadow[shade], xv + 512, yv + 350)
-            Shapes.animate(Shadow[shade], (x) * 50 + korrx, (y) * 40 - 0, animtime*1.2)   
+            Shapes.Animate(Shadow[shade], (x) * 50 + korrx, (y) * 40 - 0, animtime*1.2)   
             shade = shade + 1
           EndIf
           If level[y-1][x] >= 6 then
             Shadow[shade] = Shapes.AddImage(Path + "/SN.png")
             Shapes.Move(Shadow[shade], xv + 512, yv + 350)
-            Shapes.animate(Shadow[shade], (x) * 50 + korrx, (y) * 40 - 0, animtime*1.2)  
+            Shapes.Animate(Shadow[shade], (x) * 50 + korrx, (y) * 40 - 0, animtime*1.2)  
             shade = shade + 1
           EndIf
           If level[y][x-1] <=2 and level[y-1][x] <= 2 and level[y-1][x-1] >= 6 then
             Shadow[shade] = Shapes.AddImage(Path + "/SNW.png")
             Shapes.Move(Shadow[shade], xv + 512, yv + 350)
-            Shapes.animate(Shadow[shade], (x) * 50 + korrx, (y) * 40 - 0, animtime*1.2)    
+            Shapes.Animate(Shadow[shade], (x) * 50 + korrx, (y) * 40 - 0, animtime*1.2)    
             shade = shade + 1
           EndIf
           If level[y][x+1] <=2 and level[y-1][x] <= 2 and level[y-1][x+1] >= 6 then
             Shadow[shade] = Shapes.AddImage(Path + "/SNE.png")
             Shapes.Move(Shadow[shade], xv + 512, yv + 350)
-            Shapes.animate(Shadow[shade], (x) * 50 + korrx, (y) * 40 - 0, animtime*1.2)    
+            Shapes.Animate(Shadow[shade], (x) * 50 + korrx, (y) * 40 - 0, animtime*1.2)    
             shade = shade + 1
           EndIf
           If level[y][x-1] <=2 and level[y+1][x] <= 2 and level[y+1][x-1] >= 6 then
             Shadow[shade] = Shapes.AddImage(Path + "/SSW.png")
             Shapes.Move(Shadow[shade], xv + 512, yv + 350)
-            Shapes.animate(Shadow[shade], (x) * 50 + korrx, (y) * 40 - 0, animtime*1.2)    
+            Shapes.Animate(Shadow[shade], (x) * 50 + korrx, (y) * 40 - 0, animtime*1.2)    
             shade = shade + 1
           EndIf
           If level[y][x+1] <=2 and level[y+1][x] <= 2 and level[y+1][x+1] >= 6 then
             Shadow[shade] = Shapes.AddImage(Path + "/SSE.png")
             Shapes.Move(Shadow[shade], xv + 512, yv + 350)
-            Shapes.animate(Shadow[shade], (x) * 50 + korrx, (y) * 40 - 0, animtime*1.2)     
+            Shapes.Animate(Shadow[shade], (x) * 50 + korrx, (y) * 40 - 0, animtime*1.2)     
             shade = shade + 1
           EndIf
        endif
@@ -870,43 +870,43 @@ sub LoadShadowWater
           If ground[y][x-1] <> 3 and ground[y][x-1] >= 0 and ground[y][x-1] <> " " then
             Shadow[shade] = Shapes.AddImage(Path + "/SW.png")
             Shapes.Move(Shadow[shade], xv + 512, yv + 350)
-            Shapes.animate(Shadow[shade], (x) * 50 + korrx, (y) * 40 + ky, animtime*1.2)   
+            Shapes.Animate(Shadow[shade], (x) * 50 + korrx, (y) * 40 + ky, animtime*1.2)   
             shade = shade + 1
           EndIf 
           If ground[y][x+1] <> 3 and ground[y+1][x] >= 0 and ground[y][x+1] <> " " then
             Shadow[shade] = Shapes.AddImage(Path + "/SE.png")
             Shapes.Move(Shadow[shade], xv + 512, yv + 350)
-            Shapes.animate(Shadow[shade], (x) * 50 + korrx, (y) * 40 + ky, animtime*1.2)   
+            Shapes.Animate(Shadow[shade], (x) * 50 + korrx, (y) * 40 + ky, animtime*1.2)   
             shade = shade + 1
           EndIf
           If ground[y-1][x] <> 3 and ground[y-1][x] >= 0 and ground[y-1][x] <> " " then
             Shadow[shade] = Shapes.AddImage(Path + "/SN.png")
             Shapes.Move(Shadow[shade], xv + 512, yv + 350)
-            Shapes.animate(Shadow[shade], (x) * 50 + korrx, (y) * 40 + ky, animtime*1.2)  
+            Shapes.Animate(Shadow[shade], (x) * 50 + korrx, (y) * 40 + ky, animtime*1.2)  
             shade = shade + 1
           EndIf
           If ground[y][x-1] = 3 and ground[y-1][x] = 3 and ground[y-1][x-1] <> 3 and ground[y-1][x-1] >= 0 then
             Shadow[shade] = Shapes.AddImage(Path + "/SNW.png")
             Shapes.Move(Shadow[shade], xv + 512, yv + 350)
-            Shapes.animate(Shadow[shade], (x) * 50 + korrx, (y) * 40 + ky, animtime*1.2)    
+            Shapes.Animate(Shadow[shade], (x) * 50 + korrx, (y) * 40 + ky, animtime*1.2)    
             shade = shade + 1
           EndIf
           If ground[y][x+1] = 3 and ground[y-1][x] = 3 and ground[y-1][x+1] <> 3 and ground[y-1][x+1] >= 0 then
             Shadow[shade] = Shapes.AddImage(Path + "/SNE.png")
             Shapes.Move(Shadow[shade], xv + 512, yv + 350)
-            Shapes.animate(Shadow[shade], (x) * 50 + korrx, (y) * 40 + ky, animtime*1.2)    
+            Shapes.Animate(Shadow[shade], (x) * 50 + korrx, (y) * 40 + ky, animtime*1.2)    
             shade = shade + 1
           EndIf
           If ground[y][x-1] = 3 and ground[y+1][x] = 3 and ground[y+1][x-1] <> 3 and ground[y+1][x-1] >= 0 then
             Shadow[shade] = Shapes.AddImage(Path + "/SSW.png")
             Shapes.Move(Shadow[shade], xv + 512, yv + 350)
-            Shapes.animate(Shadow[shade], (x) * 50 + korrx, (y) * 40 + ky, animtime*1.2)    
+            Shapes.Animate(Shadow[shade], (x) * 50 + korrx, (y) * 40 + ky, animtime*1.2)    
             shade = shade + 1
           EndIf
           If ground[y][x+1] = 3 and ground[y+1][x] = 3 and ground[y+1][x+1] <> 3 and ground[y+1][x+1] >= 0 then
             Shadow[shade] = Shapes.AddImage(Path + "/SSE.png")
             Shapes.Move(Shadow[shade], xv + 512, yv + 350)
-            Shapes.animate(Shadow[shade], (x) * 50 + korrx, (y) * 40 + ky, animtime*1.2)     
+            Shapes.Animate(Shadow[shade], (x) * 50 + korrx, (y) * 40 + ky, animtime*1.2)     
             shade = shade + 1
           EndIf
        endif

@@ -341,7 +341,7 @@ public class GraphicsWindow {
 						g2.scale(dbtc.scaleX, dbtc.scaleY);
 						g2.setFont(dbtc.font);
 						g2.setColor(new Color(Integer.parseInt(color.substring(1), 16)));
-
+						g2.drawString(dbtc.text, (int) dbtc.x, (int) dbtc.y);
 						g2.rotate(java.lang.Math.toRadians(-dbtc.degree));
 						break;
 					case DRAWELLIPSE:
@@ -2431,27 +2431,28 @@ public class GraphicsWindow {
 			else
 				height = 0;
 
-			frame.setSize(new Dimension(width, height));
+			panel.setPreferredSize(new Dimension(width, height));
+			frame.pack();
 		} else if ("Title".equalsIgnoreCase(fieldName)) {
 			frame.setTitle(Title.toString());
-		} else if("Left".equalsIgnoreCase(fieldName) || "Top".equalsIgnoreCase(fieldName)) {
+		} else if ("Left".equalsIgnoreCase(fieldName) || "Top".equalsIgnoreCase(fieldName)) {
 			int left;
 			int top;
-			
-			if(Left instanceof DoubleV)
+
+			if (Left instanceof DoubleV)
 				left = (int) ((DoubleV) Left).getValue();
-			else if(Left instanceof StrV && ((StrV) Left).isNumber())
+			else if (Left instanceof StrV && ((StrV) Left).isNumber())
 				left = (int) ((StrV) Left).parseDouble();
 			else
 				left = (int) ((DoubleV) defaultLeft).getValue();
-			
-			if(Top instanceof DoubleV)
+
+			if (Top instanceof DoubleV)
 				top = (int) ((DoubleV) Top).getValue();
-			else if(Top instanceof StrV && ((StrV) Top).isNumber())
+			else if (Top instanceof StrV && ((StrV) Top).isNumber())
 				top = (int) ((StrV) Top).parseDouble();
 			else
 				top = (int) ((DoubleV) Top).getValue();
-			
+
 			frame.setLocation(left, top);
 		} else {
 		}
