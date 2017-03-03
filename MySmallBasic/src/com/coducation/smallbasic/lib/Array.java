@@ -196,8 +196,7 @@ public class Array {
 			if(arr.get(index)==null)
 				return new StrV("");
 			else
-				result = arr.get(index).toString();
-			return new StrV(result);
+				return arr.get(index);
 		} else 
 			throw new InterpretException("Error in # of Arguments: " + args.size());
 		
