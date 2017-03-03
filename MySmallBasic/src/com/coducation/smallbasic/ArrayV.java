@@ -77,5 +77,11 @@ public class ArrayV extends Value {
 
 
 	private HashMap<String,Value> arrmap;
-	
+
+
+
+	@Override
+	public double getNumber() {
+		throw new InterpretException("getNumber(Array value)");
+	}
 }

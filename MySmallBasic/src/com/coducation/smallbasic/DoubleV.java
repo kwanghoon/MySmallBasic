@@ -14,6 +14,11 @@ public class DoubleV extends Value {
 	}
 	
 	@Override
+	public double getNumber() {
+		return value;
+	}
+	
+	@Override
 	public boolean equals(Object arg0) {
 		if(arg0 instanceof DoubleV)
 			return this.value == ((DoubleV) arg0).value;

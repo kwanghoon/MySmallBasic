@@ -33,7 +33,7 @@ public class Program {
 
 				try {
 
-					dbl_arg = Double.parseDouble(arg);
+					dbl_arg = new StrV(arg).parseDouble();
 
 				} catch (NumberFormatException e) {
 
@@ -93,7 +93,7 @@ public class Program {
 
 				try {
 
-					dbl_arg = Double.parseDouble(arg);
+					dbl_arg = new StrV(arg).parseDouble();
 
 				} catch (NumberFormatException e) {
 

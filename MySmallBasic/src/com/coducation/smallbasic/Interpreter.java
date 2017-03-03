@@ -53,7 +53,12 @@ public class Interpreter {
 	
 	public static boolean isNum(String str) throws NumberFormatException {
 		try{
-			double d = Double.parseDouble(str);
+			double d;
+			
+			if ("".equals(str)) 
+				d = 0;
+			else 
+				d = Double.parseDouble(str);
 		}
 		catch(NumberFormatException nfe){
 			return false;

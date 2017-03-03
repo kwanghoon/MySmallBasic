@@ -224,13 +224,14 @@ public class Eval {
 		if (arithExpr.GetOp() == ArithExpr.UNARY_MINUS) {
 			Expr oprnd1 = arithExpr.GetOperand()[0];
 			Value v1 = eval(env, oprnd1);
-			DoubleV d1;
-
-			if (v1 instanceof DoubleV) {
-				d1 = (DoubleV) v1;
-				return new DoubleV(-d1.getValue());
-			} else
-				throw new InterpretException("Syntax Error!");
+			DoubleV d1 = new DoubleV(v1.getNumber());
+			return new DoubleV(-d1.getValue());
+			
+//			if (v1 instanceof DoubleV) {
+//				d1 = (DoubleV) v1;
+//				return new DoubleV(-d1.getValue());
+//			} else
+//				throw new InterpretException("Syntax Error!");
 		} else { // Binary 연산자
 			Expr oprnd1 = arithExpr.GetOperand()[0];
 			Expr oprnd2 = arithExpr.GetOperand()[1];
@@ -367,7 +368,10 @@ public class Eval {
 				elem = ((ArrayV) elem).get(idx_s);
 		}
 
-		return elem;
+		if (elem == null)
+			return new StrV("");
+		else
+			return elem;
 	}
 
 	public Value eval(Env env, CompExpr compExpr) {
@@ -536,20 +540,18 @@ public class Eval {
 
 	public double toDouble(String strDouble) {
 		try {
-			return Double.parseDouble(strDouble);
+			return new StrV(strDouble).parseDouble();
 		} catch (NumberFormatException e) {
 			throw new InterpretException(e.toString());
 		}
 	}
 
 	public Value eval(Env env, Var var) {
-		Value v = env.get(var.getVarName());
-		if (v == null && bbEnv.get(var.getVarName()) != null) // Subroutine
-																// name!!
+		if ( bbEnv.get(var.getVarName()) != null) // Subroutine name !!
 			return new StrV(var.getVarName());
-
-		return v;
-		// System.out.print(var.getVarName());
+		else 
+			return env.get(var.getVarName());
+		
 	}
 
 	public Value eval(Env env, Expr expr) {

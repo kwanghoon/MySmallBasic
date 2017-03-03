@@ -126,7 +126,7 @@ public class Turtle
 			if(!numTypeCheck(args.get(0)))	
 				throw new InterpretException("Not Number Value for x " + args.get(0));
 			
-			double distance = Double.parseDouble(args.get(0).toString());
+			double distance = new StrV(args.get(0).toString()).parseDouble();
 			
 			initialCallCheck();
 			
@@ -150,8 +150,8 @@ public class Turtle
 				throw new InterpretException("Not Number Value for x " + arg1);
 			else if(!numTypeCheck(arg2))
 				throw new InterpretException("Not Number Value for y" + arg2);
-			double x = Double.parseDouble(arg1.toString());
-			double y = Double.parseDouble(arg2.toString());
+			double x = new StrV(arg1.toString()).parseDouble();
+			double y = new StrV(arg2.toString()).parseDouble();
 			
 			// calculate angle
 			double dx = x - ((DoubleV)X).getValue();
@@ -193,7 +193,7 @@ public class Turtle
 			if(!numTypeCheck(args.get(0)))	
 				throw new InterpretException("Not Number Value for angle " + args.get(0));
 			
-			double angle = Double.parseDouble(args.get(0).toString());
+			double angle = new StrV(args.get(0).toString()).parseDouble();
 			
 			initialCallCheck();
 			
@@ -388,7 +388,7 @@ public class Turtle
 			return false;
 		try 
 		{  
-			Double.parseDouble(value.toString());      
+			new StrV(value.toString()).parseDouble();      
 			return true;
 		} 
 		catch (NumberFormatException e) 
@@ -469,7 +469,7 @@ public class Turtle
 			double input;
 			if(numTypeCheck(Speed))
 			{
-				input = Double.parseDouble(Speed.toString());
+				input = new StrV(Speed.toString()).parseDouble();
 				
 				if(input > 10)
 					input = 10;
@@ -490,7 +490,7 @@ public class Turtle
 				double input;
 				
 				if(numTypeCheck(Angle))
-					input = Double.parseDouble(Angle.toString());
+					input = new StrV(Angle.toString()).parseDouble();
 				else
 					input = 0;
 				Angle = new DoubleV(input);
@@ -509,7 +509,7 @@ public class Turtle
 				double input;
 				
 				if(numTypeCheck(X))
-					input = Double.parseDouble(X.toString());
+					input = new StrV(X.toString()).parseDouble();
 				else
 					input = 0;
 				X = new DoubleV(input);
@@ -527,7 +527,7 @@ public class Turtle
 				double input;
 				
 				if(numTypeCheck(Y))
-					input = Double.parseDouble(Y.toString());
+					input = new StrV(Y.toString()).parseDouble();
 				else
 					input = 0;
 				Y = new DoubleV(input);

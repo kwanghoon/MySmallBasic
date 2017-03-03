@@ -30,13 +30,21 @@ public class Env {
 	}
 
 	public Value get(String varName) {
-		return map.get(varName);
+		Value v = map.get(varName);
+		if (v == null)
+			return new StrV("");
+		else
+			return v;
 	}
 
 	public Value get(String arrName, String index) {
 		if (map.get(arrName) instanceof ArrayV) {
 			ArrayV a = (ArrayV) map.get(arrName);
-			return (StrV) a.get(index);
+			Value v = a.get(index);
+			if (v == null)
+				return new StrV("");
+			else
+				return v; // return (StrV) v; ???
 		}
 		else {
 			throw new InterpretException(arrName + "는 배열변수가 아닙니다.");

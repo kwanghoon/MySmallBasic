@@ -28,6 +28,9 @@ public class StrV extends Value {
 	
 	public boolean isNumber() {
 		try {
+			if ("".equals(v)) 
+				return true;
+			
 			Double.parseDouble(v);
 			return true;
 		} catch(NumberFormatException e) {
@@ -36,7 +39,15 @@ public class StrV extends Value {
 	}
 	
 	public double parseDouble() {
-		return Double.parseDouble(v);
+		if ("".equals(v))
+			return 0;
+		else
+			return Double.parseDouble(v);
+	}
+	
+	@Override
+	public double getNumber() {
+		return parseDouble();
 	}
 	
 	public String toString() {
@@ -44,4 +55,5 @@ public class StrV extends Value {
 	}
 	
 	private String v;
+
 }

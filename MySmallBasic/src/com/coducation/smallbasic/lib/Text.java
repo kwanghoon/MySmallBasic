@@ -285,7 +285,7 @@ public class Text {
 
 				try {
 
-					dbl_arg1 = Double.parseDouble(arg);
+					dbl_arg1 = new StrV(arg).parseDouble();
 
 				} catch (NumberFormatException e) {
 
@@ -309,7 +309,7 @@ public class Text {
 
 				try {
 
-					dbl_arg2 = Double.parseDouble(arg);
+					dbl_arg2 = new StrV(arg).parseDouble();
 
 				} catch (NumberFormatException e) {
 
@@ -369,7 +369,7 @@ public class Text {
 
 				try {
 
-					dbl_arg1 = Double.parseDouble(arg);
+					dbl_arg1 = new StrV(arg).parseDouble();
 
 				} catch (NumberFormatException e) {
 
@@ -523,7 +523,7 @@ public class Text {
 
 				try {
 
-					dbl_arg = Double.parseDouble(arg);
+					dbl_arg = new StrV(arg).parseDouble();
 
 				}
 

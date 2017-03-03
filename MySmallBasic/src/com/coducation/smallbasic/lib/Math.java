@@ -29,7 +29,7 @@ public class Math {
 
 				try {
 
-					dbl_arg = Double.parseDouble(arg);
+					dbl_arg = new StrV(arg).parseDouble();
 
 				} catch (NumberFormatException e) {
 
@@ -71,7 +71,7 @@ public class Math {
 
 				try {
 
-					dbl_arg = Double.parseDouble(arg);
+					dbl_arg = new StrV(arg).parseDouble();
 
 				}
 
@@ -115,7 +115,7 @@ public class Math {
 
 				try {
 
-					dbl_arg = Double.parseDouble(arg);
+					dbl_arg = new StrV(arg).parseDouble();
 
 				} catch (NumberFormatException e) {
 
@@ -154,7 +154,7 @@ public class Math {
 
 				try {
 
-					dbl_arg = Double.parseDouble(arg);
+					dbl_arg = new StrV(arg).parseDouble();
 
 				} catch (NumberFormatException e) {
 
@@ -193,7 +193,7 @@ public class Math {
 
 				try {
 
-					dbl_arg = Double.parseDouble(arg);
+					dbl_arg = new StrV(arg).parseDouble();
 
 				} catch (NumberFormatException e) {
 
@@ -234,7 +234,7 @@ public class Math {
 
 				try {
 
-					dbl_arg = Double.parseDouble(arg);
+					dbl_arg = new StrV(arg).parseDouble();
 
 				} catch (NumberFormatException e) {
 
@@ -272,7 +272,7 @@ public class Math {
 
 				try {
 
-					dbl_arg = Double.parseDouble(arg);
+					dbl_arg = new StrV(arg).parseDouble();
 
 				} catch (NumberFormatException e) {
 
@@ -311,7 +311,7 @@ public class Math {
 
 				try {
 
-					dbl_arg = Double.parseDouble(arg);
+					dbl_arg = new StrV(arg).parseDouble();
 
 				} catch (NumberFormatException e) {
 
@@ -352,7 +352,7 @@ public class Math {
 
 				try {
 
-					dbl_arg = Double.parseDouble(arg);
+					dbl_arg = new StrV(arg).parseDouble();
 
 				} catch (NumberFormatException e) {
 
@@ -391,7 +391,7 @@ public class Math {
 
 				try {
 
-					dbl_arg = Double.parseDouble(arg);
+					dbl_arg = new StrV(arg).parseDouble();
 
 				} catch (NumberFormatException e) {
 
@@ -432,7 +432,7 @@ public class Math {
 
 				try {
 
-					dbl_arg = Double.parseDouble(arg);
+					dbl_arg = new StrV(arg).parseDouble();
 
 				} catch (NumberFormatException e) {
 
@@ -473,7 +473,7 @@ public class Math {
 
 				try {
 
-					dbl_arg = Double.parseDouble(arg);
+					dbl_arg = new StrV(arg).parseDouble();
 
 				} catch (NumberFormatException e) {
 
@@ -514,7 +514,7 @@ public class Math {
 
 				try {
 
-					dbl_arg = Double.parseDouble(arg);
+					dbl_arg = new StrV(arg).parseDouble();
 
 				} catch (NumberFormatException e) {
 
@@ -553,7 +553,7 @@ public class Math {
 
 				try {
 
-					dbl_arg = Double.parseDouble(arg);
+					dbl_arg = new StrV(arg).parseDouble();
 
 				} catch (NumberFormatException e) {
 
@@ -593,7 +593,7 @@ public class Math {
 
 				try {
 
-					dbl_arg0 = Double.parseDouble(arg);
+					dbl_arg0 = new StrV(arg).parseDouble();
 
 				} catch (NumberFormatException e) {
 
@@ -617,7 +617,7 @@ public class Math {
 
 				try {
 
-					dbl_arg1 = Double.parseDouble(arg);
+					dbl_arg1 = new StrV(arg).parseDouble();
 
 				} catch (NumberFormatException e) {
 
@@ -657,7 +657,7 @@ public class Math {
 
 				try {
 
-					dbl_arg = Double.parseDouble(arg);
+					dbl_arg = new StrV(arg).parseDouble();
 
 				}
 
@@ -696,10 +696,10 @@ public class Math {
 			} else if (args.get(0) instanceof StrV) {
 
 				String arg = ((StrV) args.get(0)).getValue();
-
+				
 				try {
 
-					dbl_arg0 = Double.parseDouble(arg);
+					dbl_arg0 = new StrV(arg).parseDouble();
 
 				} catch (NumberFormatException e) {
 
@@ -723,7 +723,7 @@ public class Math {
 
 				try {
 
-					dbl_arg1 = Double.parseDouble(arg);
+					dbl_arg1 = new StrV(arg).parseDouble();
 
 				} catch (NumberFormatException e) {
 
@@ -765,7 +765,7 @@ public class Math {
 
 				try {
 
-					dbl_arg0 = Double.parseDouble(arg);
+					dbl_arg0 = new StrV(arg).parseDouble();
 
 				} catch (NumberFormatException e) {
 
@@ -789,7 +789,7 @@ public class Math {
 
 				try {
 
-					dbl_arg1 = Double.parseDouble(arg);
+					dbl_arg1 = new StrV(arg).parseDouble();
 
 				} catch (NumberFormatException e) {
 
@@ -829,7 +829,7 @@ public class Math {
 
 				try {
 
-					dbl_arg0 = Double.parseDouble(arg);
+					dbl_arg0 = new StrV(arg).parseDouble();
 
 				} catch (NumberFormatException e) {
 
@@ -853,7 +853,7 @@ public class Math {
 
 				try {
 
-					dbl_arg1 = Double.parseDouble(arg);
+					dbl_arg1 = new StrV(arg).parseDouble();
 
 				} catch (NumberFormatException e) {
 
@@ -894,7 +894,7 @@ public class Math {
 
 				try {
 
-					dbl_arg = Double.parseDouble(arg);
+					dbl_arg = new StrV(arg).parseDouble();
 
 				}
 
