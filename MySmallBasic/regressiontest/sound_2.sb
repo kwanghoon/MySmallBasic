@@ -1,0 +1,4 @@
+GraphicsWindow.Show()
+Path = "http://smallbasic.com/drop/soko"
+Sound.Stop(Path + "/sokocute01.wav")
+Sound.Play(Path + "/sokocute01.wav")
