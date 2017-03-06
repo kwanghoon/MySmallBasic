@@ -173,22 +173,22 @@ public class Shapes {
 
 				GraphicsWindow.ShapesRemove(shape);
 			} else if (args.get(0) instanceof ArrayV) {
-				ArrayV arr = (ArrayV) args.get(0);
-				ArrayV key = arr.getKey();
-
-				for (int i = 1; i < key.size(); i++) {
-					Value arr_value = arr.get(key.get(Integer.toString(i)).toString());
-
-					if (arr_value instanceof ArrayV) {
-						ArrayList<Value> arg = new ArrayList<>();
-						arg.add(arr_value);
-						Shapes.Remove(arg);
-					} else if (arr_value instanceof StrV) {
-						String name = ((StrV) arr_value).getValue();
-
-						GraphicsWindow.ShapesRemove(name);
-					}
-				}
+//				ArrayV arr = (ArrayV) args.get(0);
+//				ArrayV key = arr.getKey();
+//
+//				for (int i = 1; i <= key.size(); i++) {
+//					Value arr_value = arr.get(key.get(Integer.toString(i)).toString());
+//
+//					if (arr_value instanceof ArrayV) {
+//						ArrayList<Value> arg = new ArrayList<>();
+//						arg.add(arr_value);
+//						Shapes.Remove(arg);
+//					} else if (arr_value instanceof StrV) {
+//						String name = ((StrV) arr_value).getValue();
+//
+//						GraphicsWindow.ShapesRemove(name);
+//					}
+//				}
 			} else if (args.get(0) == null) {
 				GraphicsWindow.ShapesRemove("");
 			} else

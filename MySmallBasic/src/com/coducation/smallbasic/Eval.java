@@ -109,7 +109,9 @@ public class Eval {
 				Value v = eval(env, idx);
 				String idx_s;
 
-				if (v instanceof StrV || v instanceof DoubleV) {
+				if (v == null || v.toString().trim().equals(""))
+					idx_s = "0";
+				else if (v instanceof StrV || v instanceof DoubleV) {
 					idx_s = v.toString();
 				} else {
 					throw new InterpretException("Unexpected Index" + v);
@@ -226,12 +228,12 @@ public class Eval {
 			Value v1 = eval(env, oprnd1);
 			DoubleV d1 = new DoubleV(v1.getNumber());
 			return new DoubleV(-d1.getValue());
-			
-//			if (v1 instanceof DoubleV) {
-//				d1 = (DoubleV) v1;
-//				return new DoubleV(-d1.getValue());
-//			} else
-//				throw new InterpretException("Syntax Error!");
+
+			// if (v1 instanceof DoubleV) {
+			// d1 = (DoubleV) v1;
+			// return new DoubleV(-d1.getValue());
+			// } else
+			// throw new InterpretException("Syntax Error!");
 		} else { // Binary 연산자
 			Expr oprnd1 = arithExpr.GetOperand()[0];
 			Expr oprnd2 = arithExpr.GetOperand()[1];
@@ -348,15 +350,22 @@ public class Eval {
 
 	public Value eval(Env env, Array arrayExpr) {
 		// arr[3]
-		ArrayV arrV = (ArrayV) env.get(arrayExpr.getVar());
-		Value elem = arrV;
+		ArrayV arrV;
+		Value elem = null;
+
+		if (env.get(arrayExpr.getVar()) instanceof ArrayV) {
+			arrV = (ArrayV) env.get(arrayExpr.getVar());
+			elem = arrV;
+		}
 
 		for (int i = 0; i < arrayExpr.getDim(); i++) {
 			Expr idx = arrayExpr.getIndex(i);
 			Value v = eval(env, idx);
 			String idx_s;
 
-			if (v instanceof StrV || v instanceof DoubleV) {
+			if (v == null || v.toString().trim().equals(""))
+				idx_s = "0";
+			else if (v instanceof StrV || v instanceof DoubleV) {
 				idx_s = v.toString();
 			} else {
 				throw new InterpretException("Unexpected Index" + v);
@@ -364,7 +373,8 @@ public class Eval {
 
 			if (elem == null)
 				break;
-			else
+			else if (elem instanceof StrV) {
+			} else
 				elem = ((ArrayV) elem).get(idx_s);
 		}
 
@@ -382,7 +392,7 @@ public class Eval {
 		Value v2 = eval(env, oprnd2);
 
 		switch (compExpr.GetOp()) {
-		case CompExpr.EQUAL:
+		case CompExpr.EQUAL:			
 			if (v1 instanceof StrV && v2 instanceof StrV) {
 				StrV s1 = (StrV) v1;
 				StrV s2 = (StrV) v2;
@@ -392,6 +402,18 @@ public class Eval {
 				DoubleV d1 = (DoubleV) v1;
 				DoubleV d2 = (DoubleV) v2;
 				if (d1.getValue() == d2.getValue())
+					return new StrV("true");
+			} else if(v1 instanceof StrV && v2 instanceof DoubleV) {
+				String s1 = ((StrV) v1).getValue();
+				String s2 = ((DoubleV) v2).toString();
+				
+				if(s1.equals(s2))
+					return new StrV("true");
+			} else if(v1 instanceof DoubleV && v2 instanceof StrV) {
+				String s1 = ((DoubleV) v1).toString();
+				String s2 = ((StrV) v2).getValue();
+				
+				if(s1.equals(s2))
 					return new StrV("true");
 			}
 			return new StrV("false");
@@ -547,11 +569,11 @@ public class Eval {
 	}
 
 	public Value eval(Env env, Var var) {
-		if ( bbEnv.get(var.getVarName()) != null) // Subroutine name !!
+		if (bbEnv.get(var.getVarName()) != null) // Subroutine name !!
 			return new StrV(var.getVarName());
-		else 
+		else
 			return env.get(var.getVarName());
-		
+
 	}
 
 	public Value eval(Env env, Expr expr) {
@@ -602,8 +624,11 @@ public class Eval {
 		// 1) StrV >= StrV
 		// 2) DoubleV >= DoubleV
 		// 3) error
-		if (v1 == null || v2 == null)
-			return false;
+		if (v1 == null || v1.toString().equals(""))
+			v1 = new DoubleV(0);
+		if (v2 == null || v2.toString().equals(""))
+			v2 = new DoubleV(0);
+
 		if (v1 instanceof StrV && v2 instanceof StrV) {
 			String strV1 = ((StrV) v1).getValue();
 			String strV2 = ((StrV) v2).getValue();
@@ -636,8 +661,10 @@ public class Eval {
 	}
 
 	public static boolean greaterThan(Value v1, Value v2) {
-		if (v1 == null || v2 == null)
-			return false;
+		if (v1 == null || v1.toString().equals(""))
+			v1 = new DoubleV(0);
+		if (v2 == null || v2.toString().equals(""))
+			v2 = new DoubleV(0);
 
 		if (v1 instanceof StrV && v2 instanceof StrV) {
 			String strV1 = ((StrV) v1).getValue();
@@ -670,8 +697,10 @@ public class Eval {
 	}
 
 	public static boolean lessEqual(Value v1, Value v2) {
-		if (v1 == null || v2 == null)
-			return false;
+		if (v1 == null || v1.toString().equals(""))
+			v1 = new DoubleV(0);
+		if (v2 == null || v2.toString().equals(""))
+			v2 = new DoubleV(0);
 
 		if (v1 instanceof StrV && v2 instanceof StrV) {
 			String strV1 = ((StrV) v1).getValue().toString();
@@ -704,10 +733,10 @@ public class Eval {
 	}
 
 	public static boolean lessThan(Value v1, Value v2) {
-		if (v1 == null || v2 == null)
-			return false;
-		else if (v1.toString().trim().equals("") || v2.toString().trim().equals(""))
-			return false;
+		if (v1 == null || v1.toString().equals(""))
+			v1 = new DoubleV(0);
+		if (v2 == null || v2.toString().equals(""))
+			v2 = new DoubleV(0);
 
 		if (v1 instanceof StrV && v2 instanceof StrV) {
 			String strV1 = ((StrV) v1).getValue().toString();
@@ -740,8 +769,10 @@ public class Eval {
 	}
 
 	public static boolean notEqual(Value v1, Value v2) {
-		if (v1 == null || v2 == null)
-			return false;
+		if (v1 == null || v1.toString().equals(""))
+			v1 = new DoubleV(0);
+		if (v2 == null || v2.toString().equals(""))
+			v2 = new DoubleV(0);
 
 		if (v1 instanceof StrV && v2 instanceof StrV) {
 			String strV1 = ((StrV) v1).getValue();

@@ -304,6 +304,7 @@ public class GraphicsWindow {
 			pixelList = new ArrayList<>();
 
 			addMouseListener(this);
+			addMouseMotionListener(this);
 			addKeyListener(this);
 			setFocusTraversalKeysEnabled(false);
 			setPreferredSize(new Dimension(width, height));
@@ -359,13 +360,15 @@ public class GraphicsWindow {
 					case DRAWIMAGE:
 						DrawImageCmd dic = (DrawImageCmd) cmd;
 						Image img = getImage(dic.imageName);
-						g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) dic.opacity));
-						g2.rotate(java.lang.Math.toRadians(dic.degree), (dic.x + img.getWidth(this) / 2) * zoomX,
-								(dic.y + img.getHeight(this) / 2) * zoomY);
-						g2.scale(dic.scaleX, dic.scaleY);
-						g2.drawImage(img, (int) dic.x, (int) dic.y, this);
-						g2.rotate(java.lang.Math.toRadians(-dic.degree), dic.x + img.getWidth(this) / 2,
-								dic.y + img.getHeight(this) / 2);
+						if (img != null) {
+							g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) dic.opacity));
+							g2.rotate(java.lang.Math.toRadians(dic.degree), (dic.x + img.getWidth(this) / 2) * zoomX,
+									(dic.y + img.getHeight(this) / 2) * zoomY);
+							g2.scale(dic.scaleX, dic.scaleY);
+							g2.drawImage(img, (int) dic.x, (int) dic.y, this);
+							g2.rotate(java.lang.Math.toRadians(-dic.degree), dic.x + img.getWidth(this) / 2,
+									dic.y + img.getHeight(this) / 2);
+						}
 						break;
 					case DRAWLINE:
 						DrawLineCmd dlc = (DrawLineCmd) cmd;

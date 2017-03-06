@@ -131,8 +131,8 @@ Sub Main
         Shapes.Zoom(crystalimg[gemwater], gemzoom, gemzoom)  
       EndIf
       If gemwater <> 99 and Clock.ElapsedMilliseconds - watertime > 1400 then
-        Shapes.move(crystalimg[gemwater], 1000, 1000)
-        Shapes.move(crystalbnk[gemwater], 1000, 1000)
+        Shapes.Move(crystalimg[gemwater], 1000, 1000)
+        Shapes.Move(crystalbnk[gemwater], 1000, 1000)
         gemwater = 99
         gemmove = 0
         gemfall = false
