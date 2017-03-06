@@ -8,12 +8,12 @@ resumeButton = Controls.AddButton("stop",290,30)
 Sub button
   lastButton = Controls.LastClickedButton
   If playButton = lastButton Then
-    Sound.Play("resource\sanso.mp3")
+    Sound.Play("resource\ox.wav")
   EndIf
   If pauseButton = lastButton Then
-    Sound.Pause("resource\sanso.mp3")
+    Sound.Pause("resource\ox.wav")
   EndIf
   If resumeButton = lastButton Then
-    Sound.Stop("resource\sanso.mp3")
+    Sound.Stop("resource\ox.wav")
   EndIf
 EndSub
