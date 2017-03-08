@@ -1,0 +1,11 @@
+a[0] = "True"
+
+b = 1 + a
+c = 1 - a
+
+TextWindow.WriteLine("a : " + a)
+TextWindow.WriteLine("b : " + b)
+TextWindow.WriteLine("c : " + c)
+' a : True
+' b : 1True
+' c : 1

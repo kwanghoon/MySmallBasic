@@ -1,0 +1,6 @@
+a[0] = 1
+b = a[1] + a[2]
+c = a[1] - a[2]
+
+TextWindow.WriteLine("b : " + b)
+TextWindow.WriteLine("c : " + c)

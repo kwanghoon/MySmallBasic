@@ -226,9 +226,16 @@ public class Eval {
 		if (arithExpr.GetOp() == ArithExpr.UNARY_MINUS) {
 			Expr oprnd1 = arithExpr.GetOperand()[0];
 			Value v1 = eval(env, oprnd1);
-			DoubleV d1 = new DoubleV(v1.getNumber());
-			return new DoubleV(-d1.getValue());
-
+			if (v1 instanceof DoubleV) {
+				DoubleV d1 = new DoubleV(v1.getNumber());
+				return new DoubleV(-d1.getValue());
+			}
+			else if(v1 instanceof StrV && ((StrV) v1).isNumber())
+				return new DoubleV(((StrV) v1).parseDouble());
+			else if(v1 instanceof StrV)
+				return new DoubleV(0);
+			else
+				throw new InterpretException("UNARY_MINUS 1st operand unexpected " + v1);
 			// if (v1 instanceof DoubleV) {
 			// d1 = (DoubleV) v1;
 			// return new DoubleV(-d1.getValue());
@@ -253,7 +260,8 @@ public class Eval {
 					dv1 = 0.0;
 				else if (v1 instanceof DoubleV)
 					dv1 = ((DoubleV) v1).getValue();
-
+				else if(v1 instanceof StrV && v1.toString().equals(""))
+					numplus = false;
 				else if (v1 instanceof StrV && ((StrV) v1).isNumber())
 					dv1 = ((StrV) v1).parseDouble();
 				else if (v1 instanceof StrV)
@@ -282,9 +290,10 @@ public class Eval {
 					dv1 = 0.0;
 				else if (v1 instanceof DoubleV)
 					dv1 = ((DoubleV) v1).getValue();
-
 				else if (v1 instanceof StrV && ((StrV) v1).isNumber())
 					dv1 = ((StrV) v1).parseDouble();
+				else if (v1 instanceof StrV)
+					dv1 = 0.0;
 				else
 					throw new InterpretException("MINUS 1st operand unexpected" + v1);
 
@@ -294,6 +303,8 @@ public class Eval {
 					dv2 = ((DoubleV) v2).getValue();
 				else if (v2 instanceof StrV && ((StrV) v2).isNumber())
 					dv2 = ((StrV) v2).parseDouble();
+				else if (v2 instanceof StrV)
+					dv2 = 0.0;
 				else
 					throw new InterpretException("MINUS 2nd operand unexpected" + v2);
 
@@ -304,9 +315,10 @@ public class Eval {
 					dv1 = 0.0;
 				else if (v1 instanceof DoubleV)
 					dv1 = ((DoubleV) v1).getValue();
-
 				else if (v1 instanceof StrV && ((StrV) v1).isNumber())
 					dv1 = ((StrV) v1).parseDouble();
+				else if (v1 instanceof StrV)
+					dv1 = 0.0;
 				else
 					throw new InterpretException("MULTIFLY 1st operand unexpected" + v1);
 
@@ -316,6 +328,8 @@ public class Eval {
 					dv2 = ((DoubleV) v2).getValue();
 				else if (v2 instanceof StrV && ((StrV) v2).isNumber())
 					dv2 = ((StrV) v2).parseDouble();
+				else if (v2 instanceof StrV)
+					dv2 = 0.0;
 				else
 					throw new InterpretException("MULTIFLY 2nd operand unexpected" + v2);
 
@@ -325,20 +339,26 @@ public class Eval {
 					dv1 = 0.0;
 				else if (v1 instanceof DoubleV)
 					dv1 = ((DoubleV) v1).getValue();
-
 				else if (v1 instanceof StrV && ((StrV) v1).isNumber())
 					dv1 = ((StrV) v1).parseDouble();
+				else if (v1 instanceof StrV)
+					dv1 = 0.0;
 				else
 					throw new InterpretException("DIVIDE 1st operand unexpected" + v1);
 
 				if (v2 == null)
-					dv2 = 0.0;
+					dv2 = 1.0;
 				else if (v2 instanceof DoubleV)
 					dv2 = ((DoubleV) v2).getValue();
 				else if (v2 instanceof StrV && ((StrV) v2).isNumber())
 					dv2 = ((StrV) v2).parseDouble();
+				else if (v2 instanceof StrV)
+					dv2 = 0.0;
 				else
 					throw new InterpretException("DIVIDE 2nd operand unexpected" + v2);
+
+				if (dv2 == 0)
+					throw new InterpretException("DIVIDE 2nd operand is 0");
 
 				return new DoubleV(dv1 / dv2);
 			case ArithExpr.UNARY_MINUS:
@@ -392,7 +412,7 @@ public class Eval {
 		Value v2 = eval(env, oprnd2);
 
 		switch (compExpr.GetOp()) {
-		case CompExpr.EQUAL:			
+		case CompExpr.EQUAL:
 			if (v1 instanceof StrV && v2 instanceof StrV) {
 				StrV s1 = (StrV) v1;
 				StrV s2 = (StrV) v2;
@@ -403,17 +423,17 @@ public class Eval {
 				DoubleV d2 = (DoubleV) v2;
 				if (d1.getValue() == d2.getValue())
 					return new StrV("true");
-			} else if(v1 instanceof StrV && v2 instanceof DoubleV) {
+			} else if (v1 instanceof StrV && v2 instanceof DoubleV) {
 				String s1 = ((StrV) v1).getValue();
 				String s2 = ((DoubleV) v2).toString();
-				
-				if(s1.equals(s2))
+
+				if (s1.equals(s2))
 					return new StrV("true");
-			} else if(v1 instanceof DoubleV && v2 instanceof StrV) {
+			} else if (v1 instanceof DoubleV && v2 instanceof StrV) {
 				String s1 = ((DoubleV) v1).toString();
 				String s2 = ((StrV) v2).getValue();
-				
-				if(s1.equals(s2))
+
+				if (s1.equals(s2))
 					return new StrV("true");
 			}
 			return new StrV("false");
@@ -624,17 +644,22 @@ public class Eval {
 		// 1) StrV >= StrV
 		// 2) DoubleV >= DoubleV
 		// 3) error
-		if (v1 == null || v1.toString().equals(""))
-			v1 = new DoubleV(0);
-		if (v2 == null || v2.toString().equals(""))
-			v2 = new DoubleV(0);
+		if (v1 == null || v1.toString().equals("") || (v1 instanceof StrV && !((StrV) v1).isNumber()))
+			v1 = new StrV("");
+		if (v2 == null || v2.toString().equals("") || (v2 instanceof StrV && !((StrV) v2).isNumber()))
+			v2 = new StrV("");
 
 		if (v1 instanceof StrV && v2 instanceof StrV) {
-			String strV1 = ((StrV) v1).getValue();
-			String strV2 = ((StrV) v2).getValue();
+			if (((StrV) v1).isNumber() && ((StrV) v2).isNumber()) {
+				String strV1 = ((StrV) v1).getValue();
+				String strV2 = ((StrV) v2).getValue();
 
-			if (strV1.compareTo(strV2) >= 0) // compareTo 결과 양수가 나오면 앞의 문자열이 뒤의
-												// 문자열보다 크다는 것을 의미
+				if (strV1.compareTo(strV2) >= 0) // compareTo 결과 양수가 나오면 앞의 문자열이
+													// 뒤의 문자열보다 크다는 것을 의미
+					return true;
+			} else if (((StrV) v1).isNumber())
+				return true;
+			else if (v1.toString().equals("") && v2.toString().equals(""))
 				return true;
 		} else if (v1 instanceof DoubleV && v2 instanceof DoubleV) {
 			double doubleV1 = ((DoubleV) v1).getValue();
@@ -643,17 +668,22 @@ public class Eval {
 			if (doubleV1 >= doubleV2)
 				return true;
 		} else if (v1 instanceof DoubleV && v2 instanceof StrV) {
-			String strV1 = ((DoubleV) v1).toString();
-			String strV2 = ((StrV) v2).getValue();
+			if (((StrV) v2).isNumber()) {
+				String strV1 = ((DoubleV) v1).toString();
+				String strV2 = ((StrV) v2).getValue();
 
-			if (strV1.compareTo(strV2) >= 0)
+				if (strV1.compareTo(strV2) >= 0)
+					return true;
+			} else
 				return true;
 		} else if (v1 instanceof StrV && v2 instanceof DoubleV) {
-			String strV1 = ((StrV) v1).getValue();
-			String strV2 = ((DoubleV) v2).toString();
+			if (((StrV) v1).isNumber()) {
+				String strV1 = ((StrV) v1).getValue();
+				String strV2 = ((DoubleV) v2).toString();
 
-			if (strV1.compareTo(strV2) >= 0)
-				return true;
+				if (strV1.compareTo(strV2) >= 0)
+					return true;
+			}
 		} else
 			throw new InterpretException("Different Value is not comparable.");
 
@@ -661,16 +691,19 @@ public class Eval {
 	}
 
 	public static boolean greaterThan(Value v1, Value v2) {
-		if (v1 == null || v1.toString().equals(""))
-			v1 = new DoubleV(0);
-		if (v2 == null || v2.toString().equals(""))
-			v2 = new DoubleV(0);
+		if (v1 == null || v1.toString().equals("") || (v1 instanceof StrV && !((StrV) v1).isNumber()))
+			v1 = new StrV("");
+		if (v2 == null || v2.toString().equals("") || (v2 instanceof StrV && !((StrV) v2).isNumber()))
+			v2 = new StrV("");
 
 		if (v1 instanceof StrV && v2 instanceof StrV) {
-			String strV1 = ((StrV) v1).getValue();
-			String strV2 = ((StrV) v2).getValue();
+			if (((StrV) v1).isNumber() && ((StrV) v2).isNumber()) {
+				String strV1 = ((StrV) v1).getValue();
+				String strV2 = ((StrV) v2).getValue();
 
-			if (strV1.compareTo(strV2) > 0)
+				if (strV1.compareTo(strV2) > 0)
+					return true;
+			} else if (((StrV) v1).isNumber())
 				return true;
 		} else if (v1 instanceof DoubleV && v2 instanceof DoubleV) {
 			double doubleV1 = ((DoubleV) v1).getValue();
@@ -679,17 +712,22 @@ public class Eval {
 			if (doubleV1 > doubleV2)
 				return true;
 		} else if (v1 instanceof DoubleV && v2 instanceof StrV) {
-			String strV1 = ((DoubleV) v1).toString();
-			String strV2 = ((StrV) v2).getValue();
+			if (((StrV) v2).isNumber()) {
+				String strV1 = ((DoubleV) v1).toString();
+				String strV2 = ((StrV) v2).getValue();
 
-			if (strV1.compareTo(strV2) > 0)
+				if (strV1.compareTo(strV2) > 0)
+					return true;
+			} else
 				return true;
 		} else if (v1 instanceof StrV && v2 instanceof DoubleV) {
-			String strV1 = ((StrV) v1).getValue();
-			String strV2 = ((DoubleV) v2).toString();
+			if (((StrV) v1).isNumber()) {
+				String strV1 = ((StrV) v1).getValue();
+				String strV2 = ((DoubleV) v2).toString();
 
-			if (strV1.compareTo(strV2) > 0)
-				return true;
+				if (strV1.compareTo(strV2) > 0)
+					return true;
+			}
 		} else
 			throw new InterpretException("Different Value is not comparable.");
 
@@ -697,16 +735,21 @@ public class Eval {
 	}
 
 	public static boolean lessEqual(Value v1, Value v2) {
-		if (v1 == null || v1.toString().equals(""))
-			v1 = new DoubleV(0);
-		if (v2 == null || v2.toString().equals(""))
-			v2 = new DoubleV(0);
+		if (v1 == null || v1.toString().equals("") || (v1 instanceof StrV && !((StrV) v1).isNumber()))
+			v1 = new StrV("");
+		if (v2 == null || v2.toString().equals("") || (v2 instanceof StrV && !((StrV) v2).isNumber()))
+			v2 = new StrV("");
 
 		if (v1 instanceof StrV && v2 instanceof StrV) {
-			String strV1 = ((StrV) v1).getValue().toString();
-			String strV2 = ((StrV) v2).getValue().toString();
+			if (((StrV) v1).isNumber() && ((StrV) v2).isNumber()) {
+				String strV1 = ((StrV) v1).getValue().toString();
+				String strV2 = ((StrV) v2).getValue().toString();
 
-			if (strV1.compareTo(strV2) <= 0)
+				if (strV1.compareTo(strV2) <= 0)
+					return true;
+			} else if (((StrV) v2).isNumber())
+				return true;
+			else if (v1.toString().equals("") && v2.toString().equals(""))
 				return true;
 		} else if (v1 instanceof DoubleV && v2 instanceof DoubleV) {
 			double doubleV1 = ((DoubleV) v1).getValue();
@@ -715,16 +758,21 @@ public class Eval {
 			if (doubleV1 <= doubleV2)
 				return true;
 		} else if (v1 instanceof DoubleV && v2 instanceof StrV) {
-			String strV1 = ((DoubleV) v1).toString();
-			String strV2 = ((StrV) v2).getValue();
+			if (((StrV) v2).isNumber()) {
+				String strV1 = ((DoubleV) v1).toString();
+				String strV2 = ((StrV) v2).getValue();
 
-			if (strV1.compareTo(strV2) <= 0)
-				return true;
+				if (strV1.compareTo(strV2) <= 0)
+					return true;
+			}
 		} else if (v1 instanceof StrV && v2 instanceof DoubleV) {
-			String strV1 = ((StrV) v1).getValue();
-			String strV2 = ((DoubleV) v2).toString();
+			if (((StrV) v1).isNumber()) {
+				String strV1 = ((StrV) v1).getValue();
+				String strV2 = ((DoubleV) v2).toString();
 
-			if (strV1.compareTo(strV2) <= 0)
+				if (strV1.compareTo(strV2) <= 0)
+					return true;
+			} else
 				return true;
 		} else
 			throw new InterpretException("Different Value is not comparable.");
@@ -733,16 +781,19 @@ public class Eval {
 	}
 
 	public static boolean lessThan(Value v1, Value v2) {
-		if (v1 == null || v1.toString().equals(""))
-			v1 = new DoubleV(0);
-		if (v2 == null || v2.toString().equals(""))
-			v2 = new DoubleV(0);
+		if (v1 == null || v1.toString().equals("") || (v1 instanceof StrV && !((StrV) v1).isNumber()))
+			v1 = new StrV("");
+		if (v2 == null || v2.toString().equals("") || (v2 instanceof StrV && !((StrV) v2).isNumber()))
+			v2 = new StrV("");
 
 		if (v1 instanceof StrV && v2 instanceof StrV) {
-			String strV1 = ((StrV) v1).getValue().toString();
-			String strV2 = ((StrV) v2).getValue().toString();
+			if (((StrV) v1).isNumber() && ((StrV) v2).isNumber()) {
+				String strV1 = ((StrV) v1).getValue().toString();
+				String strV2 = ((StrV) v2).getValue().toString();
 
-			if (strV1.compareTo(strV2) < 0)
+				if (strV1.compareTo(strV2) < 0)
+					return true;
+			} else if (((StrV) v2).isNumber())
 				return true;
 		} else if (v1 instanceof DoubleV && v2 instanceof DoubleV) {
 			double doubleV1 = ((DoubleV) v1).getValue();
@@ -751,16 +802,21 @@ public class Eval {
 			if (doubleV1 < doubleV2)
 				return true;
 		} else if (v1 instanceof DoubleV && v2 instanceof StrV) {
-			String strV1 = ((DoubleV) v1).toString();
-			String strV2 = ((StrV) v2).getValue();
+			if (((StrV) v2).isNumber()) {
+				String strV1 = ((DoubleV) v1).toString();
+				String strV2 = ((StrV) v2).getValue();
 
-			if (strV1.compareTo(strV2) < 0)
-				return true;
+				if (strV1.compareTo(strV2) < 0)
+					return true;
+			}
 		} else if (v1 instanceof StrV && v2 instanceof DoubleV) {
-			String strV1 = ((StrV) v1).getValue();
-			String strV2 = ((DoubleV) v2).toString();
+			if (((StrV) v1).isNumber()) {
+				String strV1 = ((StrV) v1).getValue();
+				String strV2 = ((DoubleV) v2).toString();
 
-			if (strV1.compareTo(strV2) < 0)
+				if (strV1.compareTo(strV2) < 0)
+					return true;
+			} else
 				return true;
 		} else
 			throw new InterpretException("Different Value is not comparable.");
@@ -769,10 +825,13 @@ public class Eval {
 	}
 
 	public static boolean notEqual(Value v1, Value v2) {
+		if (v1 == null && v2 == null)
+			return false;
+
 		if (v1 == null || v1.toString().equals(""))
-			v1 = new DoubleV(0);
+			v1 = new StrV("");
 		if (v2 == null || v2.toString().equals(""))
-			v2 = new DoubleV(0);
+			v2 = new StrV("");
 
 		if (v1 instanceof StrV && v2 instanceof StrV) {
 			String strV1 = ((StrV) v1).getValue();

@@ -1,0 +1,19 @@
+a = "123"
+
+TextWindow.Write("a = 123 : ")
+If a Then
+	TextWindow.WriteLine("True")
+Else
+	TextWindow.WriteLine("False")
+EndIf
+' a = 123 : False
+
+a = "abc"
+
+TextWindow.Write("a = abc : ")
+If a Then
+	TextWindow.WriteLine("True")
+Else
+	TextWindow.WriteLine("False")
+EndIf
+' a = abc : False

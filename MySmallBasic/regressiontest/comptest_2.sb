@@ -46,6 +46,22 @@ Else
 EndIf
 ' a < b : false
 
+TextWindow.Write("a >= b : ")
+If "a" >= "b" Then
+  TextWindow.WriteLine("true")
+Else
+  TextWindow.WriteLine("false")
+EndIf
+' a >= b : true
+
+TextWindow.Write("a <= b : ")
+If "a" <= "b" Then
+  TextWindow.WriteLine("true")
+Else
+  TextWindow.WriteLine("false")
+EndIf
+' a <= b : true
+
 TextWindow.Write("a <> b : ")
 If "a" <> "b" Then
   TextWindow.WriteLine("true")
