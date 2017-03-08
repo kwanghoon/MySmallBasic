@@ -1,0 +1,7 @@
+newmove = ""
+
+If newmove < 25 Then
+	TextWindow.WriteLine("newmove < 25")
+Else
+	TextWindow.WriteLine("newmove >= 25")
+EndIf

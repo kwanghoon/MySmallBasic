@@ -1,0 +1,87 @@
+TextWindow.Write("a > 4 : ")
+If "a" > 4 Then 
+  TextWindow.WriteLine("true")
+Else
+  TextWindow.WriteLine("false")
+EndIf
+' a > 4 : false
+
+TextWindow.Write("6 > 4 : ")
+If "6" > "4" Then
+  TextWindow.WriteLine("true")
+Else
+  TextWindow.WriteLine("false")
+EndIf
+' 6 > 4 : true
+
+TextWindow.Write("4 > a : ")
+If "4" > "a" Then
+  TextWindow.WriteLine("true")
+Else
+  TextWindow.WriteLine("false")
+EndIf
+' 4 > a : true
+
+TextWindow.Write("4 > 6 : ")
+If 4 > "6" Then
+  TextWindow.WriteLine("true")
+Else
+  TextWindow.WriteLine("false")
+EndIf
+' 4 > 6 : false
+
+TextWindow.Write("a > b : ")
+If "a" > "b" Then
+  TextWindow.WriteLine("true")
+Else
+  TextWindow.WriteLine("false")
+EndIf
+' a > b : false
+
+TextWindow.Write("a < b : ")
+If "a" < "b" Then
+  TextWindow.WriteLine("true")
+Else
+  TextWindow.WriteLine("false")
+EndIf
+' a < b : false
+
+TextWindow.Write("a >= b : ")
+If "a" >= "b" Then
+  TextWindow.WriteLine("true")
+Else
+  TextWindow.WriteLine("false")
+EndIf
+' a >= b : true
+
+TextWindow.Write("a <= b : ")
+If "a" <= "b" Then
+  TextWindow.WriteLine("true")
+Else
+  TextWindow.WriteLine("false")
+EndIf
+' a <= b : true
+
+TextWindow.Write("a <> b : ")
+If "a" <> "b" Then
+  TextWindow.WriteLine("true")
+Else
+  TextWindow.WriteLine("false")
+EndIf
+' a <> b : true
+
+TextWindow.Write("a <> 4 : ")
+If "a" <> "4" Then
+  TextWindow.WriteLine("true")
+Else
+  TextWindow.WriteLine("false")
+EndIf
+' a <> 4 : true
+
+TextWindow.Write("4 <> 4 : ")
+If "4" < 4 Then
+  TextWindow.WriteLine("true")
+Else
+  TextWindow.WriteLine("false")
+EndIf
+' 4 <> 4 : false

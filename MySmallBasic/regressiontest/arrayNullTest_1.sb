@@ -1,0 +1,10 @@
+a[0] = "True"
+
+TextWindow.Write("array null pointer test. a[1] is null. : ")
+
+If a[1] Then
+	TextWindow.WriteLine("True")
+Else
+	TextWindow.WriteLine("False")
+EndIf
+' array null pointer test. a[1] is null. : False

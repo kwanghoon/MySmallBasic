@@ -1,0 +1,39 @@
+If "False" Then
+	a = 1
+EndIf
+
+TextWindow.WriteLine("Null Value Test...")
+
+TextWindow.WriteLine("a is null")
+
+TextWindow.Write("a = a : ")
+If a = a Then
+	TextWindow.WriteLine("Equal")
+Else
+	TextWindow.WriteLine("Not Equal")
+EndIf
+'a = a : Not Equal
+
+TextWindow.Write("a = null : ")
+If a = "" Then
+	TextWindow.WriteLine("Equal")
+Else
+	TextWindow.WriteLine("Not Equal")
+EndIf
+'a = null : Equal
+
+TextWindow.Write("a = 0 : ")
+If a = 0 Then
+	TextWindow.WriteLine("Equal")
+Else
+	TextWindow.WriteLine("Not Equal")
+EndIf
+'a = 0 : Not Equal
+
+TextWindow.Write("null = 0 : ")
+If "" = 0 Then
+	TextWindow.WriteLine("Equal")
+Else
+	TextWindow.WriteLine("Not Equal")
+EndIf
+'null = 0 : Not Equal

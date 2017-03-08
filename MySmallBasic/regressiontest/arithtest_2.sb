@@ -1,0 +1,24 @@
+TextWindow.Write("a + 4 : ")
+b = "a" + 4
+TextWindow.WriteLine(b)
+' a + 4 : a4
+
+TextWindow.Write("a - 4 : ")
+b = "a" - 4
+TextWindow.WriteLine(b)
+' a - 4 : -4
+
+TextWindow.Write("4 * a : ")
+b = 4 * "a"
+TextWindow.WriteLine(b)
+' 4 * a : 0
+
+TextWindow.Write("-a : ")
+b = -"a"
+TextWindow.WriteLine(b)
+' -a : 0
+
+TextWindow.Write("4 / a : ")
+b = 4 / "a"
+TextWindow.WriteLine(b)
+' 4 / a : divide error

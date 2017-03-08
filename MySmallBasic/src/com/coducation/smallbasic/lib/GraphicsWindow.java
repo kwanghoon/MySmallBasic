@@ -304,6 +304,7 @@ public class GraphicsWindow {
 			pixelList = new ArrayList<>();
 
 			addMouseListener(this);
+			addMouseMotionListener(this);
 			addKeyListener(this);
 			setFocusTraversalKeysEnabled(false);
 			setPreferredSize(new Dimension(width, height));
@@ -335,13 +336,14 @@ public class GraphicsWindow {
 						break;
 					case DRAWBOUNDTEXT:
 						DrawBoundTextCmd dbtc = (DrawBoundTextCmd) cmd;
+						FontMetrics dbtcMetrics = g2.getFontMetrics(dbtc.font);
 						color = ((StrV) dbtc.brushcolor).getValue();
 						g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) dbtc.opacity));
 						g2.rotate(java.lang.Math.toRadians(dbtc.degree));
 						g2.scale(dbtc.scaleX, dbtc.scaleY);
 						g2.setFont(dbtc.font);
 						g2.setColor(new Color(Integer.parseInt(color.substring(1), 16)));
-						g2.drawString(dbtc.text, (int) dbtc.x, (int) dbtc.y);
+						g2.drawString(dbtc.text, (int) dbtc.x, (int) dbtc.y + dbtcMetrics.getHeight());
 						g2.rotate(java.lang.Math.toRadians(-dbtc.degree));
 						break;
 					case DRAWELLIPSE:
@@ -359,13 +361,15 @@ public class GraphicsWindow {
 					case DRAWIMAGE:
 						DrawImageCmd dic = (DrawImageCmd) cmd;
 						Image img = getImage(dic.imageName);
-						g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) dic.opacity));
-						g2.rotate(java.lang.Math.toRadians(dic.degree), (dic.x + img.getWidth(this) / 2) * zoomX,
-								(dic.y + img.getHeight(this) / 2) * zoomY);
-						g2.scale(dic.scaleX, dic.scaleY);
-						g2.drawImage(img, (int) dic.x, (int) dic.y, this);
-						g2.rotate(java.lang.Math.toRadians(-dic.degree), dic.x + img.getWidth(this) / 2,
-								dic.y + img.getHeight(this) / 2);
+						if (img != null) {
+							g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) dic.opacity));
+							g2.rotate(java.lang.Math.toRadians(dic.degree), (dic.x + img.getWidth(this) / 2) * zoomX,
+									(dic.y + img.getHeight(this) / 2) * zoomY);
+							g2.scale(dic.scaleX, dic.scaleY);
+							g2.drawImage(img, (int) dic.x, (int) dic.y, this);
+							g2.rotate(java.lang.Math.toRadians(-dic.degree), dic.x + img.getWidth(this) / 2,
+									dic.y + img.getHeight(this) / 2);
+						}
 						break;
 					case DRAWLINE:
 						DrawLineCmd dlc = (DrawLineCmd) cmd;
