@@ -21,32 +21,29 @@ public class Weka {
 
 	public static void Update(ArrayList<Value> args) {
 		// 파일의 전체내용을 읽어서 반환
-		
+
 		if (args.size() == 2) {
 			try {
 				if(args.get(0) instanceof StrV) {
 					if(args.get(1) instanceof ArrayV) {
 						DataSource source = new DataSource(args.get(0).toString());
 						Instances data = source.getDataSet();
-						
-						if(data.numAttributes() != ((ArrayV)args.get(1)).size() ) {
-							classindex = data.numAttributes() - 1;
-							if (data.classIndex() == -1)
-								data.setClassIndex(classindex);
 
-							Instance nInstance = new DenseInstance(data.numAttributes());
-							for(int i=0; i<classindex; i++) { // 
-								nInstance.setValue(data.attribute(i), ((ArrayV)args.get(1)).get( ((ArrayV)args.get(1)).getKey().get(i+"").toString() ).toString()); 
-							}
-							data.add(nInstance);
+						classindex = data.numAttributes() - 1;
+						if (data.classIndex() == -1)
+							data.setClassIndex(classindex);
 
-							PrintWriter pw = new PrintWriter(new FileOutputStream(args.get(0).toString(), true));
-							pw.println(data.lastInstance());
-							pw.flush();
-							pw.close();
-							
+						Instance nInstance = new DenseInstance(data.numAttributes());
+						for(int i=0; i<((ArrayV)args.get(1)).size(); i++) { // 입력
+							nInstance.setValue(data.attribute(i), ((ArrayV)args.get(1)).get( ((ArrayV)args.get(1)).getKey().get(i+1+"").toString() ).toString()); 
 						}
-						else throw new InterpretException("Update: Unequal data format"); // 데이터형식이 같지않음
+						data.add(nInstance);
+
+						PrintWriter pw = new PrintWriter(new FileOutputStream(args.get(0).toString(), true));
+						pw.println(data.lastInstance());
+						pw.flush();
+						pw.close();
+
 					}
 					else throw new InterpretException("Update: Unexpected arg(1)");
 				}
@@ -63,16 +60,16 @@ public class Weka {
 
 	public static Value Classify(ArrayList<Value> args) {
 		// 분류, 인자1 : 기반데이터, 인자2 : 테스트데이터(배열)
-		
+
 		String result = "";
-		
+
 		if (args.size() == 2) {
 			try {
 				if(args.get(0) instanceof StrV) {
 					if(args.get(1) instanceof ArrayV) {
 						DataSource source = new DataSource(args.get(0).toString());
 						Instances data = source.getDataSet();
-						
+
 						if(data.numAttributes()-1 != ((ArrayV)args.get(1)).size() ) {
 							classindex = data.numAttributes() - 1;
 							if (data.classIndex() == -1)
@@ -88,8 +85,8 @@ public class Weka {
 
 							Instance testInstance = new DenseInstance(data.numAttributes());
 
-							for(int i=0; i<classindex; i++) { // 
-								testInstance.setValue(data.attribute(i), ((ArrayV)args.get(1)).get( ((ArrayV)args.get(1)).getKey().get(i+"").toString() ).toString()); 
+							for(int i=0; i<((ArrayV)args.get(1)).size(); i++) { // 
+								testInstance.setValue(data.attribute(i), ((ArrayV)args.get(1)).get( ((ArrayV)args.get(1)).getKey().get(i+1+"").toString() ).toString()); 
 							}
 
 							Idata.add(testInstance);
