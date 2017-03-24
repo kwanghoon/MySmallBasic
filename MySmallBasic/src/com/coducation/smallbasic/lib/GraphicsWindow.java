@@ -51,6 +51,8 @@ public class GraphicsWindow {
 	public static void Clear(ArrayList<Value> args) {
 		// 그래픽 창에 표시된 모든 것을 지움
 		panel.cmdList.clear();
+		controlMap.clear();
+		container.removeAll();
 		panel.repaint();
 	}
 
@@ -1699,9 +1701,10 @@ public class GraphicsWindow {
 			caption = " ";
 
 		JButton btn = new JButton(caption);
-
+		
 		btn.setFont(settingFont());
 		btn.setForeground(new Color(Integer.parseInt(BrushColor.toString().substring(1), 16)));
+		btn.setBackground(new Color(220, 220, 220)); // <-- 버튼 기본 색 설정
 		btn.setSize(btn.getPreferredSize());
 		btn.setLocation(left, top);
 		btn.addActionListener(new mActionListener());
