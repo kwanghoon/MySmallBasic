@@ -69,8 +69,8 @@ public class Weka {
 					if(args.get(1) instanceof ArrayV) {
 						DataSource source = new DataSource(args.get(0).toString());
 						Instances data = source.getDataSet();
-
-						if(data.numAttributes()-1 != ((ArrayV)args.get(1)).size() ) {
+						
+						if(data.numAttributes()-1 == ((ArrayV)args.get(1)).size() ) {
 							classindex = data.numAttributes() - 1;
 							if (data.classIndex() == -1)
 								data.setClassIndex(classindex);
