@@ -1,0 +1,7 @@
+arr[0] = 123
+arr[1] = 456
+
+brr = arr
+
+brr[0] = 789
+TextWindow.WriteLine(arr[0])
