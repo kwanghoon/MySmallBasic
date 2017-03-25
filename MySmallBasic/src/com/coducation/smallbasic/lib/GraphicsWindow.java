@@ -52,7 +52,7 @@ public class GraphicsWindow {
 		// 그래픽 창에 표시된 모든 것을 지움
 		panel.cmdList.clear();
 		controlMap.clear();
-		container.removeAll();
+		//container.removeAll();
 		panel.repaint();
 	}
 

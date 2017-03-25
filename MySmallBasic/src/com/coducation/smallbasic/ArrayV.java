@@ -1,13 +1,13 @@
 package com.coducation.smallbasic;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Set;
 
 public class ArrayV extends Value {
 	public ArrayV(){
-		arrmap = new HashMap<String,Value>();
+		arrmap = new LinkedHashMap<String,Value>();
 	}
 	
 	
@@ -23,11 +23,81 @@ public class ArrayV extends Value {
 
 	}
 	
-	
-	
-	
 	public String toString() {
-		return "*** Array ***";
+		StringBuilder sb = new StringBuilder();
+		Set<String> indices = arrmap.keySet();
+		for (String index : indices) {
+			Value v = arrmap.get(index);
+			String str = v.toString();
+			StringBuilder sbs = new StringBuilder();
+			for (int i = 0; i<str.length(); i++) {
+				char ch = str.charAt(i);
+				if (ch == ';' || ch == '=' || ch =='\\')
+					sbs.append('\\');
+				sbs.append(ch);
+			}
+			sb.append(index);
+			sb.append('=');
+			sb.append(sbs.toString());
+			sb.append(';');
+		}
+		return sb.toString();
+	}
+	
+	public static ArrayV from(String s) {
+		ArrayV arr = new ArrayV();
+		int i;
+		
+		i = 0;
+
+		try {
+			while (i < s.length()) {
+				StringBuilder sb_idx = new StringBuilder();
+				StringBuilder sb_value = new StringBuilder();
+				while ( s.charAt(i) != '=' ) {
+					if (s.charAt(i) == '\\') {
+						i = i + 1;
+						if (i >= s.length()) throw new Throwable();
+					}
+					sb_idx.append(s.charAt(i));
+					i = i + 1;
+					if (i>=s.length()) throw new Throwable();
+				}
+				String idx = sb_idx.toString();
+				if (idx.length() == 0) throw new Throwable();
+				
+				i = i + 1;
+				if (i>=s.length()) throw new Throwable();
+				
+				while ( s.charAt(i) != ';' ) {
+					if (s.charAt(i) == '\\') {
+						i = i + 1;
+						if (i >= s.length()) throw new Throwable();
+					}
+					sb_value.append(s.charAt(i));
+					i = i + 1;
+					if (i>=s.length()) throw new Throwable();
+				}
+				String val = sb_value.toString();
+				if (val.length() == 0) throw new Throwable();
+				
+				i = i + 1;
+				
+//				int j = 0;
+//				while (j < val.length() && val.charAt(j) != '=' && val.charAt(j) != ';') {
+//					j = j + 1;
+//				}
+//				if (j >= val.length())
+					arr.put(idx, new StrV(val));
+//				else
+//					arr.put(idx, from(val));
+			}
+		}
+		catch(Throwable t) {
+			
+		}
+		
+		return arr;
 	}
 	
 	//추가
@@ -75,8 +145,10 @@ public class ArrayV extends Value {
 //	}
 
 
-
-	private HashMap<String,Value> arrmap;
+	// The order of inserting pairs of key and value does matter 
+	// when ArrayV is represented in the string format. 
+	// So, we replace HashMap with LinkedHashMap.
+	private LinkedHashMap<String,Value> arrmap;
 
 
 
