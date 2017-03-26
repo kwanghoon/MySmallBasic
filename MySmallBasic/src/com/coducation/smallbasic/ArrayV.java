@@ -101,6 +101,22 @@ public class ArrayV extends Value {
 		return arr;
 	}
 	
+	ArrayV copy() {
+		ArrayV arr = new ArrayV();
+		Iterator<Entry<String, Value>> iterator = arrmap.entrySet().iterator();
+		while (iterator.hasNext()) {
+			Entry<String, Value> entry = (Entry<String, Value>)iterator.next();
+			String key = entry.getKey();
+			Value value = entry.getValue();
+			if (value instanceof ArrayV) {
+				arr.put(key, ((ArrayV)value).copy());
+			}
+			else
+				arr.put(key, value);
+		}
+		return arr;
+	}
+	
 	//추가
 	public int size(){
 		return arrmap.size();

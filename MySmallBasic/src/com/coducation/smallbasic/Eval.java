@@ -55,10 +55,11 @@ public class Eval {
 
 		// Value v1 = eval(env, lhs);
 		Value v2 = eval(env, rhs);
-		// if (v2 == null) {
-		// new PrettyPrinter().prettyPrint(assignStmt);
-		// throw new InterpretException("Assign : No Return Value in RHS " );
-		// }
+
+		// Assigning an array is done by copy.
+		if (v2 instanceof ArrayV) {
+			v2 = ((ArrayV)v2).copy();
+		}
 
 		if (lhs instanceof Var) {
 			env.put(((Var) lhs).getVarName(), v2);
