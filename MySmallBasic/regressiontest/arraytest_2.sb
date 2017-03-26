@@ -126,3 +126,46 @@ a11[3] = "3"
 TextWindow.WriteLine(a11)
 '결과
 '1=1;2=2;3=3;
+
+
+a12[1] = "0=123;1=456;2abc"
+a12[2] = "2"
+a12[3] = "3"
+
+TextWindow.WriteLine(a12[1][0])
+TextWindow.WriteLine(a12[1][1])
+TextWindow.WriteLine(a12[1][2])
+TextWindow.WriteLine(a12[2])
+TextWindow.WriteLine(a12[3])
+
+'결과
+'123
+'456
+'
+'2
+'3
+
+
+a13 = "0=123;1=456 2=abc"
+
+TextWindow.WriteLine(a13[0])
+TextWindow.WriteLine(a13[1])
+TextWindow.WriteLine(a13[2])
+
+'결과
+'123
+'456 2
+'
+
+
+a14 = "0=123;1=456;2=abc"
+
+TextWindow.WriteLine(a14[0])
+TextWindow.WriteLine(a14[1])
+TextWindow.WriteLine(a14[2])
+
+'결과
+'123
+'456
+'abc
+

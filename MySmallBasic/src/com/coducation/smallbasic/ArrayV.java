@@ -44,6 +44,10 @@ public class ArrayV extends Value {
 		return sb.toString();
 	}
 	
+	// An usable implementation but it has not been finished yet.
+	// For example, the following cases should be considered. 
+	//  - idx=val is allowed to end without ;. 
+	//  - idx val; means "idx val" is an index and "" is a value; 
 	public static ArrayV from(String s) {
 		ArrayV arr = new ArrayV();
 		int i;
@@ -83,14 +87,11 @@ public class ArrayV extends Value {
 				
 				i = i + 1;
 				
-//				int j = 0;
-//				while (j < val.length() && val.charAt(j) != '=' && val.charAt(j) != ';') {
-//					j = j + 1;
-//				}
-//				if (j >= val.length())
+				ArrayV trial = from(val);
+				if (trial.size() == 0)
 					arr.put(idx, new StrV(val));
-//				else
-//					arr.put(idx, from(val));
+				else
+					arr.put(idx, trial);
 			}
 		}
 		catch(Throwable t) {

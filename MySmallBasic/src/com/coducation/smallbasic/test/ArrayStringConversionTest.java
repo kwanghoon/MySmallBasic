@@ -38,5 +38,33 @@ public class ArrayStringConversionTest {
 		v = arr.get("5");
 		assert(v instanceof StrV && "=ab=c=".equals(((StrV)v).getValue()));		
 	}
+	
+	@Test
+	public void test3() {
+		ArrayV arr = ArrayV.from("0=0\\=123\\;1\\=456\\;2\\=abc\\;;1=0\\=789\\;1\\=12\\;2\\=345\\;;");
+		Value v;
+		
+		ArrayV arr0 = (ArrayV)arr.get("0");
+		
+		v = arr0.get("0");
+		assert(v instanceof StrV && "123".equals(((StrV)v).getValue()));
+		
+		v = arr0.get("1");
+		assert(v instanceof StrV && "456".equals(((StrV)v).getValue()));
+		
+		v = arr0.get("2");
+		assert(v instanceof StrV && "abc".equals(((StrV)v).getValue()));
+		
+		ArrayV arr1 = (ArrayV)arr.get("1");
+		
+		v = arr1.get("0");
+		assert(v instanceof StrV && "789".equals(((StrV)v).getValue()));
+		
+		v = arr1.get("1");
+		assert(v instanceof StrV && "12".equals(((StrV)v).getValue()));
+		
+		v = arr1.get("2");
+		assert(v instanceof StrV && "345".equals(((StrV)v).getValue()));
+	}
 
 }
