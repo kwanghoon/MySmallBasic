@@ -1,0 +1,11 @@
+Hamster.IOModeA(10)
+While "True"
+  If (Hamster.Light() < 10) Then
+    Hamster.OutputA(1)
+  Else
+    Hamster.OutputA(0)
+  EndIf
+  Hamster.Wait(2)
+EndWhile
+
+  

@@ -1,0 +1,10 @@
+Hamster.IOModeB(1)
+While "True"
+  If (Hamster.InputB() = 0) Then
+    Hamster.Buzzer(1000)
+  Else
+    Hamster.Buzzer(0)
+  EndIf
+  Hamster.Wait(20)
+EndWhile
+  
