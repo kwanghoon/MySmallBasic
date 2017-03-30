@@ -1,0 +1,9 @@
+Hamster.IOModeA(8)
+While "True"
+  Hamster.OutputA(10)
+  Hamster.Wait(1000)
+  Hamster.OutputA(180)
+  Hamster.Wait(1000)
+EndWhile
+
+  

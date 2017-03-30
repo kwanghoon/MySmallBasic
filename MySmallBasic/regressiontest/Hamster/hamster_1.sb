@@ -1,0 +1,18 @@
+For i = 0 To 5000
+  proximity = Hamster.LeftProximity()
+  If proximity > 15 Then
+    leftSpeed = (40 - proximity) * 4
+  Else
+    leftSpeed = 0
+  EndIf
+  
+  proximity = Hamster.RightProximity()
+  If proximity > 15 Then
+    rightSpeed = (40 - proximity) * 4
+  Else
+    rightSpeed = 0
+  EndIf
+  Hamster.Wheel(leftSpeed, rightSpeed)
+  Hamster.Wait(20)
+EndFor
+  Hamster.Stop()

@@ -1,0 +1,25 @@
+For i = 0 To 2
+  For j = 0 To 1
+    Hamster.Note("C_4", 0.5)
+    Hamster.Note("E_4", 0.5)
+    Hamster.Note("G_4", 0.5)
+  EndFor
+  For j = 0 To 2
+    Hamster.Note("A_4", 0.5)
+  EndFor
+  Hamster.Note("G_4", 1)
+  Hamster.Note(0, 0.5)
+  For j = 0 To 2
+    Hamster.Note("F_4", 0.5)
+  EndFor
+  For j = 0 To 2
+    Hamster.Note("E_4", 0.5)
+  EndFor
+  For j = 0 To 2
+    Hamster.Note("D_4", 0.5)
+  EndFor
+  Hamster.Note("C_4", 1)
+  Hamster.Note(0, 0.5)
+  
+  Hamster.Tempo(120)
+ EndFor

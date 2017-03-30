@@ -1,0 +1,16 @@
+hamsterView = 220
+
+While "True"
+  Hamster.Wheel(30)
+  
+  If Hamster.IsObstacleInDistance(hamsterView) = "True" Then
+    Hamster.Rotate(30)
+    
+    While "True"
+      If Hamster.IsObstacleInDistance(hamsterView) = "False" Then
+        Goto escape
+      EndIf
+    EndWhile 
+  EndIf
+escape:
+EndWhile
