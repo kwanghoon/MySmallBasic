@@ -52,7 +52,11 @@ public class GraphicsWindow {
 		// 그래픽 창에 표시된 모든 것을 지움
 		panel.cmdList.clear();
 		controlMap.clear();
-		//container.removeAll();
+		if (container != null) {
+			container.removeAll();
+			container.revalidate();
+			container.repaint();
+		}
 		panel.repaint();
 	}
 
@@ -1701,7 +1705,7 @@ public class GraphicsWindow {
 			caption = " ";
 
 		JButton btn = new JButton(caption);
-		
+
 		btn.setFont(settingFont());
 		btn.setForeground(new Color(Integer.parseInt(BrushColor.toString().substring(1), 16)));
 		btn.setBackground(new Color(220, 220, 220)); // <-- 버튼 기본 색 설정
