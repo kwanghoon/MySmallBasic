@@ -23,10 +23,11 @@ arff = "" ' arff 경로
 random = 0
 teachMode = 0
 count = 0
-Image1 = ImageList.LoadImage( Program.Directory+"\Image\BackGround.jpg" )
-BoardImage = ImageList.LoadImage(Program.Directory+"\Image\Board.png")
-Image3 = ImageList.LoadImage( Program.Directory+"\Image\BackGround1.png" )
-Image2 = ImageList.LoadImage( Program.Directory+"\Image\Help.jpg" )
+fortest = "\regressiontest\TicTacToe"
+Image1 = ImageList.LoadImage( Program.Directory+fortest+"\Image\BackGround.jpg" )
+BoardImage = ImageList.LoadImage(Program.Directory+fortest+"\Image\Board.png")
+Image3 = ImageList.LoadImage( Program.Directory+fortest+"\Image\BackGround1.png" )
+Image2 = ImageList.LoadImage( Program.Directory+fortest+"\Image\Help.jpg" )
 
 MainPage()  '메인 화면 실행
 Controls.ButtonClicked = ButtonClick
@@ -117,7 +118,7 @@ Sub ButtonClick
   EndIf
   
   If Controls.LastClickedButton = Update Then
-    arff = Program.Directory+"\Arff\tic-tac-toe(Custom).arff"
+    arff = Program.Directory+fortest+"\Arff\tic-tac-toe(Custom).arff"
     Learning()
     GraphicsWindow.Clear()
     GraphicsWindow.DrawImage(Image3, 0, 0)
@@ -128,7 +129,7 @@ Sub ButtonClick
   '------------
   If Controls.LastClickedButton = Hard Then
     GraphicsWindow.Clear()
-    arff = Program.Directory+"\Arff\tic-tac-toe(Hard).arff"
+    arff = Program.Directory+fortest+"\Arff\tic-tac-toe(Hard).arff"
     GraphicsWindow.DrawImage(Image3, 0, 0)
     GraphicsWindow.DrawResizedImage(BoardImage,200,200,500,500)
     Game()
@@ -138,7 +139,7 @@ Sub ButtonClick
   
   If Controls.LastClickedButton = Easy Then
     GraphicsWindow.Clear()
-    arff = Program.Directory+"\Arff\tic-tac-toe(Easy).arff"
+    arff = Program.Directory+fortest+"\Arff\tic-tac-toe(Easy).arff"
     GraphicsWindow.DrawImage(Image3, 0, 0)
     GraphicsWindow.DrawResizedImage(BoardImage,200,200,500,500)
     Game()
@@ -146,7 +147,7 @@ Sub ButtonClick
   
   If Controls.LastClickedButton = Custom Then
     GraphicsWindow.Clear()
-    arff = Program.Directory+"\Arff\tic-tac-toe(Custom).arff"
+    arff = Program.Directory+fortest+"\Arff\tic-tac-toe(Custom).arff"
     GraphicsWindow.DrawImage(Image3, 0, 0)
     GraphicsWindow.DrawResizedImage(BoardImage,200,200,500,500)
     Game()
