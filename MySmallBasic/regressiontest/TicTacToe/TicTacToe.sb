@@ -1,0 +1,672 @@
+'-----------------------------------------------------------------------------------------
+'  initialize the window first
+'-----------------------------------------------------------------------------------------
+GraphicsWindow.CanResize  = "false"
+GraphicsWindow.Width = 1024 
+GraphicsWindow.Height = 768
+GraphicsWindow.Title = "Tic Tac Toe"
+GraphicsWindow.Left = (Desktop.Width - 1024) / 2
+GraphicsWindow.Top  = (Desktop.Height - 768) / 2
+GetX=-1
+GetY=-1
+computer = 0  ' Computer와  User중 누가 먼저 할지 결정/ Computer는 user2
+turn = 1
+board[0]="" 'game board
+cboard[0]="" 'copy board
+hboard[0][0]="" 'history board
+result = 0
+maxP = -1
+positive = -1
+nextPosition = -1 ' 예측자리를 나타내는 변수
+drawing = 0
+arff = "" ' arff 경로
+random = 0
+teachMode = 0
+count = 0
+Image1 = ImageList.LoadImage( Program.Directory+"\Image\BackGround.jpg" )
+BoardImage = ImageList.LoadImage(Program.Directory+"\Image\Board.png")
+Image3 = ImageList.LoadImage( Program.Directory+"\Image\BackGround1.png" )
+Image2 = ImageList.LoadImage( Program.Directory+"\Image\Help.jpg" )
+
+MainPage()  '메인 화면 실행
+Controls.ButtonClicked = ButtonClick
+
+
+
+Sub MainPage
+  
+  
+  GraphicsWindow.DrawImage(Image1, 0, 0)
+  
+  GraphicsWindow.FontName = "Bradley Hand ITC" 
+  GraphicsWindow.FontBold = "True"
+  GraphicsWindow.FontSize = 150
+  GraphicsWindow.BrushColor = "Black"
+  GraphicsWindow.DrawText(167, 67, "Tic Tac Toe")
+
+  GraphicsWindow.BrushColor = "White"
+  GraphicsWindow.DrawText(165, 65, "Tic Tac Toe")
+
+  GraphicsWindow.FontName = "Bradley Hand ITC" 
+  GraphicsWindow.FontBold = "True"
+  GraphicsWindow.FontSize = 50
+  GraphicsWindow.BrushColor = "White"
+
+  Start = Controls.AddButton("Start", 175, 295)
+  Teach = Controls.AddButton("Teach", 175, 405)
+  Help = Controls.AddButton("Help", 175, 515)
+  Exit = Controls.AddButton("Exit", 175, 625)
+  
+EndSub
+
+
+Sub HelpPage
+  
+    GraphicsWindow.DrawImage(Image2, 0, 0)
+    GraphicsWindow.FontName = "Bradley Hand ITC"
+    GraphicsWindow.FontBold = "True"
+    GraphicsWindow.FontSize = 120
+    GraphicsWindow.BrushColor = "Black"
+    GraphicsWindow.DrawText(82,37,"Help")
+    GraphicsWindow.BrushColor = "White"
+    GraphicsWindow.DrawText(80,35,"Help")
+    GraphicsWindow.FontSize = 50
+    Back = Controls.AddButton("Main", 50, 650)  
+  
+EndSub
+
+
+Sub SelectMode ' mode select
+  GraphicsWindow.BrushColor = "White"
+  GraphicsWindow.FontName = "Bradley Hand ITC"
+  GraphicsWindow.FontSize = 70
+  GraphicsWindow.DrawText(180,35,"Please Select Mode!!!")
+  GraphicsWindow.FontSize = 50
+  Hard = Controls.AddButton("Hard Game", 175, 180)
+  Easy = Controls.AddButton("Easy Game", 175, 280)
+  Custom = Controls.AddButton("Custom Game", 175, 380)
+  User = Controls.AddButton("User-to-User", 175, 480)
+EndSub
+
+Sub ButtonClick
+
+  If Controls.LastClickedButton = Start Then
+    GraphicsWindow.Clear()
+    computer = Math.GetRandomNumber(2)
+     GraphicsWindow.DrawImage(Image3, 0, 0)
+     SelectMode()
+  EndIf
+  If Controls.LastClickedButton = Teach Then
+     GraphicsWindow.Clear()
+     GraphicsWindow.DrawImage(Image3, 0, 0)
+     GraphicsWindow.DrawResizedImage(BoardImage,200,200,500,500)
+     TeachMe()  
+     
+  EndIf
+  If Controls.LastClickedButton = Help Then
+    GraphicsWindow.Clear()
+    HelpPage()
+  EndIf
+  If Controls.LastClickedButton = Back Then
+    GraphicsWindow.Clear()
+    GraphicsWindow.MouseDown = Empty
+    MainPage()
+  EndIf
+  If Controls.LastClickedButton = Exit Then
+    Program.End()
+  EndIf
+  
+  If Controls.LastClickedButton = Update Then
+    arff = Program.Directory+"\Arff\tic-tac-toe(Custom).arff"
+    Learning()
+    GraphicsWindow.Clear()
+    GraphicsWindow.DrawImage(Image3, 0, 0)
+    GraphicsWindow.DrawResizedImage(BoardImage,200,200,500,500)
+    TeachMe()
+  
+  EndIf
+  '------------
+  If Controls.LastClickedButton = Hard Then
+    GraphicsWindow.Clear()
+    arff = Program.Directory+"\Arff\tic-tac-toe(Hard).arff"
+    GraphicsWindow.DrawImage(Image3, 0, 0)
+    GraphicsWindow.DrawResizedImage(BoardImage,200,200,500,500)
+    Game()
+  
+  EndIf
+  '-------------------------
+  
+  If Controls.LastClickedButton = Easy Then
+    GraphicsWindow.Clear()
+    arff = Program.Directory+"\Arff\tic-tac-toe(Easy).arff"
+    GraphicsWindow.DrawImage(Image3, 0, 0)
+    GraphicsWindow.DrawResizedImage(BoardImage,200,200,500,500)
+    Game()
+  EndIf
+  
+  If Controls.LastClickedButton = Custom Then
+    GraphicsWindow.Clear()
+    arff = Program.Directory+"\Arff\tic-tac-toe(Custom).arff"
+    GraphicsWindow.DrawImage(Image3, 0, 0)
+    GraphicsWindow.DrawResizedImage(BoardImage,200,200,500,500)
+    Game()
+  EndIf
+  
+  If Controls.LastClickedButton = User Then
+    GraphicsWindow.Clear()
+    GraphicsWindow.DrawImage(Image3, 0, 0)
+    GraphicsWindow.DrawResizedImage(BoardImage,200,200,500,500)
+    computer = 0
+    Game()
+  EndIf
+  
+EndSub
+
+''''''''''''''''''''''''''''''''학습모드'''''''''''''''''''''''''''''''''''''''''
+Sub TeachMe
+  teachMode = 1 ' Data Update Mode On
+  GraphicsWindow.FontName = "Bradley Hand ITC"
+  GraphicsWindow.FontBold = "True"
+  GraphicsWindow.FontSize = 150
+  GraphicsWindow.BrushColor = "White"
+  GraphicsWindow.DrawText(150, 20, "Tic Tac Toe")
+  GraphicsWindow.FontSize = 60
+  GraphicsWindow.BrushColor = "White"
+  Back = Controls.AddButton("Main", 720, 400)
+  GraphicsWindow.FontSize = 60
+  GraphicsWindow.BrushColor = "White"
+  Update = Controls.AddButton("Update", 720, 300)
+  GraphicsWindow.FontSize = 40
+  GraphicsWindow.BrushColor = "White"
+  GraphicsWindow.DrawText(720, 600, "Teach Me!!!")
+  GraphicsWindow.MouseDown = OnGameU
+  
+  Initialize()
+  
+EndSub
+
+''''''''''''''''''''''''''''''''학습진행'''''''''''''''''''''''''''''''''''''''''
+Sub Learning
+  If result = 1 Or result = 2 Then ' o-win, x-win
+    For i_Learning = 0 To count-1
+      Weka.Update(arff, hboard[i_Learning])
+    EndFor
+  EndIf
+EndSub
+
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+Sub Game ' 게임화면
+  teachMode = 0 ' Data Update Mode Off
+  GraphicsWindow.FontName = "Bradley Hand ITC" 
+  GraphicsWindow.FontBold = "True"
+  GraphicsWindow.FontSize = 150
+  GraphicsWindow.BrushColor = "White"
+  GraphicsWindow.DrawText(150, 20, "Tic Tac Toe")
+  GraphicsWindow.FontSize = 60
+  GraphicsWindow.BrushColor = "White"
+  Back = Controls.AddButton("Main", 720, 400)
+  GraphicsWindow.MouseDown = OnGameU
+  
+  Initialize()
+  
+  
+  
+  If computer = 1 Or computer = 2 Then
+    
+    OnGameC()
+    
+  EndIf
+
+  
+EndSub
+
+''''''''''''''''''''''''''''''게임진행'''''''''''''''''''''''''
+
+Sub Initialize
+  turn = 1
+  result = 0
+  maxP = -1
+  positive = -1
+  nextPosition = -1 ' 예측자리를 나타내는 변수
+  drawing = 0
+  count = 0
+  
+  For i_Initialize=0 To 8
+    board[i_Initialize] = "b"
+  EndFor
+  assigncboardtoboard()
+  If teachMode = 0 Then ' 학습모드에서는 불필요
+    Showturn()
+  EndIf
+EndSub
+
+Sub Check
+  GraphicsWindow.FontName = "Tahoma"
+  If ( board[0]="o" And board[1]="o" And board[2]="o" Or board[3]="o" And board[4]="o" And board[5]="o" Or board[6]="o" And board[7]="o" And board[8]="o" Or board[0]="o" And board[3]="o" And board[6]="o" Or board[1]="o" And board[4]="o" And board[7]="o" Or board[2]="o" And board[5]="o" And board[8]="o" Or board[0]="o" And board[4]="o" And board[8]="o" Or board[2]="o" And board[4]="o" And board[6]="o" ) Then
+    TextWindow.WriteLine("o win")
+    result = 1
+    GraphicsWindow.MouseDown = Empty
+    TextWindow.WriteLine("empty실행")
+    GraphicsWindow.PenColor = "LightGray"
+    GraphicsWindow.PenWidth = 50
+    GraphicsWindow.DrawRectangle(730, 200, 200, 30)
+    GraphicsWindow.FontSize = 40
+    GraphicsWindow.BrushColor = "DarkSlateGray"
+    GraphicsWindow.DrawText(710, 190, "User-o Win!")
+    For i_Check=0 To count-1
+      hboard[i_Check][9] = 0
+    EndFor
+  Elseif ( board[0]="x" And board[1]="x" And board[2]="x" Or board[3]="x" And board[4]="x" And board[5]="x" Or board[6]="x" And board[7]="x" And board[8]="x" Or board[0]="x" And board[3]="x" And board[6]="x" Or board[1]="x" And board[4]="x" And board[7]="x" Or board[2]="x" And board[5]="x" And board[8]="x" Or board[0]="x" And board[4]="x" And board[8]="x" Or board[2]="x" And board[4]="x" And board[6]="x" ) Then
+    TextWindow.WriteLine("x win")
+    result = 2
+    GraphicsWindow.MouseDown = Empty
+    GraphicsWindow.PenColor = "LightGray"
+    GraphicsWindow.PenWidth = 50
+    GraphicsWindow.DrawRectangle(730, 200, 200, 30)
+    GraphicsWindow.FontSize = 40
+    GraphicsWindow.BrushColor = "DarkSlateGray"
+    GraphicsWindow.DrawText(710, 190, "User-x Win!")
+    For i_Check=0 To count-1
+      hboard[i_Check][9] = 100
+    EndFor
+  Else
+    TextWindow.WriteLine("ee:"+Array.ContainsValue(board, "b"))
+    
+    If Array.ContainsValue(board, "b") Then ' Array.ContainsValue(board, "b")="False" 
+    Else
+      TextWindow.WriteLine("ee:")
+      result = 3
+      TextWindow.WriteLine(result)
+      GraphicsWindow.MouseDown = Empty
+      GraphicsWindow.PenColor = "LightGray"
+      GraphicsWindow.PenWidth = 50
+      GraphicsWindow.DrawRectangle(730, 200, 200, 30)
+      GraphicsWindow.FontSize = 40
+      GraphicsWindow.BrushColor = "DarkSlateGray"
+      GraphicsWindow.DrawText(720, 190, "Game Over")
+    EndIf
+    
+  EndIf
+EndSub
+
+Sub predict ' X기준으로 판단
+   If computer = 1 Then
+     reverse()
+   ElseIf computer = 2 Then
+     assigncboardtoboard()
+   EndIf
+   maxP = -1
+   positive = -1
+   
+   If count = 0 Then ' first 
+     TextWindow.WriteLine("count=0")
+     nextPosition = Math.GetRandomNumber(9)-1 ' First Position Random
+   Else  
+     For i_predict=0 To 8  
+       
+      If board[i_predict]="b" Then
+        cboard[i_predict] = "x" 'copyboard
+        positive = Weka.Classify(arff, cboard)
+        'positive = 0.5
+        
+        If positive>maxP Then
+          maxP = positive
+          nextPosition = i_predict
+        ElseIf positive=maxP Then
+          random = Math.GetRandomNumber(2)
+          If random = 1 Then
+            maxP = positive
+            nextPosition = i_predict
+          EndIf
+        EndIf   
+        
+        
+      EndIf
+      
+      If computer = 1 Then
+        reverse()
+      ElseIf computer = 2 Then
+        assigncboardtoboard()
+      EndIf  
+    EndFor
+  EndIf
+  
+EndSub
+
+Sub reverse
+  For i_reverse=0 To 8
+    If board[i_reverse]="o" Then
+      cboard[i_reverse]="x"
+    ElseIf board[i_reverse]="x" Then
+      cboard[i_reverse]="o"
+    EndIf
+  EndFor
+EndSub
+
+Sub Showturn
+  '   1 ---->Computer    2---->User
+  GraphicsWindow.FontName = "Tahoma"
+  If computer = 1 Then
+    ' Earlier Computer Play 
+    If turn = 1 Then
+      GraphicsWindow.PenColor = "LightGray"
+      GraphicsWindow.PenWidth = 50
+      GraphicsWindow.DrawRectangle(730, 200, 200, 30)
+      GraphicsWindow.FontSize = 40
+      GraphicsWindow.BrushColor = "DarkSlateGray"
+      GraphicsWindow.DrawText(715, 190, "Com's turn!")
+    ElseIf turn = 2 Then
+      GraphicsWindow.PenColor = "LightGray"
+      GraphicsWindow.PenWidth = 50
+      GraphicsWindow.DrawRectangle(730, 200, 200, 30)
+      GraphicsWindow.FontSize = 40
+      GraphicsWindow.BrushColor = "DarkSlateGray"
+      GraphicsWindow.DrawText(725, 190, "Your turn!")
+    EndIf
+  ElseIf computer = 2 Then
+    ' Earlier User Play 
+    If turn = 1 Then
+      GraphicsWindow.PenColor = "LightGray"
+      GraphicsWindow.PenWidth = 50
+      GraphicsWindow.DrawRectangle(730, 200, 200, 30)
+      GraphicsWindow.FontSize = 40
+      GraphicsWindow.BrushColor = "DarkSlateGray"
+      GraphicsWindow.DrawText(725, 190, "Your turn!")
+    ElseIf turn = 2 Then
+      GraphicsWindow.PenColor = "LightGray"
+      GraphicsWindow.PenWidth = 50
+      GraphicsWindow.DrawRectangle(730, 200, 200, 30)
+      GraphicsWindow.FontSize = 40
+      GraphicsWindow.BrushColor = "DarkSlateGray"
+      GraphicsWindow.DrawText(715, 190, "Com's turn!")  
+    EndIf
+  EndIf
+EndSub
+
+Sub Changeturn
+  If turn = 1 Then
+    turn = 2
+  Else
+    turn = 1
+  EndIf
+EndSub
+
+Sub OnGameC
+  If (turn=1 And computer = 1) Or (turn=2 And computer = 2) Then 
+   GraphicsWindow.MouseDown = Empty
+   
+   If Array.ContainsValue(board, "o") Then
+     'Program.Delay(3000)
+   EndIf
+   predict() 
+   Draw()
+   
+   Check()
+   Printboard()
+   If result = 0 Then
+    Changeturn()
+    Showturn()
+    GraphicsWindow.MouseDown = OnGameU
+   EndIf
+  EndIf
+
+EndSub
+
+Sub Printboard
+  For i_printboard=0 To 2
+    TextWindow.Write(board[i_printboard]+" ")
+  EndFor
+  TextWindow.WriteLine("")
+   For i_printboard=3 To 5
+    TextWindow.Write(board[i_printboard]+" ")
+  EndFor
+  TextWindow.WriteLine("")
+   For i_printboard=6 To 8
+    TextWindow.Write(board[i_printboard]+" ")
+  EndFor
+  TextWindow.WriteLine("")
+EndSub
+
+Sub Empty
+  
+EndSub
+
+Sub OnGameU
+  GetX = GraphicsWindow.MouseX
+  GetY = GraphicsWindow.MouseY
+  
+  TextWindow.WriteLine("X:"+GetX )
+  TextWindow.WriteLine("Y:"+GetY )
+  
+  ' (0)
+  If GetX >= 210 And GetX <= 360 Then
+    If GetY >= 210 And GetY <= 355 Then
+      
+      If board[0] = "b" Then
+        nextPosition = 0
+        Draw()
+   
+      EndIf
+    EndIf
+  EndIf
+  
+  '(1)
+  If GetX >= 370 And GetX <= 530 Then
+    If GetY >= 210 And GetY <= 355 Then
+      
+      If board[1] = "b" Then
+        nextPosition = 1
+        Draw()   
+  
+      EndIf
+     EndIf
+   EndIf
+   
+   '(2)
+   If GetX >= 540 And GetX <= 690 Then
+     If GetY >= 210 And GetY <= 355 Then
+       
+       If board[2] = "b" Then
+         nextPosition = 2
+         Draw()
+  
+       EndIf
+     EndIf
+   EndIf
+   
+   '(3)
+   If GetX >= 210 And GetX <= 360 Then
+     If GetY >= 365 And GetY <= 510 Then
+       
+       If board[3] = "b" Then
+         nextPosition = 3
+         Draw()
+  
+       EndIf
+     EndIf
+   EndIf 
+   
+   '(4)
+   If GetX >= 370 And GetX <= 530 Then
+     If GetY >= 365 And GetY <= 510 Then
+       If board[4] = "b" Then
+         nextPosition = 4
+         Draw()
+  
+       EndIf
+     EndIf
+   EndIf 
+   
+   '(5)
+   If GetX >= 540 And GetX <= 690 Then
+     If GetY >= 365 And GetY <= 510 Then
+       If board[5] = "b" Then
+         nextPosition = 5
+         Draw()
+  
+       EndIf
+     EndIf
+   EndIf
+   
+   '(6)
+   If GetX >= 210 And GetX <= 360 Then
+     If GetY >= 535 And GetY <= 680 Then
+       If board[6] = "b" Then
+         nextPosition = 6
+         Draw()
+  
+       EndIf
+     EndIf
+   EndIf
+   
+   '(7)
+   If GetX >= 370 And GetX <= 530 Then
+     If GetY >= 535 And GetY <= 680 Then
+       If board[7] = "b" Then
+         nextPosition = 7
+         Draw()
+ 
+       EndIf
+     EndIf
+   EndIf 
+   
+   '(8)
+   If GetX >= 540 And GetX <= 690 Then
+     If GetY >= 535 And GetY <= 680 Then
+       If board[8] = "b" Then
+         nextPosition = 8
+         Draw()
+   
+       EndIf
+     EndIf
+   EndIf
+   
+   If drawing = 1 Then
+     
+     If teachMode = 1 Then '학습모드에서 필요
+       assignhboardtoboard()
+     EndIf
+     count = count + 1
+     Check()
+     Printboard()
+     If result = 0 Then ' 결과 나오면 실행x
+       Changeturn() 
+       If teachMode = 0 Then ' 학습모드에서는 불필요
+         Showturn()
+       EndIf
+       If computer = 1 Or computer = 2 Then
+         OnGameC()
+       EndIf
+     EndIf
+     
+     drawing = 0
+   EndIf
+   
+EndSub
+
+  
+Sub Draw
+  GraphicsWindow.PenWidth = 10
+  GraphicsWindow.PenColor = "White"
+  If nextPosition = 0 Then
+    If turn = 1  Then
+      GraphicsWindow.DrawEllipse(235,232.5,100,100)
+      board[0] = "o"
+    Else
+      GraphicsWindow.DrawLine(235, 235, 335, 335) 
+      GraphicsWindow.DrawLine(235, 335, 335, 235)   
+      board[0] = "x"
+    EndIf
+  ElseIf nextPosition = 1 Then
+    If turn = 1 Then
+      GraphicsWindow.DrawEllipse(395,232.5,100,100)
+      board[1] = "o"
+          
+    Else
+      GraphicsWindow.DrawLine(400, 235, 500, 335)
+      GraphicsWindow.DrawLine(400, 335, 500, 235)
+      board[1] = "x"
+    EndIf
+  ElseIf nextPosition = 2 Then
+    If turn = 1 Then
+      GraphicsWindow.DrawEllipse(565,232.5,100,100)
+      board[2] = "o"       
+    Else
+      GraphicsWindow.DrawLine(565, 235, 665, 335)
+      GraphicsWindow.DrawLine(565, 335, 665, 235)
+      board[2] = "x"
+    EndIf
+  ElseIf nextPosition = 3 Then
+     If turn = 1 Then
+      GraphicsWindow.DrawEllipse(235,397.5,100,100)
+      board[3] = "o" 
+     Else
+      GraphicsWindow.DrawLine(235, 395, 335, 495)
+      GraphicsWindow.DrawLine(235, 495, 335, 395)
+      board[3] = "x"
+     EndIf
+  ElseIf nextPosition = 4 Then
+    If turn = 1 Then
+      GraphicsWindow.DrawEllipse(395,397.5,100,100)
+      board[4] = "o" 
+    Else
+      GraphicsWindow.DrawLine(400, 395, 500, 495)
+      GraphicsWindow.DrawLine(400, 495, 500, 395)
+      board[4] = "x"
+    EndIf
+  ElseIf nextPosition = 5 Then
+    If turn = 1 Then
+      GraphicsWindow.DrawEllipse(565,397.5,100,100)
+      board[5] = "o"
+    Else
+      GraphicsWindow.DrawLine(565, 395, 665, 495)
+      GraphicsWindow.DrawLine(565, 495, 665, 395)
+      board[5] = "x"
+    EndIf
+  ElseIf nextPosition = 6 Then
+    If turn = 1 Then
+      GraphicsWindow.DrawEllipse(235,557.5,100,100)
+      board[6] = "o"
+    Else
+      GraphicsWindow.DrawLine(235, 560, 335, 660)
+      GraphicsWindow.DrawLine(235, 660, 335, 560)
+      board[6] = "x"
+    EndIf
+  ElseIf nextPosition = 7 Then
+    If turn = 1 Then
+      GraphicsWindow.DrawEllipse(395,557.5,100,100)
+      board[7] = "o"
+    Else
+      GraphicsWindow.DrawLine(400, 560, 500, 660)
+      GraphicsWindow.DrawLine(400, 660, 500, 560)
+      board[7] = "x"
+    EndIf
+  ElseIf nextPosition = 8 Then
+    If turn = 1 Then
+      GraphicsWindow.DrawEllipse(565,557.5,100,100)
+      board[8] = "o"
+    Else
+      GraphicsWindow.DrawLine(565, 560, 665, 660)
+      GraphicsWindow.DrawLine(565, 660, 665, 560)
+      board[8] = "x"
+    EndIf
+  EndIf
+  drawing = 1 ' draw!!
+  TextWindow.WriteLine("finish draw")
+  TextWindow.WriteLine(board)
+EndSub
+  
+  Sub assigncboardtoboard
+    For i_assign=0 To 8
+      cboard[i_assign] = board[i_assign]
+    EndFor
+    
+  EndSub
+  
+  Sub assignhboardtoboard
+    For i_assign=0 To 8
+      hboard[count][i_assign] = board[i_assign]
+    EndFor
+    
+  EndSub
