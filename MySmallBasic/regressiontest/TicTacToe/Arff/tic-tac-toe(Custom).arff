@@ -1,0 +1,14 @@
+@relation tic-tac-toe
+
+@attribute top-left-square {b,o,x}
+@attribute top-middle-square {b,o,x}
+@attribute top-right-square {b,o,x}
+@attribute middle-left-square {b,o,x}
+@attribute middle-middle-square {b,o,x}
+@attribute middle-right-square {b,o,x}
+@attribute bottom-left-square {b,o,x}
+@attribute bottom-middle-square {b,o,x}
+@attribute bottom-right-square {b,o,x}
+@attribute Class numeric
+
+@data
