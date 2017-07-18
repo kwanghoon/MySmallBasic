@@ -1,0 +1,21 @@
+TextWindow.Clear()
+
+TextWindow.CursorLeft = 5
+TextWindow.Write("X")
+
+Program.Delay(3000)
+
+TextWindow.CursorTop = 10
+TextWindow.Write("X")
+
+Program.Delay(3000)
+
+TextWindow.CursorLeft = 5
+TextWindow.Write("O")
+
+Program.Delay(3000)
+
+TextWindow.CursorTop = 10
+TextWindow.Write("O")
+
+Program.Delay(3000)

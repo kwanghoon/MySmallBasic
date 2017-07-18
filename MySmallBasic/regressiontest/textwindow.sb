@@ -1,0 +1,43 @@
+i = 0
+c = 0
+
+While i <= 1
+  
+  TextWindow.Clear()
+
+  TextWindow.CursorTop = 5
+  TextWindow.CursorLeft = 10
+  
+  If c = 0 Then
+    TextWindow.ForegroundColor = "RED"
+  EndIf
+  
+  If c = 1 Then
+    TextWindow.ForegroundColor = "YELLOW"
+  EndIf
+  
+  If c = 2 Then
+    TextWindow.ForegroundColor = "BLUE"
+  EndIf
+  
+  If c = 3 Then
+    TextWindow.ForegroundColor = "GREEN"
+    c = -1
+  EndIf
+  
+  TextWindow.WriteLine("***********************************")
+  TextWindow.CursorLeft = 10
+  TextWindow.WriteLine("*                                 *")
+  TextWindow.CursorLeft = 10
+  TextWindow.WriteLine("*   CHONNAM NATIONAL UNIVERSITY   *")
+  TextWindow.CursorLeft = 10
+  TextWindow.WriteLine("*                                 *")
+  TextWindow.CursorLeft = 10
+  TextWindow.WriteLine("***********************************")
+  TextWindow.WriteLine("")
+  
+  Program.Delay(300)
+  c = c + 1
+
+EndWhile
+
