@@ -2,6 +2,7 @@ package com.coducation.smallbasic.gui;
 
 import java.awt.BorderLayout;
 
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -18,16 +19,18 @@ public class TextAreaMaker
 	
 	public static float fontSize = 20.0f;
 	
-	public TextAreaMaker(JPanel panel) 
+	public TextAreaMaker(JPanel panel, JFrame frame) 
 	{
 		//폰트사이즈 설정
 		textArea.setFont(textArea.getFont().deriveFont(fontSize));
 		
-		//스크롤넣기
+		//스크롤에 textArea, lineNumber 넣기
 		JScrollPane scroller = new JScrollPane(textArea);
 		scroller.setRowHeaderView(lineNumberComponent);			//라인넘버넣기
 		panel.add(scroller, BorderLayout.CENTER);
-		lineNumberComponent.setAlignment(LineNumberComponent.CENTER_ALIGNMENT);
+		
+		//마우스 리스너 연결
+		frame.addMouseListener(lineNumberComponent);
 		
 		//안에 바뀔때 마다부르기
 		textArea.getDocument().addDocumentListener
