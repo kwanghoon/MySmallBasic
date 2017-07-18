@@ -1,0 +1,22 @@
+TextWindow.Clear()
+
+TextWindow.BackgroundColor = "BLUE"
+TextWindow.ForegroundColor = "WHITE"
+
+TextWindow.WriteLine(TextWindow.BackgroundColor)
+TextWindow.WriteLine(TextWindow.ForegroundColor)
+
+TextWindow.WriteLine("Hello World!")
+
+TextWindow.BackgroundColor = "WHITE"
+TextWindow.ForegroundColor = "RED"
+
+TextWindow.WriteLine("Hello World!")
+
+TextWindow.CursorTop = 5
+TextWindow.CursorLeft = 10
+
+
+TextWindow.WriteLine("Hello World!!!!")
+TextWindow.WriteLine(TextWindow.CursorLeft)
+TextWindow.WriteLine(TextWindow.CursorTop)
