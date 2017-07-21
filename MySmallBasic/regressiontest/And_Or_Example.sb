@@ -1,0 +1,154 @@
+GraphicsWindow.Width = 500
+GraphicsWindow.Height = 500
+GraphicsWindow.Title = "And Or Example"
+
+GraphicsWindow.DrawLine(100, 100, 145, 100)
+GraphicsWindow.DrawEllipse(145, 97.5, 5, 5)
+switchAndA = Shapes.AddLine(150, 100, 175, 80)
+valueAndA = "False"
+GraphicsWindow.DrawEllipse(175, 97.5, 5, 5)
+GraphicsWindow.DrawLine(180, 100, 225, 100)
+GraphicsWindow.DrawEllipse(225, 97.5, 5, 5)
+switchAndB = Shapes.AddLine(230, 100, 255, 80)
+valueAndB = "False"
+GraphicsWindow.DrawEllipse(255, 97.5, 5, 5)
+GraphicsWindow.DrawLine(260, 100, 310, 100)
+
+GraphicsWindow.BrushColor = "Black"
+AndA = Controls.AddButton("A", 153, 120)
+AndB = Controls.AddButton("B", 233, 120)
+
+GraphicsWindow.DrawLine(310, 100, 310, 145)
+GraphicsWindow.DrawLine(310, 145, 320, 145)
+GraphicsWindow.BrushColor = "White"
+AandB = Shapes.AddEllipse(30, 30)
+Shapes.Move(AandB, 320, 135)
+GraphicsWindow.DrawLine(310, 155, 320, 155)
+GraphicsWindow.DrawLine(310, 155, 310, 200)
+
+GraphicsWindow.DrawLine(100, 200, 310, 200)
+GraphicsWindow.DrawLine(100, 100, 100, 140)
+GraphicsWindow.DrawRectangle(90, 140, 20, 30)
+GraphicsWindow.DrawLine(100, 170, 100, 200)
+
+GraphicsWindow.BrushColor = "Black"
+GraphicsWindow.DrawText(370, 145, "A And B")
+
+'--------------------------------------------------------------
+
+GraphicsWindow.DrawLine(100, 300, 160, 300)
+GraphicsWindow.DrawLine(160, 270, 160, 330)
+
+GraphicsWindow.DrawLine(160, 270, 190, 270)
+GraphicsWindow.DrawEllipse(190, 267.5, 5, 5)
+switchOrA = Shapes.AddLine(195, 270, 225, 250)
+valueOrA = "False"
+GraphicsWindow.DrawEllipse(225, 267.5, 5, 5)
+GraphicsWindow.DrawLine(230, 270, 260, 270)
+
+GraphicsWindow.DrawLine(160, 330, 190, 330)
+GraphicsWindow.DrawEllipse(190, 327.5, 5, 5)
+switchOrB = Shapes.AddLine(195, 330, 225, 310)
+valueOrB = "False"
+GraphicsWindow.DrawEllipse(225, 327.5, 5, 5)
+GraphicsWindow.DrawLine(230, 330, 260, 330)
+
+GraphicsWindow.DrawLine(260, 270, 260, 330)
+GraphicsWindow.DrawLine(260, 300, 310, 300)
+
+GraphicsWindow.DrawLine(310, 300, 310, 345)
+GraphicsWindow.DrawLine(310, 345, 320, 345)
+GraphicsWindow.BrushColor = "White"
+AorB = Shapes.AddEllipse(30, 30)
+Shapes.Move(AorB, 320, 335)
+GraphicsWindow.DrawLine(310, 355, 320, 355)
+GraphicsWindow.DrawLine(310, 355, 310, 400)
+
+GraphicsWindow.DrawLine(100, 400, 310, 400)
+GraphicsWindow.DrawLine(100, 300, 100, 340)
+GraphicsWindow.DrawRectangle(90, 340, 20, 30)
+GraphicsWindow.DrawLine(100, 370, 100, 400)
+
+GraphicsWindow.BrushColor = "Black"
+orA = Controls.AddButton("A", 200, 280)
+orB = Controls.AddButton("B", 200, 340)
+
+GraphicsWindow.DrawText(370, 345, "A Or B")
+
+Controls.ButtonClicked = ButtonClick
+  
+Sub ButtonClick
+  
+  If Controls.LastClickedButton = AndA Then
+    If valueAndA = "False" Then
+      Controls.Remove(switchAndA)
+      switchAndA = Shapes.AddLine(150, 100, 175, 100)
+      valueAndA = "True"
+    Else
+      Controls.Remove(switchAndA)
+      switchAndA = Shapes.AddLine(150, 100, 175, 80)
+      valueAndA = "False"
+    EndIf
+  EndIf
+  
+  If Controls.LastClickedButton = AndB Then
+    If valueAndB = "False" Then
+      Controls.Remove(switchAndB)
+      switchAndB = Shapes.AddLine(230, 100, 255, 100)
+      valueAndB = "True"
+    Else
+      Controls.Remove(switchAndB)
+      switchAndB = Shapes.AddLine(230, 100, 255, 80)
+      valueAndB = "False"
+    EndIf
+  EndIf
+  
+  If valueAndA = "True" And valueAndB = "True" Then
+    Controls.Remove(AandB)
+    GraphicsWindow.BrushColor = "Yellow"
+    AandB = Shapes.AddEllipse(30, 30)
+    Shapes.Move(AandB, 320, 135)
+  Else
+    Controls.Remove(AandB)
+    GraphicsWindow.BrushColor = "White"
+    AandB = Shapes.AddEllipse(30, 30)
+    Shapes.Move(AandB, 320, 135)
+  EndIf
+  
+  If Controls.LastClickedButton = orA Then
+    If valueOrA = "False" Then
+      Controls.Remove(switchOrA)
+      switchOrA = Shapes.AddLine(195, 270, 225, 270)
+      valueOrA = "True"
+    Else
+      Controls.Remove(switchOrA)
+      switchOrA = Shapes.AddLine(195, 270, 225, 250)
+      valueOrA = "False"
+    EndIf
+  EndIf
+  
+  If Controls.LastClickedButton = orB Then
+    If valueOrB = "False" Then
+      Controls.Remove(switchOrB)
+      switchOrB = Shapes.AddLine(195, 330, 225, 330)
+      valueOrB = "True"
+    Else
+      Controls.Remove(switchOrB)
+      switchOrB = Shapes.AddLine(195, 330, 225, 310)
+      valueOrB = "False"
+    EndIf
+  EndIf
+  
+  If valueOrA = "True" Or valueOrB = "True" Then
+    Controls.Remove(AOrB)
+    GraphicsWindow.BrushColor = "Yellow"
+    AOrB = Shapes.AddEllipse(30, 30)
+    Shapes.Move(AOrB, 320, 335)
+  Else
+    Controls.Remove(AOrB)
+    GraphicsWindow.BrushColor = "White"
+    AOrB = Shapes.AddEllipse(30, 30)
+    Shapes.Move(AOrB, 320, 335)
+  EndIf
+  
+EndSub
