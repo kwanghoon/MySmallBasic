@@ -209,7 +209,7 @@ public class Controls {
 			} else
 				throw new InterpretException("Unexpected type " + args.get(0));
 			
-			GraphicsWindow.ContorlsRemove(controlName);
+			GraphicsWindow.ControlsRemove(controlName);
 			
 		} else
 			throw new InterpretException("Unexpected # of args " + args.size());
