@@ -1427,23 +1427,28 @@ public class GraphicsWindow {
 
 	public static void ShapesRemove(String shape) {
 		ArrayList<Cmd> cmds = shapeMap.remove(shape);
+		JComponent comp = controlMap.get(shape);
+
 		if (cmds != null) {
 			for (Cmd cmd : cmds) {
 				panel.getCmdList().remove(cmd);
 			}
 			panel.repaint();
-		}
+		} else if (comp != null)
+			ControlsRemove(shape);
 	}
 
 	public static void ShapesMove(String shape, double x, double y) {
 		ArrayList<Cmd> cmds = shapeMap.get(shape);
+		JComponent comp = controlMap.get(shape);
 
 		if (cmds != null) {
 			for (Cmd cmd : cmds) {
 				cmd.Move(x, y);
 			}
 			panel.repaint();
-		}
+		} else if (comp != null)
+			ControlsMove(shape, (int) x, (int) y);
 	}
 
 	public static void Rotate(String shapeName, double angle) {
@@ -1664,6 +1669,7 @@ public class GraphicsWindow {
 
 	public static void HideShape(String shapeName) {
 		ArrayList<Cmd> cmds = shapeMap.get(shapeName);
+		JComponent comp = controlMap.get(shapeName);
 
 		if (cmds != null) {
 			for (Cmd cmd : cmds) {
@@ -1671,18 +1677,21 @@ public class GraphicsWindow {
 
 			}
 			panel.repaint();
-		}
+		} else if (comp != null)
+			HideControl(shapeName);
 	}
 
 	public static void ShowShape(String shapeName) {
 		ArrayList<Cmd> cmds = shapeMap.get(shapeName);
+		JComponent comp = controlMap.get(shapeName);
 
 		if (cmds != null) {
 			for (Cmd cmd : cmds) {
 				cmd.show = true;
 			}
 			panel.repaint();
-		}
+		} else if (comp != null)
+			ShowControl(shapeName);
 	}
 	// End Shapes Library
 
@@ -1830,26 +1839,29 @@ public class GraphicsWindow {
 		}
 	}
 
-	public static void ContorlsRemove(String control) {
+	public static void ControlsRemove(String control) {
 		JComponent comp = controlMap.get(control);
+		ArrayList<Cmd> cmd = shapeMap.get(control);
 
 		if (comp != null) {
-			controlMap.remove(comp);
-
+			controlMap.remove(control);
+			
 			container = comp.getParent();
 			container.remove(comp);
 			container.revalidate();
 			container.repaint();
-		}
+		} else if (cmd != null)
+			ShapesRemove(control);
 	}
 
 	public static void ControlsMove(String control, int x, int y) {
 		JComponent comp = controlMap.get(control);
+		ArrayList<Cmd> cmd = shapeMap.get(control);
 
 		if (comp != null) {
 			comp.setLocation(x, y);
-
-		}
+		} else if (cmd != null)
+			ShapesMove(control, x, y);
 	}
 
 	public static void SetSize(String control, int width, int height) {
@@ -1865,18 +1877,22 @@ public class GraphicsWindow {
 
 	public static void HideControl(String control) {
 		JComponent comp = controlMap.get(control);
+		ArrayList<Cmd> cmd = shapeMap.get(control);
 
 		if (comp != null) {
 			comp.setVisible(false);
-		}
+		} else if (cmd != null)
+			HideShape(control);
 	}
 
 	public static void ShowControl(String control) {
 		JComponent comp = controlMap.get(control);
+		ArrayList<Cmd> cmd = shapeMap.get(control);
 
 		if (comp != null) {
 			comp.setVisible(true);
-		}
+		} else if (cmd != null)
+			ShowShape(control);
 	}
 	// End Controls Library
 

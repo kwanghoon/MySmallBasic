@@ -1,0 +1,52 @@
+text = "This is Cross Test, 1 is Move Test, 2 is Remove Test, 3 is Hide Test, 4 is Show Test."
+GraphicsWindow.DrawText(0, 0, text)
+
+key = "Move"
+b_x = 100
+b_y = 100
+a_x = 150
+a_y = 100
+
+a = Shapes.AddEllipse(50, 50)
+Shapes.Move(a, a_x, a_y)
+b = Controls.AddButton("Test Button", b_x, b_y)
+
+GraphicsWindow.KeyDown = MyKeyDown
+GraphicsWindow.MouseDown = MyMouseDown
+
+Sub MyKeyDown
+  If GraphicsWindow.LastKey = "D1" Then
+    key = "Move"
+  ElseIf GraphicsWindow.LastKey = "D2" Then
+    key = "Remove"
+  ElseIf GraphicsWindow.LastKey = "D3" Then
+    key = "Hide"
+  ElseIf GraphicsWindow.LastKey = "D4" Then
+    key = "Show"
+  EndIf
+EndSub
+
+Sub MyMouseDown
+  If key = "Move" Then
+    tmp = a_x
+    a_x = b_x
+    b_x = tmp
+    
+    tmp = a_y
+    a_y = b_y
+    b_y = tmp
+    
+    Controls.Move(a, a_x, a_y)
+    Shapes.Move(b, b_x, b_y)
+  ElseIf key = "Remove" Then
+    Controls.Remove(a)
+    Shapes.Remove(b)
+  ElseIf key = "Hide" Then
+    Controls.HideControl(a)
+    Shapes.HideShape(b)
+  ElseIf key = "Show" Then
+    Controls.ShowControl(a)
+    Shapes.ShowShape(b)
+  EndIf
+EndSub
+  
