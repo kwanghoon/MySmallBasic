@@ -5,8 +5,8 @@ import java.awt.Rectangle;
 import javax.swing.JTextArea;
 import javax.swing.text.BadLocationException;
 
-//textArea에 대한 정보 제공
-public class LineNumberModel 
+//LineNumberComponent에서 textArea에 대한 정보 얻기
+public class LineNumberModel
 {
 	JTextArea textArea;
 	public LineNumberModel(JTextArea textArea)
@@ -18,6 +18,7 @@ public class LineNumberModel
 	{
 		return textArea.getLineCount();
 	}
+	
 	//주어진 줄에 대한 사각형 리턴 - 높이를 얻기위해 필요
 	public Rectangle getLineRect(int line) 
 	{

@@ -1,74 +1,64 @@
 package com.coducation.smallbasic.gui;
 
+import java.awt.Color;
 import java.awt.Component;
-
 import java.awt.Dimension;
-
 import java.awt.Graphics;
-
 import java.awt.Graphics2D;
-
 import java.awt.Rectangle;
-
 import java.awt.RenderingHints;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 import javax.swing.JComponent;
-
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-
 import javax.swing.JViewport;
 
-
 // 라인넘버를 그린다. 반드시 JscrollPane에 추가되어져야한다. 
-public class LineNumberComponent extends JComponent 
-{
-	//static final long serialVersionUID = 432143214L;
+public class LineNumberComponent extends JPanel implements MouseListener {
+	
+	// 간격관련 변수
+	private static final int HORIZONTAL_PADDING = (int) TextAreaMaker.fontSize / 3;
+	private static final int VERTICAL_PADDING = (int) TextAreaMaker.fontSize / 2;
 
-	//간격관련 변수들
-	public static final int LEFT_ALIGNMENT = 0;
-	public static final int RIGHT_ALIGNMENT = 1;
-	public static final int CENTER_ALIGNMENT = 2;
-	private static final int HORIZONTAL_PADDING = (int)TextAreaMaker.fontSize/3;
-	private static final int VERTICAL_PADDING = (int)TextAreaMaker.fontSize/2;
-	private int alignment = LEFT_ALIGNMENT;
-
-	//textarea 줄에대한 값을 가져올
+	// 디버그 dot 관련 변수
+	private static final int DOT_PADDING = 3;
+	private static final int DOT_WIDTH = (int) TextAreaMaker.fontSize;	// 디버그멈출 dot이 위치한 칸의 너비
+	private static boolean isDotCheck = false;
+	private static int dotLine = 0;
+	
+	// textarea 정보 가져오는 곳
 	private LineNumberModel lineNumberModel;
 
-	public LineNumberComponent()
-	{
+	public LineNumberComponent() {
 		super();
+		addMouseListener(this);
 	}
 
-	public LineNumberComponent(LineNumberModel model)
-	{
+	public LineNumberComponent(LineNumberModel model) {
 		this();
 		setLineNumberModel(model);
 	}
-	
-	public void setLineNumberModel(LineNumberModel model)
-	{
+
+	public void setLineNumberModel(LineNumberModel model) {
 		lineNumberModel = model;
-		if ( model != null )
-		{
-		    adjustWidth();
+		if (model != null) {
+			adjustWidth();
 		}
 		repaint();
 	}
 
-	//상황에 맞게 다시 그림
-	public void adjustWidth() 
-	{
+	// 상황에 맞게 다시 그림
+	public void adjustWidth() {
 		int max = lineNumberModel.getNumberLines();
-		if (getGraphics() == null) 
-		{
+		if (getGraphics() == null) {
 			return;
 		}
 
 		int width = getGraphics().getFontMetrics().stringWidth(String.valueOf(max)) + 2 * HORIZONTAL_PADDING;
 		JComponent c = (JComponent) getParent();
-		if (c == null) 
-		{
+		if (c == null) {
 			return;
 		}
 		Dimension dimension = c.getPreferredSize();
@@ -77,8 +67,7 @@ public class LineNumberComponent extends JComponent
 										// to get the main JScrollPane view
 			JViewport view = (JViewport) c;
 			Component parent = view.getParent();
-			if (parent != null && parent instanceof JScrollPane) 
-			{
+			if (parent != null && parent instanceof JScrollPane) {
 				JScrollPane scroller = (JScrollPane) view.getParent();
 				dimension = scroller.getViewport().getView().getPreferredSize();
 
@@ -86,73 +75,97 @@ public class LineNumberComponent extends JComponent
 
 		}
 
-		if (width > getPreferredSize().width || width < getPreferredSize().width) 
-		{
-			setPreferredSize(new Dimension(width + 2 * HORIZONTAL_PADDING, dimension.height));
+		if (width > getPreferredSize().width || width < getPreferredSize().width) {
+			setPreferredSize(new Dimension(width + 2 * HORIZONTAL_PADDING + DOT_WIDTH, dimension.height));
 			revalidate();
 			repaint();
 		}
 
 	}
 
-	/**
-	 * 
-	 * Sets how the numbers will be aligned.
-	 * 
-	 * @param alignment
-	 *            One of RIGHT_ALIGNMENT, LEFT_ALIGNMENT, or CENTER_ALIGNMENT
-	 * 
-	 * @throws IllegalArgumentException
-	 * 
-	 */
-
-	public void setAlignment(int alignment) throws IllegalArgumentException 
-	{
-		if (alignment < 0 || alignment > 2) 
-		{
-			throw new IllegalArgumentException("Invalid alignment option");
-		}
-		this.alignment = alignment;
-
-	}
-
-	//주어진 정보로 그리기
-	public void paintComponent(Graphics g) 
-	{
+	// 주어진 정보로 그리기
+	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 
-		if (lineNumberModel == null) 
-		{
+		if (lineNumberModel == null) {
 			return;
 		}
 
 		Graphics2D g2d = (Graphics2D) g;
+
+		//breakpoint칸 그리기
+		g.setColor(new Color(173, 216, 230));
+		g2d.fillRect(0, 0, DOT_WIDTH, getHeight());
+		
+		//숫자 칸 그리기
 		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		g.setColor(getBackground());
-		g2d.fillRect(0, 0, getWidth(), getHeight());
+		g2d.fillRect(DOT_WIDTH, 0, getWidth(), getHeight());
 		g.setColor(getForeground());
 
-		// iterate over all lines to draw the line numbers.
-		for (int i = 0; i < lineNumberModel.getNumberLines(); i++) 
-		{
+		// 모든 라인넘버 그리기
+		for (int i = 0; i < lineNumberModel.getNumberLines(); i++) {
 			Rectangle rect = lineNumberModel.getLineRect(i);
 			String text = String.valueOf(i + 1);
 			int yPosition = rect.y + rect.height - VERTICAL_PADDING;
-			int xPosition = HORIZONTAL_PADDING;// default to left alignment
+			int xPosition = DOT_WIDTH + (getPreferredSize().width - DOT_WIDTH) / 2
+					- g.getFontMetrics().stringWidth(text) / 2;
 
-			switch (alignment) 
-			{
-			case RIGHT_ALIGNMENT:
-				xPosition = getPreferredSize().width - g.getFontMetrics().stringWidth(text) - HORIZONTAL_PADDING;
-				break;
-			case CENTER_ALIGNMENT:
-				xPosition = getPreferredSize().width / 2 - g.getFontMetrics().stringWidth(text) / 2;
-				break;
-			default:// left alignment, do nothing
-				break;
-			}
 			g2d.setFont(g2d.getFont().deriveFont(TextAreaMaker.fontSize - 1));
 			g2d.drawString(String.valueOf(i + 1), xPosition, yPosition);
+			
+			//breakpoint 그리기
+			if(isDotCheck && i == dotLine)
+			{
+				g.setColor(new Color(115, 156, 6));
+				g2d.fillOval(0 + DOT_PADDING, rect.y + DOT_PADDING, 
+						DOT_WIDTH - 2*DOT_PADDING, DOT_WIDTH - 2*DOT_PADDING);
+				g.setColor(new Color(41, 64, 82));
+				g2d.drawOval(0 + DOT_PADDING, rect.y + DOT_PADDING, 
+						DOT_WIDTH - 2*DOT_PADDING, DOT_WIDTH - 2*DOT_PADDING);
+				g.setColor(getForeground());
+			}
 		}
 	}
+
+	// 마우스 이벤트 처리
+	public void mouseClicked(MouseEvent e) {
+		
+		if(e.getClickCount() != 2)
+			return;
+		
+		// 모든 라인넘버 찾기
+		for (int i = 0; i < lineNumberModel.getNumberLines(); i++) 
+		{
+			Rectangle rect = lineNumberModel.getLineRect(i);
+			if(e.getY() > rect.y && e.getY() < rect.y + rect.height)
+			{
+				if(isDotCheck)
+				{
+					if(dotLine == i)
+					{
+						isDotCheck = false;
+						repaint();
+					}
+					else
+					{
+						dotLine = i;
+						repaint();
+					}
+				}
+				else
+				{
+					isDotCheck = true;
+					dotLine = i;
+					repaint();
+				}
+				break;
+			}
+		}
+	}
+
+	public void mouseEntered(MouseEvent e) {}
+	public void mouseExited(MouseEvent e) {}
+	public void mousePressed(MouseEvent e) {}
+	public void mouseReleased(MouseEvent e) {}
 }

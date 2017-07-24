@@ -25,10 +25,7 @@ import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
-import com.coducation.smallbasic.MySmallBasicMain;
-
 public class SmallBasicGUI extends JFrame {
-
 	private static JPanel contentPane;
 	private static SmallBasicGUI frame;
 	private JButton newButton;
@@ -40,8 +37,8 @@ public class SmallBasicGUI extends JFrame {
 	private TextAreaMaker textAreaMaker;
 
 	// 저장관련 변수
-	private boolean isNew = true; // 새로운 파일인지? 경로가 있는 파일인지
-	private boolean isTemp = true; // 임시파일인가?
+	private boolean isNewFile = true; // 새로운 파일인지? 경로가 있는 파일인지
+	private boolean isTempFile = true; // 임시파일인지
 	private String filePath = TEMP_PATH; // 파일의 경로
 
 	final static String TEMP_PATH = System.getProperty("user.dir") + "/resource/tmp.sb";
@@ -51,9 +48,6 @@ public class SmallBasicGUI extends JFrame {
 		frame.setVisible(true);
 	}
 
-	/**
-	 * Create the frame.
-	 */
 	public SmallBasicGUI() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
@@ -66,15 +60,67 @@ public class SmallBasicGUI extends JFrame {
 		toolBar.setToolTipText("");
 		contentPane.add(toolBar, BorderLayout.NORTH);
 
-		// 파일
+		// 버튼추가
 		// new button
 		newButton = addButton("새로만들기", "/resource/GUI/new.png", toolBar, 50);
+		newButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				textArea.selectAll();
+				textArea.replaceSelection("");
+
+				filePath = TEMP_PATH; // 임시 tmp 파일경로
+
+				isTempFile = true;
+				isNewFile = true;
+			}
+		});
+
 		// open button
 		openButton = addButton("열기", "/resource/GUI/open.png", toolBar, 50);
+		openButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				// 파일선택창
+				FileDialog dialog = new FileDialog(frame, "열기", FileDialog.LOAD);
+				dialog.setDirectory(".");
+				dialog.setVisible(true);
+				if (dialog.getFile() == null)
+					return;
+				filePath = dialog.getDirectory() + dialog.getFile();
+
+				try {
+					BufferedReader reader = new BufferedReader(new FileReader(filePath));
+					textArea.setText("");
+					String line;
+					while ((line = reader.readLine()) != null) {
+						textArea.append(line + "\n");
+					}
+					reader.close();
+				} catch (Exception e2) {
+				}
+
+				isTempFile = false;
+				isNewFile = false;
+			}
+		});
+
 		// save button
 		saveButton = addButton("저장", "/resource/GUI/save.png", toolBar, 50);
+		saveButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				save();
+			}
+		});
+
 		// saveAs button
 		saveAsButton = addButton("다른 이름으로 저장", "/resource/GUI/saveAs.png", toolBar, 50);
+		saveAsButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				saveAs();
+
+				isTempFile = false;
+				isNewFile = false;
+			}
+		});
 
 		toolBar.addSeparator();
 
@@ -122,97 +168,10 @@ public class SmallBasicGUI extends JFrame {
 
 		// run button
 		runButton = addButton("실행", "/resource/GUI/play.png", toolBar, 50);
-
-		// textArea와 lineNumber, scroll을 만들어서 인자로 넣어준 패널에 추가함
-		// 아래처럼 getTextArea해서 얻어와서 다른거 구현하면됨
-		textAreaMaker = new TextAreaMaker(contentPane);
-		textArea = textAreaMaker.getTextArea();
-
-		setSize(1024, 800);
-	}
-
-	public ImageIcon resizeImg(String path, int width, int height) {
-		ImageIcon originIcon = new ImageIcon(path);
-		Image changedImg = originIcon.getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH);
-
-		return new ImageIcon(changedImg);
-	}
-
-	// 버튼
-	public JButton addButton(String text, String path, JToolBar toolBar, int size) {
-		JButton button = new JButton(text);
-		button.setIcon(resizeImg(System.getProperty("user.dir") + path, size, size));
-		button.setHorizontalTextPosition(SwingConstants.CENTER);
-		button.setVerticalTextPosition(SwingConstants.BOTTOM);
-		button.setIconTextGap(2);
-		toolBar.add(button);
-
-		// 버튼기능
-		button.addActionListener(new ButtonEvent());
-
-		return button;
-	}
-
-	//버튼 이벤트
-	class ButtonEvent implements ActionListener {
-		public void actionPerformed(ActionEvent e) {
-
-			// 새로만들기
-			if (e.getSource().equals(newButton)) {
-				textArea.selectAll();
-				textArea.replaceSelection("");
-
-				// 임시 tmp 파일경로...
-				filePath = TEMP_PATH;
-
-				// 저장관련 변수
-				isTemp = true;
-				isNew = true;
-			}
-
-			// 저장
-			else if (e.getSource().equals(saveButton)) {
-				save();
-			}
-
-			// 다른이름으로 저장
-			if (e.getSource().equals(saveAsButton)) {
-				saveAs();
-
-				isTemp = false;
-				isNew = false;
-			}
-
-			// 열기
-			else if (e.getSource().equals(openButton)) {
-				// 파일선택창
-				FileDialog dialog = new FileDialog(frame, "열기", FileDialog.LOAD);
-				dialog.setDirectory(".");
-				dialog.setVisible(true);
-				if (dialog.getFile() == null)
-					return;
-				filePath = dialog.getDirectory() + dialog.getFile();
-
-				try {
-					BufferedReader reader = new BufferedReader(new FileReader(filePath));
-					textArea.setText("");
-					String line;
-					while ((line = reader.readLine()) != null) {
-						textArea.append(line + "\n");
-					}
-					reader.close();
-				} catch (Exception e2) {
-				}
-
-				// 저장관련 변수 설정
-				isTemp = false;
-				isNew = false;
-			}
-
-			// 실행
-			else if (e.getSource().equals(runButton)) {
+		runButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
 				// 임시 파일로 작성한 경우.. 따로 저장안하고 실행
-				if (isTemp) {
+				if (isTempFile) {
 					try {
 						BufferedWriter writer = new BufferedWriter(new FileWriter(filePath));
 						writer.write(textArea.getText());
@@ -261,17 +220,39 @@ public class SmallBasicGUI extends JFrame {
 				catch (IOException e1) {
 					e1.printStackTrace();
 				}
-
 			}
+		});
 
-		}
+		// textArea와 lineNumber, scroll을 만들어서 인자로 넣어준 패널에 추가
+		textAreaMaker = new TextAreaMaker(contentPane, this);
+		textArea = textAreaMaker.getTextArea();
 
+		setSize(1024, 800);
 	}
 
-	// 저장하는 기능
+	// 이미지 크기 변경
+	private ImageIcon resizeImg(String path, int width, int height) {
+		ImageIcon originIcon = new ImageIcon(path);
+		Image changedImg = originIcon.getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH);
+		return new ImageIcon(changedImg);
+	}
+
+	// 툴바에 버튼 추가
+	private JButton addButton(String text, String path, JToolBar toolBar, int size) {
+		JButton button = new JButton(text);
+		button.setIcon(resizeImg(System.getProperty("user.dir") + path, size, size));
+		button.setHorizontalTextPosition(SwingConstants.CENTER);
+		button.setVerticalTextPosition(SwingConstants.BOTTOM);
+		button.setIconTextGap(2);
+		toolBar.add(button);
+
+		return button;
+	}
+
+	// 저장
 	private void save() {
 		// 새로운 파일-다른이름으로 저장 필요
-		if (isNew) {
+		if (isNewFile) {
 			saveAs();
 		}
 		// 기존 경로가 있는 파일
@@ -285,7 +266,7 @@ public class SmallBasicGUI extends JFrame {
 		}
 	}
 
-	// 다른이름으로 저장하는 기능
+	// 다른이름으로 저장
 	private void saveAs() {
 		// 경로 선택창
 		FileDialog dialog = new FileDialog(frame, "다른 이름으로 저장", FileDialog.SAVE);
@@ -313,8 +294,8 @@ public class SmallBasicGUI extends JFrame {
 		String osName = System.getProperty("os.name");
 		String osNameMatch = osName.toLowerCase();
 
-		//HOME = "C:/Users/user/git/MySmallBasic/MySmallBasic";
-		 HOME = "./";
+		// HOME = "C:/Users/user/git/MySmallBasic/MySmallBasic";
+		HOME = "./";
 		javaCmd = "com.coducation.smallbasic.MySmallBasicMain";
 
 		shellCmd = "";
@@ -331,18 +312,17 @@ public class SmallBasicGUI extends JFrame {
 
 		cwd = System.getProperty("user.dir");
 	}
-	public static void addJarFile(String path) {
 
+	public static void addJarFile(String path) {
 		File jar = new File(path);
 
 		if (jar.isDirectory() == true) {
 			File[] jars = jar.listFiles();
-			
+
 			for (int i = 0; i < jars.length; i++) {
 				if (jars[i].isDirectory() == true) { // 폴더일 경우
 					addJarFile(path + "\\" + jars[i].getName()); // 재귀호출
-				}
-				else {
+				} else {
 					if (jars[i].getName().endsWith(".jar")) {
 						classpath.append(";");
 						classpath.append(HOME + "/lib/" + jars[i].getName());
