@@ -52,11 +52,17 @@ public class LexerAnalyzer
 				
 				if(ch == '\n' || ch == '\'') // END_LINE or Comment => Token "CR"
 				{
+//					if (ch == '\'' // Should be a comment
+//							&& line.length()>=i_index+8-1 // guard for checking the next condition
+//							&& line.substring(i_index).startsWith("'@assert") // '@assert ...
+//							&& Tokenized_word.size()==0)  // No tokens before '@assert ... in the current line
+//						System.out.println("Found: " + line);
+					
 					I = "\n";
 					CurrToken = Token.CR;
 
 					Tokenized_word.add(new Terminal(I, CurrToken, front_index, index+1));
-
+					
 					break;
 				}
 				// ( ) { } , = : + - * / [ ] 

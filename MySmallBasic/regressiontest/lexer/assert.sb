@@ -1,0 +1,5 @@
+x = 5 + 5
+'@assert x=10
+   '@assert x=10
+TextWindow.WriteLine("Hello") '@assert GraphicWindow.Width>=640
+
