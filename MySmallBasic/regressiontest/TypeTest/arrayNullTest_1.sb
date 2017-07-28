@@ -7,4 +7,5 @@ If a[1] Then
 Else
 	TextWindow.WriteLine("False")
 EndIf
+'@assert a[1]="False"
 ' array null pointer test. a[1] is null. : False

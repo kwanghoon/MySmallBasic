@@ -231,8 +231,10 @@ public class GraphicsWindow {
 		if (args.size() == 0) {
 			if (frame != null)
 				frame.setVisible(true);
-			else
+			else {
 				frame = new Frame();
+				frame.setAlwaysOnTop(false);
+			}
 		} else
 			throw new InterpretException("Unexpected # of args " + args.size());
 	}
@@ -265,6 +267,7 @@ public class GraphicsWindow {
 		Frame() {
 			setTitle(Title.toString());
 			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			setAlwaysOnTop(true);
 
 			if (((StrV) CanResize).getValue().equalsIgnoreCase("true"))
 				setResizable(true);
@@ -2304,6 +2307,13 @@ public class GraphicsWindow {
 	private static final Value defaultFontName = new StrV("Tahoma");
 	private static final Value defaultFontSize = new DoubleV(12);
 	private static final Value defaultPenWidth = new DoubleV(2);
+	
+	private static final double mousePosX = Mouse.MouseX.getNumber() - defaultLeft.getNumber();
+	private static final double mousePosY = Mouse.MouseY.getNumber() - defaultTop.getNumber();
+	
+	private static final Value defaultMouseX = new DoubleV((mousePosX >= defaultLeft.getNumber() && mousePosX <= defaultLeft.getNumber() + defaultWidth.getNumber())?(int) mousePosX: 0);
+	private static final Value defaultMouseY = new DoubleV((mousePosY >= defaultTop.getNumber() && mousePosX <= defaultTop.getNumber() + defaultHeight.getNumber() && defaultMouseX.getNumber() != 0)?(int) mousePosY: 0);
+
 
 	public static Value BackgroundColor = GraphicsWindow.defaultBackgroundColor; // white
 	public static Value BrushColor = GraphicsWindow.defaultBrushColor;
@@ -2316,8 +2326,8 @@ public class GraphicsWindow {
 	public static Value LastKey;
 	public static Value LastText;
 	public static Value Left = GraphicsWindow.defaultLeft;
-	public static Value MouseX;
-	public static Value MouseY;
+	public static Value MouseX = GraphicsWindow.defaultMouseX;
+	public static Value MouseY = GraphicsWindow.defaultMouseY;
 	public static Value PenColor = GraphicsWindow.defaultPenColor; // black
 	public static Value PenWidth = GraphicsWindow.defaultPenWidth;
 	public static Value Title = GraphicsWindow.defaultTitle;

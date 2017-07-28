@@ -2,4 +2,5 @@ For i = 1 + 2 To "True" + 10
   TextWindow.WriteLine(i)
 EndFor
 
+'@assert i=3
 'nothing

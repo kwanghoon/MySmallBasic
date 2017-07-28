@@ -2,6 +2,10 @@ btn = Controls.AddButton("test1", 10, 10)
 tf = Controls.AddTextBox(10, 50)
 ta = Controls.AddMultiLineTextBox(10, 100)
 
+'@assert btn="Button1"
+'@assert tf="TextBox1"
+'@assert ta="TextBox2"
 TextWindow.Read()
 
 Controls.Remove(btn)
+'@assert btn="Button1"

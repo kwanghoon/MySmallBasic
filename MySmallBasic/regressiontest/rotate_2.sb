@@ -1,10 +1,19 @@
-﻿localResized = Shapes.AddImage("resource/peng.png")
+localResized = Shapes.AddImage("resource/peng.png")
 TextWindow.WriteLine(localResized)
 networkImage = Shapes.AddImage("https://www.google.co.kr/images/branding/googlelogo/2x/googlelogo_color_120x44dp.png")
 TextWindow.WriteLine(networkImage)
 
+'@assert localResized="Image1"
+'@assert networkImage="Image2"
+'@assert Shapes.GetLeft(localResized)=0
+'@assert Shapes.GetTop(localResized)=0
+'@assert Shaeps.GetLeft(networkImage)=0
+'@assert Shapes.GetTop(networkImage)=0
+
 currentImage = localResized
 i = 0
+
+'@assert currentImage="Image1"
 
 GraphicsWindow.KeyDown = OnKeyPressed
 
@@ -14,11 +23,17 @@ Sub OnKeyPressed
     Shapes.HideShape(networkImage)
     currentImage = localResized
     i = 0
+    '@assert GraphicsWindow.LastKey="D1"
+    '@assert currentImage="Image1"
+    '@assert i=0
   ElseIf GraphicsWindow.LastKey = "D2" Then
     Shapes.HideShape(localResized)
     Shapes.ShowShape(networkImage)
     currentImage = networkImage
     i = 0
+    '@assert GraphicsWindow.LastKey="D2"
+    '@assert currentImage="Image2"
+    '@assert i=0
   Else
     i = i + 10
     Shapes.Rotate(currentImage, i)

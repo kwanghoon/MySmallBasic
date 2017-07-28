@@ -29,8 +29,8 @@ public class Mouse {
 	
 	private static Value defaultMouseX = new DoubleV(MouseInfo.getPointerInfo().getLocation().getX());
 	private static Value defaultMouseY = new DoubleV(MouseInfo.getPointerInfo().getLocation().getY());
-	public static Value MouseX;
-	public static Value MouseY;
+	public static Value MouseX = defaultMouseX;
+	public static Value MouseY = defaultMouseY;
 	public static Value IsLeftButtonDown = new StrV("False");
 	public static Value IsRightButtonDown = new StrV("False");
 

@@ -1,6 +1,13 @@
 GraphicsWindow.FontSize = 20
 text = Shapes.AddText("hello")
+'@assert Shapes.GetLeft(text)=0
+'@assert Shapes.GetTop(text)=0
 Shapes.Move(text, 30, 30)
+
+'@assert GraphicsWindow.FontSize=20
+'@assert text="Text1"
+'@assert Shapes.GetLeft(text)=30
+'@assert Shapes.GetTop(text)=30
 
 For i = 0 To 360 Step 30
 	Shapes.Rotate("Text1", i)

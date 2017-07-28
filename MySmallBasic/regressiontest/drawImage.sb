@@ -1,10 +1,10 @@
-﻿TextWindow.WriteLine("로컬 100*100 사이즈 이미지")
-GraphicsWindow.DrawResizedImage("C:\Users\user\Desktop\ㅁ.png", 10, 10, 100, 100)
+TextWindow.WriteLine("로컬 100*100 사이즈 이미지")
+GraphicsWindow.DrawResizedImage("resource\peng.png", 10, 10, 100, 100)
 TextWindow.Read()
 
 GraphicsWindow.Clear()
 TextWindow.WriteLine("로컬 원본 이미지")
-GraphicsWindow.DrawImage("C:/Users/user/Desktop/ㅁ.png", 10, 10)
+GraphicsWindow.DrawImage("resource\peng.png", 10, 10)
 TextWindow.Read()
 
 GraphicsWindow.Clear()

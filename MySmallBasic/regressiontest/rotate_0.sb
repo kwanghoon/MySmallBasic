@@ -1,6 +1,16 @@
 first = Shapes.AddRectangle(100, 50)
+
+'@assert first="Rectangle1"
+'@assert Shapes.GetLeft(first)=0
+'@assert Shapes.GetTop(first)=0
+
 Shapes.Move(first, 10, 10)
+'@assert Shapes.GetLeft(first)=10
+'@assert Shapes.GetTop(first)=10
+
 Shapes.Zoom(first, 3, 3)
+'@assert Shapes.GetLeft(first)=10
+'@assert Shapes.GetTop(first)=10
 
 For i = 0 To 360 Step 45
 	Shapes.Rotate(first, i)
