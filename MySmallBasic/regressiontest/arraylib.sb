@@ -1,69 +1,81 @@
-'  Array.ContainsIndex
 arr[0] = "hello"
 arr[2] = "world"
 arr[4] = "123"
 
-b = Array.ContainsIndex(arr,1)
-TextWindow.WriteLine(b)
+TextWindow.WriteLine("*ContainsIndex() Test*")
 
+'@assert a = false
+a = Array.ContainsIndex(arr,1)
+TextWindow.WriteLine(a)
+
+'@assert b = true
 b = Array.ContainsIndex(arr,2)
 TextWindow.WriteLine(b)
 
-b = Array.ContainsIndex(arr,"1")
-TextWindow.WriteLine(b)
-
-b = Array.ContainsIndex(arr,"2")
-TextWindow.WriteLine(b)
-
-' Array.ContainsValue
-
-
-
-c = Array.ContainsValue(arr,"hello")
+'@assert c = false
+c = Array.ContainsIndex(arr,"1")
 TextWindow.WriteLine(c)
 
-c = Array.ContainsValue(arr,2)
-TextWindow.WriteLine(c)
-
-c = Array.ContainsValue(arr,123)
-TextWindow.WriteLine(c)
-
-
-TextWindow.WriteLine("GetAllIndices")
-d = Array.GetAllIndices(arr)
+'@assert d = true 
+d = Array.ContainsIndex(arr,"2")
 TextWindow.WriteLine(d)
-e = Array.GetItemCount(d)
-TextWindow.WriteLine(e)
-TextWindow.WriteLine("GetItemCount")
-e = Array.GetItemCount(arr)
+
+TextWindow.WriteLine("*ContainsValue() Test*")
+
+'@assert e = true
+e = Array.ContainsValue(arr,"hello")
 TextWindow.WriteLine(e)
 
-TextWindow.WriteLine("IsArray")
-f = Array.IsArray(arr)
+'@assert f = false
+f = Array.ContainsValue(arr,2)
 TextWindow.WriteLine(f)
 
-TextWindow.WriteLine("setValue")
+'@assert g = true
+g = Array.ContainsValue(arr,123)
+TextWindow.WriteLine(g)
+
+TextWindow.WriteLine("*GetAllIndices() Test*")
+
+'@assert h=1=0;2=2;3=4;
+h = Array.GetAllIndices(arr)
+TextWindow.WriteLine(h)
+
+TextWindow.WriteLine("*GetItemCount() Test*")
+
+'@assert i=3
+i = Array.GetItemCount(arr)
+TextWindow.WriteLine(i)
+
+'@assert j=3
+j = Array.GetItemCount(arr)
+TextWindow.WriteLine(j)
+
+TextWindow.WriteLine("*IsArray() Test*")
+
+'@assert k=true
+k = Array.IsArray(h)
+TextWindow.WriteLine(k)
+
+TextWindow.WriteLine("*setValue() Test*")
+
+'@assert arr = 5=ssss;6=4;7=se;0s=7;is=yeong;
 Array.SetValue("arr",5,"ssss")
 Array.SetValue("arr",6,4)
-'Array.SetValue(arr,6,"se")
-'Array.SetValue(arr,"os",7)
-'Array.SetValue(arr,"is","yeong")
-TextWindow.WriteLine(arr)
+Array.SetValue(arr,7,"se")
+Array.SetValue(arr,"os",7)
+Array.SetValue(arr,"is","yeong")
 
+TextWindow.WriteLine("*GetValue() Test*")
 
-TextWindow.WriteLine("GetItemCount")
-e = Array.GetItemCount(arr)
-TextWindow.WriteLine(e)
+'@asset l=7
+l = Array.GetValue(arr,"os")
+TextWindow.WriteLine(l)
 
+'@assert m=ssss
+m = Array.GetValue("arr","5")
+TextWindow.WriteLine(m)
 
-TextWindow.WriteLine("GetValue")
-'g = Array.GetValue(arr,4)
-'TextWindow.WriteLine(g)
-g = Array.GetValue("arr",5)
-TextWindow.WriteLine(g)
+TextWindow.WriteLine("*RemoveValue() Test*")
 
-TextWindow.WriteLine("RemoveValue")
+'@assert arr=6=4;7=se;0s=7;is=yeong;
 Array.RemoveValue("arr",5)
-
-g = Array.GetValue("arr",5)
-TextWindow.WriteLine(g)
