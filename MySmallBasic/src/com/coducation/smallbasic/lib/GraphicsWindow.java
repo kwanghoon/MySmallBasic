@@ -12,6 +12,7 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.Robot;
 import java.awt.Toolkit;
@@ -493,22 +494,20 @@ public class GraphicsWindow {
 			}
 			if (pixelList.size() != 0) {
 				for (Pixel pixel : pixelList) {
-					for (int i = 0; i < (int) ((DoubleV) Height).getValue(); i++) {
-						for (int j = 0; j < (int) ((DoubleV) Width).getValue(); j++) {
-							if (pixel.x == j && pixel.y == i) {
-								String pColor = pixel.color.getValue();
-								if (pColor.contains("#")) {
-									// hex 상태
-									g.setColor(new Color(Integer.parseInt(pColor.substring(1), 16)));
-								} else {
-									// Red, Blue, ...
-									pColor = colorMap.get(pColor.toUpperCase());
-									g.setColor(new Color(Integer.parseInt(pColor.substring(1), 16)));
-								}
-								g.drawLine(j, i, j, i);
-								break;
-							}
-						}
+					String pColor = pixel.color.getValue();
+					if (pColor.contains("#")) {
+						// hex 상태
+						g.setColor(new Color(Integer.parseInt(pColor.substring(1), 16)));
+					} else {
+						// Red, Blue, ...
+						pColor = colorMap.get(pColor.toUpperCase());
+						if(pColor == null)
+							pColor = "#000000";
+						g.setColor(new Color(Integer.parseInt(pColor.substring(1), 16)));
+					}
+					if(0 <= pixel.x && pixel.x <= Width.getNumber() && 0 <= pixel.y && pixel.y <= Height.getNumber()) {
+						g2.setStroke(new BasicStroke(1));
+						g2.drawLine(pixel.x, pixel.y, pixel.x, pixel.y);
 					}
 				}
 			}
@@ -582,6 +581,7 @@ public class GraphicsWindow {
 
 				pixelList.add(pixel);
 			}
+			panel.repaint();
 		}
 
 		ArrayList<Pixel> pixelList;
@@ -1179,6 +1179,9 @@ public class GraphicsWindow {
 
 		@Override
 		public void mouseMoved(MouseEvent e) {
+			Mouse.MouseX = new DoubleV(MouseInfo.getPointerInfo().getLocation().getX());
+			Mouse.MouseY = new DoubleV(MouseInfo.getPointerInfo().getLocation().getY());
+			
 			if (MouseMove != null) {
 				MouseX = new DoubleV(e.getX());
 				MouseY = new DoubleV(e.getY());
@@ -2307,14 +2310,7 @@ public class GraphicsWindow {
 	private static final Value defaultFontName = new StrV("Tahoma");
 	private static final Value defaultFontSize = new DoubleV(12);
 	private static final Value defaultPenWidth = new DoubleV(2);
-	
-	private static final double mousePosX = Mouse.MouseX.getNumber() - defaultLeft.getNumber();
-	private static final double mousePosY = Mouse.MouseY.getNumber() - defaultTop.getNumber();
-	
-	private static final Value defaultMouseX = new DoubleV((mousePosX >= defaultLeft.getNumber() && mousePosX <= defaultLeft.getNumber() + defaultWidth.getNumber())?(int) mousePosX: 0);
-	private static final Value defaultMouseY = new DoubleV((mousePosY >= defaultTop.getNumber() && mousePosX <= defaultTop.getNumber() + defaultHeight.getNumber() && defaultMouseX.getNumber() != 0)?(int) mousePosY: 0);
-
-
+		
 	public static Value BackgroundColor = GraphicsWindow.defaultBackgroundColor; // white
 	public static Value BrushColor = GraphicsWindow.defaultBrushColor;
 	public static Value CanResize = GraphicsWindow.defaultCanResize;
@@ -2326,14 +2322,19 @@ public class GraphicsWindow {
 	public static Value LastKey;
 	public static Value LastText;
 	public static Value Left = GraphicsWindow.defaultLeft;
-	public static Value MouseX = GraphicsWindow.defaultMouseX;
-	public static Value MouseY = GraphicsWindow.defaultMouseY;
 	public static Value PenColor = GraphicsWindow.defaultPenColor; // black
 	public static Value PenWidth = GraphicsWindow.defaultPenWidth;
 	public static Value Title = GraphicsWindow.defaultTitle;
 	public static Value Top = GraphicsWindow.defaultTop;
 	public static Value Width = GraphicsWindow.defaultWidth;
+	private static final boolean isMouseIn = (Mouse.MouseY.getNumber() >= Top.getNumber() && Mouse.MouseY.getNumber() <= Top.getNumber() + Height.getNumber()) && (Mouse.MouseX.getNumber() >= Left.getNumber() + 7 && Mouse.MouseX.getNumber() <= Left.getNumber() + Width.getNumber());
+	
+	private static final Value defaultMouseX = new DoubleV(isMouseIn?(int) Mouse.MouseX.getNumber() - Left.getNumber() - 7: 0);
+	private static final Value defaultMouseY = new DoubleV(isMouseIn?(int) Mouse.MouseY.getNumber() - Top.getNumber() - 30: 0);
 
+	public static Value MouseX = GraphicsWindow.defaultMouseX;
+	public static Value MouseY = GraphicsWindow.defaultMouseY;
+	
 	public static Value KeyDown;
 	public static Value KeyUp;
 	public static Value MouseDown;

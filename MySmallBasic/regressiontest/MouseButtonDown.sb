@@ -3,8 +3,8 @@ GraphicsWindow.Show()
 '@assert Mouse.IsLeftButtonDown="False"
 '@assert Mouse.IsRightButtonDown="False"
 
-TextWindow.WriteLine(GraphicsWindow.MouseX)
-TextWindow.WriteLine(GraphicsWindow.MouseY)
+TextWindow.WriteLine(GraphicsWindow.MouseX + ", " + Mouse.MouseX)
+TextWindow.WriteLine(GraphicsWindow.MouseY + ", " + Mouse.MouseY)
 
 GraphicsWindow.MouseDown = OnMouseDown
 
