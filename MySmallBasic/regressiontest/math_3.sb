@@ -1,9 +1,28 @@
+' Test for operations in a Math library with two parameter
+
+a = Math.Remainder(3,2)
+b = Math.Power(3,2)
+c = Math.Max(100,50)
+d = Math.Min(100,50)
+e = Math.Abs(-100.321)
+
+'@assert a = 1
+TextWindow.WriteLine(a)
+
+'@assert b = 9
+TextWindow.WriteLine(b)
+
+'@assert c = 100
+TextWindow.WriteLine(c)
+
+'@assert d = 50
+TextWindow.WriteLine(d)
+
+'@assert e = 100.321
+TextWindow.WriteLine(e)
+
+' Test for GetRandomNumber operation
 TextWindow.WriteLine(Math.GetRandomNumber(100))
-TextWindow.WriteLine(Math.Remainder(3,2))
-TextWindow.WriteLine(Math.Power(3,2))
-TextWindow.WriteLine(Math.Max(100,50))
-TextWindow.WriteLine(Math.Min(100,50))
-TextWindow.WriteLine(Math.Abs(-100.321))
 TextWindow.WriteLine(Math.GetRandomNumber(100))
 TextWindow.WriteLine(Math.GetRandomNumber(100))
 TextWindow.WriteLine(Math.GetRandomNumber(100))
