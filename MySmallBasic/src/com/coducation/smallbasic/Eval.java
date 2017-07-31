@@ -267,6 +267,8 @@ public class Eval {
 					dv1 = ((StrV) v1).parseDouble();
 				else if (v1 instanceof StrV)
 					numplus = false;
+				else if (v1 instanceof ArrayV)
+					numplus = false;
 				else
 					throw new InterpretException("PLUS 1st operand unexpected" + v1);
 
@@ -277,6 +279,8 @@ public class Eval {
 				else if (v2 instanceof StrV && ((StrV) v2).isNumber())
 					dv2 = ((StrV) v2).parseDouble();
 				else if (v2 instanceof StrV)
+					numplus = false;
+				else if (v2 instanceof ArrayV)
 					numplus = false;
 				else
 					throw new InterpretException("PLUS 2nd operand unexpected" + v2);
