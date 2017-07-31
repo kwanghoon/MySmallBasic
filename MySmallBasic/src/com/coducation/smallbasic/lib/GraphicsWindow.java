@@ -311,7 +311,6 @@ public class GraphicsWindow {
 			this.setLayout(null);
 
 			cmdList = new ArrayList<>();
-			pixelList = new ArrayList<>();
 
 			addMouseListener(this);
 			addMouseMotionListener(this);
@@ -347,7 +346,7 @@ public class GraphicsWindow {
 					case DRAWBOUNDTEXT:
 						DrawBoundTextCmd dbtc = (DrawBoundTextCmd) cmd;
 						FontMetrics dbtcMetrics = g2.getFontMetrics(dbtc.font);
-						color = ((StrV) dbtc.brushcolor).getValue();
+						color = ((StrV) hexColor((StrV) dbtc.brushcolor, new StrV("#000000"))).toString();;
 						g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) dbtc.opacity));
 						g2.rotate(java.lang.Math.toRadians(dbtc.degree));
 						g2.scale(dbtc.scaleX, dbtc.scaleY);
@@ -358,7 +357,7 @@ public class GraphicsWindow {
 						break;
 					case DRAWELLIPSE:
 						DrawEllipseCmd dec = (DrawEllipseCmd) cmd;
-						color = ((StrV) dec.pencolor).getValue();
+						color = ((StrV) hexColor((StrV) dec.pencolor, new StrV("#000000"))).toString();;
 						g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) dec.opacity));
 						g2.rotate(java.lang.Math.toRadians(dec.degree), (dec.x + dec.w / 2) * zoomX,
 								(dec.y + dec.h / 2) * zoomY);
@@ -383,7 +382,7 @@ public class GraphicsWindow {
 						break;
 					case DRAWLINE:
 						DrawLineCmd dlc = (DrawLineCmd) cmd;
-						color = ((StrV) dlc.pencolor).getValue();
+						color = ((StrV) hexColor((StrV) dlc.pencolor, new StrV("#000000"))).toString();;
 						g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) dlc.opacity));
 						g2.rotate(java.lang.Math.toRadians(dlc.degree), ((dlc.x1 + dlc.x2) / 2) * zoomX,
 								((dlc.y1 + dlc.y2) / 2) * zoomY);
@@ -395,7 +394,7 @@ public class GraphicsWindow {
 						break;
 					case DRAWRECTANGLE:
 						DrawRectangleCmd drc = (DrawRectangleCmd) cmd;
-						color = ((StrV) drc.pencolor).getValue();
+						color = ((StrV) hexColor((StrV) drc.pencolor, new StrV("#000000"))).toString();;
 						g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) drc.opacity));
 						g2.rotate(java.lang.Math.toRadians(drc.degree), (drc.x + drc.w / 2) * zoomX,
 								(drc.y + drc.h / 2) * zoomY);
@@ -433,7 +432,7 @@ public class GraphicsWindow {
 						break;
 					case DRAWTRIANGLE:
 						DrawTriangleCmd dtrc = (DrawTriangleCmd) cmd;
-						color = ((StrV) dtrc.pencolor).getValue();
+						color = ((StrV) hexColor((StrV) dtrc.pencolor, new StrV("#000000"))).toString();;
 						g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) dtrc.opacity));
 						Point dt = getCircumcenter(dtrc.xs[0], dtrc.ys[0], dtrc.xs[1], dtrc.ys[1], dtrc.xs[2],
 								dtrc.ys[2]);
@@ -447,7 +446,7 @@ public class GraphicsWindow {
 
 					case FILLELLIPSE:
 						FillEllipseCmd fec = (FillEllipseCmd) cmd;
-						color = ((StrV) fec.brushcolor).getValue();
+						color = ((StrV) hexColor((StrV) fec.brushcolor, new StrV("#000000"))).toString();;
 						g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) fec.opacity));
 						g2.rotate(java.lang.Math.toRadians(fec.degree), (fec.x + fec.w / 2) * zoomX,
 								(fec.y + fec.h / 2) * zoomY);
@@ -458,7 +457,7 @@ public class GraphicsWindow {
 						break;
 					case FILLRECTANGLE:
 						FillRectangleCmd frc = (FillRectangleCmd) cmd;
-						color = ((StrV) frc.brushcolor).getValue();
+						color = ((StrV) hexColor((StrV) frc.brushcolor, new StrV("#000000"))).toString();;
 						g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) frc.opacity));
 						g2.rotate(java.lang.Math.toRadians(frc.degree), (frc.x + frc.w / 2) * zoomX,
 								(frc.y + frc.h / 2) * zoomY);
@@ -469,7 +468,7 @@ public class GraphicsWindow {
 						break;
 					case FILLTRIANGLE:
 						FillTriangleCmd ftc = (FillTriangleCmd) cmd;
-						color = ((StrV) ftc.brushcolor).getValue();
+						color = ((StrV) hexColor((StrV) ftc.brushcolor, new StrV("#000000"))).toString();;
 						g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) ftc.opacity));
 						Point ft = getCircumcenter(ftc.xs[0], ftc.ys[0], ftc.xs[1], ftc.ys[1], ftc.xs[2], ftc.ys[2]);
 						g2.rotate(java.lang.Math.toRadians(ftc.degree), ft.getX() * zoomX, ft.getY() * zoomY);
@@ -477,6 +476,14 @@ public class GraphicsWindow {
 						g2.setColor(new Color(Integer.parseInt(color.substring(1), 16)));
 						g2.fillPolygon(ftc.xs, ftc.ys, 3);
 						g2.rotate(java.lang.Math.toRadians(-ftc.degree), ft.getX(), ft.getY());
+						break;
+					case SETPIXEL:
+						SetPixelCmd spc = (SetPixelCmd) cmd;
+						color = ((StrV) hexColor((StrV) spc.color, new StrV("#000000"))).toString();
+						g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) spc.opacity));
+						g2.setColor(new Color(Integer.parseInt(color.substring(1), 16)));
+						g2.setStroke(new BasicStroke(1));
+						g2.drawLine((int) spc.x, (int) spc.y, (int) spc.x, (int) spc.y);
 						break;
 					}
 					if (zoomX != 1) {
@@ -489,25 +496,6 @@ public class GraphicsWindow {
 					}
 					if (rotate != 0) {
 						rotate = 0;
-					}
-				}
-			}
-			if (pixelList.size() != 0) {
-				for (Pixel pixel : pixelList) {
-					String pColor = pixel.color.getValue();
-					if (pColor.contains("#")) {
-						// hex 상태
-						g.setColor(new Color(Integer.parseInt(pColor.substring(1), 16)));
-					} else {
-						// Red, Blue, ...
-						pColor = colorMap.get(pColor.toUpperCase());
-						if(pColor == null)
-							pColor = "#000000";
-						g.setColor(new Color(Integer.parseInt(pColor.substring(1), 16)));
-					}
-					if(0 <= pixel.x && pixel.x <= Width.getNumber() && 0 <= pixel.y && pixel.y <= Height.getNumber()) {
-						g2.setStroke(new BasicStroke(1));
-						g2.drawLine(pixel.x, pixel.y, pixel.x, pixel.y);
 					}
 				}
 			}
@@ -556,42 +544,6 @@ public class GraphicsWindow {
 			return null;
 		}
 
-		public void SetPixel(ArrayList<Value> args) {
-			int values[] = new int[2];
-			boolean isInteger[] = { false, false };
-
-			for (int i = 0; i < 2; i++) {
-				if (args.get(i) instanceof DoubleV) {
-					isInteger[i] = true;
-					values[i] = (int) ((DoubleV) args.get(i)).getValue();
-				} else if (args.get(i) instanceof StrV) {
-					if (((StrV) args.get(i)).isNumber()) {
-						isInteger[i] = true;
-						values[i] = (int) ((StrV) args.get(i)).parseDouble();
-					}
-				} else
-					throw new InterpretException("Unexpected type " + args.get(i));
-			}
-
-			if (isInteger[0] && isInteger[1] && args.get(2) instanceof StrV) {
-				Pixel pixel = new Pixel();
-				pixel.x = values[0];
-				pixel.y = values[1];
-				pixel.color = (StrV) args.get(2);
-
-				pixelList.add(pixel);
-			}
-			panel.repaint();
-		}
-
-		ArrayList<Pixel> pixelList;
-
-		private static class Pixel {
-			StrV color;
-			int x;
-			int y;
-		}
-
 		final int NOCOMMAND = 0;
 		final int DRAWBOUNDTEXT = 1;
 		final int DRAWELLIPSE = 2;
@@ -605,6 +557,8 @@ public class GraphicsWindow {
 		final int FILLELLIPSE = 9;
 		final int FILLRECTANGLE = 10;
 		final int FILLTRIANGLE = 11;
+
+		final int SETPIXEL = 12;
 
 		ArrayList<Cmd> cmdList;
 
@@ -1131,6 +1085,49 @@ public class GraphicsWindow {
 			}
 		}
 
+		public void SetPixel(ArrayList<Value> args) {
+			SetPixelCmd cmd = new SetPixelCmd();
+
+			if (args.size() == 3) {
+
+				int values[] = new int[2];
+				boolean isInteger[] = { false, false };
+
+				for (int i = 0; i < 2; i++) {
+					if (args.get(i) instanceof DoubleV) {
+						isInteger[i] = true;
+						values[i] = (int) ((DoubleV) args.get(i)).getValue();
+					} else if (args.get(i) instanceof StrV) {
+						if (((StrV) args.get(i)).isNumber()) {
+							isInteger[i] = true;
+							values[i] = (int) ((StrV) args.get(i)).parseDouble();
+						}
+					} else
+						throw new InterpretException("Unexpected type " + args.get(i));
+				}
+
+				if (isInteger[0] && isInteger[1] && args.get(2) instanceof StrV) {
+					cmd.cmd = SETPIXEL;
+					
+					cmd.x = values[0];
+					cmd.y = values[1];
+					cmd.color = (StrV) args.get(2);
+					cmd.show = true;
+					cmd.opacity = 1;
+					cmd.degree = 0;
+					cmd.scaleX = 1;
+					cmd.scaleY = 1;
+					
+					cmdList.add(cmd);
+					
+					repaint();
+				}
+			}
+			else {
+				throw new InterpretException("Unexpected # of args " + args.size());
+			}
+		}
+
 		public ArrayList<Cmd> getCmdList() {
 			return cmdList;
 		}
@@ -1181,7 +1178,7 @@ public class GraphicsWindow {
 		public void mouseMoved(MouseEvent e) {
 			Mouse.MouseX = new DoubleV(MouseInfo.getPointerInfo().getLocation().getX());
 			Mouse.MouseY = new DoubleV(MouseInfo.getPointerInfo().getLocation().getY());
-			
+
 			if (MouseMove != null) {
 				MouseX = new DoubleV(e.getX());
 				MouseY = new DoubleV(e.getY());
@@ -1851,7 +1848,7 @@ public class GraphicsWindow {
 
 		if (comp != null) {
 			controlMap.remove(control);
-			
+
 			container = comp.getParent();
 			container.remove(comp);
 			container.revalidate();
@@ -2293,6 +2290,14 @@ public class GraphicsWindow {
 		}
 	}
 
+	private static class SetPixelCmd extends Cmd {
+		Value color;
+
+		@Override
+		void Move(double x, double y) {
+		}
+	}
+
 	private static Frame frame = null;
 	private static Panel panel = null;
 
@@ -2310,7 +2315,7 @@ public class GraphicsWindow {
 	private static final Value defaultFontName = new StrV("Tahoma");
 	private static final Value defaultFontSize = new DoubleV(12);
 	private static final Value defaultPenWidth = new DoubleV(2);
-		
+
 	public static Value BackgroundColor = GraphicsWindow.defaultBackgroundColor; // white
 	public static Value BrushColor = GraphicsWindow.defaultBrushColor;
 	public static Value CanResize = GraphicsWindow.defaultCanResize;
@@ -2327,14 +2332,19 @@ public class GraphicsWindow {
 	public static Value Title = GraphicsWindow.defaultTitle;
 	public static Value Top = GraphicsWindow.defaultTop;
 	public static Value Width = GraphicsWindow.defaultWidth;
-	private static final boolean isMouseIn = (Mouse.MouseY.getNumber() >= Top.getNumber() && Mouse.MouseY.getNumber() <= Top.getNumber() + Height.getNumber()) && (Mouse.MouseX.getNumber() >= Left.getNumber() + 7 && Mouse.MouseX.getNumber() <= Left.getNumber() + Width.getNumber());
-	
-	private static final Value defaultMouseX = new DoubleV(isMouseIn?(int) Mouse.MouseX.getNumber() - Left.getNumber() - 7: 0);
-	private static final Value defaultMouseY = new DoubleV(isMouseIn?(int) Mouse.MouseY.getNumber() - Top.getNumber() - 30: 0);
+	private static final boolean isMouseIn = (Mouse.MouseY.getNumber() >= Top.getNumber()
+			&& Mouse.MouseY.getNumber() <= Top.getNumber() + Height.getNumber())
+			&& (Mouse.MouseX.getNumber() >= Left.getNumber() + 7
+					&& Mouse.MouseX.getNumber() <= Left.getNumber() + Width.getNumber());
+
+	private static final Value defaultMouseX = new DoubleV(
+			isMouseIn ? (int) Mouse.MouseX.getNumber() - Left.getNumber() - 7 : 0);
+	private static final Value defaultMouseY = new DoubleV(
+			isMouseIn ? (int) Mouse.MouseY.getNumber() - Top.getNumber() - 30 : 0);
 
 	public static Value MouseX = GraphicsWindow.defaultMouseX;
 	public static Value MouseY = GraphicsWindow.defaultMouseY;
-	
+
 	public static Value KeyDown;
 	public static Value KeyUp;
 	public static Value MouseDown;
@@ -2431,19 +2441,19 @@ public class GraphicsWindow {
 		if ("BrushColor".equalsIgnoreCase(fieldName)) {
 			if (BrushColor instanceof StrV) {
 				String v = ((StrV) BrushColor).getValue();
-				BrushColor = hexColor((StrV) BrushColor, GraphicsWindow.defaultBrushColor);
+				BrushColor = hexColor((StrV) BrushColor, new StrV("#000000"));
 			} else
 				throw new InterpretException("BrushColor: Unexpected value" + BrushColor.toString());
 		} else if ("PenColor".equalsIgnoreCase(fieldName)) {
 			if (PenColor instanceof StrV) {
 				String v = ((StrV) PenColor).getValue();
-				PenColor = hexColor((StrV) PenColor, GraphicsWindow.defaultPenColor);
+				PenColor = hexColor((StrV) PenColor, new StrV("#000000"));
 			} else
 				throw new InterpretException("PenColor: Unexpected value" + BrushColor.toString());
 		} else if ("BackgroundColor".equalsIgnoreCase(fieldName)) {
 			if (BackgroundColor instanceof StrV) {
 				String v = ((StrV) BackgroundColor).getValue();
-				BackgroundColor = hexColor((StrV) BackgroundColor, GraphicsWindow.defaultBackgroundColor);
+				BackgroundColor = hexColor((StrV) BackgroundColor, new StrV("#000000"));
 			} else
 				throw new InterpretException("BackgroundColor: Unexpected value" + BrushColor.toString());
 		} else if ("CanResize".equalsIgnoreCase(fieldName)) {

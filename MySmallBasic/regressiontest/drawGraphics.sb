@@ -1,3 +1,10 @@
+TextWindow.WriteLine(GraphicsWindow.BrushColor)
+'@assert GraphicsWindow.BrushColor="#6A5ACD"
+
+GraphicsWindow.BrushColor = "abc"
+TextWindow.WriteLine(GraphicsWindow.BrushColor)
+'@assert GraphicsWindow.BrushColor="#000000"
+
 GraphicsWindow.BrushColor = "OrangeRed"
 GraphicsWindow.PenColor = "LightSalmon"
 
