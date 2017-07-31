@@ -81,11 +81,11 @@ Sub ButtonClick
   
   If Controls.LastClickedButton = AndA Then
     If valueAndA = "False" Then
-      Controls.Remove(switchAndA)
+      Shapes.Remove(switchAndA)
       switchAndA = Shapes.AddLine(150, 100, 175, 100)
       valueAndA = "True"
     Else
-      Controls.Remove(switchAndA)
+      Shapes.Remove(switchAndA)
       switchAndA = Shapes.AddLine(150, 100, 175, 80)
       valueAndA = "False"
     EndIf
@@ -93,23 +93,23 @@ Sub ButtonClick
   
   If Controls.LastClickedButton = AndB Then
     If valueAndB = "False" Then
-      Controls.Remove(switchAndB)
+      Shapes.Remove(switchAndB)
       switchAndB = Shapes.AddLine(230, 100, 255, 100)
       valueAndB = "True"
     Else
-      Controls.Remove(switchAndB)
+      Shapes.Remove(switchAndB)
       switchAndB = Shapes.AddLine(230, 100, 255, 80)
       valueAndB = "False"
     EndIf
   EndIf
   
   If valueAndA = "True" And valueAndB = "True" Then
-    Controls.Remove(AandB)
+    Shapes.Remove(AandB)
     GraphicsWindow.BrushColor = "Yellow"
     AandB = Shapes.AddEllipse(30, 30)
     Shapes.Move(AandB, 320, 135)
   Else
-    Controls.Remove(AandB)
+    Shapes.Remove(AandB)
     GraphicsWindow.BrushColor = "White"
     AandB = Shapes.AddEllipse(30, 30)
     Shapes.Move(AandB, 320, 135)
@@ -117,11 +117,11 @@ Sub ButtonClick
   
   If Controls.LastClickedButton = orA Then
     If valueOrA = "False" Then
-      Controls.Remove(switchOrA)
+      Shapes.Remove(switchOrA)
       switchOrA = Shapes.AddLine(195, 270, 225, 270)
       valueOrA = "True"
     Else
-      Controls.Remove(switchOrA)
+      Shapes.Remove(switchOrA)
       switchOrA = Shapes.AddLine(195, 270, 225, 250)
       valueOrA = "False"
     EndIf
@@ -129,11 +129,11 @@ Sub ButtonClick
   
   If Controls.LastClickedButton = orB Then
     If valueOrB = "False" Then
-      Controls.Remove(switchOrB)
+      Shapes.Remove(switchOrB)
       switchOrB = Shapes.AddLine(195, 330, 225, 330)
       valueOrB = "True"
     Else
-      Controls.Remove(switchOrB)
+      Shapes.Remove(switchOrB)
       switchOrB = Shapes.AddLine(195, 330, 225, 310)
       valueOrB = "False"
     EndIf

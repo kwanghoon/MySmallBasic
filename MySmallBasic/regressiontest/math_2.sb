@@ -1,19 +1,38 @@
+' Test for operations in a Math library with one parameter
+
 a = Math.Ceiling(0.000001)
 b = Math.Floor(0.99999)
 c = Math.GetDegrees(Math.Pi/6)
 d = Math.GetRadians(30)
 e = Math.Log(100)
-f = Math.NaturalLog(2.74)
+f = Math.NaturalLog(2.71828)
 g = Math.Round(32.233)
 h = Math.Round(32.566)
 i = Math.SquareRoot(4)
 
-TextWindow.WriteLine(a)
-TextWindow.WriteLine(b)
-TextWindow.WriteLine(c)
-TextWindow.WriteLine(d)
-TextWindow.WriteLine(e)
-TextWindow.WriteLine(f)
-TextWindow.WriteLine(g)
-TextWindow.WriteLine(h)
-TextWindow.WriteLine(i)
+'@assert a = 1
+TextWindow.WriteLine("Math.Ceiling(0.000001) = " + a)
+
+'@assert b = 0
+TextWindow.WriteLine("Math.Floor(0.99999) = " + b)
+
+'@assert c = 30
+TextWindow.WriteLine("Math.GetDegrees(Math.Pi/6) = " + c)
+
+'@assert d = Math.Pi / 6
+TextWindow.WriteLine("Math.GetRadians(30) = " + d)
+
+'@assert e = 2
+TextWindow.WriteLine("Math.Log(100) = " + e)
+
+'@assert f = 1
+TextWindow.WriteLine("Math.NaturalLog(2.71828) = " + f)
+
+'@assert g = 32
+TextWindow.WriteLine("Math.Round(32.233) = " + g)
+
+'@assert h = 33
+TextWindow.WriteLine("Math.Round(32.566) = " + h)
+
+'@assert i = 2
+TextWindow.WriteLine("Math.SquareRoot(4) = " + i)

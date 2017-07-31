@@ -1,3 +1,5 @@
+' Test for trigonometric function in Math library
+
 a = Math.Sin(Math.Pi/6) 
 b = Math.Cos(Math.Pi/6)
 c = Math.Tan(Math.Pi/6)
@@ -8,12 +10,29 @@ g = Math.Sin(Math.ArcSin(0.5))
 h = Math.Cos(Math.ArcCos(0.5))
 i = Math.Tan(Math.ArcTan(0.5))
 
+'@assert a = 1 / 2
 TextWindow.WriteLine("Math.Sin(Math.Pi/6) = " + a)
+
+'@assert b = Math.SquareRoot(3) / 2
 TextWindow.WriteLine("Math.Cos(Math.Pi/6) = " + b)
+
+'@assert c = 1 / Math.SquareRoot(3)
 TextWindow.WriteLine("Math.Tan(Math.Pi/6) = " + c)
+
+'@assert d = Math.Pi / 6
 TextWindow.WriteLine("Math.ArcSin(0.5) = " + d)
+
+'@assert e = Math.Pi / 3
 TextWindow.WriteLine("Math.ArcCos(0.5) = " + e)
-TextWindow.WriteLine("Math.ArcTan(0.5) = " + f)
+
+'@assert f = Math.Pi / 4
+TextWindow.WriteLine("Math.ArcTan(1) = " + f)
+
+'@assert g = 0.5
 TextWindow.WriteLine("Math.Sin(Math.ArcSin(0.5)) = " + g)
+
+'@assert h = 0.5
 TextWindow.WriteLine("Math.Cos(Math.ArcCos(0.5)) = " + h)
+
+'@assert i = 0.5
 TextWindow.WriteLine("Math.Tan(Math.ArcTan(0.5)) = " + i)
