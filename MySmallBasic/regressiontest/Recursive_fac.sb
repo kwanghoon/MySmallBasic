@@ -1,0 +1,26 @@
+'팩토리얼 재귀함수
+
+TextWindow.Write("Insert a Number : ")
+number = TextWindow.ReadNumber()
+
+Stack.PushValue("Factorial", number)
+factorial()
+
+TextWindow.WriteLine(number + "! = " + Stack.PopValue("Factorial"))
+
+Sub factorial
+  n = Stack.PopValue("Factorial")
+  
+  If (n < 0) Then
+    TextWindow.WriteLine("Error : " + n + " is negative!")
+    Stack.PushValue("Factorial", 0)
+  ElseIf (n = 0) Then
+    Stack.PushValue("Factorial", 1)
+  Else
+    Stack.PushValue("Factorial", n)
+    Stack.PushValue("Factorial", n-1)
+    factorial()
+    
+    Stack.PushValue("Factorial", Stack.PopValue("Factorial") * Stack.PopValue("Factorial"))
+  EndIf  
+EndSub
