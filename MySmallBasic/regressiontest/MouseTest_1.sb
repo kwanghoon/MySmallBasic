@@ -1,0 +1,7 @@
+TextWindow.WriteLine("Mouse.MouseX : " + Mouse.MouseX + ", Mouse.MouseY : " + Mouse.MouseY)
+TextWindow.Read()
+
+Mouse.MouseX = -50
+Mouse.MouseY = 350
+
+TextWindow.WriteLine("Mouse.MouseX : " + Mouse.MouseX + ", Mouse.MouseY : " + Mouse.MouseY)

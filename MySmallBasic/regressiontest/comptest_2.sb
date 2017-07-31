@@ -4,6 +4,7 @@ If "a" > 4 Then
 Else
   TextWindow.WriteLine("false")
 EndIf
+'@assert a>4="False"
 ' a > 4 : false
 
 TextWindow.Write("6 > 4 : ")
@@ -12,6 +13,7 @@ If "6" > "4" Then
 Else
   TextWindow.WriteLine("false")
 EndIf
+'@assert 6>4="True"
 ' 6 > 4 : true
 
 TextWindow.Write("4 > a : ")
@@ -20,6 +22,7 @@ If "4" > "a" Then
 Else
   TextWindow.WriteLine("false")
 EndIf
+'@assert 4>a="True"
 ' 4 > a : true
 
 TextWindow.Write("4 > 6 : ")
@@ -28,6 +31,7 @@ If 4 > "6" Then
 Else
   TextWindow.WriteLine("false")
 EndIf
+'@assert 4>6="False"
 ' 4 > 6 : false
 
 TextWindow.Write("a > b : ")
@@ -36,6 +40,7 @@ If "a" > "b" Then
 Else
   TextWindow.WriteLine("false")
 EndIf
+'@assert a>b="False"
 ' a > b : false
 
 TextWindow.Write("a < b : ")
@@ -44,6 +49,7 @@ If "a" < "b" Then
 Else
   TextWindow.WriteLine("false")
 EndIf
+'@assert a<b="False"
 ' a < b : false
 
 TextWindow.Write("a >= b : ")
@@ -52,6 +58,7 @@ If "a" >= "b" Then
 Else
   TextWindow.WriteLine("false")
 EndIf
+'@assert a>=b="True"
 ' a >= b : true
 
 TextWindow.Write("a <= b : ")
@@ -60,6 +67,7 @@ If "a" <= "b" Then
 Else
   TextWindow.WriteLine("false")
 EndIf
+'@assert a<=b="True"
 ' a <= b : true
 
 TextWindow.Write("a <> b : ")
@@ -68,6 +76,7 @@ If "a" <> "b" Then
 Else
   TextWindow.WriteLine("false")
 EndIf
+'@assert a<>b="True"
 ' a <> b : true
 
 TextWindow.Write("a <> 4 : ")
@@ -76,6 +85,7 @@ If "a" <> "4" Then
 Else
   TextWindow.WriteLine("false")
 EndIf
+'@assert a<>4="True"
 ' a <> 4 : true
 
 TextWindow.Write("4 <> 4 : ")
@@ -84,4 +94,5 @@ If "4" < 4 Then
 Else
   TextWindow.WriteLine("false")
 EndIf
+'@assert 4<>4="False"
 ' 4 <> 4 : false

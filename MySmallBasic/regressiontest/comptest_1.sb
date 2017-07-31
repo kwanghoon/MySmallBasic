@@ -5,3 +5,4 @@ If newmove < 25 Then
 Else
 	TextWindow.WriteLine("newmove >= 25")
 EndIf
+'@assert newmove=""

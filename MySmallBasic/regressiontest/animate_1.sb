@@ -1,8 +1,11 @@
 first = Shapes.AddTriangle(200, 200, 100, 150, 50, 150)
 
+'@assert first="Triangle1"
 TextWindow.Read()
 Shapes.Animate(first, 0, 0, 1000)
 
 TextWindow.Read()
 TextWindow.WriteLine(Shapes.GetLeft(first))
 TextWindow.WriteLine(Shapes.GetTop(first))
+'@assert Shapes.GetLeft(first)=0
+'@assert Shapes.GetTop(first)=0

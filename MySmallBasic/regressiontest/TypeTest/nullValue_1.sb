@@ -12,6 +12,7 @@ If a = a Then
 Else
 	TextWindow.WriteLine("Not Equal")
 EndIf
+'@assert a=""
 'a = a : Not Equal
 
 TextWindow.Write("a = null : ")

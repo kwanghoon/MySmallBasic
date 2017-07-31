@@ -1,9 +1,19 @@
 a = Shapes.AddLine(10, 10, 100, 100)
+'@assert a="Line1"
+'@assert Shapes.GetLeft(a)=0
+'@assert Shapes.GetTop(a)=0
+'@assert GraphicsWindow.CanResize="True"
+
 GraphicsWindow.CanResize = "False"
+'@assert GraphicsWindow.CanResize="False"
+
 GraphicsWindow.MouseDown = OnMouseClick
 
 Sub OnMouseClick
 	x = GraphicsWindow.MouseX
 	y = GraphicsWindow.MouseY
 	Shapes.Move(a, x, y)
+	
+	'@assert GraphicsWindow.MouseX=Shapes.GetLeft(a)
+	'@assert GraphicsWindow.MouseY=Shapes.GetTop(a)
 EndSub

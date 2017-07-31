@@ -1,6 +1,11 @@
 GraphicsWindow.BrushColor = "OrangeRed"
 GraphicsWindow.PenColor = "LightSalmon"
 
+'@assert GraphicsWindow.BrushColor="#FF4500"
+'@assert GraphicsWindow.PenColor="#FFA07A"
+'@assert GraphicsWindow.BackgroundColor="#FFFFFF"
+'@assert GraphicsWindow.Title="Small Basic Graphics Window"
+
 a[0] = 0
 a[1] = 0
 a[2] = 30
@@ -12,6 +17,10 @@ GraphicsWindow.SetPixel(80, 80, "#123456")
 TextWindow.WriteLine(GraphicsWindow.GetPixel(80, 80))
 GraphicsWindow.SetPixel(100, 100, "SaddleBrown")
 GraphicsWindow.ShowMessage("hello", "test")
+
+'@assert GraphicsWindow.BrushColor="#FF4500"
+'@assert GraphicsWindow.PenColor="#FFA07A"
+'@assert GraphicsWindow.GetPixel(80, 80)="#123456"
 
 GraphicsWindow.MouseDown = OnMouseDown
 

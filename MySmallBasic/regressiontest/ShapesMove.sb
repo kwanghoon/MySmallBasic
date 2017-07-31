@@ -4,19 +4,33 @@ third = Shapes.AddRectangle(50, 50)
 fourth = Shapes.AddTriangle(30, 30, 30, 10, 50, 10)
 fifth = Shapes.AddText("test")
 
+'@assert first="Line1"
+'@assert second="Ellipse1"
+'@assert third="Rectangle1"
+'@assert fourth="Triangle1"
+'@assert fifth="Text1"
+
+'@assert GraphicsWindow.CanResize="True"
+'@assert GraphicsWindow.BackgroundColor="#FFFFFF"
+
 GraphicsWindow.KeyDown = OnKeyPressed
 GraphicsWindow.MouseDown = OnMouseClicked
 
 Sub OnKeyPressed
   If GraphicsWindow.LastKey = "D1" Then
+  	'@assert GraphicsWindow.LastKey="D1"
     shape = first
   ElseIf GraphicsWindow.LastKey = "D2" Then
+  	'@assert GraphicsWindow.LastKey="D2"
     shape = second
   ElseIf GraphicsWindow.LastKey = "D3" Then
+  	'@assert GraphicsWindow.LastKey="D3"
     shape = third
   ElseIf GraphicsWindow.LastKey = "D4" Then
+  	'@assert GraphicsWindow.LastKey="D4"
     shape = fourth
   ElseIf GraphicsWindow.LastKey = "D5" Then
+  	'@assert GraphicsWindow.LastKey="D5"
   	shape = fifth
   EndIf
 EndSub
@@ -25,4 +39,7 @@ Sub OnMouseClicked
   x = GraphicsWindow.MouseX
   y = GraphicsWindow.MouseY
   Shapes.Move(shape, x, y)
+  
+  '@assert GraphicsWindow.MouseX=Shapes.GetLeft(shape)
+  '@assert GraphicsWindow.MouseY=Shapes.GetTop(shape)
 EndSub

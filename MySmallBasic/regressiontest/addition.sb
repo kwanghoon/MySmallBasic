@@ -2,6 +2,9 @@ x = "123" + 456
 y = "abc" + 456
 z = "123" + "456"
 
+'@assert x=579
+'@assert y="abc456"
+'@assert z=579
 TextWindow.WriteLine(x)
 TextWindow.WriteLine(y)
 TextWindow.WriteLine(z)

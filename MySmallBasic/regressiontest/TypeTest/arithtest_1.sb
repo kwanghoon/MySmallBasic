@@ -3,6 +3,9 @@ a[0] = "True"
 b = 1 + a
 c = 1 - a
 
+'@assert a="True"
+'@assert b="1True"
+'@assert c=1
 TextWindow.WriteLine("a : " + a)
 TextWindow.WriteLine("b : " + b)
 TextWindow.WriteLine("c : " + c)

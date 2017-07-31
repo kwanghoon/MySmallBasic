@@ -1,10 +1,20 @@
 first = Shapes.AddRectangle(200, 20)
+'@assert first="Rectangle1"
+'@assert Shapes.GetOpacity(first)=100
+
 Shapes.Move(first, 100, 100)
+'@assert Shapes.GetLeft(first)=100
 Shapes.Animate(first, 250, 250, 3000)
+'@assert Shapes.GetLeft(first)=250
+'@assert Shapes.GetLeft(first)=250
 Shapes.Zoom(first, 2, 2)
 
 second = Shapes.AddEllipse(100, 100)
 Shapes.Move(second, 50, 40)
+'@assert second="Ellipse1"
+'@assert Shapes.GetLeft(second)=50
+'@assert Shapes.GetTop(second)=40
+'@assert Shapes.GetOpacity(second)=100
 
 third = Shapes.AddText("hello")
 Shapes.Move(third, 150, 50)
@@ -14,6 +24,8 @@ Shapes.SetText(third, "hello world")
 
 fourth = Shapes.AddLine(150, 150, 250, 150)
 Shapes.SetOpacity(fourth, 30)
+'@assert fourth="Line1"
+'@assert Shapes.GetOpacity(fourth)=30
 
 rotateTest = first
 GraphicsWindow.KeyDown = OnKeyPressed
