@@ -1,20 +1,24 @@
 TextWindow.Write("a + 4 : ")
 b = "a" + 4
+'@assert b="a4"
 TextWindow.WriteLine(b)
 ' a + 4 : a4
 
 TextWindow.Write("a - 4 : ")
 b = "a" - 4
+'@assert b=-4
 TextWindow.WriteLine(b)
 ' a - 4 : -4
 
 TextWindow.Write("4 * a : ")
 b = 4 * "a"
+'@assert b=0
 TextWindow.WriteLine(b)
 ' 4 * a : 0
 
 TextWindow.Write("-a : ")
 b = -"a"
+'@assert b=0
 TextWindow.WriteLine(b)
 ' -a : 0
 

@@ -1,8 +1,18 @@
 a = Shapes.AddRectangle(100, 100)
 b = Shapes.AddRectangle(100, 100)
+
+'@assert a="Rectangle1"
+'@assert b="Rectangle2"
+'@assert Shapes.GetLeft(a)=0
+'@assert Shapes.GetLeft(b)=0
+'@assert Shapes.GetTop(b)=0
+
 Shapes.Move(b, 100, 100)
 TextWindow.WriteLine(a)
 TextWindow.WriteLine(b)
+'@assert Shapes.GetLeft(b)=100
+'@assert Shapes.GetTop(b)=100
+
 GraphicsWindow.MouseDown = OnMouseDown
 
 Sub OnMouseDown
@@ -11,4 +21,7 @@ Sub OnMouseDown
 	TextWindow.WriteLine(x)
 	TextWindow.WriteLine(y)
 	Shapes.Move(a, x, y)
+	
+	'@assert GraphicsWindow.MouseX=Shapes.GetLeft(a)
+	'@assert GraphicsWindow.MouseY=Shapes.GetTop(a)
 EndSub

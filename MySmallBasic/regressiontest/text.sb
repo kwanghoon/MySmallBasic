@@ -1,94 +1,195 @@
-TextWindow.WriteLine("Text.Append Operation test")
+' Test for operations in the Text library
+
+TextWindow.WriteLine("Text.Append() Operation test")
+
+string1 = Text.Append("aaa","bbb")
+'@assert string1 = "aaabbb"
 TextWindow.Write("aaa + bbb : ")
-TextWindow.WriteLine(Text.Append("aaa","bbb"))
+TextWindow.WriteLine(string1)
+
+string2 = Text.Append(123,"bbb")
+'@assert string2 = "123bbb"
 TextWindow.Write("123 + bbb : ")
-TextWindow.WriteLine(Text.Append(123,"bbb"))
+TextWindow.WriteLine(string2)
+
+string3 = Text.Append(123,456)
+'@assert string3 = "123456"
 TextWindow.Write("123 + 456 : ")
-TextWindow.WriteLine(Text.Append(123,456))
+TextWindow.WriteLine(string3)
+
+string4 = Text.Append(123456789,11)
+'@assert string4 = "12345678911"
 TextWindow.Write("123456789 + 11 : ")
-TextWindow.WriteLine(Text.Append(123456789,11))
+TextWindow.WriteLine(string4)
+
 TextWindow.WriteLine("")
 
 TextWindow.WriteLine("Text.GetLength Operation test")
+
+length1 = Text.GetLength(123456789)
+'@assert length1 = 9
 TextWindow.Write("123456789 : ")
-TextWindow.WriteLine(Text.GetLength(123456789))
+TextWindow.WriteLine(length1)
+
+length2 = Text.GetLength("abcde")
+'@assert length2 = 5
 TextWindow.Write("abcde : ")
-TextWindow.WriteLine(Text.GetLength("abcde"))
+TextWindow.WriteLine(length2)
+
 TextWindow.WriteLine("")
 
 TextWindow.WriteLine("Text.IsSubText Operation test")
+
+bool1 = Text.IsSubText("abcdefg","cde")
+'@assert bool1 = "True"
 TextWindow.Write("abcdefg, cde : ")
-TextWindow.WriteLine(Text.IsSubText("abcdefg","cde"))
+TextWindow.WriteLine(bool1)
+
+bool2 = Text.IsSubText("ABCEDFG","aaa")
+'@assert bool2 = "False"
 TextWindow.Write("ABCEDFG, aaa : ")
-TextWindow.WriteLine(Text.IsSubText("ABCEDFG","aaa"))
+TextWindow.WriteLine(bool2)
+
+bool3 = Text.IsSubText("123456789",567)
+'@assert bool3 = "True"
 TextWindow.Write("123456789, 567 : ")
-TextWindow.WriteLine(Text.IsSubText("123456789",567))
+TextWindow.WriteLine(bool3)
+
 TextWindow.WriteLine("")
 
 TextWindow.WriteLine("Text.EndsWith Operation test")
+
+bool4 = Text.EndsWith("Small Basic.sb",".sb")
+'@assert bool4 = "True"
 TextWindow.Write("Small Basic.sb, .sb : ")
-TextWindow.WriteLine(Text.EndsWith("Small Basic.sb",".sb"))
+TextWindow.WriteLine(bool4)
+
+bool5 = Text.EndsWith("Small Basic.sb",".txt")
+'@assert bool5 = "False"
 TextWindow.Write("Small Basic.sb, .txt : ")
-TextWindow.WriteLine(Text.EndsWith("Small Basic.sb",".txt"))
+TextWindow.WriteLine(bool5)
+
+bool6 = Text.EndsWith(123456789,789)
+'@assert bool6 = "True"
 TextWindow.Write("123456789, 789 : ")
-TextWindow.WriteLine(Text.EndsWith(123456789,789))
+TextWindow.WriteLine(bool6)
+
+bool7 = Text.EndsWith(123456789,7890)
+'@assert bool7 = "False"
 TextWindow.Write("123456789, 7890 : ")
-TextWindow.WriteLine(Text.EndsWith(123456789,7890))
+TextWindow.WriteLine(bool7)
+
 TextWindow.WriteLine("")
 
 TextWindow.WriteLine("Text.StartsWith Operation test")
+
+bool8 = Text.StartsWith("ABCDEFG","AB")
+'@assert bool8 = "True"
 TextWindow.Write("ABCDEFG, AB : ")
-TextWindow.WriteLine(Text.StartsWith("ABCDEFG","AB"))
+TextWindow.WriteLine(bool8)
+
+bool9 = Text.StartsWith("ABCDEFG","CAB")
+'@assert bool9 = "False"
 TextWindow.Write("ABCDEFG, CAB : ")
-TextWindow.WriteLine(Text.StartsWith("ABCDEFG","CAB"))
+TextWindow.WriteLine(bool9)
+
+bool10 = Text.StartsWith(123456789,123)
+'@assert bool10 = "True"
 TextWindow.Write("123456789, 123 : ")
-TextWindow.WriteLine(Text.StartsWith(123456789,123))
+TextWindow.WriteLine(bool10)
+
+bool11 = Text.StartsWith(123456789,023)
+'@assert bool11 = "False"
 TextWindow.Write("123456789, 023 : ")
-TextWindow.WriteLine(Text.StartsWith(123456789,023))
+TextWindow.WriteLine(bool11)
+
 TextWindow.WriteLine("")
 
 TextWindow.WriteLine("Text.GetSubText Operation test")
+
+string5 = Text.GetSubText("ABCDEFG","1",3)
+'@assert string5 = "ABC"
 TextWindow.Write("ABCDEFG, 1, 3 : ")
-TextWindow.WriteLine(Text.GetSubText("ABCDEFG","1",3))
+TextWindow.WriteLine(string5)
+
 TextWindow.WriteLine("")
 
 TextWindow.WriteLine("Text.GetSubTextToEnd Operation test")
+
+string6 = Text.GetSubTextToEnd("ABCDEFG",3)
+'@assert string6 = "CDEFG"
 TextWindow.Write("ABCDEFG, 3 : ")
-TextWindow.WriteLine(Text.GetSubTextToEnd("ABCDEFG",3))
+TextWindow.WriteLine(string6)
+
 TextWindow.WriteLine("")
 
 TextWindow.WriteLine("Text.GetIndexOf Operation test")
+
+index1 = Text.GetIndexOf("ABCDEFG","BC")
+'@assert index1 = 2
 TextWindow.Write("ABCDEFG, BC : ")
-TextWindow.WriteLine(Text.GetIndexOf("ABCDEFG","BC"))
+TextWindow.WriteLine(index1)
+
+index2 = Text.GetIndexOf("ABCDEFG","D")
+'@assert index2 = 4
 TextWindow.Write("ABCDEFG, D : ")
-TextWindow.WriteLine(Text.GetIndexOf("ABCDEFG","D"))
+TextWindow.WriteLine(index2)
+
+index3 = Text.GetIndexOf(123456789,5)
+'@assert index3 = 5
 TextWindow.Write("123456789, 5 : ")
-TextWindow.WriteLine(Text.GetIndexOf(123456789,5))
+TextWindow.WriteLine(index3)
+
 TextWindow.WriteLine("")
 
 TextWindow.WriteLine("Text.ConvertToLowerCase Operation test")
+
+string7 = Text.ConvertToLowerCase("ABCDEFG")
+'@assert string7 = "abcdefg"
 TextWindow.Write("ABCDEFG : ")
-TextWindow.WriteLine(Text.ConvertToLowerCase("ABCDEFG"))
+TextWindow.WriteLine(string7)
+
+string8 = Text.ConvertToLowerCase(123456)
+'@assert string8 = "123456"
 TextWindow.Write("123456 : ")
-TextWindow.WriteLine(Text.ConvertToLowerCase(123456))
+TextWindow.WriteLine(string8)
+
 TextWindow.WriteLine("")
 
 TextWindow.WriteLine("Text.ConvertToUpperCase Operation test")
+
+string9 = Text.ConvertToUpperCase("abcdefg")
+'@assert string9 = "ABCDEFG"
 TextWindow.Write("abcdefg : ")
-TextWindow.WriteLine(Text.ConvertToUpperCase("abcdefg"))
+TextWindow.WriteLine(string9)
+
+string10 = Text.ConvertToUpperCase(123456)
+'@assert string10 = "123456"
 TextWindow.Write("123456 : ")
-TextWindow.WriteLine(Text.ConvertToUpperCase(123456))
+TextWindow.WriteLine(string10)
+
 TextWindow.WriteLine("")
 
 TextWindow.WriteLine("Text.GetCharacter Operation test")
+
+char1 = Text.GetCharacter(97)
+'@assert char1 = "a"
 TextWindow.Write("97 : ")
-TextWindow.WriteLine(Text.GetCharacter(97))
+TextWindow.WriteLine(char1)
+
+
 TextWindow.Write("1000 : ")
 TextWindow.WriteLine(Text.GetCharacter(1000))
 TextWindow.WriteLine("")
 
 TextWindow.WriteLine("Text.GetCharacterCode Operation test")
+
+code1 = Text.GetCharacterCode("a")
+'@assert code1 = 97
 TextWindow.Write("a : ")
-TextWindow.WriteLine(Text.GetCharacterCode("a"))
+TextWindow.WriteLine(code1)
+
+code2 = Text.GetCharacterCode("abc")
+'@assert code2 = 97
 TextWindow.Write("abc : ")
-TextWindow.WriteLine(Text.GetCharacterCode("abc"))
+TextWindow.WriteLine(code2)

@@ -1,3 +1,5 @@
+' Test for operations in the Program library
+
 TextWindow.Write("Properties - Program.Directory : ")
 TextWindow.WriteLine(Program.Directory)
 TextWindow.WriteLine("")

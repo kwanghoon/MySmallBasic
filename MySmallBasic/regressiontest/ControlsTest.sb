@@ -4,12 +4,20 @@ third = Controls.AddMultiLineTextBox("10", "120")
 fourth = Controls.AddButton("second button", 150, 50)
 fifth = Controls.AddButton("", 300, 50)
 
+'@assert first="Button1"
+'@assert second="TextBox1"
+'@assert third="TextBox2"
+'@assert fourth="Button2"
+'@assert fifth="Button3"
+
 Controls.ButtonClicked = displayPopUp
 
 Sub displayPopUp
   If(Controls.LastClickedButton = first) Then
+  	'@assert Controls.LastClickedButton="Button1"
     GraphicsWindow.ShowMessage(Controls.GetTextBoxText(second), "First Button Message")
   ElseIf(Controls.LastClickedButton = fourth) Then
+  	'@assert Controls.LastClickedButton="Button2"
     GraphicsWindow.ShowMessage(Controls.GetTextBoxText(third), "Second Button Message")
   EndIf
 EndSub

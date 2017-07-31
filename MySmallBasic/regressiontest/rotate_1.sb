@@ -1,5 +1,13 @@
 first = Shapes.AddTriangle(10, 10, 50, 10, 10, 50)
+
+'@assert first="Triangle1"
+'@assert Shapes.GetLeft(first)=0
+'@assert Shapes.GetTop(first)=0
+
 Shapes.Move("Triangle1", 200, 100)
+
+'@assert Shapes.GetLeft(first)=200
+'@assert Shapes.GetTop(first)=100
 
 For i = 0 To 360 Step 30
 	Shapes.Rotate(first, i)

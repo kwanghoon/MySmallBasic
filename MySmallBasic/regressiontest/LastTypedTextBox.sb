@@ -3,6 +3,11 @@ second = Controls.AddTextBox(10, 50)
 third = Controls.AddTextBox(10, 100)
 fourth = Controls.AddTextBox(10, 150)
 
+'@assert first="TextBox1"
+'@assert second="TextBox2"
+'@assert third="TextBox3"
+'@assert fourth="TextBox4"
+
 TextWindow.WriteLine(Controls.LastTypedTextBox)
 
 Controls.TextTyped = OnTextTyped
@@ -10,12 +15,16 @@ Controls.TextTyped = OnTextTyped
 Sub OnTextTyped
   TextWindow.Write("마지막에 텍스트가 입력된 박스 : ")
   If Controls.LastTypedTextBox = first Then
+  	'@assert Controls.LastTypedTextBox="TextBox1"
     TextWindow.WriteLine(first)
   ElseIf Controls.LastTypedTextBox = second Then
+  	'@assert Controls.LastTypedTextBox="TextBox2"
     TextWindow.WriteLine(second)
   ElseIf Controls.LastTypedTextBox = third Then
+  	'@assert Controls.LastTypedTextBox="TextBox3"
     TextWindow.WriteLine(third)
   ElseIf Controls.LastTypedTextBox = fourth Then
+  	'@assert Controls.LastTypedTextBox="TextBox4"
     TextWindow.WriteLine(fourth)
   EndIf
 EndSub

@@ -1,6 +1,7 @@
 a = "123"
 
 TextWindow.Write("a = 123 : ")
+'@assert a=123
 If a Then
 	TextWindow.WriteLine("True")
 Else
@@ -11,6 +12,7 @@ EndIf
 a = "abc"
 
 TextWindow.Write("a = abc : ")
+'@assert a="abc"
 If a Then
 	TextWindow.WriteLine("True")
 Else

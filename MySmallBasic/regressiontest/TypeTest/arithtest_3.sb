@@ -2,5 +2,7 @@ a[0] = 1
 b = a[1] + a[2]
 c = a[1] - a[2]
 
+'@assert b=""
+'@assert c=0
 TextWindow.WriteLine("b : " + b)
 TextWindow.WriteLine("c : " + c)

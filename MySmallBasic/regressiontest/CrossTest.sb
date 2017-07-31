@@ -11,18 +11,32 @@ a = Shapes.AddEllipse(50, 50)
 Shapes.Move(a, a_x, a_y)
 b = Controls.AddButton("Test Button", b_x, b_y)
 
+'@assert a="Ellipse1"
+'@assert b="Button1"
+
 GraphicsWindow.KeyDown = MyKeyDown
 GraphicsWindow.MouseDown = MyMouseDown
+
+TextWindow.Read()
+GraphicsWindow.Clear()
 
 Sub MyKeyDown
   If GraphicsWindow.LastKey = "D1" Then
     key = "Move"
+    '@assert GraphicsWindow.LastKey="D1"
+    '@assert key="Move"
   ElseIf GraphicsWindow.LastKey = "D2" Then
     key = "Remove"
+    '@assert GraphicsWindow.LastKey="D2"
+    '@assert key="Remove"
   ElseIf GraphicsWindow.LastKey = "D3" Then
     key = "Hide"
+  	'@assert GraphicsWindow.LastKey="D3"
+  	'@assert key="Hide"
   ElseIf GraphicsWindow.LastKey = "D4" Then
     key = "Show"
+    '@assert GraphicsWindow.LastKey="D4"
+    '@assert key="Show"
   EndIf
 EndSub
 

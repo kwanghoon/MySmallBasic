@@ -151,15 +151,13 @@ public class Array {
 			String index;
 			String arrname = arg1.toString();
 			ArrayV arr;
-			if(arg1 instanceof StrV){
+			if(arg1 instanceof StrV || arg1 instanceof ArrayV){
 				arr = hashmap.get(arrname);
 				if(arr == null){
 					arr = new ArrayV();
 					hashmap.put(arrname, arr);
 				}
-			}
-			else if(arg1 instanceof ArrayV){
-				return null;
+				
 			}
 			else 
 				throw new InterpretException("Not Value for ArrayName" + arg1);
@@ -181,13 +179,10 @@ public class Array {
 			String result;
 			String arrname = arg1.toString();
 			ArrayV arr;
-			if(arg1 instanceof StrV){
+			if(arg1 instanceof StrV || arg1 instanceof ArrayV){
 				arr = hashmap.get(arrname);
 				if(arr == null)
 					return new StrV("");
-			}
-			else if(arg1 instanceof ArrayV){
-				return new StrV("");
 			}
 			else 
 				throw new InterpretException("Not Value for ArrayName" + arg1);
@@ -211,13 +206,10 @@ public class Array {
 			String index;
 			String arrname = arg1.toString();
 			ArrayV arr;
-			if(arg1 instanceof StrV){
+			if(arg1 instanceof StrV || arg1 instanceof ArrayV){
 				arr = hashmap.get(arrname);
 				if(arr == null)
 					return null;
-			}
-			else if(arg1 instanceof ArrayV){
-				return null;
 			}
 			else 
 				throw new InterpretException("Not Value for ArrayName" + arg1);
