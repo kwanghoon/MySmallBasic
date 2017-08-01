@@ -97,7 +97,7 @@ public class MySmallBasicMain {
 			}
 			System.out.println();
 
-			System.out.println("Excution");
+			System.out.println("Execution");
 			try {
 				new Eval(new BasicBlockEnv(map)).eval(args);
 			} catch (InterpretException exn) {
