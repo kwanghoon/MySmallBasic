@@ -151,6 +151,7 @@ public class TextWindow {
 			System.out.print(args.get(i).toString());
 			cursorX++;
 		}
+		System.out.flush();
 	}
 
 	public static void WriteLine(ArrayList<Value> args) {

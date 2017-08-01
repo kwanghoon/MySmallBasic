@@ -1,0 +1,31 @@
+'피보나치수열 재귀함수
+
+TextWindow.Write("Insert a Number : ")
+number = TextWindow.ReadNumber()
+
+Stack.PushValue("Fib", number)
+fib()
+
+TextWindow.WriteLine("Fib(" + number + ")=" + Stack.PopValue("Fib"))
+
+Sub fib
+  n = Stack.PopValue("Fib")
+  
+  If (n <= 0) Then
+    Stack.PushValue("Fib", 0)
+  ElseIf (n = 1) Then
+    Stack.PushValue("Fib", 1)
+  Else
+    Stack.PushValue("Fib", n)
+    Stack.PushValue("Fib", n - 1)
+    fib()
+    return = Stack.PopValue("Fib")
+    n = Stack.PopValue("Fib")
+    
+    Stack.PushValue("Fib", return)
+    Stack.PushValue("Fib", n - 2)
+    fib()
+    
+    Stack.PushValue("Fib", Stack.PopValue("Fib") + Stack.PopValue("Fib"))
+  EndIf
+EndSub
