@@ -1,0 +1,12 @@
+arr[1] = 1
+arr[2] = 2
+
+temp = arr[1]
+TextWindow.WriteLine(temp + " , " + arr[1])
+arr[1] = arr[2]
+TextWindow.WriteLine(arr[1] + " , " + arr[2])
+arr[2] = temp
+TextWindow.WriteLine(arr[2] + " , " + temp)
+
+TextWindow.WriteLine(arr[1])
+TextWindow.WriteLine(arr[2])

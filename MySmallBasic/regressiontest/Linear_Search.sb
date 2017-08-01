@@ -1,0 +1,26 @@
+' Linear Search
+
+total = 10
+index = -1
+
+For i = 1 To total
+  TextWindow.Write(i + " 번째 수를 입력하세요. : ")
+  arr[i] = TextWindow.ReadNumber()
+EndFor
+
+TextWindow.Write("찾고자 하는 수를 입력하세요. : ")
+num = TextWindow.ReadNumber()
+
+For i = 1 To total
+  If arr[i] = num Then
+    index = i
+    Goto Out
+  EndIf
+EndFor
+
+Out:
+If index = -1 Then
+  TextWindow.WriteLine("입력하신 " + num + "(은)는 배열에 저장되어 있지 않습니다.")
+Else
+  TextWindow.WriteLine("입력하신 " + num + "(은)는 배열의 " + i + "번째에 저장되어 있습니다.")
+EndIf
