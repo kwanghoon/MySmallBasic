@@ -1,6 +1,5 @@
 package com.coducation.smallbasic.lib;
 
-import java.awt.AWTException;
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -14,7 +13,6 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.MouseInfo;
 import java.awt.Point;
-import java.awt.Robot;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -23,6 +21,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -346,7 +345,8 @@ public class GraphicsWindow {
 					case DRAWBOUNDTEXT:
 						DrawBoundTextCmd dbtc = (DrawBoundTextCmd) cmd;
 						FontMetrics dbtcMetrics = g2.getFontMetrics(dbtc.font);
-						color = ((StrV) hexColor((StrV) dbtc.brushcolor, new StrV("#000000"))).toString();;
+						color = ((StrV) hexColor((StrV) dbtc.brushcolor, new StrV("#000000"))).toString();
+						;
 						g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) dbtc.opacity));
 						g2.rotate(java.lang.Math.toRadians(dbtc.degree));
 						g2.scale(dbtc.scaleX, dbtc.scaleY);
@@ -357,7 +357,8 @@ public class GraphicsWindow {
 						break;
 					case DRAWELLIPSE:
 						DrawEllipseCmd dec = (DrawEllipseCmd) cmd;
-						color = ((StrV) hexColor((StrV) dec.pencolor, new StrV("#000000"))).toString();;
+						color = ((StrV) hexColor((StrV) dec.pencolor, new StrV("#000000"))).toString();
+						;
 						g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) dec.opacity));
 						g2.rotate(java.lang.Math.toRadians(dec.degree), (dec.x + dec.w / 2) * zoomX,
 								(dec.y + dec.h / 2) * zoomY);
@@ -382,7 +383,8 @@ public class GraphicsWindow {
 						break;
 					case DRAWLINE:
 						DrawLineCmd dlc = (DrawLineCmd) cmd;
-						color = ((StrV) hexColor((StrV) dlc.pencolor, new StrV("#000000"))).toString();;
+						color = ((StrV) hexColor((StrV) dlc.pencolor, new StrV("#000000"))).toString();
+						;
 						g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) dlc.opacity));
 						g2.rotate(java.lang.Math.toRadians(dlc.degree), ((dlc.x1 + dlc.x2) / 2) * zoomX,
 								((dlc.y1 + dlc.y2) / 2) * zoomY);
@@ -394,7 +396,8 @@ public class GraphicsWindow {
 						break;
 					case DRAWRECTANGLE:
 						DrawRectangleCmd drc = (DrawRectangleCmd) cmd;
-						color = ((StrV) hexColor((StrV) drc.pencolor, new StrV("#000000"))).toString();;
+						color = ((StrV) hexColor((StrV) drc.pencolor, new StrV("#000000"))).toString();
+						;
 						g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) drc.opacity));
 						g2.rotate(java.lang.Math.toRadians(drc.degree), (drc.x + drc.w / 2) * zoomX,
 								(drc.y + drc.h / 2) * zoomY);
@@ -432,7 +435,8 @@ public class GraphicsWindow {
 						break;
 					case DRAWTRIANGLE:
 						DrawTriangleCmd dtrc = (DrawTriangleCmd) cmd;
-						color = ((StrV) hexColor((StrV) dtrc.pencolor, new StrV("#000000"))).toString();;
+						color = ((StrV) hexColor((StrV) dtrc.pencolor, new StrV("#000000"))).toString();
+						;
 						g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) dtrc.opacity));
 						Point dt = getCircumcenter(dtrc.xs[0], dtrc.ys[0], dtrc.xs[1], dtrc.ys[1], dtrc.xs[2],
 								dtrc.ys[2]);
@@ -446,7 +450,8 @@ public class GraphicsWindow {
 
 					case FILLELLIPSE:
 						FillEllipseCmd fec = (FillEllipseCmd) cmd;
-						color = ((StrV) hexColor((StrV) fec.brushcolor, new StrV("#000000"))).toString();;
+						color = ((StrV) hexColor((StrV) fec.brushcolor, new StrV("#000000"))).toString();
+						;
 						g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) fec.opacity));
 						g2.rotate(java.lang.Math.toRadians(fec.degree), (fec.x + fec.w / 2) * zoomX,
 								(fec.y + fec.h / 2) * zoomY);
@@ -457,7 +462,8 @@ public class GraphicsWindow {
 						break;
 					case FILLRECTANGLE:
 						FillRectangleCmd frc = (FillRectangleCmd) cmd;
-						color = ((StrV) hexColor((StrV) frc.brushcolor, new StrV("#000000"))).toString();;
+						color = ((StrV) hexColor((StrV) frc.brushcolor, new StrV("#000000"))).toString();
+						;
 						g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) frc.opacity));
 						g2.rotate(java.lang.Math.toRadians(frc.degree), (frc.x + frc.w / 2) * zoomX,
 								(frc.y + frc.h / 2) * zoomY);
@@ -468,7 +474,8 @@ public class GraphicsWindow {
 						break;
 					case FILLTRIANGLE:
 						FillTriangleCmd ftc = (FillTriangleCmd) cmd;
-						color = ((StrV) hexColor((StrV) ftc.brushcolor, new StrV("#000000"))).toString();;
+						color = ((StrV) hexColor((StrV) ftc.brushcolor, new StrV("#000000"))).toString();
+						;
 						g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) ftc.opacity));
 						Point ft = getCircumcenter(ftc.xs[0], ftc.ys[0], ftc.xs[1], ftc.ys[1], ftc.xs[2], ftc.ys[2]);
 						g2.rotate(java.lang.Math.toRadians(ftc.degree), ft.getX() * zoomX, ft.getY() * zoomY);
@@ -502,45 +509,37 @@ public class GraphicsWindow {
 		}
 
 		public Value GetPixel(ArrayList<Value> args) {
-			try {
-				if (args.size() == 2) {
-					Robot robot = new Robot(panel.getGraphicsConfiguration().getDevice());
-					boolean isInteger[] = { false, false };
-					int values[] = new int[2];
+			if (args.size() == 2) {
+				boolean isInteger[] = { false, false };
+				int values[] = new int[2];
 
-					int left = (int) frame.getLocation().getX();
-					int top = (int) frame.getLocation().getY();
-
-					for (int i = 0; i < args.size(); i++) {
-						if (args.get(i) instanceof DoubleV) {
+				for (int i = 0; i < args.size(); i++) {
+					if (args.get(i) instanceof DoubleV) {
+						isInteger[i] = true;
+						values[i] = (int) ((DoubleV) args.get(i)).getValue();
+					} else if (args.get(i) instanceof StrV) {
+						if (((StrV) args.get(i)).isNumber()) {
 							isInteger[i] = true;
-							values[i] = (int) ((DoubleV) args.get(i)).getValue();
-						} else if (args.get(i) instanceof StrV) {
-							if (((StrV) args.get(i)).isNumber()) {
-								isInteger[i] = true;
-								values[i] = (int) ((StrV) args.get(i)).parseDouble();
-							}
-						} else
-							throw new InterpretException("Unexpected type " + args.get(i));
-					}
+							values[i] = (int) ((StrV) args.get(i)).parseDouble();
+						}
+					} else
+						throw new InterpretException("Unexpected type " + args.get(i));
+				}
 
-					if (isInteger[0] && isInteger[1]) {
-						Color color = robot.getPixelColor(values[0] + (int) panel.getLocationOnScreen().getX(),
-								values[1] + (int) panel.getLocationOnScreen().getY());
+				if (isInteger[0] && isInteger[1]) {
+					BufferedImage img = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
+					Graphics2D g = img.createGraphics();
+					this.paint(g);
 
-						String red = String.format("%02x", color.getRed());
-						String green = String.format("%02x", color.getGreen());
-						String blue = String.format("%02x", color.getBlue());
+					int[] arr = img.getRaster().getPixel(values[0], values[1], new int[4]);
+					String color = Integer.toHexString(arr[0]) + Integer.toHexString(arr[1])
+							+ Integer.toHexString(arr[2]);
+					StrV rgbColor = new StrV("#" + color);
 
-						StrV rgbColor = new StrV("#" + red + green + blue);
-
-						return rgbColor;
-					}
-				} else
-					throw new InterpretException("Unexpected # of args " + args.size());
-			} catch (AWTException e) {
-				e.printStackTrace();
-			}
+					return rgbColor;
+				}
+			} else
+				throw new InterpretException("Unexpected # of args " + args.size());
 			return null;
 		}
 
@@ -1108,7 +1107,7 @@ public class GraphicsWindow {
 
 				if (isInteger[0] && isInteger[1] && args.get(2) instanceof StrV) {
 					cmd.cmd = SETPIXEL;
-					
+
 					cmd.x = values[0];
 					cmd.y = values[1];
 					cmd.color = (StrV) args.get(2);
@@ -1117,13 +1116,12 @@ public class GraphicsWindow {
 					cmd.degree = 0;
 					cmd.scaleX = 1;
 					cmd.scaleY = 1;
-					
+
 					cmdList.add(cmd);
-					
+
 					repaint();
 				}
-			}
-			else {
+			} else {
 				throw new InterpretException("Unexpected # of args " + args.size());
 			}
 		}
