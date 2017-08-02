@@ -1,0 +1,38 @@
+''''''''''''''''''''  Binary Search  ''''''''''''''''''''
+
+total = 10
+
+For i = 1 To total
+  TextWindow.Write(i + " 번째 수를 입력하세요. : ")
+  arr[i] = TextWindow.ReadNumber()
+EndFor
+
+For i = 1 To total
+  TextWindow.WriteLine( i + " 번째 원소 : " + arr[i])
+EndFor
+
+For i = 1 To total
+  
+  least = i
+  TextWindow.WriteLine("정렬 " + i + "단계")
+  
+  For j = i + 1 To total
+    If arr[j] < arr[least] Then
+      least = j
+    EndIf
+  EndFor
+  
+  temp[i] = arr[i]
+  arr[i] = arr[least]
+  arr[least] = temp[i]
+  
+  For k = 1 To total
+    TextWindow.Write(arr[k] + "  ")
+  EndFor
+  TextWindow.WriteLine("")
+  
+EndFor
+
+For i = 1 To total
+  TextWindow.WriteLine( i + " 번째 원소 : " + arr[i])
+EndFor
