@@ -330,179 +330,189 @@ public class GraphicsWindow {
 
 			ArrayList<Cmd> _cmdList = (ArrayList<Cmd>) cmdList.clone();
 
-			for (Cmd cmd : _cmdList) { // clone 시 오버헤드 발생할 수 있음
-				if (cmd.show) {
-					if (cmd.scaleX != 1)
-						zoomX = cmd.scaleX;
-					if (cmd.scaleY != 1)
-						zoomY = cmd.scaleY;
-					if (cmd.degree != 0)
-						rotate = cmd.degree;
+			for (int layer = 2; layer <= 3; layer++) {
+				for (Cmd cmd : _cmdList) { // clone 시 오버헤드 발생할 수 있음
+					if(cmd.getLayer() != layer)
+						continue;
+					if (cmd.show) {
+						if (cmd.scaleX != 1)
+							zoomX = cmd.scaleX;
+						if (cmd.scaleY != 1)
+							zoomY = cmd.scaleY;
+						if (cmd.degree != 0)
+							rotate = cmd.degree;
 
-					switch (cmd.cmd) {
-					case NOCOMMAND:
-						break;
-					case DRAWBOUNDTEXT:
-						DrawBoundTextCmd dbtc = (DrawBoundTextCmd) cmd;
-						FontMetrics dbtcMetrics = g2.getFontMetrics(dbtc.font);
-						color = ((StrV) hexColor((StrV) dbtc.brushcolor, new StrV("#000000"))).toString();
-						;
-						g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) dbtc.opacity));
-						g2.rotate(java.lang.Math.toRadians(dbtc.degree));
-						g2.scale(dbtc.scaleX, dbtc.scaleY);
-						g2.setFont(dbtc.font);
-						g2.setColor(new Color(Integer.parseInt(color.substring(1), 16)));
-						g2.drawString(dbtc.text, (int) dbtc.x, (int) dbtc.y + dbtcMetrics.getHeight());
-						g2.rotate(java.lang.Math.toRadians(-dbtc.degree));
-						break;
-					case DRAWELLIPSE:
-						DrawEllipseCmd dec = (DrawEllipseCmd) cmd;
-						color = ((StrV) hexColor((StrV) dec.pencolor, new StrV("#000000"))).toString();
-						;
-						g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) dec.opacity));
-						g2.rotate(java.lang.Math.toRadians(dec.degree), (dec.x + dec.w / 2) * zoomX,
-								(dec.y + dec.h / 2) * zoomY);
-						g2.scale(dec.scaleX, dec.scaleY);
-						g2.setStroke(new BasicStroke((float) ((DoubleV) dec.penwidth).getValue()));
-						g2.setColor(new Color(Integer.parseInt(color.substring(1), 16)));
-						g2.drawOval((int) dec.x, (int) dec.y, dec.w, dec.h);
-						g2.rotate(java.lang.Math.toRadians(-dec.degree), dec.x + dec.w / 2, dec.y + dec.h / 2);
-						break;
-					case DRAWIMAGE:
-						DrawImageCmd dic = (DrawImageCmd) cmd;
-						Image img = getImage(dic.imageName);
-						if (img != null) {
-							g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) dic.opacity));
-							g2.rotate(java.lang.Math.toRadians(dic.degree), (dic.x + img.getWidth(this) / 2) * zoomX,
-									(dic.y + img.getHeight(this) / 2) * zoomY);
-							g2.scale(dic.scaleX, dic.scaleY);
-							g2.drawImage(img, (int) dic.x, (int) dic.y, this);
-							g2.rotate(java.lang.Math.toRadians(-dic.degree), dic.x + img.getWidth(this) / 2,
-									dic.y + img.getHeight(this) / 2);
+						switch (cmd.cmd) {
+						case NOCOMMAND:
+							break;
+						case DRAWBOUNDTEXT:
+							DrawBoundTextCmd dbtc = (DrawBoundTextCmd) cmd;
+							FontMetrics dbtcMetrics = g2.getFontMetrics(dbtc.font);
+							color = ((StrV) hexColor((StrV) dbtc.brushcolor, new StrV("#000000"))).toString();
+							;
+							g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) dbtc.opacity));
+							g2.rotate(java.lang.Math.toRadians(dbtc.degree));
+							g2.scale(dbtc.scaleX, dbtc.scaleY);
+							g2.setFont(dbtc.font);
+							g2.setColor(new Color(Integer.parseInt(color.substring(1), 16)));
+							g2.drawString(dbtc.text, (int) dbtc.x, (int) dbtc.y + dbtcMetrics.getHeight());
+							g2.rotate(java.lang.Math.toRadians(-dbtc.degree));
+							break;
+						case DRAWELLIPSE:
+							DrawEllipseCmd dec = (DrawEllipseCmd) cmd;
+							color = ((StrV) hexColor((StrV) dec.pencolor, new StrV("#000000"))).toString();
+							;
+							g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) dec.opacity));
+							g2.rotate(java.lang.Math.toRadians(dec.degree), (dec.x + dec.w / 2) * zoomX,
+									(dec.y + dec.h / 2) * zoomY);
+							g2.scale(dec.scaleX, dec.scaleY);
+							g2.setStroke(new BasicStroke((float) ((DoubleV) dec.penwidth).getValue()));
+							g2.setColor(new Color(Integer.parseInt(color.substring(1), 16)));
+							g2.drawOval((int) dec.x, (int) dec.y, dec.w, dec.h);
+							g2.rotate(java.lang.Math.toRadians(-dec.degree), dec.x + dec.w / 2, dec.y + dec.h / 2);
+							break;
+						case DRAWIMAGE:
+							DrawImageCmd dic = (DrawImageCmd) cmd;
+							Image img = getImage(dic.imageName);
+							if (img != null) {
+								g2.setComposite(
+										AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) dic.opacity));
+								g2.rotate(java.lang.Math.toRadians(dic.degree),
+										(dic.x + img.getWidth(this) / 2) * zoomX,
+										(dic.y + img.getHeight(this) / 2) * zoomY);
+								g2.scale(dic.scaleX, dic.scaleY);
+								g2.drawImage(img, (int) dic.x, (int) dic.y, this);
+								g2.rotate(java.lang.Math.toRadians(-dic.degree), dic.x + img.getWidth(this) / 2,
+										dic.y + img.getHeight(this) / 2);
+							}
+							break;
+						case DRAWLINE:
+							DrawLineCmd dlc = (DrawLineCmd) cmd;
+							color = ((StrV) hexColor((StrV) dlc.pencolor, new StrV("#000000"))).toString();
+							;
+							g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) dlc.opacity));
+							g2.rotate(java.lang.Math.toRadians(dlc.degree), ((dlc.x1 + dlc.x2) / 2) * zoomX,
+									((dlc.y1 + dlc.y2) / 2) * zoomY);
+							g2.scale(dlc.scaleX, dlc.scaleY);
+							g2.setStroke(new BasicStroke((float) ((DoubleV) dlc.penwidth).getValue()));
+							g2.setColor(new Color(Integer.parseInt(color.substring(1), 16)));
+							g2.drawLine(dlc.x1, dlc.y1, dlc.x2, dlc.y2);
+							g2.rotate(java.lang.Math.toRadians(-dlc.degree), (dlc.x1 + dlc.x2) / 2,
+									(dlc.y1 + dlc.y2) / 2);
+							break;
+						case DRAWRECTANGLE:
+							DrawRectangleCmd drc = (DrawRectangleCmd) cmd;
+							color = ((StrV) hexColor((StrV) drc.pencolor, new StrV("#000000"))).toString();
+							;
+							g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) drc.opacity));
+							g2.rotate(java.lang.Math.toRadians(drc.degree), (drc.x + drc.w / 2) * zoomX,
+									(drc.y + drc.h / 2) * zoomY);
+							g2.scale(drc.scaleX, drc.scaleY);
+							g2.setStroke(new BasicStroke((float) ((DoubleV) drc.penwidth).getValue()));
+							g2.setColor(new Color(Integer.parseInt(color.substring(1), 16)));
+							g2.drawRect((int) drc.x, (int) drc.y, drc.w, drc.h);
+							g2.rotate(java.lang.Math.toRadians(-drc.degree), drc.x + drc.w / 2, drc.y + drc.h / 2);
+							break;
+						case DRAWRESIZEDIMAGE:
+							DrawResizedImageCmd dric = (DrawResizedImageCmd) cmd;
+							Image imgResized = getImage(dric.imageName);
+							g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) dric.opacity));
+							g2.rotate(java.lang.Math.toRadians(dric.degree),
+									(dric.x + imgResized.getWidth(this) / 2) * zoomX,
+									(dric.y + imgResized.getHeight(this) / 2) * zoomY);
+							g2.scale(dric.scaleX, dric.scaleY);
+							g2.drawImage(imgResized, (int) dric.x, (int) dric.y, dric.w, dric.h, this);
+							g2.rotate(java.lang.Math.toRadians(-dric.degree), dric.x + imgResized.getWidth(this) / 2,
+									dric.y + imgResized.getHeight(this) / 2);
+							break;
+						case DRAWTEXT:
+							DrawTextCmd dtc = (DrawTextCmd) cmd;
+							FontMetrics dtcMetrics = g2.getFontMetrics(dtc.font);
+							color = ((StrV) dtc.brushcolor).getValue();
+							g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) dtc.opacity));
+							g2.rotate(java.lang.Math.toRadians(dtc.degree),
+									dtc.x + dtcMetrics.stringWidth(dtc.text) / 2,
+									dtc.y + (dtcMetrics.getHeight() * 1.5) / 2);
+							g2.scale(dtc.scaleX, dtc.scaleY);
+							g2.setFont(dtc.font);
+							g2.setColor(new Color(Integer.parseInt(color.substring(1), 16)));
+							g2.drawString(dtc.text, (int) dtc.x, (int) dtc.y + dtcMetrics.getHeight());
+							g2.rotate(java.lang.Math.toRadians(-dtc.degree),
+									dtc.x + dtcMetrics.stringWidth(dtc.text) / 2,
+									dtc.y + (dtcMetrics.getHeight() * 1.5) / 2);
+							break;
+						case DRAWTRIANGLE:
+							DrawTriangleCmd dtrc = (DrawTriangleCmd) cmd;
+							color = ((StrV) hexColor((StrV) dtrc.pencolor, new StrV("#000000"))).toString();
+							;
+							g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) dtrc.opacity));
+							Point dt = getCircumcenter(dtrc.xs[0], dtrc.ys[0], dtrc.xs[1], dtrc.ys[1], dtrc.xs[2],
+									dtrc.ys[2]);
+							g2.rotate(java.lang.Math.toRadians(dtrc.degree), dt.getX() * zoomX, dt.getY() * zoomY);
+							g2.scale(dtrc.scaleX, dtrc.scaleY);
+							g2.setStroke(new BasicStroke((float) ((DoubleV) dtrc.penwidth).getValue()));
+							g2.setColor(new Color(Integer.parseInt(color.substring(1), 16)));
+							g2.drawPolygon(dtrc.xs, dtrc.ys, 3);
+							g2.rotate(java.lang.Math.toRadians(-dtrc.degree), dt.getX(), dt.getY());
+							break;
+
+						case FILLELLIPSE:
+							FillEllipseCmd fec = (FillEllipseCmd) cmd;
+							color = ((StrV) hexColor((StrV) fec.brushcolor, new StrV("#000000"))).toString();
+							;
+							g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) fec.opacity));
+							g2.rotate(java.lang.Math.toRadians(fec.degree), (fec.x + fec.w / 2) * zoomX,
+									(fec.y + fec.h / 2) * zoomY);
+							g2.scale(fec.scaleX, fec.scaleY);
+							g2.setColor(new Color(Integer.parseInt(color.substring(1), 16)));
+							g2.fillOval((int) fec.x, (int) fec.y, fec.w, fec.h);
+							g2.rotate(java.lang.Math.toRadians(-fec.degree), fec.x + fec.w / 2, fec.y + fec.h / 2);
+							break;
+						case FILLRECTANGLE:
+							FillRectangleCmd frc = (FillRectangleCmd) cmd;
+							color = ((StrV) hexColor((StrV) frc.brushcolor, new StrV("#000000"))).toString();
+							;
+							g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) frc.opacity));
+							g2.rotate(java.lang.Math.toRadians(frc.degree), (frc.x + frc.w / 2) * zoomX,
+									(frc.y + frc.h / 2) * zoomY);
+							g2.scale(frc.scaleX, frc.scaleY);
+							g2.setColor(new Color(Integer.parseInt(color.substring(1), 16)));
+							g2.fillRect((int) frc.x, (int) frc.y, frc.w, frc.h);
+							g2.rotate(java.lang.Math.toRadians(-frc.degree), frc.x + frc.w / 2, frc.y + frc.h / 2);
+							break;
+						case FILLTRIANGLE:
+							FillTriangleCmd ftc = (FillTriangleCmd) cmd;
+							color = ((StrV) hexColor((StrV) ftc.brushcolor, new StrV("#000000"))).toString();
+							;
+							g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) ftc.opacity));
+							Point ft = getCircumcenter(ftc.xs[0], ftc.ys[0], ftc.xs[1], ftc.ys[1], ftc.xs[2],
+									ftc.ys[2]);
+							g2.rotate(java.lang.Math.toRadians(ftc.degree), ft.getX() * zoomX, ft.getY() * zoomY);
+							g2.scale(ftc.scaleX, ftc.scaleY);
+							g2.setColor(new Color(Integer.parseInt(color.substring(1), 16)));
+							g2.fillPolygon(ftc.xs, ftc.ys, 3);
+							g2.rotate(java.lang.Math.toRadians(-ftc.degree), ft.getX(), ft.getY());
+							break;
+						case SETPIXEL:
+							SetPixelCmd spc = (SetPixelCmd) cmd;
+							color = ((StrV) hexColor((StrV) spc.color, new StrV("#000000"))).toString();
+							g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) spc.opacity));
+							g2.setColor(new Color(Integer.parseInt(color.substring(1), 16)));
+							g2.setStroke(new BasicStroke(1));
+							g2.drawLine((int) spc.x, (int) spc.y, (int) spc.x, (int) spc.y);
+							break;
 						}
-						break;
-					case DRAWLINE:
-						DrawLineCmd dlc = (DrawLineCmd) cmd;
-						color = ((StrV) hexColor((StrV) dlc.pencolor, new StrV("#000000"))).toString();
-						;
-						g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) dlc.opacity));
-						g2.rotate(java.lang.Math.toRadians(dlc.degree), ((dlc.x1 + dlc.x2) / 2) * zoomX,
-								((dlc.y1 + dlc.y2) / 2) * zoomY);
-						g2.scale(dlc.scaleX, dlc.scaleY);
-						g2.setStroke(new BasicStroke((float) ((DoubleV) dlc.penwidth).getValue()));
-						g2.setColor(new Color(Integer.parseInt(color.substring(1), 16)));
-						g2.drawLine(dlc.x1, dlc.y1, dlc.x2, dlc.y2);
-						g2.rotate(java.lang.Math.toRadians(-dlc.degree), (dlc.x1 + dlc.x2) / 2, (dlc.y1 + dlc.y2) / 2);
-						break;
-					case DRAWRECTANGLE:
-						DrawRectangleCmd drc = (DrawRectangleCmd) cmd;
-						color = ((StrV) hexColor((StrV) drc.pencolor, new StrV("#000000"))).toString();
-						;
-						g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) drc.opacity));
-						g2.rotate(java.lang.Math.toRadians(drc.degree), (drc.x + drc.w / 2) * zoomX,
-								(drc.y + drc.h / 2) * zoomY);
-						g2.scale(drc.scaleX, drc.scaleY);
-						g2.setStroke(new BasicStroke((float) ((DoubleV) drc.penwidth).getValue()));
-						g2.setColor(new Color(Integer.parseInt(color.substring(1), 16)));
-						g2.drawRect((int) drc.x, (int) drc.y, drc.w, drc.h);
-						g2.rotate(java.lang.Math.toRadians(-drc.degree), drc.x + drc.w / 2, drc.y + drc.h / 2);
-						break;
-					case DRAWRESIZEDIMAGE:
-						DrawResizedImageCmd dric = (DrawResizedImageCmd) cmd;
-						Image imgResized = getImage(dric.imageName);
-						g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) dric.opacity));
-						g2.rotate(java.lang.Math.toRadians(dric.degree),
-								(dric.x + imgResized.getWidth(this) / 2) * zoomX,
-								(dric.y + imgResized.getHeight(this) / 2) * zoomY);
-						g2.scale(dric.scaleX, dric.scaleY);
-						g2.drawImage(imgResized, (int) dric.x, (int) dric.y, dric.w, dric.h, this);
-						g2.rotate(java.lang.Math.toRadians(-dric.degree), dric.x + imgResized.getWidth(this) / 2,
-								dric.y + imgResized.getHeight(this) / 2);
-						break;
-					case DRAWTEXT:
-						DrawTextCmd dtc = (DrawTextCmd) cmd;
-						FontMetrics dtcMetrics = g2.getFontMetrics(dtc.font);
-						color = ((StrV) dtc.brushcolor).getValue();
-						g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) dtc.opacity));
-						g2.rotate(java.lang.Math.toRadians(dtc.degree), dtc.x + dtcMetrics.stringWidth(dtc.text) / 2,
-								dtc.y + (dtcMetrics.getHeight() * 1.5) / 2);
-						g2.scale(dtc.scaleX, dtc.scaleY);
-						g2.setFont(dtc.font);
-						g2.setColor(new Color(Integer.parseInt(color.substring(1), 16)));
-						g2.drawString(dtc.text, (int) dtc.x, (int) dtc.y + dtcMetrics.getHeight());
-						g2.rotate(java.lang.Math.toRadians(-dtc.degree), dtc.x + dtcMetrics.stringWidth(dtc.text) / 2,
-								dtc.y + (dtcMetrics.getHeight() * 1.5) / 2);
-						break;
-					case DRAWTRIANGLE:
-						DrawTriangleCmd dtrc = (DrawTriangleCmd) cmd;
-						color = ((StrV) hexColor((StrV) dtrc.pencolor, new StrV("#000000"))).toString();
-						;
-						g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) dtrc.opacity));
-						Point dt = getCircumcenter(dtrc.xs[0], dtrc.ys[0], dtrc.xs[1], dtrc.ys[1], dtrc.xs[2],
-								dtrc.ys[2]);
-						g2.rotate(java.lang.Math.toRadians(dtrc.degree), dt.getX() * zoomX, dt.getY() * zoomY);
-						g2.scale(dtrc.scaleX, dtrc.scaleY);
-						g2.setStroke(new BasicStroke((float) ((DoubleV) dtrc.penwidth).getValue()));
-						g2.setColor(new Color(Integer.parseInt(color.substring(1), 16)));
-						g2.drawPolygon(dtrc.xs, dtrc.ys, 3);
-						g2.rotate(java.lang.Math.toRadians(-dtrc.degree), dt.getX(), dt.getY());
-						break;
-
-					case FILLELLIPSE:
-						FillEllipseCmd fec = (FillEllipseCmd) cmd;
-						color = ((StrV) hexColor((StrV) fec.brushcolor, new StrV("#000000"))).toString();
-						;
-						g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) fec.opacity));
-						g2.rotate(java.lang.Math.toRadians(fec.degree), (fec.x + fec.w / 2) * zoomX,
-								(fec.y + fec.h / 2) * zoomY);
-						g2.scale(fec.scaleX, fec.scaleY);
-						g2.setColor(new Color(Integer.parseInt(color.substring(1), 16)));
-						g2.fillOval((int) fec.x, (int) fec.y, fec.w, fec.h);
-						g2.rotate(java.lang.Math.toRadians(-fec.degree), fec.x + fec.w / 2, fec.y + fec.h / 2);
-						break;
-					case FILLRECTANGLE:
-						FillRectangleCmd frc = (FillRectangleCmd) cmd;
-						color = ((StrV) hexColor((StrV) frc.brushcolor, new StrV("#000000"))).toString();
-						;
-						g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) frc.opacity));
-						g2.rotate(java.lang.Math.toRadians(frc.degree), (frc.x + frc.w / 2) * zoomX,
-								(frc.y + frc.h / 2) * zoomY);
-						g2.scale(frc.scaleX, frc.scaleY);
-						g2.setColor(new Color(Integer.parseInt(color.substring(1), 16)));
-						g2.fillRect((int) frc.x, (int) frc.y, frc.w, frc.h);
-						g2.rotate(java.lang.Math.toRadians(-frc.degree), frc.x + frc.w / 2, frc.y + frc.h / 2);
-						break;
-					case FILLTRIANGLE:
-						FillTriangleCmd ftc = (FillTriangleCmd) cmd;
-						color = ((StrV) hexColor((StrV) ftc.brushcolor, new StrV("#000000"))).toString();
-						;
-						g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) ftc.opacity));
-						Point ft = getCircumcenter(ftc.xs[0], ftc.ys[0], ftc.xs[1], ftc.ys[1], ftc.xs[2], ftc.ys[2]);
-						g2.rotate(java.lang.Math.toRadians(ftc.degree), ft.getX() * zoomX, ft.getY() * zoomY);
-						g2.scale(ftc.scaleX, ftc.scaleY);
-						g2.setColor(new Color(Integer.parseInt(color.substring(1), 16)));
-						g2.fillPolygon(ftc.xs, ftc.ys, 3);
-						g2.rotate(java.lang.Math.toRadians(-ftc.degree), ft.getX(), ft.getY());
-						break;
-					case SETPIXEL:
-						SetPixelCmd spc = (SetPixelCmd) cmd;
-						color = ((StrV) hexColor((StrV) spc.color, new StrV("#000000"))).toString();
-						g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) spc.opacity));
-						g2.setColor(new Color(Integer.parseInt(color.substring(1), 16)));
-						g2.setStroke(new BasicStroke(1));
-						g2.drawLine((int) spc.x, (int) spc.y, (int) spc.x, (int) spc.y);
-						break;
-					}
-					if (zoomX != 1) {
-						g2.scale((double) 1 / zoomX, 1);
-						zoomX = 1;
-					}
-					if (zoomY != 1) {
-						g2.scale(1, (double) 1 / zoomY);
-						zoomY = 1;
-					}
-					if (rotate != 0) {
-						rotate = 0;
+						if (zoomX != 1) {
+							g2.scale((double) 1 / zoomX, 1);
+							zoomX = 1;
+						}
+						if (zoomY != 1) {
+							g2.scale(1, (double) 1 / zoomY);
+							zoomY = 1;
+						}
+						if (rotate != 0) {
+							rotate = 0;
+						}
 					}
 				}
 			}
@@ -1246,767 +1256,6 @@ public class GraphicsWindow {
 
 	}
 
-	// Shapes Library
-	private static final String rectIdLabel = "Rectangle";
-	private static final String ellipIdLabel = "Ellipse";
-	private static final String triIdLabel = "Triangle";
-	private static final String lineIdLabel = "Line";
-	private static final String textIdLabel = "Text";
-	private static final String imageIdLabel = "Image";
-
-	private static int rectId = 1;
-	private static int ellipId = 1;
-	private static int triId = 1;
-	private static int lineId = 1;
-	private static int textId = 1;
-	private static int imageId = 1;
-
-	private static HashMap<String, ArrayList<Cmd>> shapeMap = new HashMap<>();
-
-	public static String AddRectangle(int width, int height) {
-		if (frame == null)
-			Show(new ArrayList<Value>());
-
-		ArrayList<Value> grArgs = new ArrayList<Value>();
-		grArgs.add(new DoubleV(0));
-		grArgs.add(new DoubleV(0));
-		grArgs.add(new DoubleV(width));
-		grArgs.add(new DoubleV(height));
-
-		GraphicsWindow.FillRectangle(grArgs);
-		Cmd fillCmd = panel.getCmdList().get(panel.getCmdList().size() - 1);
-		GraphicsWindow.DrawRectangle(grArgs);
-		Cmd drawCmd = panel.getCmdList().get(panel.getCmdList().size() - 1);
-
-		ArrayList<Cmd> cmds = new ArrayList<>();
-		cmds.add(fillCmd);
-		cmds.add(drawCmd);
-
-		String id = rectIdLabel + rectId;
-		rectId++;
-
-		shapeMap.put(id, cmds);
-
-		return id;
-	}
-
-	public static String AddEllipse(int width, int height) {
-		if (frame == null)
-			Show(new ArrayList<Value>());
-
-		ArrayList<Value> grArgs = new ArrayList<>();
-		grArgs.add(new DoubleV(0));
-		grArgs.add(new DoubleV(0));
-		grArgs.add(new DoubleV(width));
-		grArgs.add(new DoubleV(height));
-
-		GraphicsWindow.FillEllipse(grArgs);
-		Cmd fillCmd = panel.getCmdList().get(panel.getCmdList().size() - 1);
-		GraphicsWindow.DrawEllipse(grArgs);
-		Cmd drawCmd = panel.getCmdList().get(panel.getCmdList().size() - 1);
-
-		ArrayList<Cmd> cmds = new ArrayList<>();
-		cmds.add(fillCmd);
-		cmds.add(drawCmd);
-
-		String id = ellipIdLabel + ellipId;
-		ellipId++;
-
-		shapeMap.put(id, cmds);
-
-		return id;
-	}
-
-	public static String AddTriangle(int x1, int y1, int x2, int y2, int x3, int y3) {
-		if (frame == null)
-			Show(new ArrayList<Value>());
-
-		ArrayList<Value> grArgs = new ArrayList<>();
-		grArgs.add(new DoubleV(x1));
-		grArgs.add(new DoubleV(y1));
-		grArgs.add(new DoubleV(x2));
-		grArgs.add(new DoubleV(y2));
-		grArgs.add(new DoubleV(x3));
-		grArgs.add(new DoubleV(y3));
-
-		GraphicsWindow.FillTriangle(grArgs);
-		Cmd fillCmd = panel.getCmdList().get(panel.getCmdList().size() - 1);
-		GraphicsWindow.DrawTriangle(grArgs);
-		Cmd drawCmd = panel.getCmdList().get(panel.getCmdList().size() - 1);
-
-		ArrayList<Cmd> cmds = new ArrayList<>();
-		cmds.add(fillCmd);
-		cmds.add(drawCmd);
-
-		String id = triIdLabel + triId;
-		triId++;
-
-		shapeMap.put(id, cmds);
-
-		return id;
-	}
-
-	public static String AddLine(int x1, int y1, int x2, int y2) {
-		if (frame == null)
-			Show(new ArrayList<Value>());
-
-		ArrayList<Value> grArgs = new ArrayList<>();
-		grArgs.add(new DoubleV(x1));
-		grArgs.add(new DoubleV(y1));
-		grArgs.add(new DoubleV(x2));
-		grArgs.add(new DoubleV(y2));
-
-		GraphicsWindow.DrawLine(grArgs);
-		Cmd drawCmd = panel.getCmdList().get(panel.getCmdList().size() - 1);
-
-		ArrayList<Cmd> cmds = new ArrayList<>();
-		cmds.add(drawCmd);
-
-		String id = lineIdLabel + lineId;
-		lineId++;
-
-		shapeMap.put(id, cmds);
-
-		return id;
-	}
-
-	public static String AddImage(String imageName) {
-		if (frame == null)
-			Show(new ArrayList<Value>());
-
-		ArrayList<Value> grArgs = new ArrayList<>();
-		grArgs.add(new StrV(imageName));
-		grArgs.add(new DoubleV(0));
-		grArgs.add(new DoubleV(0));
-
-		GraphicsWindow.DrawImage(grArgs);
-		Cmd drawCmd = panel.getCmdList().get(panel.getCmdList().size() - 1);
-
-		ArrayList<Cmd> cmds = new ArrayList<>();
-		cmds.add(drawCmd);
-
-		String id = imageIdLabel + imageId;
-		imageId++;
-
-		shapeMap.put(id, cmds);
-
-		return id;
-	}
-
-	public static String AddText(String text) {
-		if (frame == null)
-			Show(new ArrayList<Value>());
-
-		ArrayList<Value> grArgs = new ArrayList<>();
-		grArgs.add(new DoubleV(0));
-		grArgs.add(new DoubleV(0));
-		grArgs.add(new StrV(text));
-
-		GraphicsWindow.DrawText(grArgs);
-		Cmd drawCmd = panel.getCmdList().get(panel.getCmdList().size() - 1);
-
-		ArrayList<Cmd> cmds = new ArrayList<>();
-		cmds.add(drawCmd);
-
-		String id = textIdLabel + textId;
-		textId++;
-
-		shapeMap.put(id, cmds);
-
-		return id;
-	}
-
-	public static void SetText(String shapeName, String text) {
-		ArrayList<Cmd> cmds = shapeMap.get(shapeName);
-
-		if (cmds != null && cmds.size() == 1) {
-			if (cmds.get(0) instanceof DrawTextCmd)
-				((DrawTextCmd) cmds.get(0)).text = text;
-		}
-		panel.repaint();
-	}
-
-	public static void ShapesRemove(String shape) {
-		ArrayList<Cmd> cmds = shapeMap.remove(shape);
-		JComponent comp = controlMap.get(shape);
-
-		if (cmds != null) {
-			for (Cmd cmd : cmds) {
-				panel.getCmdList().remove(cmd);
-			}
-			panel.repaint();
-		} else if (comp != null)
-			ControlsRemove(shape);
-	}
-
-	public static void ShapesMove(String shape, double x, double y) {
-		ArrayList<Cmd> cmds = shapeMap.get(shape);
-		JComponent comp = controlMap.get(shape);
-
-		if (cmds != null) {
-			for (Cmd cmd : cmds) {
-				cmd.Move(x, y);
-			}
-			panel.repaint();
-		} else if (comp != null)
-			ControlsMove(shape, (int) x, (int) y);
-	}
-
-	public static void Rotate(String shapeName, double angle) {
-		ArrayList<Cmd> cmds = shapeMap.get(shapeName);
-
-		if (cmds != null) {
-			for (Cmd cmd : cmds) {
-				cmd.degree = angle;
-			}
-			panel.repaint();
-		}
-	}
-
-	public static void Zoom(String shapeName, double scaleX, double scaleY) {
-		ArrayList<Cmd> cmds = shapeMap.get(shapeName);
-
-		if (cmds != null) {
-			if (scaleX < 0.1)
-				scaleX = 0.1;
-			else if (scaleX > 20)
-				scaleX = 20;
-
-			if (scaleY < 0.1)
-				scaleY = 0.1;
-			else if (scaleY > 20)
-				scaleY = 20;
-
-			for (Cmd cmd : cmds) {
-				cmd.scaleX = scaleX;
-				cmd.scaleY = scaleY;
-			}
-			panel.repaint();
-		}
-	}
-
-	public static void Animate(String shapeName, double x, double y, int duration) {
-		ArrayList<Cmd> cmds = shapeMap.get(shapeName);
-
-		if (cmds != null) {
-			if (duration < 0 || duration > 100000000)
-				throw new InterpretException("Not a valid number : " + duration);
-
-			if (duration == 0) {
-				for (Cmd cmd : cmds) {
-					if (cmd instanceof DrawLineCmd) {
-						DrawLineCmd lineCmd = (DrawLineCmd) cmd;
-						lineCmd.Move(lineCmd.x1 + x, lineCmd.y1 + y);
-						lineCmd.x = x;
-						lineCmd.y = y;
-					} else if (cmd instanceof DrawTriangleCmd) {
-						DrawTriangleCmd triCmd = (DrawTriangleCmd) cmd;
-						triCmd.Move(triCmd.xs[0] + x, triCmd.ys[0] + y);
-						triCmd.x = x;
-						triCmd.y = y;
-					} else if (cmd instanceof FillTriangleCmd) {
-						FillTriangleCmd triCmd = (FillTriangleCmd) cmd;
-						triCmd.Move(triCmd.xs[0] + x, triCmd.ys[0] + y);
-						triCmd.x = x;
-						triCmd.y = y;
-					} else
-						cmd.Move(x, y);
-					panel.repaint();
-				}
-			} else {
-				MyActionListener animate_action = new MyActionListener(cmds, x, y, duration);
-				javax.swing.Timer animate = new javax.swing.Timer(100, animate_action);
-				animate_action.timer = animate;
-				animate.start();
-			}
-		}
-	}
-
-	static class MyActionListener implements ActionListener {
-		int i = 1;
-		ArrayList<Cmd> cmds;
-		int times;
-		double x, y;
-		public javax.swing.Timer timer;
-
-		public MyActionListener(ArrayList<Cmd> cmds, double x, double y, int duration) {
-			this.cmds = cmds;
-			this.x = x;
-			this.y = y;
-			this.times = duration / 100;
-		}
-
-		ArrayList<Pair<Double, Double>> a_pair = new ArrayList<>();
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			int n = 0;
-			for (Cmd cmd : cmds) {
-				if (cmd instanceof DrawLineCmd) {
-					DrawLineCmd lineCmd = (DrawLineCmd) cmd;
-					double a_x;
-					double a_y;
-
-					if (i == 1) {
-						a_x = (x - lineCmd.x) / times;
-						a_y = (y - lineCmd.y) / times;
-						Pair<Double, Double> pair = new Pair<>(a_x, a_y);
-						a_pair.add(pair);
-					} else {
-						a_x = a_pair.get(n).getFst();
-						a_y = a_pair.get(n).getSec();
-					}
-
-					lineCmd.Move(lineCmd.x1 + a_x, lineCmd.y1 + a_y);
-					lineCmd.x = x;
-					lineCmd.y = y;
-				} else if (cmd instanceof DrawTriangleCmd) {
-					DrawTriangleCmd triCmd = (DrawTriangleCmd) cmd;
-					double a_x;
-					double a_y;
-
-					if (i == 1) {
-						a_x = (x - triCmd.x) / times;
-						a_y = (y - triCmd.y) / times;
-						Pair<Double, Double> pair = new Pair<>(a_x, a_y);
-						a_pair.add(pair);
-					} else {
-						a_x = a_pair.get(n).getFst();
-						a_y = a_pair.get(n).getSec();
-					}
-
-					triCmd.Move(triCmd.xs[0] + a_x, triCmd.ys[0] + a_y);
-					triCmd.x = x;
-					triCmd.y = y;
-				} else if (cmd instanceof FillTriangleCmd) {
-					FillTriangleCmd triCmd = (FillTriangleCmd) cmd;
-					double a_x;
-					double a_y;
-
-					if (i == 1) {
-						a_x = (x - triCmd.x) / times;
-						a_y = (y - triCmd.y) / times;
-						Pair<Double, Double> pair = new Pair<>(a_x, a_y);
-						a_pair.add(pair);
-					} else {
-						a_x = a_pair.get(n).getFst();
-						a_y = a_pair.get(n).getSec();
-					}
-
-					triCmd.Move(triCmd.xs[0] + a_x, triCmd.ys[0] + a_y);
-					triCmd.x = x;
-					triCmd.y = y;
-				} else {
-					double a_x;
-					double a_y;
-
-					if (i == 1) {
-						a_x = (x - cmd.x) / times;
-						a_y = (y - cmd.y) / times;
-						Pair<Double, Double> pair = new Pair<>(a_x, a_y);
-						a_pair.add(pair);
-					} else {
-						a_x = a_pair.get(n).getFst();
-						a_y = a_pair.get(n).getSec();
-					}
-
-					cmd.Move(cmd.x + a_x, cmd.y + a_y);
-				}
-				n++;
-			}
-			panel.repaint();
-			i++;
-
-			if (i > times) {
-				timer.stop();
-			}
-		}
-	}
-
-	public static double GetLeft(String shapeName) {
-		ArrayList<Cmd> cmds = shapeMap.get(shapeName);
-
-		if (cmds != null) {
-			return cmds.get(0).x;
-		}
-
-		return 0;
-	}
-
-	public static double GetTop(String shapeName) {
-		ArrayList<Cmd> cmds = shapeMap.get(shapeName);
-
-		if (cmds != null) {
-			return cmds.get(0).y;
-		}
-
-		return 0;
-	}
-
-	public static double GetOpacity(String shapeName) {
-		ArrayList<Cmd> cmds = shapeMap.get(shapeName);
-
-		if (cmds != null) {
-			return cmds.get(0).opacity * 100;
-		}
-
-		return 0;
-	}
-
-	public static void SetOpacity(String shapeName, double opacity) {
-		ArrayList<Cmd> cmds = shapeMap.get(shapeName);
-
-		if (cmds != null) {
-			for (Cmd cmd : cmds) {
-				if (opacity >= 0 && opacity <= 100)
-					cmd.opacity = (float) (opacity / 100);
-				else if (opacity < 0)
-					cmd.opacity = 0;
-				else if (opacity > 100)
-					cmd.opacity = 1;
-			}
-		}
-	}
-
-	public static void HideShape(String shapeName) {
-		ArrayList<Cmd> cmds = shapeMap.get(shapeName);
-		JComponent comp = controlMap.get(shapeName);
-
-		if (cmds != null) {
-			for (Cmd cmd : cmds) {
-				cmd.show = false;
-
-			}
-			panel.repaint();
-		} else if (comp != null)
-			HideControl(shapeName);
-	}
-
-	public static void ShowShape(String shapeName) {
-		ArrayList<Cmd> cmds = shapeMap.get(shapeName);
-		JComponent comp = controlMap.get(shapeName);
-
-		if (cmds != null) {
-			for (Cmd cmd : cmds) {
-				cmd.show = true;
-			}
-			panel.repaint();
-		} else if (comp != null)
-			ShowControl(shapeName);
-	}
-	// End Shapes Library
-
-	// Controls Library
-	private static final String btnIdLabel = "Button";
-	private static final String txtBoxIdLabel = "TextBox";
-
-	private static int btnId = 1;
-	private static int txtBoxId = 1;
-
-	private static HashMap<String, JComponent> controlMap = new HashMap<>();
-
-	private static Container container;
-
-	public static String AddButton(String caption, int left, int top) {
-		if (frame == null)
-			Show(new ArrayList<Value>());
-
-		if (caption.equals(""))
-			caption = " ";
-
-		JButton btn = new JButton(caption);
-
-		btn.setFont(settingFont());
-		btn.setForeground(new Color(Integer.parseInt(BrushColor.toString().substring(1), 16)));
-		btn.setBackground(new Color(220, 220, 220)); // <-- 버튼 기본 색 설정
-		btn.setSize(btn.getPreferredSize());
-		btn.setLocation(left, top);
-		btn.addActionListener(new mActionListener());
-		panel.add(btn);
-
-		container = btn.getParent();
-		container.revalidate();
-		container.repaint();
-
-		String id = btnIdLabel + btnId;
-		btnId++;
-
-		controlMap.put(id, btn);
-
-		return id;
-	}
-
-	public static String AddTextBox(int left, int top) {
-		if (frame == null)
-			Show(new ArrayList<Value>());
-
-		JTextField tf = new JTextField(13);
-
-		tf.setFont(settingFont());
-		tf.setForeground(new Color(Integer.parseInt(BrushColor.toString().substring(1), 16)));
-		tf.setSize(tf.getPreferredSize());
-		tf.setLocation(left, top);
-		tf.getDocument().addDocumentListener(new mDocumentListener());
-
-		panel.add(tf);
-
-		container = tf.getParent();
-		container.revalidate();
-		container.repaint();
-
-		String id = txtBoxIdLabel + txtBoxId;
-		txtBoxId++;
-
-		controlMap.put(id, tf);
-
-		return id;
-	}
-
-	public static String AddMultiLineTextBox(int left, int top) {
-		if (frame == null)
-			Show(new ArrayList<Value>());
-
-		JTextArea ta = new JTextArea(5, 18);
-
-		JScrollPane scroll = new JScrollPane(ta);
-
-		scroll.setFont(settingFont());
-		scroll.setForeground(new Color(Integer.parseInt(BrushColor.toString().substring(1), 16)));
-		scroll.setSize(scroll.getPreferredSize());
-		scroll.setLocation(left, top);
-		ta.getDocument().addDocumentListener(new mDocumentListener());
-
-		panel.add(scroll);
-
-		container = ta.getParent();
-		container.revalidate();
-		container.repaint();
-
-		String id = txtBoxIdLabel + txtBoxId;
-		txtBoxId++;
-
-		controlMap.put(id, ta);
-
-		return id;
-	}
-
-	public static String GetButtonCaption(String buttonName) {
-		JComponent comp = controlMap.get(buttonName);
-		String caption = "";
-
-		if (comp != null && comp instanceof JButton) {
-			caption = ((JButton) comp).getText();
-		}
-
-		return caption;
-	}
-
-	public static void SetButtonCaption(String buttonName, String caption) {
-		JComponent comp = controlMap.get(buttonName);
-
-		if (comp != null && comp instanceof JButton) {
-			JButton btn = (JButton) comp;
-			btn.setText(caption);
-			btn.setSize(btn.getPreferredSize());
-		}
-	}
-
-	public static String GetTextBoxText(String textBoxName) {
-		JComponent comp = controlMap.get(textBoxName);
-		String text = "";
-
-		if (comp != null) {
-			if (comp instanceof JTextField) {
-				text = ((JTextField) comp).getText();
-			} else if (comp instanceof JTextArea) {
-				text = ((JTextArea) comp).getText();
-			}
-		}
-
-		return text;
-	}
-
-	public static void SetTextBoxText(String textBoxName, String text) {
-		JComponent comp = controlMap.get(textBoxName);
-
-		if (comp != null) {
-			if (comp instanceof JTextField) {
-				JTextField tf = (JTextField) comp;
-				tf.setText(text);
-			} else if (comp instanceof JTextArea) {
-				JTextArea ta = (JTextArea) comp;
-				ta.setText(text);
-			}
-		}
-	}
-
-	public static void ControlsRemove(String control) {
-		JComponent comp = controlMap.get(control);
-		ArrayList<Cmd> cmd = shapeMap.get(control);
-
-		if (comp != null) {
-			controlMap.remove(control);
-
-			container = comp.getParent();
-			container.remove(comp);
-			container.revalidate();
-			container.repaint();
-		} else if (cmd != null)
-			ShapesRemove(control);
-	}
-
-	public static void ControlsMove(String control, int x, int y) {
-		JComponent comp = controlMap.get(control);
-		ArrayList<Cmd> cmd = shapeMap.get(control);
-
-		if (comp != null) {
-			comp.setLocation(x, y);
-		} else if (cmd != null)
-			ShapesMove(control, x, y);
-	}
-
-	public static void SetSize(String control, int width, int height) {
-		JComponent comp = controlMap.get(control);
-
-		if (comp != null) {
-			comp.setSize(width, height);
-
-			container = comp.getParent();
-			container.repaint();
-		}
-	}
-
-	public static void HideControl(String control) {
-		JComponent comp = controlMap.get(control);
-		ArrayList<Cmd> cmd = shapeMap.get(control);
-
-		if (comp != null) {
-			comp.setVisible(false);
-		} else if (cmd != null)
-			HideShape(control);
-	}
-
-	public static void ShowControl(String control) {
-		JComponent comp = controlMap.get(control);
-		ArrayList<Cmd> cmd = shapeMap.get(control);
-
-		if (comp != null) {
-			comp.setVisible(true);
-		} else if (cmd != null)
-			ShowShape(control);
-	}
-	// End Controls Library
-
-	// Mouse Library
-	static Toolkit tk = Toolkit.getDefaultToolkit();
-	static Cursor cursor;
-
-	public static void HideCursor() {
-		if (frame == null)
-			Show(new ArrayList<Value>());
-
-		cursor = tk.createCustomCursor(tk.createImage(""), new Point(), null);
-		panel.setCursor(cursor);
-	}
-
-	public static void ShowCursor() {
-		if (frame == null)
-			Show(new ArrayList<Value>());
-
-		cursor = new Cursor(Cursor.DEFAULT_CURSOR);
-		panel.setCursor(cursor);
-	}
-
-	private static void MouseButtonDown(int button) {
-		String right = "False";
-		String left = "False";
-
-		if (button == MouseEvent.BUTTON1) {
-			left = "True";
-		}
-		if (button == MouseEvent.BUTTON3) {
-			right = "True";
-		}
-
-		Mouse.IsLeftButtonDown = new StrV(left);
-		Mouse.IsRightButtonDown = new StrV(right);
-	}
-	// End Mouse Library
-
-	private static class mActionListener implements ActionListener {
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			if (Controls.ButtonClicked != null) {
-				JButton button = (JButton) e.getSource();
-
-				if (controlMap.containsValue(button)) {
-					Controls.LastClickedButton = new StrV(getKeyFromValue(button));
-				}
-				Eval.eval(Controls.ButtonClicked);
-			}
-		}
-	}
-
-	private static class mDocumentListener implements DocumentListener {
-
-		@Override
-		public void changedUpdate(DocumentEvent e) {
-
-		}
-
-		@Override
-		public void insertUpdate(DocumentEvent e) {
-			if (Controls.TextTyped != null) {
-				JComponent comp = getCompFromDoc(e.getDocument());
-				if (comp != null) {
-					Controls.LastTypedTextBox = new StrV(getKeyFromValue(comp));
-				}
-				Eval.eval(Controls.TextTyped);
-			}
-		}
-
-		@Override
-		public void removeUpdate(DocumentEvent e) {
-			if (Controls.TextTyped != null) {
-				JComponent comp = getCompFromDoc(e.getDocument());
-				if (comp != null) {
-					Controls.LastTypedTextBox = new StrV(getKeyFromValue(comp));
-				}
-				Eval.eval(Controls.TextTyped);
-			}
-		}
-
-	}
-
-	private static String getKeyFromValue(JComponent comp) {
-		if (comp instanceof JButton || comp instanceof JTextField || comp instanceof JTextArea) {
-			for (String str : controlMap.keySet()) {
-				if (controlMap.get(str).equals(comp))
-					return str;
-			}
-		}
-
-		return "";
-	}
-
-	private static JComponent getCompFromDoc(Document doc) {
-		for (JComponent comp : controlMap.values()) {
-			if (comp instanceof JTextField) {
-				JTextField tf = (JTextField) comp;
-
-				if (tf.getDocument().equals(doc))
-					return tf;
-			} else if (comp instanceof JTextArea) {
-				JTextArea ta = (JTextArea) comp;
-
-				if (ta.getDocument().equals(doc))
-					return ta;
-			}
-		}
-		return null;
-	}
-
 	private static String isUrlOrPath(String imageName) {
 		if (imageName.contains("http")) {
 			ArrayList<Value> tmp = new ArrayList<>();
@@ -2028,54 +1277,6 @@ public class GraphicsWindow {
 		}
 
 		return img;
-	}
-
-	// font
-	private static boolean fontBold() {
-		StrV bold = (StrV) FontBold;
-		String boolBold = bold.getValue();
-
-		if (boolBold.equalsIgnoreCase("True"))
-			return true;
-		else
-			return false;
-	}
-
-	private static boolean fontItalic() {
-		StrV italic = (StrV) FontItalic;
-		String boolItalic = italic.getValue();
-
-		if (boolItalic.equalsIgnoreCase("True"))
-			return true;
-		else
-			return false;
-	}
-
-	private static Font settingFont() {
-		Font font;
-
-		boolean bold = fontBold();
-		boolean italic = fontItalic();
-		String fontName = ((StrV) FontName).getValue();
-		int fontSize;
-
-		if (FontSize instanceof DoubleV)
-			fontSize = (int) ((DoubleV) FontSize).getValue();
-		else if (FontSize instanceof StrV && ((StrV) FontSize).isNumber())
-			fontSize = (int) ((StrV) FontSize).parseDouble();
-		else
-			throw new InterpretException("Unexpected type of " + FontSize);
-
-		if (bold && italic)
-			font = new Font(fontName, Font.BOLD | Font.ITALIC, fontSize);
-		else if (bold)
-			font = new Font(fontName, Font.BOLD, fontSize);
-		else if (italic)
-			font = new Font(fontName, Font.ITALIC, fontSize);
-		else
-			font = new Font(fontName, Font.PLAIN, fontSize);
-
-		return font;
 	}
 
 	private static int getLeft() {
@@ -2156,6 +1357,55 @@ public class GraphicsWindow {
 				&& block != Character.UnicodeBlock.SPECIALS;
 	}
 
+	// font: used by GraphicsWindow & Controls
+	private static boolean fontBold() {
+		StrV bold = (StrV) FontBold;
+		String boolBold = bold.getValue();
+
+		if (boolBold.equalsIgnoreCase("True"))
+			return true;
+		else
+			return false;
+	}
+
+	private static boolean fontItalic() {
+		StrV italic = (StrV) FontItalic;
+		String boolItalic = italic.getValue();
+
+		if (boolItalic.equalsIgnoreCase("True"))
+			return true;
+		else
+			return false;
+	}
+
+	private static Font settingFont() {
+		Font font;
+
+		boolean bold = fontBold();
+		boolean italic = fontItalic();
+		String fontName = ((StrV) FontName).getValue();
+		int fontSize;
+
+		if (FontSize instanceof DoubleV)
+			fontSize = (int) ((DoubleV) FontSize).getValue();
+		else if (FontSize instanceof StrV && ((StrV) FontSize).isNumber())
+			fontSize = (int) ((StrV) FontSize).parseDouble();
+		else
+			throw new InterpretException("Unexpected type of " + FontSize);
+
+		if (bold && italic)
+			font = new Font(fontName, Font.BOLD | Font.ITALIC, fontSize);
+		else if (bold)
+			font = new Font(fontName, Font.BOLD, fontSize);
+		else if (italic)
+			font = new Font(fontName, Font.ITALIC, fontSize);
+		else
+			font = new Font(fontName, Font.PLAIN, fontSize);
+
+		return font;
+	}
+	// End of font
+
 	private static abstract class Cmd {
 		boolean show;
 		int cmd;
@@ -2163,7 +1413,20 @@ public class GraphicsWindow {
 		float opacity;
 		double scaleX, scaleY;
 		double degree;
+		int layer;
 
+		Cmd() {
+			layer = 2; // 2nd layer for draw... and fill... method
+		}
+		
+		void setLayerforShapesOrControls() {
+			layer = 3;
+		}
+		
+		int getLayer() {
+			return layer;
+		}
+		
 		void Move(double x, double y) {
 			this.x = x;
 			this.y = y;
@@ -2531,4 +1794,776 @@ public class GraphicsWindow {
 		if (frame == null)
 			Show(new ArrayList<Value>());
 	}
+	// End of GraphicsWindow Library
+
+	// Supporting Shapes Library
+	private static final String rectIdLabel = "Rectangle";
+	private static final String ellipIdLabel = "Ellipse";
+	private static final String triIdLabel = "Triangle";
+	private static final String lineIdLabel = "Line";
+	private static final String textIdLabel = "Text";
+	private static final String imageIdLabel = "Image";
+
+	private static int rectId = 1;
+	private static int ellipId = 1;
+	private static int triId = 1;
+	private static int lineId = 1;
+	private static int textId = 1;
+	private static int imageId = 1;
+
+	private static HashMap<String, ArrayList<Cmd>> shapeMap = new HashMap<>();
+
+	static String AddRectangle(int width, int height) {
+		if (frame == null)
+			Show(new ArrayList<Value>());
+
+		ArrayList<Value> grArgs = new ArrayList<Value>();
+		grArgs.add(new DoubleV(0));
+		grArgs.add(new DoubleV(0));
+		grArgs.add(new DoubleV(width));
+		grArgs.add(new DoubleV(height));
+
+		GraphicsWindow.FillRectangle(grArgs);
+		Cmd fillCmd = panel.getCmdList().get(panel.getCmdList().size() - 1);
+		fillCmd.setLayerforShapesOrControls();
+		GraphicsWindow.DrawRectangle(grArgs);
+		Cmd drawCmd = panel.getCmdList().get(panel.getCmdList().size() - 1);
+		drawCmd.setLayerforShapesOrControls();
+		
+		ArrayList<Cmd> cmds = new ArrayList<>();
+		cmds.add(fillCmd);
+		cmds.add(drawCmd);
+
+		String id = rectIdLabel + rectId;
+		rectId++;
+
+		shapeMap.put(id, cmds);
+
+		return id;
+	}
+
+	static String AddEllipse(int width, int height) {
+		if (frame == null)
+			Show(new ArrayList<Value>());
+
+		ArrayList<Value> grArgs = new ArrayList<>();
+		grArgs.add(new DoubleV(0));
+		grArgs.add(new DoubleV(0));
+		grArgs.add(new DoubleV(width));
+		grArgs.add(new DoubleV(height));
+
+		GraphicsWindow.FillEllipse(grArgs);
+		Cmd fillCmd = panel.getCmdList().get(panel.getCmdList().size() - 1);
+		fillCmd.setLayerforShapesOrControls();
+		GraphicsWindow.DrawEllipse(grArgs);
+		Cmd drawCmd = panel.getCmdList().get(panel.getCmdList().size() - 1);
+		drawCmd.setLayerforShapesOrControls();
+		
+		ArrayList<Cmd> cmds = new ArrayList<>();
+		cmds.add(fillCmd);
+		cmds.add(drawCmd);
+
+		String id = ellipIdLabel + ellipId;
+		ellipId++;
+
+		shapeMap.put(id, cmds);
+
+		return id;
+	}
+
+	static String AddTriangle(int x1, int y1, int x2, int y2, int x3, int y3) {
+		if (frame == null)
+			Show(new ArrayList<Value>());
+
+		ArrayList<Value> grArgs = new ArrayList<>();
+		grArgs.add(new DoubleV(x1));
+		grArgs.add(new DoubleV(y1));
+		grArgs.add(new DoubleV(x2));
+		grArgs.add(new DoubleV(y2));
+		grArgs.add(new DoubleV(x3));
+		grArgs.add(new DoubleV(y3));
+
+		GraphicsWindow.FillTriangle(grArgs);
+		Cmd fillCmd = panel.getCmdList().get(panel.getCmdList().size() - 1);
+		fillCmd.setLayerforShapesOrControls();
+		GraphicsWindow.DrawTriangle(grArgs);
+		Cmd drawCmd = panel.getCmdList().get(panel.getCmdList().size() - 1);
+		drawCmd.setLayerforShapesOrControls();
+
+		ArrayList<Cmd> cmds = new ArrayList<>();
+		cmds.add(fillCmd);
+		cmds.add(drawCmd);
+
+		String id = triIdLabel + triId;
+		triId++;
+
+		shapeMap.put(id, cmds);
+
+		return id;
+	}
+
+	static String AddLine(int x1, int y1, int x2, int y2) {
+		if (frame == null)
+			Show(new ArrayList<Value>());
+
+		ArrayList<Value> grArgs = new ArrayList<>();
+		grArgs.add(new DoubleV(x1));
+		grArgs.add(new DoubleV(y1));
+		grArgs.add(new DoubleV(x2));
+		grArgs.add(new DoubleV(y2));
+
+		GraphicsWindow.DrawLine(grArgs);
+		Cmd drawCmd = panel.getCmdList().get(panel.getCmdList().size() - 1);
+		drawCmd.setLayerforShapesOrControls();
+
+		ArrayList<Cmd> cmds = new ArrayList<>();
+		cmds.add(drawCmd);
+
+		String id = lineIdLabel + lineId;
+		lineId++;
+
+		shapeMap.put(id, cmds);
+
+		return id;
+	}
+
+	static String AddImage(String imageName) {
+		if (frame == null)
+			Show(new ArrayList<Value>());
+
+		ArrayList<Value> grArgs = new ArrayList<>();
+		grArgs.add(new StrV(imageName));
+		grArgs.add(new DoubleV(0));
+		grArgs.add(new DoubleV(0));
+
+		GraphicsWindow.DrawImage(grArgs);
+		Cmd drawCmd = panel.getCmdList().get(panel.getCmdList().size() - 1);
+		drawCmd.setLayerforShapesOrControls();
+
+		ArrayList<Cmd> cmds = new ArrayList<>();
+		cmds.add(drawCmd);
+
+		String id = imageIdLabel + imageId;
+		imageId++;
+
+		shapeMap.put(id, cmds);
+
+		return id;
+	}
+
+	static String AddText(String text) {
+		if (frame == null)
+			Show(new ArrayList<Value>());
+
+		ArrayList<Value> grArgs = new ArrayList<>();
+		grArgs.add(new DoubleV(0));
+		grArgs.add(new DoubleV(0));
+		grArgs.add(new StrV(text));
+
+		GraphicsWindow.DrawText(grArgs);
+		Cmd drawCmd = panel.getCmdList().get(panel.getCmdList().size() - 1);
+		drawCmd.setLayerforShapesOrControls();
+
+		ArrayList<Cmd> cmds = new ArrayList<>();
+		cmds.add(drawCmd);
+
+		String id = textIdLabel + textId;
+		textId++;
+
+		shapeMap.put(id, cmds);
+
+		return id;
+	}
+
+	static void SetText(String shapeName, String text) {
+		ArrayList<Cmd> cmds = shapeMap.get(shapeName);
+
+		if (cmds != null && cmds.size() == 1) {
+			if (cmds.get(0) instanceof DrawTextCmd)
+				((DrawTextCmd) cmds.get(0)).text = text;
+		}
+		panel.repaint();
+	}
+
+	static void ShapesRemove(String shape) {
+		ArrayList<Cmd> cmds = shapeMap.remove(shape);
+		JComponent comp = controlMap.get(shape);
+
+		if (cmds != null) {
+			for (Cmd cmd : cmds) {
+				panel.getCmdList().remove(cmd);
+			}
+			panel.repaint();
+		} else if (comp != null)
+			ControlsRemove(shape);
+	}
+
+	static void ShapesMove(String shape, double x, double y) {
+		ArrayList<Cmd> cmds = shapeMap.get(shape);
+		JComponent comp = controlMap.get(shape);
+
+		if (cmds != null) {
+			for (Cmd cmd : cmds) {
+				cmd.Move(x, y);
+			}
+			panel.repaint();
+		} else if (comp != null)
+			ControlsMove(shape, (int) x, (int) y);
+	}
+
+	static void Rotate(String shapeName, double angle) {
+		ArrayList<Cmd> cmds = shapeMap.get(shapeName);
+
+		if (cmds != null) {
+			for (Cmd cmd : cmds) {
+				cmd.degree = angle;
+			}
+			panel.repaint();
+		}
+	}
+
+	static void Zoom(String shapeName, double scaleX, double scaleY) {
+		ArrayList<Cmd> cmds = shapeMap.get(shapeName);
+
+		if (cmds != null) {
+			if (scaleX < 0.1)
+				scaleX = 0.1;
+			else if (scaleX > 20)
+				scaleX = 20;
+
+			if (scaleY < 0.1)
+				scaleY = 0.1;
+			else if (scaleY > 20)
+				scaleY = 20;
+
+			for (Cmd cmd : cmds) {
+				cmd.scaleX = scaleX;
+				cmd.scaleY = scaleY;
+			}
+			panel.repaint();
+		}
+	}
+
+	static void Animate(String shapeName, double x, double y, int duration) {
+		ArrayList<Cmd> cmds = shapeMap.get(shapeName);
+
+		if (cmds != null) {
+			if (duration < 0 || duration > 100000000)
+				throw new InterpretException("Not a valid number : " + duration);
+
+			if (duration == 0) {
+				for (Cmd cmd : cmds) {
+					if (cmd instanceof DrawLineCmd) {
+						DrawLineCmd lineCmd = (DrawLineCmd) cmd;
+						lineCmd.Move(lineCmd.x1 + x, lineCmd.y1 + y);
+						lineCmd.x = x;
+						lineCmd.y = y;
+					} else if (cmd instanceof DrawTriangleCmd) {
+						DrawTriangleCmd triCmd = (DrawTriangleCmd) cmd;
+						triCmd.Move(triCmd.xs[0] + x, triCmd.ys[0] + y);
+						triCmd.x = x;
+						triCmd.y = y;
+					} else if (cmd instanceof FillTriangleCmd) {
+						FillTriangleCmd triCmd = (FillTriangleCmd) cmd;
+						triCmd.Move(triCmd.xs[0] + x, triCmd.ys[0] + y);
+						triCmd.x = x;
+						triCmd.y = y;
+					} else
+						cmd.Move(x, y);
+					panel.repaint();
+				}
+			} else {
+				MyActionListener animate_action = new MyActionListener(cmds, x, y, duration);
+				javax.swing.Timer animate = new javax.swing.Timer(100, animate_action);
+				animate_action.timer = animate;
+				animate.start();
+			}
+		}
+	}
+
+	static class MyActionListener implements ActionListener {
+		int i = 1;
+		ArrayList<Cmd> cmds;
+		int times;
+		double x, y;
+		public javax.swing.Timer timer;
+
+		public MyActionListener(ArrayList<Cmd> cmds, double x, double y, int duration) {
+			this.cmds = cmds;
+			this.x = x;
+			this.y = y;
+			this.times = duration / 100;
+		}
+
+		ArrayList<Pair<Double, Double>> a_pair = new ArrayList<>();
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			int n = 0;
+			for (Cmd cmd : cmds) {
+				if (cmd instanceof DrawLineCmd) {
+					DrawLineCmd lineCmd = (DrawLineCmd) cmd;
+					double a_x;
+					double a_y;
+
+					if (i == 1) {
+						a_x = (x - lineCmd.x) / times;
+						a_y = (y - lineCmd.y) / times;
+						Pair<Double, Double> pair = new Pair<>(a_x, a_y);
+						a_pair.add(pair);
+					} else {
+						a_x = a_pair.get(n).getFst();
+						a_y = a_pair.get(n).getSec();
+					}
+
+					lineCmd.Move(lineCmd.x1 + a_x, lineCmd.y1 + a_y);
+					lineCmd.x = x;
+					lineCmd.y = y;
+				} else if (cmd instanceof DrawTriangleCmd) {
+					DrawTriangleCmd triCmd = (DrawTriangleCmd) cmd;
+					double a_x;
+					double a_y;
+
+					if (i == 1) {
+						a_x = (x - triCmd.x) / times;
+						a_y = (y - triCmd.y) / times;
+						Pair<Double, Double> pair = new Pair<>(a_x, a_y);
+						a_pair.add(pair);
+					} else {
+						a_x = a_pair.get(n).getFst();
+						a_y = a_pair.get(n).getSec();
+					}
+
+					triCmd.Move(triCmd.xs[0] + a_x, triCmd.ys[0] + a_y);
+					triCmd.x = x;
+					triCmd.y = y;
+				} else if (cmd instanceof FillTriangleCmd) {
+					FillTriangleCmd triCmd = (FillTriangleCmd) cmd;
+					double a_x;
+					double a_y;
+
+					if (i == 1) {
+						a_x = (x - triCmd.x) / times;
+						a_y = (y - triCmd.y) / times;
+						Pair<Double, Double> pair = new Pair<>(a_x, a_y);
+						a_pair.add(pair);
+					} else {
+						a_x = a_pair.get(n).getFst();
+						a_y = a_pair.get(n).getSec();
+					}
+
+					triCmd.Move(triCmd.xs[0] + a_x, triCmd.ys[0] + a_y);
+					triCmd.x = x;
+					triCmd.y = y;
+				} else {
+					double a_x;
+					double a_y;
+
+					if (i == 1) {
+						a_x = (x - cmd.x) / times;
+						a_y = (y - cmd.y) / times;
+						Pair<Double, Double> pair = new Pair<>(a_x, a_y);
+						a_pair.add(pair);
+					} else {
+						a_x = a_pair.get(n).getFst();
+						a_y = a_pair.get(n).getSec();
+					}
+
+					cmd.Move(cmd.x + a_x, cmd.y + a_y);
+				}
+				n++;
+			}
+			panel.repaint();
+			i++;
+
+			if (i > times) {
+				timer.stop();
+			}
+		}
+	}
+
+	static double GetLeft(String shapeName) {
+		ArrayList<Cmd> cmds = shapeMap.get(shapeName);
+
+		if (cmds != null) {
+			return cmds.get(0).x;
+		}
+
+		return 0;
+	}
+
+	static double GetTop(String shapeName) {
+		ArrayList<Cmd> cmds = shapeMap.get(shapeName);
+
+		if (cmds != null) {
+			return cmds.get(0).y;
+		}
+
+		return 0;
+	}
+
+	static double GetOpacity(String shapeName) {
+		ArrayList<Cmd> cmds = shapeMap.get(shapeName);
+
+		if (cmds != null) {
+			return cmds.get(0).opacity * 100;
+		}
+
+		return 0;
+	}
+
+	static void SetOpacity(String shapeName, double opacity) {
+		ArrayList<Cmd> cmds = shapeMap.get(shapeName);
+
+		if (cmds != null) {
+			for (Cmd cmd : cmds) {
+				if (opacity >= 0 && opacity <= 100)
+					cmd.opacity = (float) (opacity / 100);
+				else if (opacity < 0)
+					cmd.opacity = 0;
+				else if (opacity > 100)
+					cmd.opacity = 1;
+			}
+		}
+	}
+
+	static void HideShape(String shapeName) {
+		ArrayList<Cmd> cmds = shapeMap.get(shapeName);
+		JComponent comp = controlMap.get(shapeName);
+
+		if (cmds != null) {
+			for (Cmd cmd : cmds) {
+				cmd.show = false;
+
+			}
+			panel.repaint();
+		} else if (comp != null)
+			HideControl(shapeName);
+	}
+
+	static void ShowShape(String shapeName) {
+		ArrayList<Cmd> cmds = shapeMap.get(shapeName);
+		JComponent comp = controlMap.get(shapeName);
+
+		if (cmds != null) {
+			for (Cmd cmd : cmds) {
+				cmd.show = true;
+			}
+			panel.repaint();
+		} else if (comp != null)
+			ShowControl(shapeName);
+	}
+	// End of Supporting Shapes Library
+
+	// Supporting Controls Library
+	private static final String btnIdLabel = "Button";
+	private static final String txtBoxIdLabel = "TextBox";
+
+	private static int btnId = 1;
+	private static int txtBoxId = 1;
+
+	private static HashMap<String, JComponent> controlMap = new HashMap<>();
+
+	private static Container container;
+
+	static String AddButton(String caption, int left, int top) {
+		if (frame == null)
+			Show(new ArrayList<Value>());
+
+		if (caption.equals(""))
+			caption = " ";
+
+		JButton btn = new JButton(caption);
+
+		btn.setFont(settingFont());
+		btn.setForeground(new Color(Integer.parseInt(BrushColor.toString().substring(1), 16)));
+		btn.setBackground(new Color(220, 220, 220)); // <-- 버튼 기본 색 설정
+		btn.setSize(btn.getPreferredSize());
+		btn.setLocation(left, top);
+		btn.addActionListener(new mActionListener());
+		panel.add(btn);
+
+		container = btn.getParent();
+		container.revalidate();
+		container.repaint();
+
+		String id = btnIdLabel + btnId;
+		btnId++;
+
+		controlMap.put(id, btn);
+
+		return id;
+	}
+
+	static String AddTextBox(int left, int top) {
+		if (frame == null)
+			Show(new ArrayList<Value>());
+
+		JTextField tf = new JTextField(13);
+
+		tf.setFont(settingFont());
+		tf.setForeground(new Color(Integer.parseInt(BrushColor.toString().substring(1), 16)));
+		tf.setSize(tf.getPreferredSize());
+		tf.setLocation(left, top);
+		tf.getDocument().addDocumentListener(new mDocumentListener());
+
+		panel.add(tf);
+
+		container = tf.getParent();
+		container.revalidate();
+		container.repaint();
+
+		String id = txtBoxIdLabel + txtBoxId;
+		txtBoxId++;
+
+		controlMap.put(id, tf);
+
+		return id;
+	}
+
+	static String AddMultiLineTextBox(int left, int top) {
+		if (frame == null)
+			Show(new ArrayList<Value>());
+
+		JTextArea ta = new JTextArea(5, 18);
+
+		JScrollPane scroll = new JScrollPane(ta);
+
+		scroll.setFont(settingFont());
+		scroll.setForeground(new Color(Integer.parseInt(BrushColor.toString().substring(1), 16)));
+		scroll.setSize(scroll.getPreferredSize());
+		scroll.setLocation(left, top);
+		ta.getDocument().addDocumentListener(new mDocumentListener());
+
+		panel.add(scroll);
+
+		container = ta.getParent();
+		container.revalidate();
+		container.repaint();
+
+		String id = txtBoxIdLabel + txtBoxId;
+		txtBoxId++;
+
+		controlMap.put(id, ta);
+
+		return id;
+	}
+
+	static String GetButtonCaption(String buttonName) {
+		JComponent comp = controlMap.get(buttonName);
+		String caption = "";
+
+		if (comp != null && comp instanceof JButton) {
+			caption = ((JButton) comp).getText();
+		}
+
+		return caption;
+	}
+
+	static void SetButtonCaption(String buttonName, String caption) {
+		JComponent comp = controlMap.get(buttonName);
+
+		if (comp != null && comp instanceof JButton) {
+			JButton btn = (JButton) comp;
+			btn.setText(caption);
+			btn.setSize(btn.getPreferredSize());
+		}
+	}
+
+	static String GetTextBoxText(String textBoxName) {
+		JComponent comp = controlMap.get(textBoxName);
+		String text = "";
+
+		if (comp != null) {
+			if (comp instanceof JTextField) {
+				text = ((JTextField) comp).getText();
+			} else if (comp instanceof JTextArea) {
+				text = ((JTextArea) comp).getText();
+			}
+		}
+
+		return text;
+	}
+
+	static void SetTextBoxText(String textBoxName, String text) {
+		JComponent comp = controlMap.get(textBoxName);
+
+		if (comp != null) {
+			if (comp instanceof JTextField) {
+				JTextField tf = (JTextField) comp;
+				tf.setText(text);
+			} else if (comp instanceof JTextArea) {
+				JTextArea ta = (JTextArea) comp;
+				ta.setText(text);
+			}
+		}
+	}
+
+	static void ControlsRemove(String control) {
+		JComponent comp = controlMap.get(control);
+		ArrayList<Cmd> cmd = shapeMap.get(control);
+
+		if (comp != null) {
+			controlMap.remove(control);
+
+			container = comp.getParent();
+			container.remove(comp);
+			container.revalidate();
+			container.repaint();
+		} else if (cmd != null)
+			ShapesRemove(control);
+	}
+
+	static void ControlsMove(String control, int x, int y) {
+		JComponent comp = controlMap.get(control);
+		ArrayList<Cmd> cmd = shapeMap.get(control);
+
+		if (comp != null) {
+			comp.setLocation(x, y);
+		} else if (cmd != null)
+			ShapesMove(control, x, y);
+	}
+
+	static void SetSize(String control, int width, int height) {
+		JComponent comp = controlMap.get(control);
+
+		if (comp != null) {
+			comp.setSize(width, height);
+
+			container = comp.getParent();
+			container.repaint();
+		}
+	}
+
+	static void HideControl(String control) {
+		JComponent comp = controlMap.get(control);
+		ArrayList<Cmd> cmd = shapeMap.get(control);
+
+		if (comp != null) {
+			comp.setVisible(false);
+		} else if (cmd != null)
+			HideShape(control);
+	}
+
+	static void ShowControl(String control) {
+		JComponent comp = controlMap.get(control);
+		ArrayList<Cmd> cmd = shapeMap.get(control);
+
+		if (comp != null) {
+			comp.setVisible(true);
+		} else if (cmd != null)
+			ShowShape(control);
+	}
+
+	private static class mActionListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if (Controls.ButtonClicked != null) {
+				JButton button = (JButton) e.getSource();
+
+				if (controlMap.containsValue(button)) {
+					Controls.LastClickedButton = new StrV(getKeyFromValue(button));
+				}
+				Eval.eval(Controls.ButtonClicked);
+			}
+		}
+	}
+
+	private static class mDocumentListener implements DocumentListener {
+
+		@Override
+		public void changedUpdate(DocumentEvent e) {
+
+		}
+
+		@Override
+		public void insertUpdate(DocumentEvent e) {
+			if (Controls.TextTyped != null) {
+				JComponent comp = getCompFromDoc(e.getDocument());
+				if (comp != null) {
+					Controls.LastTypedTextBox = new StrV(getKeyFromValue(comp));
+				}
+				Eval.eval(Controls.TextTyped);
+			}
+		}
+
+		@Override
+		public void removeUpdate(DocumentEvent e) {
+			if (Controls.TextTyped != null) {
+				JComponent comp = getCompFromDoc(e.getDocument());
+				if (comp != null) {
+					Controls.LastTypedTextBox = new StrV(getKeyFromValue(comp));
+				}
+				Eval.eval(Controls.TextTyped);
+			}
+		}
+
+	}
+
+	private static String getKeyFromValue(JComponent comp) {
+		if (comp instanceof JButton || comp instanceof JTextField || comp instanceof JTextArea) {
+			for (String str : controlMap.keySet()) {
+				if (controlMap.get(str).equals(comp))
+					return str;
+			}
+		}
+
+		return "";
+	}
+
+	private static JComponent getCompFromDoc(Document doc) {
+		for (JComponent comp : controlMap.values()) {
+			if (comp instanceof JTextField) {
+				JTextField tf = (JTextField) comp;
+
+				if (tf.getDocument().equals(doc))
+					return tf;
+			} else if (comp instanceof JTextArea) {
+				JTextArea ta = (JTextArea) comp;
+
+				if (ta.getDocument().equals(doc))
+					return ta;
+			}
+		}
+		return null;
+	}
+	// End of Supporting Controls Library
+
+	// Supporting Mouse Library
+	static Toolkit tk = Toolkit.getDefaultToolkit();
+	static Cursor cursor;
+
+	static void HideCursor() {
+		if (frame == null)
+			Show(new ArrayList<Value>());
+
+		cursor = tk.createCustomCursor(tk.createImage(""), new Point(), null);
+		panel.setCursor(cursor);
+	}
+
+	static void ShowCursor() {
+		if (frame == null)
+			Show(new ArrayList<Value>());
+
+		cursor = new Cursor(Cursor.DEFAULT_CURSOR);
+		panel.setCursor(cursor);
+	}
+
+	private static void MouseButtonDown(int button) {
+		String right = "False";
+		String left = "False";
+
+		if (button == MouseEvent.BUTTON1) {
+			left = "True";
+		}
+		if (button == MouseEvent.BUTTON3) {
+			right = "True";
+		}
+
+		Mouse.IsLeftButtonDown = new StrV(left);
+		Mouse.IsRightButtonDown = new StrV(right);
+	}
+	// End of Supporting Mouse Library
+
 }

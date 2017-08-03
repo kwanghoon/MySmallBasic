@@ -1,0 +1,6 @@
+GraphicsWindow.DrawEllipse(50, 50, 100, 20)
+Controls.AddButton("test", 50, 50)
+GraphicsWindow.DrawRectangle(40, 40, 20, 30)
+
+a = Shapes.AddEllipse(50, 50)
+Shapes.Move(a, 30, 30)
