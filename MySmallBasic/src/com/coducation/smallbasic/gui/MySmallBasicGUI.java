@@ -20,22 +20,28 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.JTextArea;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-public class MySmallBasicGUI extends JFrame implements MySmallBasicDeberggerClientModel {
+public class MySmallBasicGUI extends JFrame implements MySmallBasicDebuggerClientModel {
 	private static JPanel contentPane;
+	private static JPanel toolBarPanel;
 	private static MySmallBasicGUI frame;
 	private JButton newButton;
 	private JButton openButton;
 	private JButton saveButton;
 	private JButton saveAsButton;
 	private JButton runButton;
+	private JButton debugButton;
 	private TextAreaMaker textAreaMaker;
+
+	// 디버그 관련 변수
+	private MySmallBasicDebugger debugger;
+	private Thread debuggerThread;
+	private JToolBar debugToolBar;
 
 	// 저장관련 변수
 	private boolean isNewFile = true; // 새로운 파일인지? 경로가 있는 파일인지
@@ -43,7 +49,7 @@ public class MySmallBasicGUI extends JFrame implements MySmallBasicDeberggerClie
 	private String filePath = TEMP_PATH; // 파일의 경로
 	private boolean isTextAreaChanged = false;
 
-	//나중에 반드시 임시로 저장할 경로를 설정해주세요!
+	// 나중에 반드시 임시로 저장할 경로를 설정해주세요!
 	final static String TEMP_PATH = System.getProperty("user.dir") + "/resource/tmp.sb";
 
 	public static void main(String[] args) {
@@ -59,15 +65,23 @@ public class MySmallBasicGUI extends JFrame implements MySmallBasicDeberggerClie
 		contentPane.setLayout(new BorderLayout(0, 0));
 		setContentPane(contentPane);
 
+		// 툴바가 들어갈 panel 설정
+		toolBarPanel = new JPanel();
+		toolBarPanel.setLayout(new BorderLayout());
+		contentPane.add(toolBarPanel, BorderLayout.NORTH);
 		JToolBar toolBar = new JToolBar();
+		toolBarPanel.add(toolBar, BorderLayout.CENTER);
 		toolBar.setToolTipText("");
-		contentPane.add(toolBar, BorderLayout.NORTH);
 
 		// 버튼추가
 		// new button
 		newButton = addButton("새로만들기", "/resource/GUI/new.png", toolBar, 50);
 		newButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+
+				if (debugger != null)
+					return;
+
 				textAreaMaker.getTextArea().selectAll();
 				textAreaMaker.getTextArea().replaceSelection("");
 
@@ -75,6 +89,8 @@ public class MySmallBasicGUI extends JFrame implements MySmallBasicDeberggerClie
 
 				isTempFile = true;
 				isNewFile = true;
+
+				textAreaMaker.clearBreakPointInfo();
 			}
 		});
 
@@ -82,6 +98,10 @@ public class MySmallBasicGUI extends JFrame implements MySmallBasicDeberggerClie
 		openButton = addButton("열기", "/resource/GUI/open.png", toolBar, 50);
 		openButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+
+				if (debugger != null)
+					return;
+
 				// 파일선택창
 				FileDialog dialog = new FileDialog(frame, "열기", FileDialog.LOAD);
 				dialog.setDirectory(".");
@@ -104,6 +124,8 @@ public class MySmallBasicGUI extends JFrame implements MySmallBasicDeberggerClie
 				isTempFile = false;
 				isNewFile = false;
 				isTextAreaChanged = false;
+
+				textAreaMaker.clearBreakPointInfo();
 			}
 		});
 
@@ -111,6 +133,9 @@ public class MySmallBasicGUI extends JFrame implements MySmallBasicDeberggerClie
 		saveButton = addButton("저장", "/resource/GUI/save.png", toolBar, 50);
 		saveButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				if (debugger != null)
+					return;
+
 				save();
 			}
 		});
@@ -119,6 +144,9 @@ public class MySmallBasicGUI extends JFrame implements MySmallBasicDeberggerClie
 		saveAsButton = addButton("다른 이름으로 저장", "/resource/GUI/saveAs.png", toolBar, 50);
 		saveAsButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				if (debugger != null)
+					return;
+
 				saveAs();
 
 				isTempFile = false;
@@ -173,11 +201,15 @@ public class MySmallBasicGUI extends JFrame implements MySmallBasicDeberggerClie
 		// run button
 		runButton = addButton("실행", "/resource/GUI/play.png", toolBar, 50);
 		runButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {	
-				//내용이 변경되었으면 저장
-				if (isTextAreaChanged && isTempFile) {
+			public void actionPerformed(ActionEvent e) {
+				if (debugger != null)
+					return;
+
+				// 내용이 변경되었으면 저장
+				if (isTextAreaChanged || isTempFile) {
 					// 임시 파일로 작성한 경우
 					if (isTempFile) {
+						System.out.println("실행");
 						try {
 							BufferedWriter writer = new BufferedWriter(new FileWriter(filePath));
 							writer.write(textAreaMaker.getTextArea().getText());
@@ -189,7 +221,6 @@ public class MySmallBasicGUI extends JFrame implements MySmallBasicDeberggerClie
 					else
 						save();
 				}
-
 				isTextAreaChanged = false;
 
 				try {
@@ -203,7 +234,7 @@ public class MySmallBasicGUI extends JFrame implements MySmallBasicDeberggerClie
 					Map<String, String> env = pb.environment();
 
 					classpath.append(HOME + "/bin");
-					addJarFile(HOME + "/lib");
+					addJarFile(classpath, HOME, HOME + "/lib");
 
 					env.put("CLASSPATH", classpath.toString());
 
@@ -229,6 +260,50 @@ public class MySmallBasicGUI extends JFrame implements MySmallBasicDeberggerClie
 				catch (IOException e1) {
 					e1.printStackTrace();
 				}
+			}
+		});
+
+		// debug button
+		debugButton = addButton("디버그", "/resource/GUI/debug.png", toolBar, 50);
+		debugButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (debugger != null)
+					return;
+
+				debugToolBar = new JToolBar();
+				debugToolBar.setToolTipText("디버그 메뉴");
+				toolBarPanel.add(debugToolBar, BorderLayout.SOUTH);
+				debugToolBar.setSize(1024, 20);
+
+				JButton stepButton = addButton("스텝", "/resource/GUI/play.png", debugToolBar, 20);
+				stepButton.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						synchronized (debuggerThread) {
+							textAreaMaker.removeHightLightLine();
+							debugger.step();
+							debuggerThread.notify();
+						}
+					}
+				});
+				JButton continueButton = addButton("컨티뉴", "/resource/GUI/play.png", debugToolBar, 20);
+				continueButton.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						synchronized (debuggerThread) {
+							textAreaMaker.removeHightLightLine();
+							debugger.continueDebugging();
+							debuggerThread.notify();
+						}
+					}
+				});
+				JButton exitButton = addButton("종료", "/resource/GUI/debugExit.png", debugToolBar, 20);
+				exitButton.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						textAreaMaker.removeHightLightLine();
+						debugger.exit();
+					}
+				});
+
+				debugModeRun();
 			}
 		});
 
@@ -311,7 +386,7 @@ public class MySmallBasicGUI extends JFrame implements MySmallBasicDeberggerClie
 	private static String shellCmd, HOME, javaCmd, cwd;
 	private static StringBuilder classpath = new StringBuilder();
 
-	public static void init() {
+	private static void init() {
 
 		String osName = System.getProperty("os.name");
 		String osNameMatch = osName.toLowerCase();
@@ -335,7 +410,7 @@ public class MySmallBasicGUI extends JFrame implements MySmallBasicDeberggerClie
 		cwd = System.getProperty("user.dir");
 	}
 
-	public static void addJarFile(String path) {
+	public static void addJarFile(StringBuilder classpath, String home, String path) {
 		File jar = new File(path);
 
 		if (jar.isDirectory() == true) {
@@ -343,33 +418,84 @@ public class MySmallBasicGUI extends JFrame implements MySmallBasicDeberggerClie
 
 			for (int i = 0; i < jars.length; i++) {
 				if (jars[i].isDirectory() == true) { // 폴더일 경우
-					addJarFile(path + "\\" + jars[i].getName()); // 재귀호출
+					addJarFile(classpath, home, path + "\\" + jars[i].getName()); // 재귀호출
 				} else {
 					if (jars[i].getName().endsWith(".jar")) {
 						classpath.append(";");
-						classpath.append(HOME + "/lib/" + jars[i].getName());
+						classpath.append(home + "/lib/" + jars[i].getName());
 					}
 				}
 			}
 		}
 	}
 
-	// 디버깅 모드를 위해 필요한 것들
+	// 디버깅 모드를 위해 필요한 메소드
 	@Override
 	public void debugModeRun() {
-		// TODO Auto-generated method stub
+		// 내용이 변경되었으면 저장
+		if (isTextAreaChanged && isTempFile) {
+			// 임시 파일로 작성한 경우
+			if (isTempFile) {
+				try {
+					BufferedWriter writer = new BufferedWriter(new FileWriter(filePath));
+					writer.write(textAreaMaker.getTextArea().getText());
+					writer.close();
+				} catch (Exception e2) {
+				}
+			}
+			// 변경된 내용이 있으면 저장
+			else
+				save();
+		}
+		isTextAreaChanged = false;
+		
+		textAreaMaker.getTextArea().setEditable(false);
 
+		debugger = new MySmallBasicDebugger(this, filePath, textAreaMaker.getBreakPoints());
+		debuggerThread = new Thread(debugger);
+		debuggerThread.start();
 	}
 
 	@Override
 	public void normalReturn() {
-		// TODO Auto-generated method stub
-
+		textAreaMaker.removeHightLightLine();
+		textAreaMaker.getTextArea().setEditable(true);
+		
+		debugger = null;
+		debuggerThread.interrupt();
+		
+		toolBarPanel.remove(debugToolBar);
+		toolBarPanel.revalidate();
+		toolBarPanel.repaint();
+		
 	}
 
 	@Override
 	public void abnormalReturn() {
-		// TODO Auto-generated method stub
+		// 비정상 예외 정보 알려주기 추가할것...
+		System.out.println("abnormal return");
 
+		textAreaMaker.removeHightLightLine();
+		textAreaMaker.getTextArea().setEditable(true);
+		
+		debugger = null;
+		debuggerThread.interrupt();
+		
+		toolBarPanel.remove(debugToolBar);
+		toolBarPanel.revalidate();
+		toolBarPanel.repaint();
+	}
+
+	@Override
+	public void stopState(int stopLine) {
+		textAreaMaker.hightLightLine(stopLine);
+		try {
+			synchronized (debuggerThread) {
+				debuggerThread.wait();
+			}
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }

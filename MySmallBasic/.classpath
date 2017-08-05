@@ -8,5 +8,7 @@
 	<classpathentry kind="lib" path="lib/weka.jar"/>
 	<classpathentry kind="lib" path="lib/org.roboid_1.1.2.jar"/>
 	<classpathentry kind="lib" path="lib/jansi-1.16.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/Java/jdk1.8.0_101/lib/tools.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Administrator/Desktop/jdiscript.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
