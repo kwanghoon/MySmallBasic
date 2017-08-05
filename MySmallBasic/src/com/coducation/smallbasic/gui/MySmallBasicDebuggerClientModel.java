@@ -1,6 +1,6 @@
 package com.coducation.smallbasic.gui;
 
-public interface MySmallBasicDeberggerClientModel 
+public interface MySmallBasicDebuggerClientModel 
 {
 	//디버그모드로 실행
 	public abstract void debugModeRun();

@@ -2,12 +2,12 @@ package com.coducation.smallbasic.gui;
 
 import java.util.Set;
 
-public abstract class MySmallBasicDeberggerModel {
-	MySmallBasicDeberggerClientModel deberggerClient;
-	Set<Integer> breakPoints;
+public abstract class MySmallBasicDebuggerModel {
+	protected MySmallBasicDebuggerClientModel debuggerClient;
+	protected Set<Integer> breakPoints;
 
-	public MySmallBasicDeberggerModel(MySmallBasicDeberggerClientModel deberggerClient, Set<Integer> breakPoints) {
-		this.deberggerClient = deberggerClient;
+	public MySmallBasicDebuggerModel(MySmallBasicDebuggerClientModel debuggerClient, String filePath,Set<Integer> breakPoints) {
+		this.debuggerClient = debuggerClient;
 		this.breakPoints = breakPoints;
 	}
 

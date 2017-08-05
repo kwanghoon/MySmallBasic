@@ -9,6 +9,9 @@ import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.TreeSet;
 
 import javax.swing.JComponent;
 import javax.swing.JPanel;
@@ -25,8 +28,7 @@ public class LineNumberComponent extends JPanel implements MouseListener {
 	// 디버그 dot 관련 변수
 	private static final int DOT_PADDING = 3;
 	private static final int DOT_WIDTH = (int) TextAreaMaker.fontSize;	// 디버그멈출 dot이 위치한 칸의 너비
-	private static boolean isDotCheck = false;
-	private static int dotLine = 0;
+	private Set<Integer> breakPoints = new HashSet<Integer>();
 	
 	// textarea 정보 가져오는 곳
 	private LineNumberModel lineNumberModel;
@@ -115,7 +117,7 @@ public class LineNumberComponent extends JPanel implements MouseListener {
 			g2d.drawString(String.valueOf(i + 1), xPosition, yPosition);
 			
 			//breakpoint 그리기
-			if(isDotCheck && i == dotLine)
+			if(breakPoints.contains(i+1))
 			{
 				g.setColor(new Color(115, 156, 6));
 				g2d.fillOval(0 + DOT_PADDING, rect.y + DOT_PADDING, 
@@ -128,6 +130,11 @@ public class LineNumberComponent extends JPanel implements MouseListener {
 		}
 	}
 
+	public Set<Integer> getBreakPoints()
+	{
+		return breakPoints;
+	}
+	
 	// 마우스 이벤트 처리
 	public void mouseClicked(MouseEvent e) {
 		
@@ -140,30 +147,15 @@ public class LineNumberComponent extends JPanel implements MouseListener {
 			Rectangle rect = lineNumberModel.getLineRect(i);
 			if(e.getY() > rect.y && e.getY() < rect.y + rect.height)
 			{
-				if(isDotCheck)
-				{
-					if(dotLine == i)
-					{
-						isDotCheck = false;
-						repaint();
-					}
-					else
-					{
-						dotLine = i;
-						repaint();
-					}
-				}
+				if(breakPoints.contains(i+1))
+					breakPoints.remove(i+1);
 				else
-				{
-					isDotCheck = true;
-					dotLine = i;
-					repaint();
-				}
+					breakPoints.add(i+1);
+				repaint();
 				break;
 			}
 		}
 	}
-
 	public void mouseEntered(MouseEvent e) {}
 	public void mouseExited(MouseEvent e) {}
 	public void mousePressed(MouseEvent e) {}

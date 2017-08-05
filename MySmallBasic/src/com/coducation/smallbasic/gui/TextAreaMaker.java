@@ -1,6 +1,8 @@
 package com.coducation.smallbasic.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.util.Set;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -8,6 +10,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DefaultHighlighter;
 
 
 public class TextAreaMaker 
@@ -55,5 +59,27 @@ public class TextAreaMaker
 	public JTextArea getTextArea()
 	{
 		return textArea;
+	}
+	//디버거에게 넘겨줄 breakPoints 정보
+	public Set<Integer> getBreakPoints()
+	{
+		return lineNumberComponent.getBreakPoints();
+	}
+
+	public void hightLightLine(int lineNum)
+	{
+		textArea.getHighlighter().removeAllHighlights();
+		try {
+			textArea.getHighlighter().addHighlight(
+					textArea.getLineStartOffset(lineNum-1), textArea.getLineEndOffset(lineNum-1), 
+					new DefaultHighlighter.DefaultHighlightPainter(Color.PINK));
+		} catch (BadLocationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	public void removeHightLightLine()
+	{
+		textArea.getHighlighter().removeAllHighlights();
 	}
 }
