@@ -65,6 +65,12 @@ public class TextAreaMaker
 	{
 		return lineNumberComponent.getBreakPoints();
 	}
+	//breakPoint정보 모두 지우기
+	public void clearBreakPointInfo()
+	{
+		lineNumberComponent.getBreakPoints().clear();
+		lineNumberComponent.repaint();
+	}
 
 	public void hightLightLine(int lineNum)
 	{

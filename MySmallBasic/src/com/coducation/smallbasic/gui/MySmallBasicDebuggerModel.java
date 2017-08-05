@@ -18,7 +18,7 @@ public abstract class MySmallBasicDebuggerModel {
 	// 다음 breakpoint까지 진행
 	public abstract void continueDebugging();
 	//디버거 종료
-	public abstract void stop();
+	public abstract void exit();
 	public Set<Integer> getBreakPoints() {
 		return breakPoints;
 	}

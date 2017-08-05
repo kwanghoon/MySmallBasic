@@ -8,4 +8,6 @@ public interface MySmallBasicDebuggerClientModel
 	public abstract void normalReturn();
 	//디버깅되는 프로그램의 비정상 종료
 	public abstract void abnormalReturn();
+	//디버그 멈춘 상태에 호출되는 메소드
+	public abstract void stopState(int stopLine);
 }
