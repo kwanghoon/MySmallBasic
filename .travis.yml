@@ -1,5 +1,5 @@
 language: java
-script: javac -cp ./lib/json_simple-1.1.jar:./lib/jl1.0.1.jar:./junit-4.12.jar:./lib/weka.jar:./lib/org.roboid_1.1.2.jar:./lib/jansi-1.16.jar @sources.txt
+script: javac -cp ./lib/json_simple-1.1.jar:./lib/jl1.0.1.jar:./junit-4.12.jar:./lib/weka.jar:./lib/org.roboid_1.1.2.jar:./lib/jansi-1.16.jar:./lib/jdiscript.jar:./lib/tools.jar @sources.txt
 
 before_script:
  - cd MySmallBasic
