@@ -13,6 +13,8 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -26,9 +28,10 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import com.coducation.smallbasic.Value;
+
 public class MySmallBasicGUI extends JFrame implements MySmallBasicDebuggerClientModel {
 	private static JPanel contentPane;
-	private static JPanel toolBarPanel;
 	private static MySmallBasicGUI frame;
 	private JButton newButton;
 	private JButton openButton;
@@ -41,7 +44,9 @@ public class MySmallBasicGUI extends JFrame implements MySmallBasicDebuggerClien
 	// 디버그 관련 변수
 	private MySmallBasicDebugger debugger;
 	private Thread debuggerThread;
+	private JPanel debugPanel;
 	private JToolBar debugToolBar;
+	private MonitoringTable monitoringTable;
 
 	// 저장관련 변수
 	private boolean isNewFile = true; // 새로운 파일인지? 경로가 있는 파일인지
@@ -59,6 +64,7 @@ public class MySmallBasicGUI extends JFrame implements MySmallBasicDebuggerClien
 
 	public MySmallBasicGUI() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setTitle("MySmallBasic");
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -66,11 +72,8 @@ public class MySmallBasicGUI extends JFrame implements MySmallBasicDebuggerClien
 		setContentPane(contentPane);
 
 		// 툴바가 들어갈 panel 설정
-		toolBarPanel = new JPanel();
-		toolBarPanel.setLayout(new BorderLayout());
-		contentPane.add(toolBarPanel, BorderLayout.NORTH);
 		JToolBar toolBar = new JToolBar();
-		toolBarPanel.add(toolBar, BorderLayout.CENTER);
+		contentPane.add(toolBar, BorderLayout.NORTH);
 		toolBar.setToolTipText("");
 
 		// 버튼추가
@@ -270,11 +273,22 @@ public class MySmallBasicGUI extends JFrame implements MySmallBasicDebuggerClien
 				if (debugger != null)
 					return;
 
+				debugPanel = new JPanel();
+				debugPanel.setLayout(new BorderLayout());
+				
+				//디버그 툴바 추가
 				debugToolBar = new JToolBar();
 				debugToolBar.setToolTipText("디버그 메뉴");
-				toolBarPanel.add(debugToolBar, BorderLayout.SOUTH);
+				debugPanel.add(debugToolBar, BorderLayout.NORTH);
+				//toolBarPanel.add(debugToolBar, BorderLayout.SOUTH);
 				debugToolBar.setSize(1024, 20);
+				
+				//변수 모니터링 창 추가
+				monitoringTable = new MonitoringTable();
+				debugPanel.add(monitoringTable, BorderLayout.CENTER);
+				contentPane.add(debugPanel, BorderLayout.EAST);
 
+				//디버그관련 버튼
 				JButton stepButton = addButton("스텝", "/resource/GUI/play.png", debugToolBar, 20);
 				stepButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
@@ -448,7 +462,7 @@ public class MySmallBasicGUI extends JFrame implements MySmallBasicDebuggerClien
 				save();
 		}
 		isTextAreaChanged = false;
-		
+
 		textAreaMaker.getTextArea().setEditable(false);
 
 		debugger = new MySmallBasicDebugger(this, filePath, textAreaMaker.getBreakPoints());
@@ -458,16 +472,21 @@ public class MySmallBasicGUI extends JFrame implements MySmallBasicDebuggerClien
 
 	@Override
 	public void normalReturn() {
+
 		textAreaMaker.removeHightLightLine();
 		textAreaMaker.getTextArea().setEditable(true);
-		
+
 		debugger = null;
 		debuggerThread.interrupt();
+
+		//디버그관련 gui 제거
+		contentPane.remove(debugPanel);
+		debugToolBar = null;
+		monitoringTable = null;
 		
-		toolBarPanel.remove(debugToolBar);
-		toolBarPanel.revalidate();
-		toolBarPanel.repaint();
-		
+		contentPane.revalidate();
+		contentPane.repaint();
+
 	}
 
 	@Override
@@ -477,18 +496,25 @@ public class MySmallBasicGUI extends JFrame implements MySmallBasicDebuggerClien
 
 		textAreaMaker.removeHightLightLine();
 		textAreaMaker.getTextArea().setEditable(true);
-		
+
 		debugger = null;
 		debuggerThread.interrupt();
+
+		//디버그관련 gui 제거
+		contentPane.remove(debugPanel);
+		debugToolBar = null;
+		monitoringTable = null;
 		
-		toolBarPanel.remove(debugToolBar);
-		toolBarPanel.revalidate();
-		toolBarPanel.repaint();
+		contentPane.revalidate();
+		contentPane.repaint();
+		
 	}
 
 	@Override
-	public void stopState(int stopLine) {
+	public void stopState(int stopLine, HashMap<String, String> variableMap) {
+		
 		textAreaMaker.hightLightLine(stopLine);
+		monitoringTable.renewValueInfo(variableMap);
 		try {
 			synchronized (debuggerThread) {
 				debuggerThread.wait();
