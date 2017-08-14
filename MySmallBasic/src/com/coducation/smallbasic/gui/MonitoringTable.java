@@ -13,6 +13,8 @@ public class MonitoringTable extends JPanel
 	private JTable table;
 	DefaultTableModel tableModel;
 	
+	public static final float TABLE_FONT_SIZE = 16.0f;
+	
 	public MonitoringTable()
 	{
 		String[] columnName = {"변수명", "값"};
@@ -20,6 +22,10 @@ public class MonitoringTable extends JPanel
 		tableModel = new DefaultTableModel(rowData, columnName);
 		table = new JTable(tableModel);
 		JScrollPane scrollPane = new JScrollPane(table);
+		
+		//테이블 설정 변경
+		table.setFont(table.getFont().deriveFont(TABLE_FONT_SIZE));
+		table.setRowHeight(22);
 		
 		add(scrollPane, BorderLayout.CENTER);
 	}

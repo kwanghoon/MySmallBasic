@@ -286,9 +286,9 @@ public class MySmallBasicGUI extends JFrame implements MySmallBasicDebuggerClien
 				//변수 모니터링 창 추가
 				monitoringTable = new MonitoringTable();
 				debugPanel.add(monitoringTable, BorderLayout.CENTER);
-				//contentPane.add(monitoringTable, BorderLayout.EAST);
 				contentPane.add(debugPanel, BorderLayout.EAST);
 
+				//디버그관련 버튼
 				JButton stepButton = addButton("스텝", "/resource/GUI/play.png", debugToolBar, 20);
 				stepButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
