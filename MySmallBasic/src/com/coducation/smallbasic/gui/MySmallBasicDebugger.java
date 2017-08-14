@@ -1,12 +1,15 @@
 package com.coducation.smallbasic.gui;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.jdiscript.JDIScript;
-import org.jdiscript.util.VMLauncher;
+import org.jdiscript.util.VMSocketAttacher;
 
 import com.sun.jdi.ClassNotLoadedException;
 import com.sun.jdi.Field;
@@ -22,18 +25,46 @@ public class MySmallBasicDebugger extends MySmallBasicDebuggerModel implements R
 	private int previousLineNum = Integer.MAX_VALUE;
 	private boolean isStepState = false;
 
-	private String HOME = "./";
+	private static String HOME = "./";
 
 	public MySmallBasicDebugger(MySmallBasicDebuggerClientModel debuggerClient, String filePath,
 			Set<Integer> breakPoints) {
 		super(debuggerClient, filePath, breakPoints);
 
+		//==============================================================================
+		init();
+		//ProcessBuilder pb = new ProcessBuilder(shellCmd, "/c", "start java.exe", javaCmd, "-gui", filePath, "-agentlib:jdwp=transport=dt_socket,address=localhost:7070,server=y,suspend=y");
+		ProcessBuilder pb = new ProcessBuilder(shellCmd, "/c", "start java.exe", "-agentlib:jdwp=transport=dt_socket,address=localhost:7070,server=y,suspend=y", javaCmd, "-gui", filePath);
+
+		for (String c : pb.command())
+			System.out.println(c);
+
+		Map<String, String> env = pb.environment();
+
+		classpath.append(HOME + "/bin");
+		addJarFile(classpath, HOME, HOME + "/lib");
+
+		env.put("CLASSPATH", classpath.toString());
+
+		for (Map.Entry<String, String> entry : env.entrySet()) {
+			System.out.println(entry.getKey() + " : " + entry.getValue());
+		}
+
+		pb.directory(new File(HOME));
+		try {
+			Process p = pb.start();
+		} catch (IOException e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+		}
+/*
 		String main = "com.coducation.smallbasic.MySmallBasicMain -gui " + filePath;
 		StringBuilder options = new StringBuilder("-cp ");
 		options.append(HOME + "bin");
 		MySmallBasicGUI.addJarFile(options, HOME, HOME + "//lib");
-
-		jdiScript = new JDIScript(new VMLauncher(options.toString(), main).start());
+*/
+		//jdiScript = new JDIScript(new VMLauncher(options.toString(), main).start());
+		jdiScript = new JDIScript(new VMSocketAttacher("localhost", 7070, 10000).attach());
 
 		// breakpoint info
 		String breakPointClass = "com.coducation.smallbasic.Eval";
@@ -168,4 +199,53 @@ public class MySmallBasicDebugger extends MySmallBasicDebuggerModel implements R
 		jdiScript.vm().exit(0);
 		debuggerClient.normalReturn();
 	}
+	
+	
+	//=================================================================
+	private static String shellCmd, javaCmd, cwd;
+	private static StringBuilder classpath = new StringBuilder();
+
+	private static void init() {
+
+		String osName = System.getProperty("os.name");
+		String osNameMatch = osName.toLowerCase();
+
+		// HOME = "C:/Users/user/git/MySmallBasic/MySmallBasic";
+		HOME = "./";
+		javaCmd = "com.coducation.smallbasic.MySmallBasicMain";
+
+		shellCmd = "";
+
+		if (osNameMatch.contains("linux")) {
+			shellCmd = "";
+		} else if (osNameMatch.contains("windows")) {
+			shellCmd = "cmd.exe";
+		} else if (osNameMatch.contains("mac os") || osNameMatch.contains("macos") || osNameMatch.contains("darwin")) {
+			shellCmd = "";
+		} else {
+			shellCmd = ""; // Windows OS by default
+		}
+
+		cwd = System.getProperty("user.dir");
+	}
+
+	public static void addJarFile(StringBuilder classpath, String home, String path) {
+		File jar = new File(path);
+
+		if (jar.isDirectory() == true) {
+			File[] jars = jar.listFiles();
+
+			for (int i = 0; i < jars.length; i++) {
+				if (jars[i].isDirectory() == true) { // 폴더일 경우
+					addJarFile(classpath, home, path + "\\" + jars[i].getName()); // 재귀호출
+				} else {
+					if (jars[i].getName().endsWith(".jar")) {
+						classpath.append(";");
+						classpath.append(home + "/lib/" + jars[i].getName());
+					}
+				}
+			}
+		}
+	}
+
 }
