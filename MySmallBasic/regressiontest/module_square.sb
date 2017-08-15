@@ -1,0 +1,8 @@
+For i = 1 To 10
+  Square()
+  TextWindow.WriteLine(n)
+EndFor
+
+Sub Square
+  n = i * i
+EndSub

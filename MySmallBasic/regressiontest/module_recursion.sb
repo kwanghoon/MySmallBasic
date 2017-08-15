@@ -1,0 +1,23 @@
+result = 1
+
+TextWindow.Write("정수 입력 : ")
+n = TextWindow.ReadNumber()
+temp = n
+
+Factorial()
+
+TextWindow.WriteLine(temp + "!은 " + result + "입니다.")
+
+Sub Factorial
+  
+  If n = 1 Then
+    Goto EndRecursion
+  EndIf
+  
+  result = result * n
+  n = n - 1
+  Factorial()
+  
+  EndRecursion:
+ 
+EndSub
