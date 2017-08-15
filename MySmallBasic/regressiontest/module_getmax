@@ -1,0 +1,16 @@
+TextWindow.Write("정수 입력 : ")
+x = TextWindow.ReadNumber()
+TextWindow.Write("정수 입력 : ")
+y = TextWindow.ReadNumber()
+
+Get_Max()
+
+TextWindow.WriteLine("두 수 중에서 큰 수는 " + max + "입니다.")
+
+Sub Get_Max
+  If x > y Then
+    max = x
+  Else
+    max = y
+  EndIf
+EndSub

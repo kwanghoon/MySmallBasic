@@ -1,0 +1,17 @@
+TextWindow.WriteLine("ax^2 + bx + c = 0")
+TextWindow.Write("a : ")
+a = TextWindow.ReadNumber()
+TextWindow.Write("b : ")
+b = TextWindow.ReadNumber()
+TextWindow.Write("c : ")
+c = TextWindow.ReadNumber()
+
+Solve()
+
+TextWindow.WriteLine("x1 = " + x1)
+TextWindow.WriteLine("x2 = " + x2)
+
+Sub Solve
+  x1 = (-b + Math.SquareRoot(b*b - 4*a*c)) / (2 * a)
+  x2 = (-b - Math.SquareRoot(b*b - 4*a*c)) / (2 * a)
+EndSub
