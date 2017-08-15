@@ -8,15 +8,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -28,7 +22,8 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import com.coducation.smallbasic.Value;
+import com.sun.jdi.Value;
+
 
 public class MySmallBasicGUI extends JFrame implements MySmallBasicDebuggerClientModel {
 	private static JPanel contentPane;
@@ -208,61 +203,8 @@ public class MySmallBasicGUI extends JFrame implements MySmallBasicDebuggerClien
 				if (debugger != null)
 					return;
 
-				// 내용이 변경되었으면 저장
-				if (isTextAreaChanged || isTempFile) {
-					// 임시 파일로 작성한 경우
-					if (isTempFile) {
-						System.out.println("실행");
-						try {
-							BufferedWriter writer = new BufferedWriter(new FileWriter(filePath));
-							writer.write(textAreaMaker.getTextArea().getText());
-							writer.close();
-						} catch (Exception e2) {
-						}
-					}
-					// 변경된 내용이 있으면 저장
-					else
-						save();
-				}
-				isTextAreaChanged = false;
-
-				try {
-					init();
-
-					ProcessBuilder pb = new ProcessBuilder(shellCmd, "/c", "start java.exe", javaCmd, "-gui", filePath);
-
-					for (String c : pb.command())
-						System.out.println(c);
-
-					Map<String, String> env = pb.environment();
-
-					classpath.append(HOME + "/bin");
-					addJarFile(classpath, HOME, HOME + "/lib");
-
-					env.put("CLASSPATH", classpath.toString());
-
-					for (Map.Entry<String, String> entry : env.entrySet()) {
-						System.out.println(entry.getKey() + " : " + entry.getValue());
-					}
-
-					pb.directory(new File(HOME));
-					Process p = pb.start();
-
-					// p.waitFor();
-
-					InputStream is = p.getErrorStream();
-					Scanner scan = new Scanner(is);
-					while (scan.hasNext()) {
-						System.out.print("ERROR: ");
-						System.out.println(scan.nextLine());
-					}
-
-					System.out.println("Exit value: " + p.exitValue());
-				}
-				// 예외를 던지게 짜여있으므로 일단 잡음
-				catch (IOException e1) {
-					e1.printStackTrace();
-				}
+				fileCheckForRun();
+				new MySmallBasicDebugger(filePath, false, null, null);
 			}
 		});
 
@@ -275,21 +217,21 @@ public class MySmallBasicGUI extends JFrame implements MySmallBasicDebuggerClien
 
 				debugPanel = new JPanel();
 				debugPanel.setLayout(new BorderLayout());
-				
-				//디버그 툴바 추가
+
+				// 디버그 툴바 추가
 				debugToolBar = new JToolBar();
 				debugToolBar.setToolTipText("디버그 메뉴");
 				debugPanel.add(debugToolBar, BorderLayout.NORTH);
-				//toolBarPanel.add(debugToolBar, BorderLayout.SOUTH);
+				// toolBarPanel.add(debugToolBar, BorderLayout.SOUTH);
 				debugToolBar.setSize(1024, 20);
-				
-				//변수 모니터링 창 추가
+
+				// 변수 모니터링 창 추가
 				monitoringTable = new MonitoringTable();
 				debugPanel.add(monitoringTable, BorderLayout.CENTER);
 				contentPane.add(debugPanel, BorderLayout.EAST);
 
-				//디버그관련 버튼
-				JButton stepButton = addButton("스텝", "/resource/GUI/play.png", debugToolBar, 20);
+				// 디버그관련 버튼
+				JButton stepButton = addButton("다음줄", "/resource/GUI/play.png", debugToolBar, 20);
 				stepButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						synchronized (debuggerThread) {
@@ -299,7 +241,7 @@ public class MySmallBasicGUI extends JFrame implements MySmallBasicDebuggerClien
 						}
 					}
 				});
-				JButton continueButton = addButton("컨티뉴", "/resource/GUI/play.png", debugToolBar, 20);
+				JButton continueButton = addButton("계속", "/resource/GUI/play.png", debugToolBar, 20);
 				continueButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						synchronized (debuggerThread) {
@@ -396,56 +338,7 @@ public class MySmallBasicGUI extends JFrame implements MySmallBasicDebuggerClien
 		}
 	}
 
-	// 다른 프로세스로 실행하기 위해 필요한 것
-	private static String shellCmd, HOME, javaCmd, cwd;
-	private static StringBuilder classpath = new StringBuilder();
-
-	private static void init() {
-
-		String osName = System.getProperty("os.name");
-		String osNameMatch = osName.toLowerCase();
-
-		// HOME = "C:/Users/user/git/MySmallBasic/MySmallBasic";
-		HOME = "./";
-		javaCmd = "com.coducation.smallbasic.MySmallBasicMain";
-
-		shellCmd = "";
-
-		if (osNameMatch.contains("linux")) {
-			shellCmd = "";
-		} else if (osNameMatch.contains("windows")) {
-			shellCmd = "cmd.exe";
-		} else if (osNameMatch.contains("mac os") || osNameMatch.contains("macos") || osNameMatch.contains("darwin")) {
-			shellCmd = "";
-		} else {
-			shellCmd = ""; // Windows OS by default
-		}
-
-		cwd = System.getProperty("user.dir");
-	}
-
-	public static void addJarFile(StringBuilder classpath, String home, String path) {
-		File jar = new File(path);
-
-		if (jar.isDirectory() == true) {
-			File[] jars = jar.listFiles();
-
-			for (int i = 0; i < jars.length; i++) {
-				if (jars[i].isDirectory() == true) { // 폴더일 경우
-					addJarFile(classpath, home, path + "\\" + jars[i].getName()); // 재귀호출
-				} else {
-					if (jars[i].getName().endsWith(".jar")) {
-						classpath.append(";");
-						classpath.append(home + "/lib/" + jars[i].getName());
-					}
-				}
-			}
-		}
-	}
-
-	// 디버깅 모드를 위해 필요한 메소드
-	@Override
-	public void debugModeRun() {
+	private void fileCheckForRun() {
 		// 내용이 변경되었으면 저장
 		if (isTextAreaChanged && isTempFile) {
 			// 임시 파일로 작성한 경우
@@ -463,9 +356,15 @@ public class MySmallBasicGUI extends JFrame implements MySmallBasicDebuggerClien
 		}
 		isTextAreaChanged = false;
 
-		textAreaMaker.getTextArea().setEditable(false);
+	}
 
-		debugger = new MySmallBasicDebugger(this, filePath, textAreaMaker.getBreakPoints());
+	// 디버깅 모드를 위해 필요한 메소드
+	@Override
+	public void debugModeRun() {
+		fileCheckForRun();
+
+		textAreaMaker.getTextArea().setEditable(false);
+		debugger = new MySmallBasicDebugger(filePath, true, this, textAreaMaker.getBreakPoints());
 		debuggerThread = new Thread(debugger);
 		debuggerThread.start();
 	}
@@ -479,11 +378,11 @@ public class MySmallBasicGUI extends JFrame implements MySmallBasicDebuggerClien
 		debugger = null;
 		debuggerThread.interrupt();
 
-		//디버그관련 gui 제거
+		// 디버그관련 gui 제거
 		contentPane.remove(debugPanel);
 		debugToolBar = null;
 		monitoringTable = null;
-		
+
 		contentPane.revalidate();
 		contentPane.repaint();
 
@@ -500,19 +399,19 @@ public class MySmallBasicGUI extends JFrame implements MySmallBasicDebuggerClien
 		debugger = null;
 		debuggerThread.interrupt();
 
-		//디버그관련 gui 제거
+		// 디버그관련 gui 제거
 		contentPane.remove(debugPanel);
 		debugToolBar = null;
 		monitoringTable = null;
-		
+
 		contentPane.revalidate();
 		contentPane.repaint();
-		
+
 	}
 
 	@Override
-	public void stopState(int stopLine, HashMap<String, String> variableMap) {
-		
+	public void stopState(int stopLine, HashMap<Value, Value> variableMap) {
+
 		textAreaMaker.hightLightLine(stopLine);
 		monitoringTable.renewValueInfo(variableMap);
 		try {
@@ -524,4 +423,5 @@ public class MySmallBasicGUI extends JFrame implements MySmallBasicDebuggerClien
 			e.printStackTrace();
 		}
 	}
+	
 }

@@ -18,6 +18,7 @@ import com.sun.jdi.InvalidTypeException;
 import com.sun.jdi.InvocationException;
 import com.sun.jdi.Method;
 import com.sun.jdi.ObjectReference;
+import com.sun.jdi.VMDisconnectedException;
 import com.sun.jdi.Value;
 
 public class MySmallBasicDebugger extends MySmallBasicDebuggerModel implements Runnable {
@@ -25,51 +26,65 @@ public class MySmallBasicDebugger extends MySmallBasicDebuggerModel implements R
 	private int previousLineNum = Integer.MAX_VALUE;
 	private boolean isStepState = false;
 
-	private static String HOME = "./";
+	// 실행관련 변수
+	private static String shellCmd, javaCmd, HOME, cwd;
+	private static StringBuilder classpath = new StringBuilder();
 
-	public MySmallBasicDebugger(MySmallBasicDebuggerClientModel debuggerClient, String filePath,
+	public MySmallBasicDebugger(String filePath, boolean isDebugMode, MySmallBasicDebuggerClientModel debuggerClient,
 			Set<Integer> breakPoints) {
 		super(debuggerClient, filePath, breakPoints);
 
-		//==============================================================================
+		// 프로세스 준비
 		init();
-		//ProcessBuilder pb = new ProcessBuilder(shellCmd, "/c", "start java.exe", javaCmd, "-gui", filePath, "-agentlib:jdwp=transport=dt_socket,address=localhost:7070,server=y,suspend=y");
-		ProcessBuilder pb = new ProcessBuilder(shellCmd, "/c", "start java.exe", "-agentlib:jdwp=transport=dt_socket,address=localhost:7070,server=y,suspend=y", javaCmd, "-gui", filePath);
+
+		ProcessBuilder pb;
+		if (isDebugMode) {
+			pb = new ProcessBuilder(shellCmd, "/c", "start java.exe",
+					"-agentlib:jdwp=transport=dt_socket,address=localhost:7070,server=y,suspend=y", javaCmd, "-gui",
+					filePath);
+		} else {
+			pb = new ProcessBuilder(shellCmd, "/c", "start java.exe", javaCmd, "-gui", filePath);
+		}
 
 		for (String c : pb.command())
 			System.out.println(c);
 
 		Map<String, String> env = pb.environment();
-
 		classpath.append(HOME + "/bin");
 		addJarFile(classpath, HOME, HOME + "/lib");
-
 		env.put("CLASSPATH", classpath.toString());
 
-		for (Map.Entry<String, String> entry : env.entrySet()) {
+		for (Map.Entry<String, String> entry : env.entrySet())
 			System.out.println(entry.getKey() + " : " + entry.getValue());
-		}
 
 		pb.directory(new File(HOME));
 		try {
 			Process p = pb.start();
 		} catch (IOException e2) {
-			// TODO Auto-generated catch block
 			e2.printStackTrace();
 		}
-/*
-		String main = "com.coducation.smallbasic.MySmallBasicMain -gui " + filePath;
-		StringBuilder options = new StringBuilder("-cp ");
-		options.append(HOME + "bin");
-		MySmallBasicGUI.addJarFile(options, HOME, HOME + "//lib");
-*/
-		//jdiScript = new JDIScript(new VMLauncher(options.toString(), main).start());
-		jdiScript = new JDIScript(new VMSocketAttacher("localhost", 7070, 10000).attach());
+		
+		//원래 실행하는 부분에 있었던 코드...
+		/*
+		 * p.waitFor();
+		 * 
+		 * InputStream is = p.getErrorStream(); Scanner scan = new Scanner(is);
+		 * while (scan.hasNext()) { System.out.print("ERROR: ");
+		 * System.out.println(scan.nextLine()); }
+		 * System.out.println("Exit value: " + p.exitValue());
+		 */
 
-		// breakpoint info
+		if (!isDebugMode)
+			return;
+
+		// ==============디버그모드=================================
+
+		jdiScript = new JDIScript(new VMSocketAttacher("localhost", 7070, 10000).attach());
+		
 		String breakPointClass = "com.coducation.smallbasic.Eval";
 		String breakPointMethod = "eval";
 
+		//breakPoint에서 멈추고 정보 출력
 		jdiScript.onMethodInvocation(breakPointClass, breakPointMethod,
 				"(Lcom/coducation/smallbasic/BasicBlockEnv;Lcom/coducation/smallbasic/Env;Lcom/coducation/smallbasic/Stmt;)V",
 				methodEvent -> {
@@ -90,9 +105,9 @@ public class MySmallBasicDebugger extends MySmallBasicDebuggerModel implements R
 
 					// stop 할 위치 검사
 					if (previousLineNum != lineNum && lineNum != 0 && (isStepState || breakPoints.contains(lineNum))) {
-						
-						HashMap<String, String> variableMap = new HashMap<>();
-						
+
+						HashMap<Value, Value> variableMap = new HashMap<>();
+
 						// 변수정보 가져오기
 						try {
 
@@ -101,12 +116,6 @@ public class MySmallBasicDebugger extends MySmallBasicDebuggerModel implements R
 									.fieldByName("map");
 							Value map = ((ObjectReference) methodEvent.thread().frame(0).getArgumentValues().get(1))
 									.getValue(mapField);
-
-							// Env.label (HashMap 타입) 참조 구하기
-							Field labelField = jdiScript.vm().classesByName("com.coducation.smallbasic.Env").get(0)
-									.fieldByName("label");
-							Value label = ((ObjectReference) methodEvent.thread().frame(0).getArgumentValues().get(1))
-									.getValue(labelField);
 
 							// MySmallBasic 변수값 가져오기
 							try {
@@ -122,8 +131,8 @@ public class MySmallBasicDebugger extends MySmallBasicDebuggerModel implements R
 								Method getMethod = jdiScript.vm().classesByName("java.util.HashMap").get(0)
 										.methodsByName("get").get(0);
 
-								List<Value> parameter = new LinkedList<Value>(); // 메소드의 파라미터
-	
+								List<Value> parameter = new LinkedList<Value>(); // 메소드의
+																					// 파라미터
 
 								// Env의 map을 가져와서 iterator로 접근
 								Value keySet = ((ObjectReference) map).invokeMethod(methodEvent.thread(), keySetMethod,
@@ -145,18 +154,23 @@ public class MySmallBasicDebugger extends MySmallBasicDebuggerModel implements R
 											getMethod, parameter, ObjectReference.INVOKE_SINGLE_THREADED);
 
 									// Value.toString 구하기
-									int startIdx = 12; // end index of "instance of"
+									int startIdx = 12; // end index of "instance
+														// of"
 									int endIdx = valueInstance.toString().indexOf("(id");
-									String valueClass = valueInstance.toString().substring(startIdx, endIdx); // Value의 실제객체이름
+									String valueClass = valueInstance.toString().substring(startIdx, endIdx); // Value의
+																												// 실제객체이름
 
 									parameter.clear();
 									Method toStringMethod = jdiScript.vm().classesByName(valueClass).get(0)
-											.methodsByName("toString").get(0); // Value 실제 클래스의 toString
+											.methodsByName("toString").get(0); // Value
+																				// 실제
+																				// 클래스의
+																				// toString
 									Value value = ((ObjectReference) valueInstance).invokeMethod(methodEvent.thread(),
 											toStringMethod, parameter, ObjectReference.INVOKE_SINGLE_THREADED);
 
 									// 구한 key와 value를 담기
-									variableMap.put(key.toString(), value.toString());
+									variableMap.put(key, value);
 
 									hasNext = ((ObjectReference) iterator).invokeMethod(methodEvent.thread(),
 											hasNextMethod, parameter, ObjectReference.INVOKE_SINGLE_THREADED);
@@ -182,6 +196,7 @@ public class MySmallBasicDebugger extends MySmallBasicDebuggerModel implements R
 	// 디버거프로그램 시작
 	public void run() {
 		jdiScript.run();
+		debuggerClient.normalReturn();
 	}
 
 	// 한줄 진행
@@ -196,15 +211,18 @@ public class MySmallBasicDebugger extends MySmallBasicDebuggerModel implements R
 
 	// 디버거 종료
 	public void exit() {
-		jdiScript.vm().exit(0);
+		
+		//디버거 멈춰있을 때 콘솔창을 닫아버린 경우 vm이 disconnection되어서 에러발생--- 논의필요.....
+		try{
+			jdiScript.vm().exit(0);
+		}
+		catch(VMDisconnectedException e) {}
+		
 		debuggerClient.normalReturn();
 	}
-	
-	
-	//=================================================================
-	private static String shellCmd, javaCmd, cwd;
-	private static StringBuilder classpath = new StringBuilder();
 
+	// =============================실행을 위해 필요한 메소드
+	// =====================================================
 	private static void init() {
 
 		String osName = System.getProperty("os.name");
@@ -229,7 +247,7 @@ public class MySmallBasicDebugger extends MySmallBasicDebuggerModel implements R
 		cwd = System.getProperty("user.dir");
 	}
 
-	public static void addJarFile(StringBuilder classpath, String home, String path) {
+	private static void addJarFile(StringBuilder classpath, String home, String path) {
 		File jar = new File(path);
 
 		if (jar.isDirectory() == true) {

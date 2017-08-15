@@ -1,9 +1,8 @@
 package com.coducation.smallbasic.gui;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
-import com.coducation.smallbasic.Value;
+import com.sun.jdi.Value;
 
 public interface MySmallBasicDebuggerClientModel 
 {
@@ -14,5 +13,5 @@ public interface MySmallBasicDebuggerClientModel
 	//디버깅되는 프로그램의 비정상 종료
 	public abstract void abnormalReturn();
 	//디버그 멈춘 상태에 호출되는 메소드
-	public abstract void stopState(int stopLine, HashMap<String, String> variableMap);
+	public abstract void stopState(int stopLine, HashMap<Value, Value> variableMap);
 }
