@@ -571,6 +571,8 @@ public class Math {
 
 			throw new InterpretException("SquareRoot : Unexpected # of args: " + args.size());
 
+		if (dbl_arg < 0) return new DoubleV(0);
+		
 		return new DoubleV(java.lang.Math.sqrt(dbl_arg));
 
 	}
