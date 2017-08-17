@@ -180,7 +180,7 @@ public class TextWindow {
 			
 			if (ForegroundColor instanceof StrV) {
 				
-				v = ((StrV)ForegroundColor).getValue();
+				v = ((StrV)ForegroundColor).getValue().toUpperCase();
 				
 			} else
 				
@@ -195,7 +195,7 @@ public class TextWindow {
 			
 			if (BackgroundColor instanceof StrV) {
 				
-				v = ((StrV)BackgroundColor).getValue();
+				v = ((StrV)BackgroundColor).getValue().toUpperCase();
 				
 			} else
 				
