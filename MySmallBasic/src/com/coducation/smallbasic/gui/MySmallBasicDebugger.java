@@ -2,16 +2,19 @@ package com.coducation.smallbasic.gui;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.StringTokenizer;
 
 import org.jdiscript.JDIScript;
+import org.jdiscript.handlers.OnVMDisconnect;
 import org.jdiscript.util.VMSocketAttacher;
 
 import com.sun.jdi.ClassNotLoadedException;
+import com.sun.jdi.DoubleValue;
 import com.sun.jdi.Field;
 import com.sun.jdi.IncompatibleThreadStateException;
 import com.sun.jdi.InvalidTypeException;
@@ -63,8 +66,8 @@ public class MySmallBasicDebugger extends MySmallBasicDebuggerModel implements R
 		} catch (IOException e2) {
 			e2.printStackTrace();
 		}
-		
-		//원래 실행하는 부분에 있었던 코드...
+
+		// 원래 실행하는 부분에 있었던 코드...
 		/*
 		 * p.waitFor();
 		 * 
@@ -80,11 +83,18 @@ public class MySmallBasicDebugger extends MySmallBasicDebuggerModel implements R
 		// ==============디버그모드=================================
 
 		jdiScript = new JDIScript(new VMSocketAttacher("localhost", 7070, 10000).attach());
-		
+
 		String breakPointClass = "com.coducation.smallbasic.Eval";
 		String breakPointMethod = "eval";
 
-		//breakPoint에서 멈추고 정보 출력
+		// 정상종료할때
+		jdiScript.vmDeathRequest(handler -> {
+			debuggerClient.normalReturn();
+		});
+
+		// jdiScript의 filler사용?
+
+		// breakPoint에서 멈추고 정보 출력
 		jdiScript.onMethodInvocation(breakPointClass, breakPointMethod,
 				"(Lcom/coducation/smallbasic/BasicBlockEnv;Lcom/coducation/smallbasic/Env;Lcom/coducation/smallbasic/Stmt;)V",
 				methodEvent -> {
@@ -106,7 +116,7 @@ public class MySmallBasicDebugger extends MySmallBasicDebuggerModel implements R
 					// stop 할 위치 검사
 					if (previousLineNum != lineNum && lineNum != 0 && (isStepState || breakPoints.contains(lineNum))) {
 
-						HashMap<Value, Value> variableMap = new HashMap<>();
+						LinkedHashMap<String, String> variableMap = new LinkedHashMap<>();
 
 						// 변수정보 가져오기
 						try {
@@ -144,34 +154,73 @@ public class MySmallBasicDebugger extends MySmallBasicDebuggerModel implements R
 
 								// map의 모든 요소에 접근
 								while (Boolean.parseBoolean(hasNext.toString())) {
+
 									// key값
-									Value key = ((ObjectReference) iterator).invokeMethod(methodEvent.thread(),
+									Value keyInstance = ((ObjectReference) iterator).invokeMethod(methodEvent.thread(),
 											nextMethod, parameter, ObjectReference.INVOKE_SINGLE_THREADED);
+									String key = keyInstance.toString().substring(1,
+											keyInstance.toString().length() - 1);
 
 									// Value 객체 구하기
-									parameter.add(key);
+									parameter.add(keyInstance);
 									Value valueInstance = ((ObjectReference) map).invokeMethod(methodEvent.thread(),
 											getMethod, parameter, ObjectReference.INVOKE_SINGLE_THREADED);
 
-									// Value.toString 구하기
+									// Value Inastance 구하기
 									int startIdx = 12; // end index of "instance
 														// of"
 									int endIdx = valueInstance.toString().indexOf("(id");
 									String valueClass = valueInstance.toString().substring(startIdx, endIdx); // Value의
 																												// 실제객체이름
 
+									if (valueClass.equals("com.coducation.smallbasic.ArrayV")) {
+										Method toStringMethod = jdiScript.vm().classesByName(valueClass).get(0)
+												.methodsByName("toString").get(0); //
+										parameter.clear();
+										Value strValue = ((ObjectReference) valueInstance).invokeMethod(
+												methodEvent.thread(), toStringMethod, parameter,
+												ObjectReference.INVOKE_SINGLE_THREADED);
+
+										String value = strValue.toString().substring(1,
+												strValue.toString().length() - 1);
+
+										StringTokenizer tokenizer = new StringTokenizer(value, ";", true);
+										while (tokenizer.hasMoreTokens()) {
+											String s = tokenizer.nextToken();
+											if (!s.equals(";")) {
+												int index = s.indexOf("=");
+												String arrKey = s.substring(0, index);
+												String arrValue = s.substring(index + 1, s.length());
+
+												variableMap.put(key + "[" + arrKey + "]", arrValue);
+
+											}
+										}
+									} else if (valueClass.equals("com.coducation.smallbasic.DoubleV")) {
+										Method getValueMethod = jdiScript.vm()
+												.classesByName("com.coducation.smallbasic.DoubleV").get(0)
+												.methodsByName("getValue").get(0);
+										parameter.clear();
+										DoubleValue doubleValue = (DoubleValue) ((ObjectReference) valueInstance)
+												.invokeMethod(methodEvent.thread(), getValueMethod, parameter,
+														ObjectReference.INVOKE_SINGLE_THREADED);
+
+										String value = String.valueOf(doubleValue.doubleValue());
+										variableMap.put(key, value);
+									} else if (valueClass.equals("com.coducation.smallbasic.StrV")) {
+										Method getValueMethod = jdiScript.vm().classesByName(valueClass).get(0)
+												.methodsByName("getValue").get(0); //
+										parameter.clear();
+										Value strValue = ((ObjectReference) valueInstance).invokeMethod(
+												methodEvent.thread(), getValueMethod, parameter,
+												ObjectReference.INVOKE_SINGLE_THREADED);
+
+										String value = strValue.toString().substring(1,
+												strValue.toString().length() - 1);
+										variableMap.put(key, value);
+									}
+
 									parameter.clear();
-									Method toStringMethod = jdiScript.vm().classesByName(valueClass).get(0)
-											.methodsByName("toString").get(0); // Value
-																				// 실제
-																				// 클래스의
-																				// toString
-									Value value = ((ObjectReference) valueInstance).invokeMethod(methodEvent.thread(),
-											toStringMethod, parameter, ObjectReference.INVOKE_SINGLE_THREADED);
-
-									// 구한 key와 value를 담기
-									variableMap.put(key, value);
-
 									hasNext = ((ObjectReference) iterator).invokeMethod(methodEvent.thread(),
 											hasNextMethod, parameter, ObjectReference.INVOKE_SINGLE_THREADED);
 								}
@@ -196,7 +245,6 @@ public class MySmallBasicDebugger extends MySmallBasicDebuggerModel implements R
 	// 디버거프로그램 시작
 	public void run() {
 		jdiScript.run();
-		debuggerClient.normalReturn();
 	}
 
 	// 한줄 진행
@@ -211,13 +259,13 @@ public class MySmallBasicDebugger extends MySmallBasicDebuggerModel implements R
 
 	// 디버거 종료
 	public void exit() {
-		
-		//디버거 멈춰있을 때 콘솔창을 닫아버린 경우 vm이 disconnection되어서 에러발생--- 논의필요.....
-		try{
+
+		// 디버거 멈춰있을 때 콘솔창을 닫아버린 경우 vm이 disconnection되어서 에러발생--- 논의필요.....
+		try {
 			jdiScript.vm().exit(0);
+		} catch (VMDisconnectedException e) {
 		}
-		catch(VMDisconnectedException e) {}
-		
+
 		debuggerClient.normalReturn();
 	}
 
