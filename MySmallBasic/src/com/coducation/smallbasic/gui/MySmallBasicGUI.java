@@ -22,8 +22,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import com.sun.jdi.Value;
-
+import com.coducation.smallbasic.Value;
 
 public class MySmallBasicGUI extends JFrame implements MySmallBasicDebuggerClientModel {
 	private static JPanel contentPane;
@@ -44,7 +43,6 @@ public class MySmallBasicGUI extends JFrame implements MySmallBasicDebuggerClien
 	private MonitoringTable monitoringTable;
 
 	// 저장관련 변수
-	private boolean isNewFile = true; // 새로운 파일인지? 경로가 있는 파일인지
 	private boolean isTempFile = true; // 임시파일인지
 	private String filePath = TEMP_PATH; // 파일의 경로
 	private boolean isTextAreaChanged = false;
@@ -86,7 +84,7 @@ public class MySmallBasicGUI extends JFrame implements MySmallBasicDebuggerClien
 				filePath = TEMP_PATH; // 임시 tmp 파일경로
 
 				isTempFile = true;
-				isNewFile = true;
+				isTextAreaChanged = true;
 
 				textAreaMaker.clearBreakPointInfo();
 			}
@@ -120,7 +118,6 @@ public class MySmallBasicGUI extends JFrame implements MySmallBasicDebuggerClien
 				}
 
 				isTempFile = false;
-				isNewFile = false;
 				isTextAreaChanged = false;
 
 				textAreaMaker.clearBreakPointInfo();
@@ -146,9 +143,6 @@ public class MySmallBasicGUI extends JFrame implements MySmallBasicDebuggerClien
 					return;
 
 				saveAs();
-
-				isTempFile = false;
-				isNewFile = false;
 			}
 		});
 
@@ -304,8 +298,8 @@ public class MySmallBasicGUI extends JFrame implements MySmallBasicDebuggerClien
 
 	// 저장
 	private void save() {
-		// 새로운 파일-다른이름으로 저장 필요
-		if (isNewFile) {
+		// 임시 파일-다른이름으로 저장 필요
+		if (isTempFile) {
 			saveAs();
 		}
 		// 기존 경로가 있는 파일
@@ -317,6 +311,8 @@ public class MySmallBasicGUI extends JFrame implements MySmallBasicDebuggerClien
 			} catch (Exception e2) {
 			}
 		}
+
+		isTextAreaChanged = false;
 	}
 
 	// 다른이름으로 저장
@@ -336,26 +332,29 @@ public class MySmallBasicGUI extends JFrame implements MySmallBasicDebuggerClien
 			writer.close();
 		} catch (Exception e2) {
 		}
+
+		isTextAreaChanged = false;
+		isTempFile = false;
 	}
 
 	private void fileCheckForRun() {
+			
 		// 내용이 변경되었으면 저장
-		if (isTextAreaChanged && isTempFile) {
+		if (isTextAreaChanged) {
 			// 임시 파일로 작성한 경우
 			if (isTempFile) {
 				try {
 					BufferedWriter writer = new BufferedWriter(new FileWriter(filePath));
 					writer.write(textAreaMaker.getTextArea().getText());
 					writer.close();
-				} catch (Exception e2) {
-				}
+				} catch (Exception e2) {}
+				
+				isTextAreaChanged = false;
 			}
 			// 변경된 내용이 있으면 저장
 			else
 				save();
 		}
-		isTextAreaChanged = false;
-
 	}
 
 	// 디버깅 모드를 위해 필요한 메소드
@@ -410,7 +409,7 @@ public class MySmallBasicGUI extends JFrame implements MySmallBasicDebuggerClien
 	}
 
 	@Override
-	public void stopState(int stopLine, HashMap<Value, Value> variableMap) {
+	public void stopState(int stopLine, HashMap<String, String> variableMap) {
 
 		textAreaMaker.hightLightLine(stopLine);
 		monitoringTable.renewValueInfo(variableMap);
@@ -423,5 +422,5 @@ public class MySmallBasicGUI extends JFrame implements MySmallBasicDebuggerClien
 			e.printStackTrace();
 		}
 	}
-	
+
 }

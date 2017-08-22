@@ -11,7 +11,8 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 
-import com.sun.jdi.Value;
+import com.coducation.smallbasic.Value;
+
 
 public class MonitoringTable extends JPanel
 {
@@ -49,27 +50,25 @@ public class MonitoringTable extends JPanel
 		add(scrollPane, BorderLayout.CENTER);
 	}
 
-	public void renewValueInfo(HashMap<Value, Value> variableMap)
+	public void renewValueInfo(HashMap<String, String> variableMap)
 	{
 		tableModel.getDataVector().removeAllElements();
 		tableModel.fireTableDataChanged();
 		
-		for(Value key : variableMap.keySet())
+		for(String key : variableMap.keySet())
 		{
-			String keyString = key.toString();
-			String valueString = variableMap.get(key).toString();
+			String value = variableMap.get(key);
 			
-			Object[] addValue = {keyString.substring(1, keyString.length()-1), 
-					valueString.substring(1, valueString.length()-1)};
+			Object[] addValue = {key, value.toString()};
 			tableModel.addRow(addValue);
 			
-			//key 칼럼 가운데 정렬
-			DefaultTableCellRenderer cellRenderer = new DefaultTableCellRenderer();
-			cellRenderer.setHorizontalAlignment(SwingConstants.CENTER);
-			TableColumnModel columnModel = table.getColumnModel();
-			columnModel.getColumn(0).setCellRenderer(cellRenderer);
-			
 		}
+		
+		//key 칼럼 가운데 정렬
+		DefaultTableCellRenderer cellRenderer = new DefaultTableCellRenderer();
+		cellRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+		TableColumnModel columnModel = table.getColumnModel();
+		columnModel.getColumn(0).setCellRenderer(cellRenderer);
 	}
 	
 	public void clear()

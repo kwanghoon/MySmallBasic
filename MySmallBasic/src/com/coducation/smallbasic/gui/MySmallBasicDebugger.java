@@ -2,16 +2,19 @@ package com.coducation.smallbasic.gui;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.StringTokenizer;
 
 import org.jdiscript.JDIScript;
+import org.jdiscript.handlers.OnVMDisconnect;
 import org.jdiscript.util.VMSocketAttacher;
 
 import com.sun.jdi.ClassNotLoadedException;
+import com.sun.jdi.DoubleValue;
 import com.sun.jdi.Field;
 import com.sun.jdi.IncompatibleThreadStateException;
 import com.sun.jdi.InvalidTypeException;
@@ -20,6 +23,7 @@ import com.sun.jdi.Method;
 import com.sun.jdi.ObjectReference;
 import com.sun.jdi.VMDisconnectedException;
 import com.sun.jdi.Value;
+import com.sun.jdi.event.BreakpointEvent;
 
 public class MySmallBasicDebugger extends MySmallBasicDebuggerModel implements Runnable {
 	private JDIScript jdiScript;
@@ -63,8 +67,8 @@ public class MySmallBasicDebugger extends MySmallBasicDebuggerModel implements R
 		} catch (IOException e2) {
 			e2.printStackTrace();
 		}
-		
-		//원래 실행하는 부분에 있었던 코드...
+
+		// 원래 실행하는 부분에 있었던 코드...
 		/*
 		 * p.waitFor();
 		 * 
@@ -80,11 +84,18 @@ public class MySmallBasicDebugger extends MySmallBasicDebuggerModel implements R
 		// ==============디버그모드=================================
 
 		jdiScript = new JDIScript(new VMSocketAttacher("localhost", 7070, 10000).attach());
-		
+
 		String breakPointClass = "com.coducation.smallbasic.Eval";
 		String breakPointMethod = "eval";
 
-		//breakPoint에서 멈추고 정보 출력
+		// 정상종료할때
+		jdiScript.vmDeathRequest(handler -> {
+			debuggerClient.normalReturn();
+		});
+
+		// jdiScript의 filler사용?
+
+		// breakPoint에서 멈추고 정보 출력
 		jdiScript.onMethodInvocation(breakPointClass, breakPointMethod,
 				"(Lcom/coducation/smallbasic/BasicBlockEnv;Lcom/coducation/smallbasic/Env;Lcom/coducation/smallbasic/Stmt;)V",
 				methodEvent -> {
@@ -106,7 +117,7 @@ public class MySmallBasicDebugger extends MySmallBasicDebuggerModel implements R
 					// stop 할 위치 검사
 					if (previousLineNum != lineNum && lineNum != 0 && (isStepState || breakPoints.contains(lineNum))) {
 
-						HashMap<Value, Value> variableMap = new HashMap<>();
+						LinkedHashMap<String, String> variableMap = new LinkedHashMap<>();
 
 						// 변수정보 가져오기
 						try {
@@ -144,38 +155,105 @@ public class MySmallBasicDebugger extends MySmallBasicDebuggerModel implements R
 
 								// map의 모든 요소에 접근
 								while (Boolean.parseBoolean(hasNext.toString())) {
+
 									// key값
-									Value key = ((ObjectReference) iterator).invokeMethod(methodEvent.thread(),
+									Value keyInstance = ((ObjectReference) iterator).invokeMethod(methodEvent.thread(),
 											nextMethod, parameter, ObjectReference.INVOKE_SINGLE_THREADED);
+									String key = keyInstance.toString().substring(1,
+											keyInstance.toString().length() - 1);
 
 									// Value 객체 구하기
-									parameter.add(key);
+									parameter.add(keyInstance);
 									Value valueInstance = ((ObjectReference) map).invokeMethod(methodEvent.thread(),
 											getMethod, parameter, ObjectReference.INVOKE_SINGLE_THREADED);
 
-									// Value.toString 구하기
+									// Value Inastance 구하기
 									int startIdx = 12; // end index of "instance
 														// of"
 									int endIdx = valueInstance.toString().indexOf("(id");
 									String valueClass = valueInstance.toString().substring(startIdx, endIdx); // Value의
 																												// 실제객체이름
 
+									//Value별 다른 처리
+									if (valueClass.equals("com.coducation.smallbasic.ArrayV")) {
+										
+										//ArrayV의 arrmap을 가져와서 iterator로 배열에 접근
+										Field arrmapField = jdiScript.vm().classesByName("com.coducation.smallbasic.ArrayV").get(0)
+												.fieldByName("arrmap");
+										
+										Method arrKeySetMethod = jdiScript.vm().classesByName("java.util.LinkedHashMap").get(0)
+												.methodsByName("keySet").get(0);
+										Method arrIteratorMethod = jdiScript.vm().classesByName("java.util.Set").get(0)
+												.methodsByName("iterator").get(0);
+										Method arrHasNextMethod = jdiScript.vm().classesByName("java.util.Iterator").get(0)
+												.methodsByName("hasNext").get(0);
+										Method arrNextMethod = jdiScript.vm().classesByName("java.util.Iterator").get(0)
+												.methodsByName("next").get(0);
+										Method arrGetMethod = jdiScript.vm().classesByName("java.util.LinkedHashMap").get(0)
+												.methodsByName("get").get(0);
+										
+										Value arrmap = ((ObjectReference)valueInstance).getValue(arrmapField);
+										
+										parameter.clear();
+										Value arrKeySet = ((ObjectReference) arrmap).invokeMethod(methodEvent.thread(), arrKeySetMethod,
+												parameter, ObjectReference.INVOKE_SINGLE_THREADED);
+										Value arrIterator = ((ObjectReference) arrKeySet).invokeMethod(methodEvent.thread(),
+												arrIteratorMethod, parameter, ObjectReference.INVOKE_SINGLE_THREADED);
+										Value arrHasNext = ((ObjectReference) arrIterator).invokeMethod(methodEvent.thread(),
+												arrHasNextMethod, parameter, ObjectReference.INVOKE_SINGLE_THREADED);
+										
+										//배열의 원소에 접근
+										while(Boolean.parseBoolean(arrHasNext.toString()))
+										{
+											// key값
+											parameter.clear();
+											Value arrKeyInstance = ((ObjectReference) arrIterator).invokeMethod(methodEvent.thread(),
+													arrNextMethod, parameter, ObjectReference.INVOKE_SINGLE_THREADED);
+											String arrKey = arrKeyInstance.toString().substring(1,
+													arrKeyInstance.toString().length() - 1);
+
+											// Value 객체 구하기
+											parameter.add(arrKeyInstance);
+											Value arrValueInstance = ((ObjectReference) arrmap).invokeMethod(methodEvent.thread(),
+													arrGetMethod, parameter, ObjectReference.INVOKE_SINGLE_THREADED);
+															
+											int arrEndIdx = arrValueInstance.toString().indexOf("(id");						
+
+											String arrValueClass = arrValueInstance.toString().substring(startIdx, arrEndIdx); // Value의
+																														// 실제객체이름
+											if(arrValueClass.equals("com.coducation.smallbasic.ArrayV"))
+											{
+												//다차원배열은 출력x
+												variableMap.put(key+ '[' + arrKey + ']', "::Multidimention Array::");
+											}
+											else if(arrValueClass.equals("com.coducation.smallbasic.StrV"))
+											{
+												String value = getStrV_Value(arrValueInstance, methodEvent);
+												variableMap.put(key + '[' + arrKey + ']', value);
+											}
+											else if(arrValueClass.equals("com.coducation.smallbasic.DoubleV"))
+											{
+												String value = getDoubleV_Value(arrValueInstance, methodEvent);
+												variableMap.put(key + '[' + arrKey + ']', value);
+											}
+																					
+											parameter.clear();
+											arrHasNext = ((ObjectReference) arrIterator).invokeMethod(methodEvent.thread(),
+													arrHasNextMethod, parameter, ObjectReference.INVOKE_SINGLE_THREADED);
+										}
+										
+									} else if (valueClass.equals("com.coducation.smallbasic.DoubleV")) {
+										String value = getDoubleV_Value(valueInstance, methodEvent);
+										variableMap.put(key, value);
+									} else if (valueClass.equals("com.coducation.smallbasic.StrV")) {
+										String value = getStrV_Value(valueInstance, methodEvent);
+										variableMap.put(key, value);
+									}
+
 									parameter.clear();
-									Method toStringMethod = jdiScript.vm().classesByName(valueClass).get(0)
-											.methodsByName("toString").get(0); // Value
-																				// 실제
-																				// 클래스의
-																				// toString
-									Value value = ((ObjectReference) valueInstance).invokeMethod(methodEvent.thread(),
-											toStringMethod, parameter, ObjectReference.INVOKE_SINGLE_THREADED);
-
-									// 구한 key와 value를 담기
-									variableMap.put(key, value);
-
 									hasNext = ((ObjectReference) iterator).invokeMethod(methodEvent.thread(),
 											hasNextMethod, parameter, ObjectReference.INVOKE_SINGLE_THREADED);
 								}
-
 							} catch (InvalidTypeException e) {
 								e.printStackTrace();
 							} catch (ClassNotLoadedException e) {
@@ -196,7 +274,6 @@ public class MySmallBasicDebugger extends MySmallBasicDebuggerModel implements R
 	// 디버거프로그램 시작
 	public void run() {
 		jdiScript.run();
-		debuggerClient.normalReturn();
 	}
 
 	// 한줄 진행
@@ -211,18 +288,48 @@ public class MySmallBasicDebugger extends MySmallBasicDebuggerModel implements R
 
 	// 디버거 종료
 	public void exit() {
-		
-		//디버거 멈춰있을 때 콘솔창을 닫아버린 경우 vm이 disconnection되어서 에러발생--- 논의필요.....
-		try{
+
+		// 디버거 멈춰있을 때 콘솔창을 닫아버린 경우 vm이 disconnection되어서 에러발생--- 논의필요.....
+		try {
 			jdiScript.vm().exit(0);
+		} catch (VMDisconnectedException e) {
 		}
-		catch(VMDisconnectedException e) {}
-		
+
 		debuggerClient.normalReturn();
 	}
 
-	// =============================실행을 위해 필요한 메소드
-	// =====================================================
+	//===================디버거모드에서 스몰베이직의 변수값을 가져오기 위해 필요한 메소드=========================
+	//com.sun.jdi.Value -> com.coducaition.smallbasic.strV.toString
+	private String getStrV_Value(Value valueInstance, BreakpointEvent methodEvent) 
+			throws InvalidTypeException,ClassNotLoadedException,IncompatibleThreadStateException,InvocationException
+	{
+		Method getValueMethod = jdiScript.vm().classesByName("com.coducation.smallbasic.StrV").get(0)
+				.methodsByName("getValue").get(0);
+		
+		List<Value> parameter = new LinkedList<Value>();
+		parameter.clear();
+		
+		Value strValue = ((ObjectReference) valueInstance).invokeMethod(
+				methodEvent.thread(), getValueMethod, parameter,
+				ObjectReference.INVOKE_SINGLE_THREADED);
+
+		return strValue.toString().substring(1, strValue.toString().length() - 1);
+	}
+	//com.sun.jdi.Value -> com.coducaition.smallbasic.DoubleV.toString
+	private String getDoubleV_Value(Value valueInstance, BreakpointEvent methodEvent) 
+			throws InvalidTypeException,ClassNotLoadedException,IncompatibleThreadStateException,InvocationException
+	{
+		Method getValueMethod = jdiScript.vm().classesByName("com.coducation.smallbasic.DoubleV").get(0)
+				.methodsByName("getValue").get(0);
+		List<Value> parameter = new LinkedList<Value>();
+		parameter.clear();
+		DoubleValue doubleValue = (DoubleValue) ((ObjectReference) valueInstance)
+				.invokeMethod(methodEvent.thread(), getValueMethod, parameter,
+						ObjectReference.INVOKE_SINGLE_THREADED);
+
+		return String.valueOf(doubleValue.doubleValue());
+	}
+	// =============================실행을 위해 필요한 메소드=====================================================
 	private static void init() {
 
 		String osName = System.getProperty("os.name");
