@@ -1,0 +1,47 @@
+list = List.Single(123)
+
+TextWindow.WriteLine(list)
+
+TextWindow.WriteLine(List.Head(list))
+
+TextWindow.WriteLine(List.IndexAt(list,1))
+
+TextWindow.WriteLine(List.Tail(list))
+
+TextWindow.WriteLine(List.Head(list))
+
+TextWindow.WriteLine(List.IsEmpty(list))
+
+list1 = List.Single(1)
+
+list2 = List.Single(2)
+
+list3 = List.Single(3)
+
+List.Concat(list1, list2)
+
+List.Concat(list1, list3)
+
+TextWindow.WriteLine(list1)
+TextWindow.WriteLine(list2)
+TextWindow.WriteLine(list3)
+
+TextWindow.WriteLine(List.Head(list1))
+List.Tail(list1)
+TextWindow.WriteLine(List.Head(list1))
+List.Tail(list1)
+TextWindow.WriteLine(List.Head(list1))
+List.Tail(list1)
+TextWindow.WriteLine(List.Head(list1))
+
+List.Add(list1, 1)
+List.Add(list1, 2)
+List.Add(list1, 3)
+
+TextWindow.WriteLine(List.Head(list1))
+List.Tail(list1)
+TextWindow.WriteLine(List.Head(list1))
+List.Tail(list1)
+TextWindow.WriteLine(List.Head(list1))
+List.Tail(list1)
+TextWindow.WriteLine(List.Head(list1))
