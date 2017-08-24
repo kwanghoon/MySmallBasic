@@ -52,18 +52,53 @@ public class LexerAnalyzer
 				
 				if(ch == '\n' || ch == '\'') // END_LINE or Comment => Token "CR"
 				{
-//					if (ch == '\'' // Should be a comment
-//							&& line.length()>=i_index+8-1 // guard for checking the next condition
-//							&& line.substring(i_index).startsWith("'@assert") // '@assert ...
-//							&& Tokenized_word.size()==0)  // No tokens before '@assert ... in the current line
-//						System.out.println("Found: " + line);
+					if (ch == '\'' // Should be a comment
+							&& line.length()>=i_index+8-1 // guard for checking the next condition
+							&& line.substring(i_index).startsWith("'@assert ") // '@assert ...
+							&& Tokenized_word.size()==0)  // No tokens before '@assert ... in the current line
+					{	
+						// System.out.println("Found: " + line);
+						
+						// Replace '@assert expr with Assert.assertion("expr", expr)
+						// Note: The position of expr is shifted accordingly. 
+						
+						String prefix;
+						String expr_str;
+						String last_ch;
+						
+						if (line.charAt(line.length()-1)=='\n') {
+							prefix = line.substring(0, i_index+9);
+							expr_str = line.substring(i_index+9, line.length()-1); // expr without '\n'
+							last_ch = "\n";
+						}
+						else {
+							prefix = line.substring(0, i_index+9);
+							expr_str = line.substring(i_index+9);
+							last_ch = "";
+						}
+						
+						
+//						System.out.println("prefix " + prefix);
+//						System.out.println("expr_str " + expr_str);
+//						System.out.println("last_ch " + last_ch);
+						
+						line = "Assert.assertion(" + "\"" + expr_str + "\"" + ", " + expr_str + ")" + last_ch;
+						i_index = 0;
+						I = "";
+						
+//						System.out.println("line " + line);
+						continue;
+					}
 					
-					I = "\n";
-					CurrToken = Token.CR;
-
-					Tokenized_word.add(new Terminal(I, CurrToken, front_index, index+1));
+					else {
+						I = "\n";
 					
-					break;
+						CurrToken = Token.CR;
+	
+						Tokenized_word.add(new Terminal(I, CurrToken, front_index, index+1));
+						
+						break;
+					}
 				}
 				// ( ) { } , = : + - * / [ ] 
 				else if(ch == '(' || ch == ')' || ch == '{' || ch == '}' ||  ch == ',' || ch == '=' || ch == ':' || ch == '+' || ch == '-' || ch == '*' || ch == '/' || ch == '[' || ch == ']')

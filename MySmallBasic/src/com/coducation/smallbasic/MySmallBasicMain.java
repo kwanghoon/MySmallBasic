@@ -77,38 +77,42 @@ public class MySmallBasicMain {
 			System.out.println("-------------------------------");
 		}
 
-		FileReader fr = new FileReader(Filename);
-		LexerAnalyzer Lexing = new LexerAnalyzer(fr);
-		Parser Parsing = new Parser(Lexing);
-
-		// Parser Test Routine.
-		Nonterminal stack = Parsing.Parsing();
-		if (stack.getTree() instanceof BlockStmt) {
-			PrettyPrinter printer = new PrettyPrinter((BlockStmt) stack.getTree());
-			printer.prettyPrint();
-
-			HashMap<String, Stmt> map = new Continuous().transform((BlockStmt) stack.getTree());
-			Set<Map.Entry<String, Stmt>> set = map.entrySet();
-			for (Map.Entry<String, Stmt> entry : set) {
-				String key = entry.getKey();
-				Stmt stmt = entry.getValue();
-				System.out.println(key + ":");
-				new PrettyPrinter(stmt).prettyPrint();
+		try {
+			FileReader fr = new FileReader(Filename);
+			LexerAnalyzer Lexing = new LexerAnalyzer(fr);
+			Parser Parsing = new Parser(Lexing);
+	
+			// Parser Test Routine.
+			Nonterminal stack = Parsing.Parsing();
+			if (stack.getTree() instanceof BlockStmt) {
+				PrettyPrinter printer = new PrettyPrinter((BlockStmt) stack.getTree());
+				printer.prettyPrint();
+	
+				HashMap<String, Stmt> map = new Continuous().transform((BlockStmt) stack.getTree());
+				Set<Map.Entry<String, Stmt>> set = map.entrySet();
+				for (Map.Entry<String, Stmt> entry : set) {
+					String key = entry.getKey();
+					Stmt stmt = entry.getValue();
+					System.out.println(key + ":");
+					new PrettyPrinter(stmt).prettyPrint();
+				}
+				System.out.println();
+	
+				System.out.println("Execution");
+				try {
+					new Eval(new BasicBlockEnv(map)).eval(args);
+				} catch (InterpretException exn) {
+					if (exn.getProgramEnd() == false)
+						throw exn;
+				}
+			} else {
+				System.err.println("Tree is not BlockStmt.");
 			}
-			System.out.println();
-
-			System.out.println("Execution");
-			try {
-				new Eval(new BasicBlockEnv(map)).eval(args);
-			} catch (InterpretException exn) {
-				if (exn.getProgramEnd() == false)
-					throw exn;
-			}
-		} else {
-			System.err.println("Tree is not BlockStmt.");
 		}
-
-		System.out.print("Press any key to continue...");
+		catch(Throwable t) {
+			t.printStackTrace();
+		}
+		System.out.println("Press Enter to continue...");
 		new Scanner(System.in).nextLine();
 
 	}
