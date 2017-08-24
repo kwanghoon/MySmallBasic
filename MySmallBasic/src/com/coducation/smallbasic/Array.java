@@ -16,11 +16,17 @@ public class Array extends Expr
 	public String getVar() {
 		return var;
 	}
+	public void setVar(String var) {
+		this.var = var;
+	}
 	public int getDim() {
 		return index_list.size();
 	}
 	public Expr getIndex(int i) {
 		return index_list.get(i);
+	}
+	public ArrayList<Expr> indices() {
+		return index_list;
 	}
 	private String var;
 	private ArrayList<Expr> index_list;

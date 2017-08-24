@@ -14,7 +14,6 @@ public class Parser
 	public Parser(LexerAnalyzer Lexer) throws IOException
 	{
 		stack = new Stack<Stkelem>();
-		index_list = new ArrayList<Expr>();
 		Lexing_result = Lexer.Lexing();
 		final_line = Lexer.get_size();
 		String temp_str;
@@ -277,7 +276,12 @@ public class Parser
 					{
 						Nonterminal sub_tree1 = (Nonterminal)stack.get(last_stack_tree_index-1);
 						Terminal sub_tree2 = (Terminal)stack.get(last_stack_tree_index-7);
-						Array array = new Array( sub_tree2.getSyntax(), index_list);
+						
+						Nonterminal sub_tree_idxs = (Nonterminal)stack.get(last_stack_tree_index-5);
+						
+						//Array array = new Array( sub_tree2.getSyntax(), index_list);
+						Array array = (Array)sub_tree_idxs.getTree();
+						array.setVar( sub_tree2.getSyntax() );
 						
 						Assign assign =  new Assign((Expr)array, (Expr)sub_tree1.getTree());
 						assign.at(sub_tree2.getLine_index(), sub_tree2.getCh_index());
@@ -644,23 +648,37 @@ public class Parser
 					else if(Grammer_rule.get(state_num).equals("Primary -> ID Idxs"))
 					{
 						Terminal sub_tree1 = (Terminal)stack.get(last_stack_tree_index-3);
+						Nonterminal sub_tree2 = (Nonterminal)stack.get(last_stack_tree_index-1);
 
-						Array array = new Array( sub_tree1.getSyntax(), index_list);
+						//Array array = new Array( sub_tree1.getSyntax(), index_list);
+						Array array = (Array)sub_tree2.getTree();
+						array.setVar(sub_tree1.getSyntax());
 						array.at(sub_tree1.getLine_index(), sub_tree1.getCh_index());
 						tree = array;
 					}
 					else if(Grammer_rule.get(state_num).equals("Idxs -> [ Expr ]"))
 					{
-						index_list = null;
-						index_list = new ArrayList<Expr>();
-						
+//						index_list = null;
+//						index_list = new ArrayList<Expr>();
+											
 						Nonterminal temp = (Nonterminal) stack.get(last_stack_tree_index-3);
-						index_list.add(0, (Expr)temp.getTree() );
+//						index_list.add(0, (Expr)temp.getTree() );
+						
+						ArrayList<Expr> list = new ArrayList<Expr>();
+						list.add((Expr)temp.getTree());
+						Array array = new Array(null,  list);
+						tree = array;
 					}
 					else if(Grammer_rule.get(state_num).equals("Idxs -> [ Expr ] Idxs"))
 					{	
+						Nonterminal temp_Idxs = (Nonterminal) stack.get(last_stack_tree_index-1);
+						
 						Nonterminal temp = (Nonterminal) stack.get(last_stack_tree_index-5);
-						index_list.add(0, (Expr)temp.getTree());				
+//						index_list.add(0, (Expr)temp.getTree());
+						
+						Array incompleteArr = (Array)temp_Idxs.getTree();
+						incompleteArr.indices().add(0, (Expr)temp.getTree());
+						tree = incompleteArr;
 					}
 					else
 					{
