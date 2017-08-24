@@ -238,7 +238,17 @@ public class PrettyPrinter {
 	}
 
 	public void prettyPrint(MethodCallExpr methodCallExpr) {
-		System.out.print(methodCallExpr.getObj() + "." + methodCallExpr.getName() + "(");
+		String cdotm = methodCallExpr.getObj() + "." + methodCallExpr.getName();
+		
+		if (cdotm.equals("Assert.assertion")) {
+			System.out.print("'@assert ");
+			// methodCallExpr.getArgs().size() == 2
+			// methodcalLExpr.getArgs().get(0) ==> StrV
+			System.out.print(methodCallExpr.getArgs().get(0).toString());
+			return;
+		}
+		
+		System.out.print(cdotm + "(");
 		if (methodCallExpr.getArgs() != null) {
 			int size = methodCallExpr.getArgs().size();
 			for (int i = 0; i < size; i++) {
