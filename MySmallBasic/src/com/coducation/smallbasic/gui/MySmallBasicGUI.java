@@ -1,6 +1,7 @@
 package com.coducation.smallbasic.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Desktop;
 import java.awt.FileDialog;
 import java.awt.GridLayout;
 import java.awt.Image;
@@ -8,8 +9,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.HashMap;
 
 import javax.swing.ImageIcon;
@@ -46,6 +49,11 @@ public class MySmallBasicGUI extends JFrame implements MySmallBasicDebuggerClien
 	private boolean isTempFile = true; // 임시파일인지
 	private String filePath = TEMP_PATH; // 파일의 경로
 	private boolean isTextAreaChanged = false;
+
+	// blockly 관련 변수
+	private JButton blockButton;
+	private final static File path = new File("blockly/demos/code/index.html");
+
 
 	// 나중에 반드시 임시로 저장할 경로를 설정해주세요!
 	final static String TEMP_PATH = System.getProperty("user.dir") + "/resource/tmp.sb";
@@ -274,6 +282,24 @@ public class MySmallBasicGUI extends JFrame implements MySmallBasicDebuggerClien
 			}
 		});
 
+		//block button
+		blockButton = addButton("block", "/resource/Blockly/block.png", toolBar, 50);
+		blockButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				if (debugger != null)
+					return;
+
+				try { 
+					Desktop.getDesktop().browse(path.toURI()); 
+				} catch (IOException e1) { 
+					e1.printStackTrace(); 
+				}
+			}
+
+
+		});
+
 		setSize(1024, 800);
 	}
 
@@ -338,7 +364,7 @@ public class MySmallBasicGUI extends JFrame implements MySmallBasicDebuggerClien
 	}
 
 	private void fileCheckForRun() {
-			
+
 		// 내용이 변경되었으면 저장
 		if (isTextAreaChanged) {
 			// 임시 파일로 작성한 경우
@@ -348,7 +374,7 @@ public class MySmallBasicGUI extends JFrame implements MySmallBasicDebuggerClien
 					writer.write(textAreaMaker.getTextArea().getText());
 					writer.close();
 				} catch (Exception e2) {}
-				
+
 				isTextAreaChanged = false;
 			}
 			// 변경된 내용이 있으면 저장
