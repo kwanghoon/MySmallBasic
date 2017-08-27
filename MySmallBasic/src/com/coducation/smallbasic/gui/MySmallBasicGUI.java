@@ -2,6 +2,7 @@ package com.coducation.smallbasic.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Desktop;
+import java.awt.Dimension;
 import java.awt.FileDialog;
 import java.awt.GridLayout;
 import java.awt.Image;
@@ -24,6 +25,10 @@ import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.event.UndoableEditEvent;
+import javax.swing.event.UndoableEditListener;
+import javax.swing.undo.CannotRedoException;
+import javax.swing.undo.UndoManager;
 
 import com.coducation.smallbasic.Value;
 
@@ -72,6 +77,23 @@ public class MySmallBasicGUI extends JFrame implements MySmallBasicDebuggerClien
 		contentPane.setLayout(new BorderLayout(0, 0));
 		setContentPane(contentPane);
 
+		// textArea와 lineNumber, scroll을 만들어서 인자로 넣어준 패널에 추가
+		textAreaMaker = new TextAreaMaker(contentPane, this);
+		// textArea내용 변경시에만 저장하고 실행
+		textAreaMaker.getTextArea().getDocument().addDocumentListener(new DocumentListener() {
+			public void changedUpdate(DocumentEvent arg0) {
+				isTextAreaChanged = true;
+			}
+
+			public void insertUpdate(DocumentEvent arg0) {
+				isTextAreaChanged = true;
+			}
+
+			public void removeUpdate(DocumentEvent arg0) {
+				isTextAreaChanged = true;
+			}
+		});
+		
 		// 툴바가 들어갈 panel 설정
 		JToolBar toolBar = new JToolBar();
 		contentPane.add(toolBar, BorderLayout.NORTH);
@@ -175,26 +197,88 @@ public class MySmallBasicGUI extends JFrame implements MySmallBasicDebuggerClien
 
 		// cut button
 		JButton cutButton = addButton("잘라내기", "/resource/GUI/cut.png", toolBar, 50);
+		cutButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (debugger != null)
+					return;
+
+				textAreaMaker.getTextArea().cut();
+				textAreaMaker.getTextArea().repaint();
+			}
+		});
 		// copy button
 		JButton copyButton = addButton("복사", "/resource/GUI/copy.png", toolBar, 50);
+		copyButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (debugger != null)
+					return;
+
+				textAreaMaker.getTextArea().copy();
+				textAreaMaker.getTextArea().repaint();
+			}
+		});
 		// paste button
 		JButton pasteButton = addButton("붙이기", "/resource/GUI/paste.png", toolBar, 50);
+		pasteButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (debugger != null)
+					return;
 
-		// 세로로 정렬하기 위해 패널에 추가
+				textAreaMaker.getTextArea().paste();
+				textAreaMaker.getTextArea().repaint();
+			}
+		});
+
 		// undo and redo
+		// 세로로 정렬하기 위해 패널에 추가
 		JPanel doPanel = new JPanel();
 		doPanel.setLayout(new GridLayout(2, 1, 0, 0));
 		toolBar.add(doPanel);
+		
 		// button - 이미지 적당한거 못찾음
-		JButton undoButton = new JButton("취소");
+		JButton undoButton = new JButton("되돌리기");
 		undoButton.setIcon(resizeImg(System.getProperty("user.dir") + "/resource/GUI/undo.png", 25, 25));
 		undoButton.setIconTextGap(2);
 		doPanel.add(undoButton);
 
-		JButton redoButton = new JButton("다시");
+		JButton redoButton = new JButton("다시하기");
 		redoButton.setIcon(resizeImg(System.getProperty("user.dir") + "/resource/GUI/redo.png", 25, 25));
 		redoButton.setIconTextGap(2);
 		doPanel.add(redoButton);
+
+		// redo, undo 기능구현
+		UndoManager undoManager = new UndoManager();
+		textAreaMaker.getTextArea().getDocument().addUndoableEditListener(new UndoableEditListener() {
+			@Override
+			public void undoableEditHappened(UndoableEditEvent e) {
+				undoManager.addEdit(e.getEdit());
+				undoButton.setEnabled(undoManager.canUndo());
+				redoButton.setEnabled(undoManager.canRedo());
+			}
+		});
+
+		undoButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					undoManager.undo();
+				} catch (CannotRedoException cre) {
+					cre.printStackTrace();
+				}
+				undoButton.setEnabled(undoManager.canUndo());
+				redoButton.setEnabled(undoManager.canRedo());
+			}
+		});
+		redoButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					undoManager.redo();
+				} catch (CannotRedoException cre) {
+					cre.printStackTrace();
+				}
+				undoButton.setEnabled(undoManager.canUndo());
+				redoButton.setEnabled(undoManager.canRedo());
+			}
+		});
 
 		toolBar.addSeparator();
 
@@ -262,23 +346,6 @@ public class MySmallBasicGUI extends JFrame implements MySmallBasicDebuggerClien
 				});
 
 				debugModeRun();
-			}
-		});
-
-		// textArea와 lineNumber, scroll을 만들어서 인자로 넣어준 패널에 추가
-		textAreaMaker = new TextAreaMaker(contentPane, this);
-		// textArea내용 변경시에만 저장하고 실행
-		textAreaMaker.getTextArea().getDocument().addDocumentListener(new DocumentListener() {
-			public void changedUpdate(DocumentEvent arg0) {
-				isTextAreaChanged = true;
-			}
-
-			public void insertUpdate(DocumentEvent arg0) {
-				isTextAreaChanged = true;
-			}
-
-			public void removeUpdate(DocumentEvent arg0) {
-				isTextAreaChanged = true;
 			}
 		});
 
