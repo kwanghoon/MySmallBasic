@@ -2,7 +2,6 @@ package com.coducation.smallbasic.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Desktop;
-import java.awt.Dimension;
 import java.awt.FileDialog;
 import java.awt.GridLayout;
 import java.awt.Image;
@@ -29,8 +28,6 @@ import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;
 import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.UndoManager;
-
-import com.coducation.smallbasic.Value;
 
 public class MySmallBasicGUI extends JFrame implements MySmallBasicDebuggerClientModel {
 	private static JPanel contentPane;
@@ -77,9 +74,8 @@ public class MySmallBasicGUI extends JFrame implements MySmallBasicDebuggerClien
 		contentPane.setLayout(new BorderLayout(0, 0));
 		setContentPane(contentPane);
 
-		// textArea와 lineNumber, scroll을 만들어서 인자로 넣어준 패널에 추가
+		// 텍스트 편집창
 		textAreaMaker = new TextAreaMaker(contentPane, this);
-		// textArea내용 변경시에만 저장하고 실행
 		textAreaMaker.getTextArea().getDocument().addDocumentListener(new DocumentListener() {
 			public void changedUpdate(DocumentEvent arg0) {
 				isTextAreaChanged = true;
@@ -99,7 +95,9 @@ public class MySmallBasicGUI extends JFrame implements MySmallBasicDebuggerClien
 		contentPane.add(toolBar, BorderLayout.NORTH);
 		toolBar.setToolTipText("");
 
+		
 		// 버튼추가
+		
 		// new button
 		newButton = addButton("새로만들기", "/resource/GUI/new.png", toolBar, 50);
 		newButton.addActionListener(new ActionListener() {
@@ -235,7 +233,6 @@ public class MySmallBasicGUI extends JFrame implements MySmallBasicDebuggerClien
 		doPanel.setLayout(new GridLayout(2, 1, 0, 0));
 		toolBar.add(doPanel);
 		
-		// button - 이미지 적당한거 못찾음
 		JButton undoButton = new JButton("되돌리기");
 		undoButton.setIcon(resizeImg(System.getProperty("user.dir") + "/resource/GUI/undo.png", 25, 25));
 		undoButton.setIconTextGap(2);
@@ -256,7 +253,6 @@ public class MySmallBasicGUI extends JFrame implements MySmallBasicDebuggerClien
 				redoButton.setEnabled(undoManager.canRedo());
 			}
 		});
-
 		undoButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
@@ -353,7 +349,6 @@ public class MySmallBasicGUI extends JFrame implements MySmallBasicDebuggerClien
 		blockButton = addButton("block", "/resource/Blockly/block.png", toolBar, 50);
 		blockButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-
 				if (debugger != null)
 					return;
 
@@ -363,10 +358,8 @@ public class MySmallBasicGUI extends JFrame implements MySmallBasicDebuggerClien
 					e1.printStackTrace(); 
 				}
 			}
-
-
 		});
-
+		
 		setSize(1024, 800);
 	}
 
