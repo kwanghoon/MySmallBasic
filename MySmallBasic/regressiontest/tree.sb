@@ -1,0 +1,15 @@
+t = Tree.Tree(0, 1, 2, 3)
+
+TextWindow.WriteLine(Tree.Root(t))
+
+t1 = Tree.ChildAt(t, 1)
+
+TextWindow.WriteLine(Tree.Root(t1))
+
+t2 = Tree.ChildAt(t, 2)
+
+TextWindow.WriteLine(Tree.Root(t2))
+
+t3 = Tree.ChildAt(t, 3)
+
+TextWindow.WriteLine(Tree.Root(t3))

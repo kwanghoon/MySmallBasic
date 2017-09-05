@@ -1,0 +1,15 @@
+g1 = Graph.Graph(1, 2, 3, 4)
+g2 = Graph.Graph(4, 2)
+
+g3 = Graph.Union(g1, g2)
+
+TextWindow.WriteLine(g1)
+TextWindow.WriteLine(g2)
+TextWindow.WriteLine(g3)
+
+Graph.printVertex(g1)
+TextWindow.WriteLine()
+
+'Graph.printVertex(g2)
+TextWindow.WriteLine()
+'Graph.printVertex(g3)
