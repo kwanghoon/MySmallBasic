@@ -5,6 +5,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map.Entry;
@@ -43,7 +46,8 @@ public class GenJava {
 	StringBuilder currentMethodBody;
 	int numberOfIndent;
 	String className;
-	
+	static final String lib = "com.coducation.smallbasic.lib.";
+
 	public GenJava(BasicBlockEnv bbenv, String[] args) {
 		this();
 	}
@@ -60,10 +64,10 @@ public class GenJava {
 		for (int i = 0; i <= numberOfIndent; i++) {
 			javaIndent.append("    ");
 		}
-		
+
 		return javaIndent.toString();
 	}
-	
+
 	public static void main(String[] args) {
 		GenJava g = new GenJava();
 	}
@@ -73,16 +77,16 @@ public class GenJava {
 	public void codeGen(String[] args, Stmt stmt) {
 		String fileName = args[0].split("/")[args[0].split("/").length - 1];
 		className = fileName.substring(0, fileName.length()-3);
-		
+
 		codeGen(true, stmt);
 
 		OutputStreamWriter osw;
 		try {
 			//스몰베이직파일명과 동일한 .java 파일을 오픈
-			
+
 			osw = new OutputStreamWriter(new FileOutputStream(args[0].substring(0, args[0].length()-3) + ".java"), "UTF-8");
 			System.out.println(className);
-			
+
 			//1~9번까지 출력
 			osw.write("class " + className + " {\r\n");
 			osw.write("\r\n");
@@ -158,7 +162,7 @@ public class GenJava {
 
 		StringBuilder javaStmt = new StringBuilder("");
 		javaStmt.append(printIndent());
-		
+
 		javaStmt.append(codeGen(lhs));
 		javaStmt.append(" = ");
 		javaStmt.append(codeGen(rhs));
@@ -226,7 +230,7 @@ public class GenJava {
 	public void codeGen(boolean isTopLevel, ExprStmt exprStmt) {
 		StringBuilder javaStmt = new StringBuilder("");
 		javaStmt.append(printIndent());
-		
+
 		javaStmt.append(codeGen(exprStmt.getExpr()));
 		javaStmt.append(";\r\n");
 
@@ -238,7 +242,7 @@ public class GenJava {
 				methods.put(currentMethod, methods.get(currentMethod).append(javaStmt));
 			else methods.put(currentMethod, javaStmt);
 		}
-		
+
 	}
 
 	public void codeGen(boolean isTopLevel, ForStmt forStmt) {
@@ -361,7 +365,7 @@ public class GenJava {
 
 		StringBuilder javaStmt = new StringBuilder(printIndent());
 
-		javaStmt.append(labelStmt.getLabel() + ":");
+		javaStmt.append(labelStmt.getLabel() + ":\r\n");
 
 		if(isTopLevel) {
 			topLevel.append(javaStmt);
@@ -443,7 +447,7 @@ public class GenJava {
 
 	//스몰베이직 식을 받아 자바식에 대한 문자열을 만들어 리턴
 	public String codeGen(Expr expr) {
-		
+
 		if (expr instanceof ArithExpr)
 			return codeGen((ArithExpr) expr);
 		else if (expr instanceof Array)
@@ -466,11 +470,11 @@ public class GenJava {
 			throw new InterpretException("Syntax Error! " + expr.getClass());
 
 	}
-	
+
 	public String codeGen(ArithExpr arithExpr) {
-		
+
 		StringBuilder javaExpr = new StringBuilder("");
-		
+
 		switch (arithExpr.GetOp()) {
 		case 1:
 			javaExpr.append(codeGen(arithExpr.GetOperand()[0]));
@@ -495,7 +499,7 @@ public class GenJava {
 		}
 		if (arithExpr.GetOperand()[1] != null)
 			javaExpr.append(codeGen(arithExpr.GetOperand()[1]));
-		
+
 		return javaExpr.toString();
 	}
 
@@ -503,19 +507,19 @@ public class GenJava {
 
 		StringBuilder javaExpr = new StringBuilder("");
 		javaExpr.append(arrayExpr.getVar());
-		
+
 		for (int i = 0; i < arrayExpr.getDim(); i++) {
 			javaExpr.append("[" + arrayExpr.getIndex(i) + "]");
 		}
 		return javaExpr.toString();
 
 	}
-	
+
 	public String codeGen(CompExpr compExpr) {
-		
+
 		StringBuilder javaExpr = new StringBuilder("");
 		javaExpr.append(codeGen(compExpr.GetOperand()[0]));
-		
+
 		switch (compExpr.GetOp()) {
 		case CompExpr.GREATER_THAN:
 			javaExpr.append(" > ");
@@ -540,20 +544,20 @@ public class GenJava {
 			break;
 		}
 		javaExpr.append(codeGen(compExpr.GetOperand()[1]));
-		
+
 		return javaExpr.toString();
 	}
 
 	public String codeGen(Lit litExpr) {
-	
+
 		return litExpr.gets();
 	}
 
 	public String codeGen(LogicalExpr logicalExpr) {
-		
+
 		StringBuilder javaExpr = new StringBuilder("");
 		javaExpr.append(codeGen(logicalExpr.GetOperand()[0]));
-		
+
 		switch (logicalExpr.GetOp()) {
 		case 1:
 			javaExpr.append(" And ");
@@ -566,15 +570,15 @@ public class GenJava {
 			break;
 		}
 		javaExpr.append(codeGen(logicalExpr.GetOperand()[1]));
-		
+
 		return javaExpr.toString();
 	}
 
 	public String codeGen(MethodCallExpr methodCallExpr) {
-		
+
 		StringBuilder javaExpr = new StringBuilder("");
 		javaExpr.append(methodCallExpr.getObj() + "." + methodCallExpr.getName() + "(");
-		
+
 		if (methodCallExpr.getArgs() != null) {
 			int size = methodCallExpr.getArgs().size();
 			for (int i = 0; i < size; i++) {
@@ -584,13 +588,13 @@ public class GenJava {
 			}
 		}
 		javaExpr.append(")");
-		
+
 		return javaExpr.toString();
 
 	}
 
 	public String codeGen(ParenExpr parenExpr) {
-	
+
 		return "(" + codeGen(parenExpr.get()) + ")";
 	}
 
@@ -602,6 +606,60 @@ public class GenJava {
 	public String codeGen(Var var) {
 
 		return var.getVarName();
+	}
+    
+	public static Class getClass(String name) throws ClassNotFoundException {
+		return Class.forName(lib + name);
+	}
+
+	public static String assignPropertyExpr(String indent, Expr lhs, String rhsValue) throws ClassNotFoundException {
+		StringBuilder javaStmt = new StringBuilder("");
+		
+		javaStmt.append("try {\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    String clzName = ((PropertyExpr) " + lhs + ").getObj();\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("	 Class clz = getClass(clzName);\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("	 Field fld = clz.getField(((PropertyExpr) " + lhs + ").getName());\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("	 fld.set(null, " + rhsValue + ");\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("	 Method mth = clz.getMethod(notifyFieldAssign, String.class);\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("	 mth.invoke(null, ((PropertyExpr) " + lhs + ").getName());\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("} catch (NoSuchFieldException | SecurityException e) {\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("	 throw new InterpretException(\"Assign : \" + e.toString());\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("} catch (IllegalArgumentException e) {\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("	 throw new InterpretException(\"Assign : \" + e.toString());\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("} catch (IllegalAccessException e) {\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("	 throw new InterpretException(\"Assign : \" + e.toString());\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("} catch (ClassNotFoundException e) {\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("	 throw new InterpretException(\"Class Not Found \" + e.toString());\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("} catch (NoSuchMethodException e) {\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("	 throw new InterpretException(\"Method Not Found \" + e.toString());\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("} catch (InvocationTargetException e) {\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("	 throw new InterpretException(\"Target Not Found \" + e.toString() + \": \");\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("}\r\n");
+
+		return javaStmt.toString();
+	}
+
+	public static String assignArray(String indent) throws ClassNotFoundException {
+		return "";
 	}
 
 
