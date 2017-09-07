@@ -33,6 +33,7 @@ import com.coducation.smallbasic.PropertyExpr;
 import com.coducation.smallbasic.Stmt;
 import com.coducation.smallbasic.SubCallExpr;
 import com.coducation.smallbasic.SubDef;
+import com.coducation.smallbasic.Value;
 import com.coducation.smallbasic.Var;
 import com.coducation.smallbasic.WhileStmt;
 
@@ -102,6 +103,7 @@ public class GenJava {
 			osw.write(topLevel.toString());
 			//11번 출력
 			osw.write("    }\r\n");
+			osw.write("\r\n");
 			//스몰베이직의 각 서브루틴으로부터 생성된 자바메소드들을 출력
 			Iterator<Entry<String, StringBuilder>> it = methods.entrySet().iterator();
 			while(it.hasNext()) {
@@ -607,58 +609,127 @@ public class GenJava {
 
 		return var.getVarName();
 	}
-    
+
 	public static Class getClass(String name) throws ClassNotFoundException {
 		return Class.forName(lib + name);
 	}
 
-	public static String assignPropertyExpr(String indent, Expr lhs, String rhsValue) throws ClassNotFoundException {
+	public static String assignValue(String indent) throws ClassNotFoundException {
+		return "";
+	}
+
+	public static String getValue(String indent) throws ClassNotFoundException {
+		return "";
+	}
+
+	public static String assignPropertyExprGen(String indent, Expr lhs, String rhsValue) throws ClassNotFoundException {
 		StringBuilder javaStmt = new StringBuilder("");
-		
-		javaStmt.append("try {\r\n");
+
 		javaStmt.append(indent);
-		javaStmt.append("    String clzName = ((PropertyExpr) " + lhs + ").getObj();\r\n");
+		javaStmt.append("public static String assignPropertyExpr(String lhsObj, String lhsName, String rhsValue) {\r\n");
+		javaStmt.append("    try {\r\n");
 		javaStmt.append(indent);
-		javaStmt.append("	 Class clz = getClass(clzName);\r\n");
+		javaStmt.append("        String clzName = lhsObj;\r\n");
 		javaStmt.append(indent);
-		javaStmt.append("	 Field fld = clz.getField(((PropertyExpr) " + lhs + ").getName());\r\n");
+		javaStmt.append("	     Class clz = getClass(clzName);\r\n");
 		javaStmt.append(indent);
-		javaStmt.append("	 fld.set(null, " + rhsValue + ");\r\n");
+		javaStmt.append("	     Field fld = clz.getField(lhsName);\r\n");
 		javaStmt.append(indent);
-		javaStmt.append("	 Method mth = clz.getMethod(notifyFieldAssign, String.class);\r\n");
+		javaStmt.append("	     fld.set(null, rhsValue);\r\n");
 		javaStmt.append(indent);
-		javaStmt.append("	 mth.invoke(null, ((PropertyExpr) " + lhs + ").getName());\r\n");
+		javaStmt.append("	     Method mth = clz.getMethod(notifyFieldAssign, String.class);\r\n");
 		javaStmt.append(indent);
-		javaStmt.append("} catch (NoSuchFieldException | SecurityException e) {\r\n");
+		javaStmt.append("	     mth.invoke(null, lhsName);\r\n");
 		javaStmt.append(indent);
-		javaStmt.append("	 throw new InterpretException(\"Assign : \" + e.toString());\r\n");
+		javaStmt.append("    } catch (NoSuchFieldException | SecurityException e) {\r\n");
 		javaStmt.append(indent);
-		javaStmt.append("} catch (IllegalArgumentException e) {\r\n");
+		javaStmt.append("	     throw new CodeGenException(\"Assign : \" + e.toString());\r\n");
 		javaStmt.append(indent);
-		javaStmt.append("	 throw new InterpretException(\"Assign : \" + e.toString());\r\n");
+		javaStmt.append("    } catch (IllegalArgumentException e) {\r\n");
 		javaStmt.append(indent);
-		javaStmt.append("} catch (IllegalAccessException e) {\r\n");
+		javaStmt.append("	     throw new CodeGenException(\"Assign : \" + e.toString());\r\n");
 		javaStmt.append(indent);
-		javaStmt.append("	 throw new InterpretException(\"Assign : \" + e.toString());\r\n");
+		javaStmt.append("    } catch (IllegalAccessException e) {\r\n");
 		javaStmt.append(indent);
-		javaStmt.append("} catch (ClassNotFoundException e) {\r\n");
+		javaStmt.append("	     throw new CodeGenException(\"Assign : \" + e.toString());\r\n");
 		javaStmt.append(indent);
-		javaStmt.append("	 throw new InterpretException(\"Class Not Found \" + e.toString());\r\n");
+		javaStmt.append("    } catch (ClassNotFoundException e) {\r\n");
 		javaStmt.append(indent);
-		javaStmt.append("} catch (NoSuchMethodException e) {\r\n");
+		javaStmt.append("	     throw new CodeGenException(\"Class Not Found \" + e.toString());\r\n");
 		javaStmt.append(indent);
-		javaStmt.append("	 throw new InterpretException(\"Method Not Found \" + e.toString());\r\n");
+		javaStmt.append("    } catch (NoSuchMethodException e) {\r\n");
 		javaStmt.append(indent);
-		javaStmt.append("} catch (InvocationTargetException e) {\r\n");
+		javaStmt.append("	     throw new CodeGenException(\"Method Not Found \" + e.toString());\r\n");
 		javaStmt.append(indent);
-		javaStmt.append("	 throw new InterpretException(\"Target Not Found \" + e.toString() + \": \");\r\n");
+		javaStmt.append("    } catch (InvocationTargetException e) {\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("	     throw new CodeGenException(\"Target Not Found \" + e.toString() + \": \");\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    }\r\n");
 		javaStmt.append(indent);
 		javaStmt.append("}\r\n");
+		javaStmt.append("\r\n");
+
+		return javaStmt.toString();
+	}
+
+	public static String getPropertyExprGen(String indent, PropertyExpr propertyExpr, String rhsValue) throws ClassNotFoundException {
+		StringBuilder javaStmt = new StringBuilder("");
+		
+		javaStmt.append(indent);
+		javaStmt.append("public static String getPropertyExpr(String obj, String name) {\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    try {\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        String clzName = obj;\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("	     Class clz = getClass(clzName);\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("	     Field fld = clz.getField(name);\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("	     Method mth = clz.getMethod(notifyFieldAssign, String.class);\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("	     mth.invoke(null, name);\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("	     (Value) fld.get(null);\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    } catch (NoSuchFieldException | SecurityException e) {\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("	     throw new CodeGenException(\"PropertyExpr : \" + e.toString());\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    } catch (IllegalArgumentException e) {\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("	     throw new CodeGenException(\"PropertyExpr : \" + e.toString());\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    } catch (IllegalAccessException e) {\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("	     throw new CodeGenException(\"PropertyExpr : \" + e.toString());\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    } catch (ClassNotFoundException e) {\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("	     throw new CodeGenException(\"Class Not Found \" + e.toString());\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    } catch (NoSuchMethodException e) {\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("	     throw new CodeGenException(\"Method Not Found \" + e.toString());\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    } catch (InvocationTargetException e) {\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("	     throw new CodeGenException(\"Target Not Found \" + e.toString() + \": \");\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    }\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("}\r\n");
+		javaStmt.append("\r\n");
 
 		return javaStmt.toString();
 	}
 
 	public static String assignArray(String indent) throws ClassNotFoundException {
+		return "";
+	}
+
+	public static String getArray(String indent) throws ClassNotFoundException {
 		return "";
 	}
 
