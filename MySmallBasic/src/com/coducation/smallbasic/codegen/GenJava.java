@@ -31,6 +31,7 @@ import com.coducation.smallbasic.MethodCallExpr;
 import com.coducation.smallbasic.ParenExpr;
 import com.coducation.smallbasic.PropertyExpr;
 import com.coducation.smallbasic.Stmt;
+import com.coducation.smallbasic.StrV;
 import com.coducation.smallbasic.SubCallExpr;
 import com.coducation.smallbasic.SubDef;
 import com.coducation.smallbasic.Value;
@@ -173,8 +174,8 @@ public class GenJava {
 		javaStmt.append(";\r\n");
 
 		if(lhs instanceof Var) {
-			Var v = (Var)lhs;
-			javaStmt.append(v.getVarName() + " = " + codeGen(rhs) + ";\r\n");
+			Var var = (Var)lhs;
+			javaStmt.append("assignVar(" + var.getVarName() + ", new StrV(" + codeGen(rhs) + ");\r\n");
 
 		}
 		else if(lhs instanceof PropertyExpr) {
@@ -606,8 +607,10 @@ public class GenJava {
 	}
 
 	public String codeGen(Var var) {
-
-		return var.getVarName();
+		if (methods.get(var.getVarName()) != null)
+			return var.getVarName();
+		else
+			return "getVar(" + var.getVarName() + ")";
 	}
 
 	public static String getClassGen(String indent) throws ClassNotFoundException {
@@ -628,9 +631,9 @@ public class GenJava {
 		StringBuilder javaStmt = new StringBuilder("");
 
 		javaStmt.append(indent);
-		javaStmt.append("public static Class getClass(String name) {\r\n");
+		javaStmt.append("public static void assignVar(String varName, Value rhsValue) {\r\n");
 		javaStmt.append(indent);
-		javaStmt.append("    return Class.forName(lib + name);");
+		javaStmt.append("    env.put(varName, rhsValue);");
 		javaStmt.append(indent);
 		javaStmt.append("}\r\n");
 		javaStmt.append("\r\n");
@@ -644,13 +647,13 @@ public class GenJava {
 		javaStmt.append(indent);
 		javaStmt.append("public static String getVar(String varName) {\r\n");
 		javaStmt.append(indent);
-		javaStmt.append("    if (env.get(varName).equals(\"\"))");
+		javaStmt.append("    if (env.get(varName).toString().equals(\"\"))");
 		javaStmt.append(indent);
 		javaStmt.append("        return varName;");
 		javaStmt.append(indent);
 		javaStmt.append("    else");
 		javaStmt.append(indent);
-		javaStmt.append("        return env.get(var.getVarName());");
+		javaStmt.append("        return env.get(varName).toString();");
 		javaStmt.append(indent);
 		javaStmt.append("}\r\n");
 		javaStmt.append("\r\n");
@@ -762,12 +765,32 @@ public class GenJava {
 		return javaStmt.toString();
 	}
 
-	public static String assignArray(String indent) {
-		return "";
+	public static String assignArrayGen(String indent) {
+		StringBuilder javaStmt = new StringBuilder("");
+
+		javaStmt.append(indent);
+		javaStmt.append("public static void assignArray(String varName, Value rhsValue) {\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    env.put(varName, rhsValue);");
+		javaStmt.append(indent);
+		javaStmt.append("}\r\n");
+		javaStmt.append("\r\n");
+
+		return javaStmt.toString();
 	}
 
-	public static String getArray(String indent) {
-		return "";
+	public static String getArrayGen(String indent) {
+		StringBuilder javaStmt = new StringBuilder("");
+
+		javaStmt.append(indent);
+		javaStmt.append("public static void getArray(String varName, Value rhsValue) {\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    env.put(varName, rhsValue);");
+		javaStmt.append(indent);
+		javaStmt.append("}\r\n");
+		javaStmt.append("\r\n");
+
+		return javaStmt.toString();
 	}
 
 
