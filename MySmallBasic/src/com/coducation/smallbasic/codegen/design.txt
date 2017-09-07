@@ -1,0 +1,158 @@
+class GenJava {
+	
+	public GenJava() {
+		
+	}
+
+	//args[0] : Smallbasic file name
+	//stmt : 스몰베이직의 AST
+	public void codeGen(String[] args, Stmt stmt) {
+		StringBuilder topLevel;
+		ArrayList<Pair<String, StringBuilder>> methods;
+
+		codeGen(topLevel, methods, stmt);
+
+		//스몰베이직파일명과 동일한 .java 파일을 오픈
+
+		//1~9번까지 출력
+		//탑레벨 스몰베이직 문장으로부터 생성된 자바문장을 출력
+		//11번 출력
+		//스몰베이직의 각 서브루틴으로부터 생성된 자바메소드들을 출력
+		//13번 출력
+
+		//파일을 닫기
+	}
+
+	//스몰베이직 문장을 받아 자바문장에 대한 문자열을 만들고
+	//topLevel 또는 methods에 추가
+	public void codeGen(Stmt stmt) {
+
+	}
+
+	public void codeGen(boolean isTopLevel, Assign assignStmt) {
+		Expr lhs = assignStmt.getLSide();
+		Expr rhs = assignStmt.getRSide();
+
+		if(lhs instanceof Var) {
+			Var v = (Var)lhs;
+			String javaStmt = v.getVarName() + " = " + codeGen(rhs) + "\n";
+			if(isTopLevel) {
+				topLevel.add(javaStmt);
+			}
+			else 
+				...
+		}
+		else if(lhs instanceof PropertyExpr) {
+
+		}
+		else if(lhs instanceof Array) {
+
+		}
+		else {
+			throw new CodeGenException("Assign : Unknown lhs " + lhs);
+		}
+	}
+
+	//스몰베이직 식을 받아 자바식에 대한 문자열을 만들어 리턴
+	public String codeGen(Expr expr) {
+
+	}
+
+}
+
+HelloWorld.sb
+	TextWindow.WriteLine("Hello Smallbasic")
+
+//HelloWorld.java
+1: class HelloWorld {
+2:
+3: 	static Env env;
+4: 	
+5: 	public HelloWorld() {
+6: 		env = new Env();
+7: 	}
+8:
+9:	public static void main(String[] args) {
+10:		...
+11:	}
+12:		... // sub
+13: }
+
+==Stmt==
+Assign
+ - x = E
+ - arr[]..[] = E
+ - C.f = E
+
+ForStmt
+ - For x = E0 TO E1 [step E2]
+	Stmt
+
+BlockStmt
+ - S1...Sn
+
+ExprStmt
+ - E
+
+GotoStmt
+ - this.targetLabel = targetLabel
+
+IfStmt
+ - If(E0)  then S0
+   else S1
+
+Label
+ - this.label = label
+
+SubDef(??)
+ - this.name = name
+   this.block = Stmt
+
+SubCallExpr
+ - this.name = name
+
+WhileStmt
+ - While(E) Stmt
+
+==Expr==
+ArithExpr
+ - - E
+ - E0 + E1
+ - E0 - E1
+ - E0 * E1
+ - E0 / E1
+
+Array
+ - var[0] = E0 (var, index_list)
+   var[1] = E1
+   var[2] = E2
+        .
+        .
+
+CompExpr
+ - E0 > E1
+ - E0 < E1
+ - E0 >= E1
+ - E0 <= E1
+ - E0 = E1
+ - E0 <> E1
+
+Lit
+ - 123
+ - "123"
+
+LogicalExpr
+ - E0 AND E1
+ - E0 OR E1
+
+MethodCallExpr
+ - C.f(E0..En)
+
+ParenExpr(??)
+ - 
+
+PropertyExpr
+ - C.f
+
+
+
