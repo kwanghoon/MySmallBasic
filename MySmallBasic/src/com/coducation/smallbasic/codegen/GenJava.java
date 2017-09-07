@@ -46,7 +46,7 @@ public class GenJava {
 	String currentMethod;
 	StringBuilder currentMethodBody;
 	int numberOfIndent;
-	String className;
+	static String className;
 	static final String lib = "com.coducation.smallbasic.lib.";
 
 	public GenJava(BasicBlockEnv bbenv, String[] args) {
@@ -109,6 +109,8 @@ public class GenJava {
 			while(it.hasNext()) {
 				osw.write(it.next().getValue().toString());
 			}
+			osw.write(assignPropertyExprGen("    "));
+			osw.write(getPropertyExprGen("	"));
 			//13번 출력
 			osw.write("}\r\n");
 			osw.flush();
@@ -170,7 +172,36 @@ public class GenJava {
 		javaStmt.append(codeGen(rhs));
 		javaStmt.append(";\r\n");
 
+		if(lhs instanceof Var) {
+			Var v = (Var)lhs;
+			javaStmt.append(v.getVarName() + " = " + codeGen(rhs) + ";\r\n");
+
+		}
+		else if(lhs instanceof PropertyExpr) {
+			PropertyExpr propertyExpr = (PropertyExpr)lhs;
+			javaStmt.append("assignPropertyExpr(" + propertyExpr.getObj() + ", " + propertyExpr.getName() + ", " + codeGen(rhs) + ");\r\n");
+
+		}
+		else if(lhs instanceof Array) {
+			Array arr = (Array) lhs;
+
+			for (int i = 0; i < arr.getDim(); i++) {
+			}
+		}
+		else {
+			throw new CodeGenException("Assign : Unknown lhs " + lhs);
+		}
+
 		if(isTopLevel) {
+			topLevel.append(javaStmt);
+		}
+		else {
+			if(methods.get(currentMethod) != null) 
+				methods.put(currentMethod, methods.get(currentMethod).append(javaStmt));
+			else methods.put(currentMethod, javaStmt);
+		}
+
+		/*if(isTopLevel) {
 			if(lhs instanceof Var || lhs instanceof Array) {
 				topLevel.append(javaStmt);
 			}
@@ -183,39 +214,6 @@ public class GenJava {
 			if(methods.get(currentMethod) != null) 
 				methods.put(currentMethod, methods.get(currentMethod).append(javaStmt));
 			else methods.put(currentMethod, javaStmt);
-		}
-
-		/*if(lhs instanceof Var) {
-			Var v = (Var)lhs;
-			String javaStmt = v.getVarName() + " = " + codeGen(rhs) + ";\r\n";
-
-			if(isTopLevel) {
-				topLevel.append(javaStmt);
-			}
-			else {
-				methods.put(currentMethod, methods.get(currentMethod).append(javaStmt));
-			}
-
-		}
-		else if(lhs instanceof PropertyExpr) {
-			PropertyExpr propertyExpr = (PropertyExpr)lhs;
-			String javaStmt = propertyExpr.getObj() + "." + propertyExpr.getName() + " = " + codeGen(rhs) + ";\r\n";
-
-			if(isTopLevel) {
-				topLevel.append(javaStmt);
-			}
-			else {
-				methods.put(currentMethod, methods.get(currentMethod).append(javaStmt));
-			}
-		}
-		else if(lhs instanceof Array) {
-			Array arr = (Array) lhs;
-
-			for (int i = 0; i < arr.getDim(); i++) {
-			}
-		}
-		else {
-			throw new CodeGenException("Assign : Unknown lhs " + lhs);
 		}*/
 	}
 
@@ -601,8 +599,10 @@ public class GenJava {
 	}
 
 	public String codeGen(PropertyExpr propertyExpr) {
+		StringBuilder javaExpr = new StringBuilder("");
+		javaExpr.append("getPropertyExpr(" + propertyExpr.getObj() + ", " + propertyExpr.getName() + ")");
 
-		return propertyExpr.getObj() + "." + propertyExpr.getName();
+		return javaExpr.toString();
 	}
 
 	public String codeGen(Var var) {
@@ -610,23 +610,60 @@ public class GenJava {
 		return var.getVarName();
 	}
 
-	public static Class getClass(String name) throws ClassNotFoundException {
-		return Class.forName(lib + name);
-	}
-
-	public static String assignValue(String indent) throws ClassNotFoundException {
-		return "";
-	}
-
-	public static String getValue(String indent) throws ClassNotFoundException {
-		return "";
-	}
-
-	public static String assignPropertyExprGen(String indent, Expr lhs, String rhsValue) throws ClassNotFoundException {
+	public static String getClassGen(String indent) throws ClassNotFoundException {
 		StringBuilder javaStmt = new StringBuilder("");
 
 		javaStmt.append(indent);
-		javaStmt.append("public static String assignPropertyExpr(String lhsObj, String lhsName, String rhsValue) {\r\n");
+		javaStmt.append("public static Class getClass(String name) {\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    return Class.forName(lib + name);");
+		javaStmt.append(indent);
+		javaStmt.append("}\r\n");
+		javaStmt.append("\r\n");
+
+		return javaStmt.toString();
+	}
+
+	public static String assignVarGen(String indent) {
+		StringBuilder javaStmt = new StringBuilder("");
+
+		javaStmt.append(indent);
+		javaStmt.append("public static Class getClass(String name) {\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    return Class.forName(lib + name);");
+		javaStmt.append(indent);
+		javaStmt.append("}\r\n");
+		javaStmt.append("\r\n");
+
+		return javaStmt.toString();
+	}
+
+	public static String getVarGen(String indent) {
+		StringBuilder javaStmt = new StringBuilder("");
+
+		javaStmt.append(indent);
+		javaStmt.append("public static String getVar(String varName) {\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    if (env.get(varName).equals(\"\"))");
+		javaStmt.append(indent);
+		javaStmt.append("        return varName;");
+		javaStmt.append(indent);
+		javaStmt.append("    else");
+		javaStmt.append(indent);
+		javaStmt.append("        return env.get(var.getVarName());");
+		javaStmt.append(indent);
+		javaStmt.append("}\r\n");
+		javaStmt.append("\r\n");
+
+		return javaStmt.toString();
+	}
+
+	public static String assignPropertyExprGen(String indent) {
+		StringBuilder javaStmt = new StringBuilder("");
+
+		javaStmt.append(indent);
+		javaStmt.append("public static void assignPropertyExpr(String lhsObj, String lhsName, String rhsValue) {\r\n");
+		javaStmt.append(indent);
 		javaStmt.append("    try {\r\n");
 		javaStmt.append(indent);
 		javaStmt.append("        String clzName = lhsObj;\r\n");
@@ -673,9 +710,9 @@ public class GenJava {
 		return javaStmt.toString();
 	}
 
-	public static String getPropertyExprGen(String indent, PropertyExpr propertyExpr, String rhsValue) throws ClassNotFoundException {
+	public static String getPropertyExprGen(String indent) {
 		StringBuilder javaStmt = new StringBuilder("");
-		
+
 		javaStmt.append(indent);
 		javaStmt.append("public static String getPropertyExpr(String obj, String name) {\r\n");
 		javaStmt.append(indent);
@@ -691,7 +728,7 @@ public class GenJava {
 		javaStmt.append(indent);
 		javaStmt.append("	     mth.invoke(null, name);\r\n");
 		javaStmt.append(indent);
-		javaStmt.append("	     (Value) fld.get(null);\r\n");
+		javaStmt.append("	     return (Value) fld.get(null);\r\n");
 		javaStmt.append(indent);
 		javaStmt.append("    } catch (NoSuchFieldException | SecurityException e) {\r\n");
 		javaStmt.append(indent);
@@ -725,11 +762,11 @@ public class GenJava {
 		return javaStmt.toString();
 	}
 
-	public static String assignArray(String indent) throws ClassNotFoundException {
+	public static String assignArray(String indent) {
 		return "";
 	}
 
-	public static String getArray(String indent) throws ClassNotFoundException {
+	public static String getArray(String indent) {
 		return "";
 	}
 
