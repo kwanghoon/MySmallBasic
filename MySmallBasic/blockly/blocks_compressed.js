@@ -5,7 +5,7 @@
 // Copyright 2012 Google Inc.  Apache License 2.0
 Blockly.Blocks.lists={};Blockly.Constants={};Blockly.Constants.Lists={};Blockly.Constants.Lists.HUE=260;Blockly.Blocks.lists.HUE=Blockly.Constants.Lists.HUE;
 Blockly.defineBlocksWithJsonArray([{type:"lists_create_empty",message0:"%{BKY_LISTS_CREATE_EMPTY_TITLE}",output:"Array",colour:"%{BKY_LISTS_HUE}",tooltip:"%{BKY_LISTS_CREATE_EMPTY_TOOLTIP}",helpUrl:"%{BKY_LISTS_CREATE_EMPTY_HELPURL}"},{type:"lists_repeat",message0:"%{BKY_LISTS_REPEAT_TITLE}",args0:[{type:"input_value",name:"ITEM"},{type:"input_value",name:"NUM",check:"Number"}],output:"Array",colour:"%{BKY_LISTS_HUE}",tooltip:"%{BKY_LISTS_REPEAT_TOOLTIP}",helpUrl:"%{BKY_LISTS_REPEAT_HELPURL}"},{type:"lists_reverse",
-message0:"%{BKY_LISTS_REVERSE_MESSAGE0}",args0:[{type:"input_value",name:"LIST",check:"Array"}],output:"Array",inputsInline:!0,colour:"%{BKY_LISTS_HUE}",tooltip:"%{BKY_LISTS_REVERSE_TOOLTIP}",helpUrl:"%{BKY_LISTS_REVERSE_HELPURL}"},{type:"lists_isEmpty",message0:"%{BKY_LISTS_ISEMPTY_TITLE}",args0:[{type:"input_value",name:"VALUE",check:["String","Array"]}],output:"Boolean",colour:"%{BKY_LISTS_HUE}",tooltip:"%{BKY_LISTS_ISEMPTY_TOOLTIP}",helpUrl:"%{BKY_LISTS_ISEMPTY_HELPURL}"},{type:"lists_length",
+message0:"%{BKY_LISTS_REVERSE_MESSAGE0}",args0:[{type:"input_value",name:"LIST",check:"Array"}],output:"Array",inputsInline:!0,colour:"%{BKY_LISTS_HUE}",tooltip:"%{BKY_LISTS_REVERSE_TOOLTIP}",helpUrl:"%{BKY_LISTS_REVERSE_HELPURL}"},{type:"lists_isArray",message0:"%1 is Array",args0:[{type:"input_value",name:"VALUE",check:["String","Array"]}],output:"Boolean",colour:"%{BKY_LISTS_HUE}",tooltip:"%{BKY_LISTS_ISEMPTY_TOOLTIP}",helpUrl:"%{BKY_LISTS_ISEMPTY_HELPURL}"},{type:"lists_length",
 message0:"%{BKY_LISTS_LENGTH_TITLE}",args0:[{type:"input_value",name:"VALUE",check:["String","Array"]}],output:"Number",colour:"%{BKY_LISTS_HUE}",tooltip:"%{BKY_LISTS_LENGTH_TOOLTIP}",helpUrl:"%{BKY_LISTS_LENGTH_HELPURL}"}]);
 Blockly.Blocks.lists_create_with={init:function(){this.setHelpUrl(Blockly.Msg.LISTS_CREATE_WITH_HELPURL);this.setColour(Blockly.Blocks.lists.HUE);this.itemCount_=3;this.updateShape_();this.setOutput(!0,"Array");this.setMutator(new Blockly.Mutator(["lists_create_with_item"]));this.setTooltip(Blockly.Msg.LISTS_CREATE_WITH_TOOLTIP)},mutationToDom:function(){var a=document.createElement("mutation");a.setAttribute("items",this.itemCount_);return a},domToMutation:function(a){this.itemCount_=parseInt(a.getAttribute("items"),
 10);this.updateShape_()},decompose:function(a){var b=a.newBlock("lists_create_with_container");b.initSvg();for(var c=b.getInput("STACK").connection,d=0;d<this.itemCount_;d++){var e=a.newBlock("lists_create_with_item");e.initSvg();c.connect(e.previousConnection);c=e.nextConnection}return b},compose:function(a){var b=a.getInputTargetBlock("STACK");for(a=[];b;)a.push(b.valueConnection_),b=b.nextConnection&&b.nextConnection.targetBlock();for(b=0;b<this.itemCount_;b++){var c=this.getInput("ADD"+b).connection.targetConnection;
@@ -15,7 +15,7 @@ Blockly.Blocks.lists_create_with_container={init:function(){this.setColour(Block
 Blockly.Blocks.lists_create_with_item={init:function(){this.setColour(Blockly.Blocks.lists.HUE);this.appendDummyInput().appendField(Blockly.Msg.LISTS_CREATE_WITH_ITEM_TITLE);this.setPreviousStatement(!0);this.setNextStatement(!0);this.setTooltip(Blockly.Msg.LISTS_CREATE_WITH_ITEM_TOOLTIP);this.contextMenu=!1}};
 Blockly.Blocks.lists_indexOf={init:function(){var a=[[Blockly.Msg.LISTS_INDEX_OF_FIRST,"FIRST"],[Blockly.Msg.LISTS_INDEX_OF_LAST,"LAST"]];this.setHelpUrl(Blockly.Msg.LISTS_INDEX_OF_HELPURL);this.setColour(Blockly.Blocks.lists.HUE);this.setOutput(!0,"Number");this.appendValueInput("VALUE").setCheck("Array").appendField(Blockly.Msg.LISTS_INDEX_OF_INPUT_IN_LIST);this.appendValueInput("FIND").appendField(new Blockly.FieldDropdown(a),"END");this.setInputsInline(!0);var b=this;this.setTooltip(function(){return Blockly.Msg.LISTS_INDEX_OF_TOOLTIP.replace("%1",
 b.workspace.options.oneBasedIndex?"0":"-1")})}};
-Blockly.Blocks.lists_getIndex={init:function(){var a=[[Blockly.Msg.LISTS_GET_INDEX_GET,"GET"],[Blockly.Msg.LISTS_GET_INDEX_GET_REMOVE,"GET_REMOVE"],[Blockly.Msg.LISTS_GET_INDEX_REMOVE,"REMOVE"]];this.WHERE_OPTIONS=[[Blockly.Msg.LISTS_GET_INDEX_FROM_START,"FROM_START"],[Blockly.Msg.LISTS_GET_INDEX_FROM_END,"FROM_END"],[Blockly.Msg.LISTS_GET_INDEX_FIRST,"FIRST"],[Blockly.Msg.LISTS_GET_INDEX_LAST,"LAST"],[Blockly.Msg.LISTS_GET_INDEX_RANDOM,"RANDOM"]];this.setHelpUrl(Blockly.Msg.LISTS_GET_INDEX_HELPURL);this.setColour(Blockly.Blocks.lists.HUE);
+Blockly.Blocks.lists_getIndex={init:function(){var a=[[Blockly.Msg.LISTS_GET_INDEX_GET,"GET"],[Blockly.Msg.LISTS_GET_INDEX_REMOVE,"REMOVE"]];this.WHERE_OPTIONS=[[Blockly.Msg.LISTS_GET_INDEX_FROM_START,"FROM_START"]];this.setHelpUrl(Blockly.Msg.LISTS_GET_INDEX_HELPURL);this.setColour(Blockly.Blocks.lists.HUE);
 a=new Blockly.FieldDropdown(a,function(a){this.sourceBlock_.updateStatement_("REMOVE"==a)});this.appendValueInput("VALUE").setCheck("Array").appendField(Blockly.Msg.LISTS_GET_INDEX_INPUT_IN_LIST);this.appendDummyInput().appendField(a,"MODE").appendField("","SPACE");this.appendDummyInput("AT");Blockly.Msg.LISTS_GET_INDEX_TAIL&&this.appendDummyInput("TAIL").appendField(Blockly.Msg.LISTS_GET_INDEX_TAIL);this.setInputsInline(!0);this.setOutput(!0);this.updateAt_(!0);var b=this;this.setTooltip(function(){var a=
 b.getFieldValue("MODE"),d=b.getFieldValue("WHERE"),e="";switch(a+" "+d){case "GET FROM_START":case "GET FROM_END":e=Blockly.Msg.LISTS_GET_INDEX_TOOLTIP_GET_FROM;break;case "GET FIRST":e=Blockly.Msg.LISTS_GET_INDEX_TOOLTIP_GET_FIRST;break;case "GET LAST":e=Blockly.Msg.LISTS_GET_INDEX_TOOLTIP_GET_LAST;break;case "GET RANDOM":e=Blockly.Msg.LISTS_GET_INDEX_TOOLTIP_GET_RANDOM;break;case "GET_REMOVE FROM_START":case "GET_REMOVE FROM_END":e=Blockly.Msg.LISTS_GET_INDEX_TOOLTIP_GET_REMOVE_FROM;break;case "GET_REMOVE FIRST":e=
 Blockly.Msg.LISTS_GET_INDEX_TOOLTIP_GET_REMOVE_FIRST;break;case "GET_REMOVE LAST":e=Blockly.Msg.LISTS_GET_INDEX_TOOLTIP_GET_REMOVE_LAST;break;case "GET_REMOVE RANDOM":e=Blockly.Msg.LISTS_GET_INDEX_TOOLTIP_GET_REMOVE_RANDOM;break;case "REMOVE FROM_START":case "REMOVE FROM_END":e=Blockly.Msg.LISTS_GET_INDEX_TOOLTIP_REMOVE_FROM;break;case "REMOVE FIRST":e=Blockly.Msg.LISTS_GET_INDEX_TOOLTIP_REMOVE_FIRST;break;case "REMOVE LAST":e=Blockly.Msg.LISTS_GET_INDEX_TOOLTIP_REMOVE_LAST;break;case "REMOVE RANDOM":e=
@@ -37,17 +37,16 @@ tooltip:Blockly.Msg.LISTS_SORT_TOOLTIP,helpUrl:Blockly.Msg.LISTS_SORT_HELPURL})}
 Blockly.Blocks.lists_split={init:function(){var a=this,b=new Blockly.FieldDropdown([[Blockly.Msg.LISTS_SPLIT_LIST_FROM_TEXT,"SPLIT"],[Blockly.Msg.LISTS_SPLIT_TEXT_FROM_LIST,"JOIN"]],function(b){a.updateType_(b)});this.setHelpUrl(Blockly.Msg.LISTS_SPLIT_HELPURL);this.setColour(Blockly.Blocks.lists.HUE);this.appendValueInput("INPUT").setCheck("String").appendField(b,"MODE");this.appendValueInput("DELIM").setCheck("String").appendField(Blockly.Msg.LISTS_SPLIT_WITH_DELIMITER);this.setInputsInline(!0);
 this.setOutput(!0,"Array");this.setTooltip(function(){var b=a.getFieldValue("MODE");if("SPLIT"==b)return Blockly.Msg.LISTS_SPLIT_TOOLTIP_SPLIT;if("JOIN"==b)return Blockly.Msg.LISTS_SPLIT_TOOLTIP_JOIN;throw"Unknown mode: "+b;})},updateType_:function(a){"SPLIT"==a?(this.outputConnection.setCheck("Array"),this.getInput("INPUT").setCheck("String")):(this.outputConnection.setCheck("String"),this.getInput("INPUT").setCheck("Array"))},mutationToDom:function(){var a=document.createElement("mutation");a.setAttribute("mode",
 this.getFieldValue("MODE"));return a},domToMutation:function(a){this.updateType_(a.getAttribute("mode"))}};Blockly.Blocks.math={};Blockly.Constants.Math={};Blockly.Constants.Math.HUE=230;Blockly.Blocks.math.HUE=Blockly.Constants.Math.HUE;
-Blockly.defineBlocksWithJsonArray([{type:"math_number",message0:"%1",args0:[{type:"field_number",name:"NUM",value:0}],output:"Number",colour:"%{BKY_MATH_HUE}",helpUrl:"%{BKY_MATH_NUMBER_HELPURL}",tooltip:"%{BKY_MATH_NUMBER_TOOLTIP}",extensions:["parent_tooltip_when_inline"]},{type:"math_arithmetic",message0:"%1 %2 %3",args0:[{type:"input_value",name:"A",check:"Number"},{type:"field_dropdown",name:"OP",options:[["%{BKY_MATH_ADDITION_SYMBOL}","ADD"],["%{BKY_MATH_SUBTRACTION_SYMBOL}","MINUS"],["%{BKY_MATH_MULTIPLICATION_SYMBOL}",
-"MULTIPLY"],["%{BKY_MATH_DIVISION_SYMBOL}","DIVIDE"],["%{BKY_MATH_POWER_SYMBOL}","POWER"]]},{type:"input_value",name:"B",check:"Number"}],inputsInline:!0,output:"Number",colour:"%{BKY_MATH_HUE}",helpUrl:"%{BKY_MATH_ARITHMETIC_HELPURL}",extensions:["math_op_tooltip"]},{type:"math_single",message0:"%1 %2",args0:[{type:"field_dropdown",name:"OP",options:[["%{BKY_MATH_SINGLE_OP_ROOT}","ROOT"],["%{BKY_MATH_SINGLE_OP_ABSOLUTE}","ABS"],["-","NEG"],["ln","LN"],["log10","LOG10"],["e^","EXP"],["10^","POW10"]]},
+Blockly.defineBlocksWithJsonArray([{type:"math_number",message0:"%1",args0:[{type:"field_number",name:"NUM",value:0}],output:"Number",colour:"%{BKY_MATH_HUE}",helpUrl:"%{BKY_" +
+		"HELPURL}",tooltip:"%{BKY_MATH_NUMBER_TOOLTIP}",extensions:["parent_tooltip_when_inline"]},{type:"math_arithmetic",message0:"%1 %2 %3",args0:[{type:"input_value",name:"A",check:"Number"},{type:"field_dropdown",name:"OP",options:[["%{BKY_MATH_ADDITION_SYMBOL}","ADD"],["%{BKY_MATH_SUBTRACTION_SYMBOL}","MINUS"],["%{BKY_MATH_MULTIPLICATION_SYMBOL}",
+"MULTIPLY"],["%{BKY_MATH_DIVISION_SYMBOL}","DIVIDE"],["%{BKY_MATH_POWER_SYMBOL}","POWER"]]},{type:"input_value",name:"B",check:"Number"}],inputsInline:!0,output:"Number",colour:"%{BKY_MATH_HUE}",helpUrl:"%{BKY_MATH_ARITHMETIC_HELPURL}",extensions:["math_op_tooltip"]},{type:"math_single",message0:"%1 %2",args0:[{type:"field_dropdown",name:"OP",options:[["%{BKY_MATH_SINGLE_OP_ROOT}","ROOT"],["%{BKY_MATH_SINGLE_OP_ABSOLUTE}","ABS"],["-","NEG"],["ln","LN"],["log10","LOG10"]]},
 {type:"input_value",name:"NUM",check:"Number"}],output:"Number",colour:"%{BKY_MATH_HUE}",helpUrl:"%{BKY_MATH_SINGLE_HELPURL}",extensions:["math_op_tooltip"]},{type:"math_trig",message0:"%1 %2",args0:[{type:"field_dropdown",name:"OP",options:[["%{BKY_MATH_TRIG_SIN}","SIN"],["%{BKY_MATH_TRIG_COS}","COS"],["%{BKY_MATH_TRIG_TAN}","TAN"],["%{BKY_MATH_TRIG_ASIN}","ASIN"],["%{BKY_MATH_TRIG_ACOS}","ACOS"],["%{BKY_MATH_TRIG_ATAN}","ATAN"]]},{type:"input_value",name:"NUM",check:"Number"}],output:"Number",colour:"%{BKY_MATH_HUE}",
-helpUrl:"%{BKY_MATH_TRIG_HELPURL}",extensions:["math_op_tooltip"]},{type:"math_constant",message0:"%1",args0:[{type:"field_dropdown",name:"CONSTANT",options:[["\u03c0","PI"],["e","E"],["\u03c6","GOLDEN_RATIO"],["sqrt(2)","SQRT2"],["sqrt(\u00bd)","SQRT1_2"],["\u221e","INFINITY"]]}],output:"Number",colour:"%{BKY_MATH_HUE}",tooltip:"%{BKY_MATH_CONSTANT_TOOLTIP}",helpUrl:"%{BKY_MATH_CONSTANT_HELPURL}"},{type:"math_number_property",message0:"%1 %2",args0:[{type:"input_value",name:"NUMBER_TO_CHECK",check:"Number"},
-{type:"field_dropdown",name:"PROPERTY",options:[["%{BKY_MATH_IS_EVEN}","EVEN"],["%{BKY_MATH_IS_ODD}","ODD"],["%{BKY_MATH_IS_PRIME}","PRIME"],["%{BKY_MATH_IS_WHOLE}","WHOLE"],["%{BKY_MATH_IS_POSITIVE}","POSITIVE"],["%{BKY_MATH_IS_NEGATIVE}","NEGATIVE"],["%{BKY_MATH_IS_DIVISIBLE_BY}","DIVISIBLE_BY"]]}],inputsInline:!0,output:"Boolean",colour:"%{BKY_MATH_HUE}",tooltip:"%{BKY_MATH_IS_TOOLTIP}",mutator:"math_is_divisibleby_mutator"},{type:"math_change",message0:"%{BKY_MATH_CHANGE_TITLE}",args0:[{type:"field_variable",
-name:"VAR",variable:"%{BKY_MATH_CHANGE_TITLE_ITEM}"},{type:"input_value",name:"DELTA",check:"Number"}],previousStatement:null,nextStatement:null,colour:"%{BKY_VARIABLES_HUE}",helpUrl:"%{BKY_MATH_CHANGE_HELPURL}",extensions:["math_change_tooltip"]},{type:"math_round",message0:"%1 %2",args0:[{type:"field_dropdown",name:"OP",options:[["%{BKY_MATH_ROUND_OPERATOR_ROUND}","ROUND"],["%{BKY_MATH_ROUND_OPERATOR_ROUNDUP}","ROUNDUP"],["%{BKY_MATH_ROUND_OPERATOR_ROUNDDOWN}","ROUNDDOWN"]]},{type:"input_value",
+helpUrl:"%{BKY_MATH_TRIG_HELPURL}",extensions:["math_op_tooltip"]},{type:"math_constant",message0:"%1",args0:[{type:"field_dropdown",name:"CONSTANT",options:[["\u03c0","PI"],["e","E"]]}],output:"Number",colour:"%{BKY_MATH_HUE}",tooltip:"%{BKY_MATH_CONSTANT_TOOLTIP}",helpUrl:"%{BKY_MATH_CONSTANT_HELPURL}"},{type:"math_round",message0:"%1 %2",args0:[{type:"field_dropdown",name:"OP",options:[["%{BKY_MATH_ROUND_OPERATOR_ROUND}","ROUND"],["%{BKY_MATH_ROUND_OPERATOR_ROUNDUP}","ROUNDUP"],["%{BKY_MATH_ROUND_OPERATOR_ROUNDDOWN}","ROUNDDOWN"]]},{type:"input_value",
 name:"NUM",check:"Number"}],output:"Number",colour:"%{BKY_MATH_HUE}",helpUrl:"%{BKY_MATH_ROUND_HELPURL}",tooltip:"%{BKY_MATH_ROUND_TOOLTIP}"},{type:"math_on_list",message0:"%1 %2",args0:[{type:"field_dropdown",name:"OP",options:[["%{BKY_MATH_ONLIST_OPERATOR_SUM}","SUM"],["%{BKY_MATH_ONLIST_OPERATOR_MIN}","MIN"],["%{BKY_MATH_ONLIST_OPERATOR_MAX}","MAX"],["%{BKY_MATH_ONLIST_OPERATOR_AVERAGE}","AVERAGE"],["%{BKY_MATH_ONLIST_OPERATOR_MEDIAN}","MEDIAN"],["%{BKY_MATH_ONLIST_OPERATOR_MODE}","MODE"],["%{BKY_MATH_ONLIST_OPERATOR_STD_DEV}",
 "STD_DEV"],["%{BKY_MATH_ONLIST_OPERATOR_RANDOM}","RANDOM"]]},{type:"input_value",name:"LIST",check:"Array"}],output:"Number",colour:"%{BKY_MATH_HUE}",helpUrl:"%{BKY_MATH_ONLIST_HELPURL}",mutator:"math_modes_of_list_mutator",extensions:["math_op_tooltip"]},{type:"math_modulo",message0:"%{BKY_MATH_MODULO_TITLE}",args0:[{type:"input_value",name:"DIVIDEND",check:"Number"},{type:"input_value",name:"DIVISOR",check:"Number"}],inputsInline:!0,output:"Number",colour:"%{BKY_MATH_HUE}",tooltip:"%{BKY_MATH_MODULO_TOOLTIP}",
-helpUrl:"%{BKY_MATH_MODULO_HELPURL}"},{type:"math_constrain",message0:"%{BKY_MATH_CONSTRAIN_TITLE}",args0:[{type:"input_value",name:"VALUE",check:"Number"},{type:"input_value",name:"LOW",check:"Number"},{type:"input_value",name:"HIGH",check:"Number"}],inputsInline:!0,output:"Number",colour:"%{BKY_MATH_HUE}",tooltip:"%{BKY_MATH_CONSTRAIN_TOOLTIP}",helpUrl:"%{BKY_MATH_CONSTRAIN_HELPURL}"},{type:"math_random_int",message0:"%{BKY_MATH_RANDOM_INT_TITLE}",args0:[{type:"input_value",name:"FROM",check:"Number"},
+helpUrl:"%{BKY_MATH_MODULO_HELPURL}"},{type:"math_random_int",message0:"%{BKY_MATH_RANDOM_INT_TITLE}",args0:[{type:"input_value",name:"FROM",check:"Number"},
 {type:"input_value",name:"TO",check:"Number"}],inputsInline:!0,output:"Number",colour:"%{BKY_MATH_HUE}",tooltip:"%{BKY_MATH_RANDOM_INT_TOOLTIP}",helpUrl:"%{BKY_MATH_RANDOM_INT_HELPURL}"},{type:"math_random_float",message0:"%{BKY_MATH_RANDOM_FLOAT_TITLE_RANDOM}",output:"Number",colour:"%{BKY_MATH_HUE}",tooltip:"%{BKY_MATH_RANDOM_FLOAT_TOOLTIP}",helpUrl:"%{BKY_MATH_RANDOM_FLOAT_HELPURL}"}]);
-Blockly.Constants.Math.TOOLTIPS_BY_OP={ADD:"%{BKY_MATH_ARITHMETIC_TOOLTIP_ADD}",MINUS:"%{BKY_MATH_ARITHMETIC_TOOLTIP_MINUS}",MULTIPLY:"%{BKY_MATH_ARITHMETIC_TOOLTIP_MULTIPLY}",DIVIDE:"%{BKY_MATH_ARITHMETIC_TOOLTIP_DIVIDE}",POWER:"%{BKY_MATH_ARITHMETIC_TOOLTIP_POWER}",ROOT:"%{BKY_MATH_SINGLE_TOOLTIP_ROOT}",ABS:"%{BKY_MATH_SINGLE_TOOLTIP_ABS}",NEG:"%{BKY_MATH_SINGLE_TOOLTIP_NEG}",LN:"%{BKY_MATH_SINGLE_TOOLTIP_LN}",LOG10:"%{BKY_MATH_SINGLE_TOOLTIP_LOG10}",EXP:"%{BKY_MATH_SINGLE_TOOLTIP_EXP}",POW10:"%{BKY_MATH_SINGLE_TOOLTIP_POW10}",
+Blockly.Constants.Math.TOOLTIPS_BY_OP={ADD:"%{BKY_MATH_ARITHMETIC_TOOLTIP_ADD}",MINUS:"%{BKY_MATH_ARITHMETIC_TOOLTIP_MINUS}",MULTIPLY:"%{BKY_MATH_ARITHMETIC_TOOLTIP_MULTIPLY}",DIVIDE:"%{BKY_MATH_ARITHMETIC_TOOLTIP_DIVIDE}",POWER:"%{BKY_MATH_ARITHMETIC_TOOLTIP_POWER}",ROOT:"%{BKY_MATH_SINGLE_TOOLTIP_ROOT}",ABS:"%{BKY_MATH_SINGLE_TOOLTIP_ABS}",NEG:"%{BKY_MATH_SINGLE_TOOLTIP_NEG}",LN:"%{BKY_MATH_SINGLE_TOOLTIP_LN}",LOG10:"%{BKY_MATH_SINGLE_TOOLTIP_LOG10}",
 SIN:"%{BKY_MATH_TRIG_TOOLTIP_SIN}",COS:"%{BKY_MATH_TRIG_TOOLTIP_COS}",TAN:"%{BKY_MATH_TRIG_TOOLTIP_TAN}",ASIN:"%{BKY_MATH_TRIG_TOOLTIP_ASIN}",ACOS:"%{BKY_MATH_TRIG_TOOLTIP_ACOS}",ATAN:"%{BKY_MATH_TRIG_TOOLTIP_ATAN}",SUM:"%{BKY_MATH_ONLIST_TOOLTIP_SUM}",MIN:"%{BKY_MATH_ONLIST_TOOLTIP_MIN}",MAX:"%{BKY_MATH_ONLIST_TOOLTIP_MAX}",AVERAGE:"%{BKY_MATH_ONLIST_TOOLTIP_AVERAGE}",MEDIAN:"%{BKY_MATH_ONLIST_TOOLTIP_MEDIAN}",MODE:"%{BKY_MATH_ONLIST_TOOLTIP_MODE}",STD_DEV:"%{BKY_MATH_ONLIST_TOOLTIP_STD_DEV}",RANDOM:"%{BKY_MATH_ONLIST_TOOLTIP_RANDOM}"};
 Blockly.Extensions.register("math_op_tooltip",Blockly.Extensions.buildTooltipForDropdown("OP",Blockly.Constants.Math.TOOLTIPS_BY_OP));
 Blockly.Constants.Math.IS_DIVISIBLEBY_MUTATOR_MIXIN={mutationToDom:function(){var a=document.createElement("mutation"),b="DIVISIBLE_BY"==this.getFieldValue("PROPERTY");a.setAttribute("divisor_input",b);return a},domToMutation:function(a){a="true"==a.getAttribute("divisor_input");this.updateShape_(a)},updateShape_:function(a){var b=this.getInput("DIVISOR");a?b||this.appendValueInput("DIVISOR").setCheck("Number"):b&&this.removeInput("DIVISOR")}};
@@ -95,7 +94,7 @@ this.isInFlyout||this.getInheritedDisabled()||this.setDisabled(!0))}},FUNCTION_T
 Blockly.defineBlocksWithJsonArray([{type:"text",message0:"%1",args0:[{type:"field_input",name:"TEXT",text:""}],output:"String",colour:"%{BKY_TEXTS_HUE}",helpUrl:"%{BKY_TEXT_TEXT_HELPURL}",tooltip:"%{BKY_TEXT_TEXT_TOOLTIP}",extensions:["text_quotes","parent_tooltip_when_inline"]},{type:"text_join",message0:"",output:"String",colour:"%{BKY_TEXTS_HUE}",helpUrl:"%{BKY_TEXT_JOIN_HELPURL}",tooltip:"%{BKY_TEXT_JOIN_TOOLTIP}",mutator:"text_join_mutator"},{type:"text_create_join_container",message0:"%{BKY_TEXT_CREATE_JOIN_TITLE_JOIN} %1 %2",
 args0:[{type:"input_dummy"},{type:"input_statement",name:"STACK"}],colour:"%{BKY_TEXTS_HUE}",tooltip:"%{BKY_TEXT_CREATE_JOIN_TOOLTIP}",enableContextMenu:!1},{type:"text_create_join_item",message0:"%{BKY_TEXT_CREATE_JOIN_ITEM_TITLE_ITEM}",previousStatement:null,nextStatement:null,colour:"%{BKY_TEXTS_HUE}",tooltip:"{%BKY_TEXT_CREATE_JOIN_ITEM_TOOLTIP}",enableContextMenu:!1},{type:"text_append",message0:"%{BKY_TEXT_APPEND_TITLE}",args0:[{type:"field_variable",name:"VAR",variable:"%{BKY_TEXT_APPEND_VARIABLE}"},
 {type:"input_value",name:"TEXT"}],previousStatement:null,nextStatement:null,colour:"%{BKY_TEXTS_HUE}",extensions:["text_append_tooltip"]},{type:"text_length",message0:"%{BKY_TEXT_LENGTH_TITLE}",args0:[{type:"input_value",name:"VALUE",check:["String","Array"]}],output:"Number",colour:"%{BKY_TEXTS_HUE}",tooltip:"%{BKY_TEXT_LENGTH_TOOLTIP}",helpUrl:"%{BKY_TEXT_LENGTH_HELPURL}"},{type:"text_isEmpty",message0:"%{BKY_TEXT_ISEMPTY_TITLE}",args0:[{type:"input_value",name:"VALUE",check:["String","Array"]}],
-output:"Boolean",colour:"%{BKY_TEXTS_HUE}",tooltip:"%{BKY_TEXT_ISEMPTY_TOOLTIP}",helpUrl:"%{BKY_TEXT_ISEMPTY_HELPURL}"},{type:"text_indexOf",message0:"%{BKY_TEXT_INDEXOF_TITLE}",args0:[{type:"input_value",name:"VALUE",check:"String"},{type:"field_dropdown",name:"END",options:[["%{BKY_TEXT_INDEXOF_OPERATOR_FIRST}","FIRST"],["%{BKY_TEXT_INDEXOF_OPERATOR_LAST}","LAST"]]},{type:"input_value",name:"FIND",check:"String"}],output:"Number",colour:"%{BKY_TEXTS_HUE}",helpUrl:"%{BKY_TEXT_INDEXOF_HELPURL}",inputsInline:!0,
+output:"Boolean",colour:"%{BKY_TEXTS_HUE}",tooltip:"%{BKY_TEXT_ISEMPTY_TOOLTIP}",helpUrl:"%{BKY_TEXT_ISEMPTY_HELPURL}"},{type:"text_indexOf",message0:"in text %1 find first occurence of text %2",args0:[{type:"input_value",name:"VALUE",check:"String"},{type:"input_value",name:"FIND",check:"String"}],output:"Number",colour:"%{BKY_TEXTS_HUE}",helpUrl:"%{BKY_TEXT_INDEXOF_HELPURL}",inputsInline:!0,
 extensions:["text_indexOf_tooltip"]},{type:"text_charAt",message0:"%{BKY_TEXT_CHARAT_TITLE}",args0:[{type:"input_value",name:"VALUE",check:"String"},{type:"input_dummy",name:"AT"}],output:"String",colour:"%{BKY_TEXTS_HUE}",helpUrl:"%{BKY_TEXT_CHARAT_HELPURL}",inputsInline:!0,mutator:"text_charAt_mutator"}]);
 Blockly.Blocks.text_getSubstring={init:function(){this.WHERE_OPTIONS_1=[[Blockly.Msg.TEXT_GET_SUBSTRING_START_FROM_START,"FROM_START"],[Blockly.Msg.TEXT_GET_SUBSTRING_START_FROM_END,"FROM_END"],[Blockly.Msg.TEXT_GET_SUBSTRING_START_FIRST,"FIRST"]];this.WHERE_OPTIONS_2=[[Blockly.Msg.TEXT_GET_SUBSTRING_END_FROM_START,"FROM_START"],[Blockly.Msg.TEXT_GET_SUBSTRING_END_FROM_END,"FROM_END"],[Blockly.Msg.TEXT_GET_SUBSTRING_END_LAST,"LAST"]];this.setHelpUrl(Blockly.Msg.TEXT_GET_SUBSTRING_HELPURL);this.setColour(Blockly.Blocks.texts.HUE);
 this.appendValueInput("STRING").setCheck("String").appendField(Blockly.Msg.TEXT_GET_SUBSTRING_INPUT_IN_TEXT);this.appendDummyInput("AT1");this.appendDummyInput("AT2");Blockly.Msg.TEXT_GET_SUBSTRING_TAIL&&this.appendDummyInput("TAIL").appendField(Blockly.Msg.TEXT_GET_SUBSTRING_TAIL);this.setInputsInline(!0);this.setOutput(!0,"String");this.updateAt_(1,!0);this.updateAt_(2,!0);this.setTooltip(Blockly.Msg.TEXT_GET_SUBSTRING_TOOLTIP)},mutationToDom:function(){var a=document.createElement("mutation"),
@@ -103,7 +102,7 @@ b=this.getInput("AT1").type==Blockly.INPUT_VALUE;a.setAttribute("at1",b);b=this.
 this.appendDummyInput("AT"+a);2==a&&Blockly.Msg.TEXT_GET_SUBSTRING_TAIL&&(this.removeInput("TAIL",!0),this.appendDummyInput("TAIL").appendField(Blockly.Msg.TEXT_GET_SUBSTRING_TAIL));var c=new Blockly.FieldDropdown(this["WHERE_OPTIONS_"+a],function(c){var d="FROM_START"==c||"FROM_END"==c;if(d!=b){var f=this.sourceBlock_;f.updateAt_(a,d);f.setFieldValue(c,"WHERE"+a);return null}});this.getInput("AT"+a).appendField(c,"WHERE"+a);1==a&&this.moveInputBefore("AT1","AT2")}};
 Blockly.Blocks.text_changeCase={init:function(){var a=[[Blockly.Msg.TEXT_CHANGECASE_OPERATOR_UPPERCASE,"UPPERCASE"],[Blockly.Msg.TEXT_CHANGECASE_OPERATOR_LOWERCASE,"LOWERCASE"],[Blockly.Msg.TEXT_CHANGECASE_OPERATOR_TITLECASE,"TITLECASE"]];this.setHelpUrl(Blockly.Msg.TEXT_CHANGECASE_HELPURL);this.setColour(Blockly.Blocks.texts.HUE);this.appendValueInput("TEXT").setCheck("String").appendField(new Blockly.FieldDropdown(a),"CASE");this.setOutput(!0,"String");this.setTooltip(Blockly.Msg.TEXT_CHANGECASE_TOOLTIP)}};
 Blockly.Blocks.text_trim={init:function(){var a=[[Blockly.Msg.TEXT_TRIM_OPERATOR_BOTH,"BOTH"],[Blockly.Msg.TEXT_TRIM_OPERATOR_LEFT,"LEFT"],[Blockly.Msg.TEXT_TRIM_OPERATOR_RIGHT,"RIGHT"]];this.setHelpUrl(Blockly.Msg.TEXT_TRIM_HELPURL);this.setColour(Blockly.Blocks.texts.HUE);this.appendValueInput("TEXT").setCheck("String").appendField(new Blockly.FieldDropdown(a),"MODE");this.setOutput(!0,"String");this.setTooltip(Blockly.Msg.TEXT_TRIM_TOOLTIP)}};
-Blockly.Blocks.text_print={init:function(){this.jsonInit({message0:Blockly.Msg.TEXT_PRINT_TITLE,args0:[{type:"input_value",name:"TEXT"}],previousStatement:null,nextStatement:null,colour:Blockly.Blocks.texts.HUE,tooltip:Blockly.Msg.TEXT_PRINT_TOOLTIP,helpUrl:Blockly.Msg.TEXT_PRINT_HELPURL})}};
+Blockly.Blocks.text_print={init:function(){this.jsonInit({message0:Blockly.Msg.TEXT_PRINT_TITLE,args0:[{type:"input_value",name:"TEXT"}],previousStatement:null,nextStatement:null,colour:35,tooltip:Blockly.Msg.TEXT_PRINT_TOOLTIP,helpUrl:Blockly.Msg.TEXT_PRINT_HELPURL})}};
 Blockly.Blocks.text_prompt_ext={init:function(){var a=[[Blockly.Msg.TEXT_PROMPT_TYPE_TEXT,"TEXT"],[Blockly.Msg.TEXT_PROMPT_TYPE_NUMBER,"NUMBER"]];this.setHelpUrl(Blockly.Msg.TEXT_PROMPT_HELPURL);this.setColour(Blockly.Blocks.texts.HUE);var b=this;a=new Blockly.FieldDropdown(a,function(a){b.updateType_(a)});this.appendValueInput("TEXT").appendField(a,"TYPE");this.setOutput(!0,"String");this.setTooltip(function(){return"TEXT"==b.getFieldValue("TYPE")?Blockly.Msg.TEXT_PROMPT_TOOLTIP_TEXT:Blockly.Msg.TEXT_PROMPT_TOOLTIP_NUMBER})},
 updateType_:function(a){this.outputConnection.setCheck("NUMBER"==a?"Number":"String")},mutationToDom:function(){var a=document.createElement("mutation");a.setAttribute("type",this.getFieldValue("TYPE"));return a},domToMutation:function(a){this.updateType_(a.getAttribute("type"))}};
 Blockly.Blocks.text_prompt={init:function(){this.mixin(Blockly.Constants.Text.QUOTE_IMAGE_MIXIN);var a=[[Blockly.Msg.TEXT_PROMPT_TYPE_TEXT,"TEXT"],[Blockly.Msg.TEXT_PROMPT_TYPE_NUMBER,"NUMBER"]],b=this;this.setHelpUrl(Blockly.Msg.TEXT_PROMPT_HELPURL);this.setColour(Blockly.Blocks.texts.HUE);a=new Blockly.FieldDropdown(a,function(a){b.updateType_(a)});this.appendDummyInput().appendField(a,"TYPE").appendField(this.newQuote_(!0)).appendField(new Blockly.FieldTextInput(""),"TEXT").appendField(this.newQuote_(!1));
@@ -124,12 +123,26 @@ this.appendDummyInput("AT");Blockly.Msg.TEXT_CHARAT_TAIL&&(this.removeInput("TAI
 Blockly.Constants.Text.TEXT_CHARAT_EXTENSION=function(){this.WHERE_OPTIONS=[[Blockly.Msg.TEXT_CHARAT_FROM_START,"FROM_START"],[Blockly.Msg.TEXT_CHARAT_FROM_END,"FROM_END"],[Blockly.Msg.TEXT_CHARAT_FIRST,"FIRST"],[Blockly.Msg.TEXT_CHARAT_LAST,"LAST"],[Blockly.Msg.TEXT_CHARAT_RANDOM,"RANDOM"]];this.updateAt_(!0);var a=this;this.setTooltip(function(){var b=a.getFieldValue("WHERE"),c=Blockly.Msg.TEXT_CHARAT_TOOLTIP;("FROM_START"==b||"FROM_END"==b)&&(b="FROM_START"==b?Blockly.Msg.LISTS_INDEX_FROM_START_TOOLTIP:
 Blockly.Msg.LISTS_INDEX_FROM_END_TOOLTIP)&&(c+="  "+b.replace("%1",a.workspace.options.oneBasedIndex?"#1":"#0"));return c})};Blockly.Extensions.register("text_indexOf_tooltip",Blockly.Constants.Text.TEXT_INDEXOF_TOOLTIP_EXTENSION);Blockly.Extensions.register("text_quotes",Blockly.Constants.Text.TEXT_QUOTES_EXTENSION);Blockly.Extensions.register("text_append_tooltip",Blockly.Constants.Text.TEXT_APPEND_TOOLTIP_EXTENSION);
 Blockly.Extensions.registerMutator("text_join_mutator",Blockly.Constants.Text.TEXT_JOIN_MUTATOR_MIXIN,Blockly.Constants.Text.TEXT_JOIN_EXTENSION);Blockly.Extensions.registerMutator("text_charAt_mutator",Blockly.Constants.Text.TEXT_CHARAT_MUTATOR_MIXIN,Blockly.Constants.Text.TEXT_CHARAT_EXTENSION);Blockly.Blocks.loops={};Blockly.Constants.Loops={};Blockly.Constants.Loops.HUE=120;Blockly.Blocks.loops.HUE=Blockly.Constants.Loops.HUE;
-Blockly.defineBlocksWithJsonArray([{type:"controls_repeat_ext",message0:"%{BKY_CONTROLS_REPEAT_TITLE}",args0:[{type:"input_value",name:"TIMES",check:"Number"}],message1:"%{BKY_CONTROLS_REPEAT_INPUT_DO} %1",args1:[{type:"input_statement",name:"DO"}],previousStatement:null,nextStatement:null,colour:"%{BKY_LOOPS_HUE}",tooltip:"%{BKY_CONTROLS_REPEAT_TOOLTIP}",helpUrl:"%{BKY_CONTROLS_REPEAT_HELPURL}"},{type:"controls_repeat",message0:"%{BKY_CONTROLS_REPEAT_TITLE}",args0:[{type:"field_number",name:"TIMES",
-value:10,min:0,precision:1}],message1:"%{BKY_CONTROLS_REPEAT_INPUT_DO} %1",args1:[{type:"input_statement",name:"DO"}],previousStatement:null,nextStatement:null,colour:"%{BKY_LOOPS_HUE}",tooltip:"%{BKY_CONTROLS_REPEAT_TOOLTIP}",helpUrl:"%{BKY_CONTROLS_REPEAT_HELPURL}"},{type:"controls_whileUntil",message0:"%1 %2",args0:[{type:"field_dropdown",name:"MODE",options:[["%{BKY_CONTROLS_WHILEUNTIL_OPERATOR_WHILE}","WHILE"],["%{BKY_CONTROLS_WHILEUNTIL_OPERATOR_UNTIL}","UNTIL"]]},{type:"input_value",name:"BOOL",
-check:"Boolean"}],message1:"%{BKY_CONTROLS_REPEAT_INPUT_DO} %1",args1:[{type:"input_statement",name:"DO"}],previousStatement:null,nextStatement:null,colour:"%{BKY_LOOPS_HUE}",helpUrl:"%{BKY_CONTROLS_WHILEUNTIL_HELPURL}",extensions:["controls_whileUntil_tooltip"]},{type:"controls_for",message0:"%{BKY_CONTROLS_FOR_TITLE}",args0:[{type:"field_variable",name:"VAR",variable:null},{type:"input_value",name:"FROM",check:"Number",align:"RIGHT"},{type:"input_value",name:"TO",check:"Number",align:"RIGHT"},{type:"input_value",
-name:"BY",check:"Number",align:"RIGHT"}],message1:"%{BKY_CONTROLS_REPEAT_INPUT_DO} %1",args1:[{type:"input_statement",name:"DO"}],inputsInline:!0,previousStatement:null,nextStatement:null,colour:"%{BKY_LOOPS_HUE}",helpUrl:"%{BKY_CONTROLS_FOR_HELPURL}",extensions:["contextMenu_newGetVariableBlock","controls_for_tooltip"]},{type:"controls_forEach",message0:"%{BKY_CONTROLS_FOREACH_TITLE}",args0:[{type:"field_variable",name:"VAR",variable:null},{type:"input_value",name:"LIST",check:"Array"}],message1:"%{BKY_CONTROLS_REPEAT_INPUT_DO} %1",
-args1:[{type:"input_statement",name:"DO"}],previousStatement:null,nextStatement:null,colour:"%{BKY_LOOPS_HUE}",helpUrl:"%{BKY_CONTROLS_FOREACH_HELPURL}",extensions:["contextMenu_newGetVariableBlock","controls_forEach_tooltip"]},{type:"controls_flow_statements",message0:"%1",args0:[{type:"field_dropdown",name:"FLOW",options:[["%{BKY_CONTROLS_FLOW_STATEMENTS_OPERATOR_BREAK}","BREAK"],["%{BKY_CONTROLS_FLOW_STATEMENTS_OPERATOR_CONTINUE}","CONTINUE"]]}],previousStatement:null,colour:"%{BKY_LOOPS_HUE}",
-helpUrl:"%{BKY_CONTROLS_FLOW_STATEMENTS_HELPURL}",extensions:["controls_flow_tooltip","controls_flow_in_loop_check"]}]);Blockly.Constants.Loops.WHILE_UNTIL_TOOLTIPS={WHILE:"%{BKY_CONTROLS_WHILEUNTIL_TOOLTIP_WHILE}",UNTIL:"%{BKY_CONTROLS_WHILEUNTIL_TOOLTIP_UNTIL}"};Blockly.Extensions.register("controls_whileUntil_tooltip",Blockly.Extensions.buildTooltipForDropdown("MODE",Blockly.Constants.Loops.WHILE_UNTIL_TOOLTIPS));
+Blockly.defineBlocksWithJsonArray([{type:"controls_repeat",message0:"%{BKY_CONTROLS_REPEAT_TITLE}",args0:[{type:"field_number",name:"TIMES",
+value:10,min:0,precision:1}],message1:"%{BKY_CONTROLS_REPEAT_INPUT_DO} %1",args1:[{type:"input_statement",name:"DO"}],previousStatement:null,nextStatement:null,colour:"%{BKY_LOOPS_HUE}",tooltip:"%{BKY_CONTROLS_REPEAT_TOOLTIP}",helpUrl:"%{BKY_CONTROLS_REPEAT_HELPURL}"},{"type": "controls_while",
+    "message0": "while %1",
+    "args0": [
+      {
+        "type": "input_value",
+        "name": "WHILE",
+        "check" : "Boolean"
+      }
+    ],
+    "message1": "%{BKY_CONTROLS_REPEAT_INPUT_DO} %1",
+    "args1": [{
+      "type": "input_statement",
+      "name": "DO"
+    }],
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": "%{BKY_LOOPS_HUE}",
+    "helpUrl": "%{BKY_CONTROLS_WHILEUNTIL_HELPURL}"},{type:"controls_for",message0:"for with %1 from %2 to %3 by %4",args0:[{type:"field_variable",name:"VAR",variable:null},{type:"input_value",name:"FROM",check:"Number",align:"RIGHT"},{type:"input_value",name:"TO",check:"Number",align:"RIGHT"},{type:"input_value",
+name:"BY",check:"Number",align:"RIGHT"}],message1:"%{BKY_CONTROLS_REPEAT_INPUT_DO} %1",args1:[{type:"input_statement",name:"DO"}],inputsInline:!0,previousStatement:null,nextStatement:null,colour:"%{BKY_LOOPS_HUE}",helpUrl:"%{BKY_CONTROLS_FOR_HELPURL}",extensions:["contextMenu_newGetVariableBlock","controls_for_tooltip"]}]);Blockly.Constants.Loops.WHILE_UNTIL_TOOLTIPS={WHILE:"%{BKY_CONTROLS_WHILEUNTIL_TOOLTIP_WHILE}",UNTIL:"%{BKY_CONTROLS_WHILEUNTIL_TOOLTIP_UNTIL}"};Blockly.Extensions.register("controls_whileUntil_tooltip",Blockly.Extensions.buildTooltipForDropdown("MODE",Blockly.Constants.Loops.WHILE_UNTIL_TOOLTIPS));
 Blockly.Constants.Loops.BREAK_CONTINUE_TOOLTIPS={BREAK:"%{BKY_CONTROLS_FLOW_STATEMENTS_TOOLTIP_BREAK}",CONTINUE:"%{BKY_CONTROLS_FLOW_STATEMENTS_TOOLTIP_CONTINUE}"};Blockly.Extensions.register("controls_flow_tooltip",Blockly.Extensions.buildTooltipForDropdown("FLOW",Blockly.Constants.Loops.BREAK_CONTINUE_TOOLTIPS));
 Blockly.Constants.Loops.CUSTOM_CONTEXT_MENU_CREATE_VARIABLES_GET_MIXIN={customContextMenu:function(a){var b=this.getFieldValue("VAR");if(!this.isCollapsed()&&null!=b){var c={enabled:!0};c.text=Blockly.Msg.VARIABLES_SET_CREATE_GET.replace("%1",b);b=goog.dom.createDom("field",null,b);b.setAttribute("name","VAR");b=goog.dom.createDom("block",null,b);b.setAttribute("type","variables_get");c.callback=Blockly.ContextMenu.callbackFactory(this,b);a.push(c)}}};
 Blockly.Extensions.registerMixin("contextMenu_newGetVariableBlock",Blockly.Constants.Loops.CUSTOM_CONTEXT_MENU_CREATE_VARIABLES_GET_MIXIN);Blockly.Extensions.register("controls_for_tooltip",Blockly.Extensions.buildTooltipWithFieldValue(Blockly.Msg.CONTROLS_FOR_TOOLTIP,"VAR"));Blockly.Extensions.register("controls_forEach_tooltip",Blockly.Extensions.buildTooltipWithFieldValue(Blockly.Msg.CONTROLS_FOREACH_TOOLTIP,"VAR"));
@@ -139,8 +152,7 @@ Blockly.defineBlocksWithJsonArray([{type:"logic_boolean",message0:"%1",args0:[{t
 name:"DO0"}],previousStatement:null,nextStatement:null,colour:"%{BKY_LOGIC_HUE}",helpUrl:"%{BKY_CONTROLS_IF_HELPURL}",mutator:"controls_if_mutator",extensions:["controls_if_tooltip"]},{type:"controls_ifelse",message0:"%{BKY_CONTROLS_IF_MSG_IF} %1",args0:[{type:"input_value",name:"IF0",check:"Boolean"}],message1:"%{BKY_CONTROLS_IF_MSG_THEN} %1",args1:[{type:"input_statement",name:"DO0"}],message2:"%{BKY_CONTROLS_IF_MSG_ELSE} %1",args2:[{type:"input_statement",name:"ELSE"}],previousStatement:null,nextStatement:null,
 colour:"%{BKY_LOGIC_HUE}",tooltip:"%{BKYCONTROLS_IF_TOOLTIP_2}",helpUrl:"%{BKY_CONTROLS_IF_HELPURL}",extensions:["controls_if_tooltip"]},{type:"logic_compare",message0:"%1 %2 %3",args0:[{type:"input_value",name:"A"},{type:"field_dropdown",name:"OP",options:[["=","EQ"],["\u2260","NEQ"],["<","LT"],["\u2264","LTE"],[">","GT"],["\u2265","GTE"]]},{type:"input_value",name:"B"}],inputsInline:!0,output:"Boolean",colour:"%{BKY_LOGIC_HUE}",helpUrl:"%{BKY_LOGIC_COMPARE_HELPURL}",extensions:["logic_compare",
 "logic_op_tooltip"]},{type:"logic_operation",message0:"%1 %2 %3",args0:[{type:"input_value",name:"A",check:"Boolean"},{type:"field_dropdown",name:"OP",options:[["%{BKY_LOGIC_OPERATION_AND}","AND"],["%{BKY_LOGIC_OPERATION_OR}","OR"]]},{type:"input_value",name:"B",check:"Boolean"}],inputsInline:!0,output:"Boolean",colour:"%{BKY_LOGIC_HUE}",helpUrl:"%{BKY_LOGIC_OPERATION_HELPURL}",extensions:["logic_op_tooltip"]},{type:"logic_negate",message0:"%{BKY_LOGIC_NEGATE_TITLE}",args0:[{type:"input_value",name:"BOOL",
-check:"Boolean"}],output:"Boolean",colour:"%{BKY_LOGIC_HUE}",tooltip:"%{BKY_LOGIC_NEGATE_TOOLTIP}",helpUrl:"%{BKY_LOGIC_NEGATE_HELPURL}"},{type:"logic_null",message0:"%{BKY_LOGIC_NULL}",output:null,colour:"%{BKY_LOGIC_HUE}",tooltip:"%{BKY_LOGIC_NULL_TOOLTIP}",helpUrl:"%{BKY_LOGIC_NULL_HELPURL}"},{type:"logic_ternary",message0:"%{BKY_LOGIC_TERNARY_CONDITION} %1",args0:[{type:"input_value",name:"IF",check:"Boolean"}],message1:"%{BKY_LOGIC_TERNARY_IF_TRUE} %1",args1:[{type:"input_value",name:"THEN"}],
-message2:"%{BKY_LOGIC_TERNARY_IF_FALSE} %1",args2:[{type:"input_value",name:"ELSE"}],output:null,colour:"%{BKY_LOGIC_HUE}",tooltip:"%{BKY_LOGIC_TERNARY_TOOLTIP}",helpUrl:"%{BKY_LOGIC_TERNARY_HELPURL}",extensions:["logic_ternary"]}]);
+check:"Boolean"}],output:"Boolean",colour:"%{BKY_LOGIC_HUE}",tooltip:"%{BKY_LOGIC_NEGATE_TOOLTIP}",helpUrl:"%{BKY_LOGIC_NEGATE_HELPURL}"}]);
 Blockly.defineBlocksWithJsonArray([{type:"controls_if_if",message0:"%{BKY_CONTROLS_IF_IF_TITLE_IF}",nextStatement:null,enableContextMenu:!1,colour:"%{BKY_LOGIC_HUE}",tooltip:"%{BKY_CONTROLS_IF_IF_TOOLTIP}"},{type:"controls_if_elseif",message0:"%{BKY_CONTROLS_IF_ELSEIF_TITLE_ELSEIF}",previousStatement:null,nextStatement:null,enableContextMenu:!1,colour:"%{BKY_LOGIC_HUE}",tooltip:"%{BKY_CONTROLS_IF_ELSEIF_TOOLTIP}"},{type:"controls_if_else",message0:"%{BKY_CONTROLS_IF_ELSE_TITLE_ELSE}",previousStatement:null,
 enableContextMenu:!1,colour:"%{BKY_LOGIC_HUE}",tooltip:"%{BKY_CONTROLS_IF_ELSE_TOOLTIP}"}]);Blockly.Constants.Logic.TOOLTIPS_BY_OP={EQ:"%{BKY_LOGIC_COMPARE_TOOLTIP_EQ}",NEQ:"%{BKY_LOGIC_COMPARE_TOOLTIP_NEQ}",LT:"%{BKY_LOGIC_COMPARE_TOOLTIP_LT}",LTE:"%{BKY_LOGIC_COMPARE_TOOLTIP_LTE}",GT:"%{BKY_LOGIC_COMPARE_TOOLTIP_GT}",GTE:"%{BKY_LOGIC_COMPARE_TOOLTIP_GTE}",AND:"%{BKY_LOGIC_OPERATION_TOOLTIP_AND}",OR:"%{BKY_LOGIC_OPERATION_TOOLTIP_OR}"};
 Blockly.Extensions.register("logic_op_tooltip",Blockly.Extensions.buildTooltipForDropdown("OP",Blockly.Constants.Logic.TOOLTIPS_BY_OP));
@@ -155,3 +167,2866 @@ Blockly.Constants.Logic.LOGIC_COMPARE_ONCHANGE_MIXIN={prevBlocks_:[null,null],on
 Blockly.Constants.Logic.LOGIC_COMPARE_EXTENSION=function(){this.RTL&&Blockly.Constants.Logic.fixLogicCompareRtlOpLabels.apply(this);this.mixin(Blockly.Constants.Logic.LOGIC_COMPARE_ONCHANGE_MIXIN)};Blockly.Extensions.register("logic_compare",Blockly.Constants.Logic.LOGIC_COMPARE_EXTENSION);
 Blockly.Constants.Logic.LOGIC_TERNARY_ONCHANGE_MIXIN={prevParentConnection_:null,onchange:function(a){var b=this.getInputTargetBlock("THEN"),c=this.getInputTargetBlock("ELSE"),d=this.outputConnection.targetConnection;if((b||c)&&d)for(var e=0;2>e;e++){var f=1==e?b:c;f&&!f.outputConnection.checkType_(d)&&(Blockly.Events.setGroup(a.group),d===this.prevParentConnection_?(this.unplug(),d.getSourceBlock().bumpNeighbours_()):(f.unplug(),f.bumpNeighbours_()),Blockly.Events.setGroup(!1))}this.prevParentConnection_=
 d}};Blockly.Extensions.registerMixin("logic_ternary",Blockly.Constants.Logic.LOGIC_TERNARY_ONCHANGE_MIXIN);
+
+
+
+Blockly.defineBlocksWithJsonArray([
+	{
+		  "type": "lists_setvalue",
+		  "message0": "set %1 %2 # %3 value %4",
+		  "args0": [
+		    {
+		      "type": "input_value",
+		      "name": "LIST",
+		      "check": "Array"
+		    },
+		    {
+		      "type": "input_dummy"
+		    },
+		    {
+		      "type": "input_value",
+		      "name": "NUM",
+		      "check": "Number"
+		    },
+		    {
+		      "type": "input_value",
+		      "name": "VALUE",
+		      "check": [
+		        "Number",
+		        "String"
+		      ]
+		    }
+		  ],
+		  "colour": 260,
+		  "tooltip": "",
+		  "helpUrl":  "http://www.smallbasic.com/doc.aspx?o=Array"
+		}
+,
+{
+  "type": "lists_containsindex",
+  "message0": "in list %1 contains  index %2",
+  "args0": [
+    {
+      "type": "input_value",
+      "name": "LIST",
+      "check": "Array"
+    },
+    {
+      "type": "input_value",
+      "name": "NUM",
+      "check": "Number"
+    }
+  ],
+  "inputsInline": true,
+  "output": "Boolean",
+  "colour": 260,
+  "tooltip": "",
+  "helpUrl":  "http://www.smallbasic.com/doc.aspx?o=Array"
+}
+,
+{
+	  "type": "lists_containsvalue",
+	  "message0": "in list %1 contains  value %2",
+	  "args0": [
+	    {
+	      "type": "input_value",
+	      "name": "LIST",
+	      "check": "Array"
+	    },
+	    {
+	      "type": "input_value",
+	      "name": "NUM",
+	      "check": [
+	        "Number",
+	        "String"
+	      ]
+	    }
+	  ],
+	  "inputsInline": true,
+	  "output": "Boolean",
+	  "colour": 260,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=Array"
+	}
+,
+{
+	  "type": "lists_getallindices",
+	  "message0": "in list %1 get all array lists",
+	  "args0": [
+	    {
+	      "type": "input_value",
+	      "name": "LIST",
+	      "check": "Array"
+	    }
+	  ],
+	  "inputsInline": true,
+	  "output": "Boolean",
+	  "colour": 260,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=Array"
+	}
+,
+{
+	  "type": "clock_value",
+	  "message0": "%1",
+	  "args0": [
+	    {
+	      "type": "field_dropdown",
+	      "name": "VALUE",
+	      "options": [
+	        [
+	          "time",
+	          "TIME"
+	        ],
+	        [
+	          "date",
+	          "DATE"
+	        ],
+	        [
+	          "year",
+	          "YEAR"
+	        ],
+	        [
+	          "month",
+	          "MONTH"
+	        ],
+	        [
+	          "day",
+	          "DAY"
+	        ],
+	        [
+	          "weekday",
+	          "WEEKDAY"
+	        ],
+	        [
+	          "hour",
+	          "HOUR"
+	        ],
+	        [
+	          "minute",
+	          "MINUTE"
+	        ],
+	        [
+	          "second",
+	          "SECOND"
+	        ],
+	        [
+	          "millisecond",
+	          "MILLISECOND"
+	        ]
+	      ]
+	    }
+	  ],
+	  "inputsInline": true,
+	  "output": null,
+	  "colour": 20,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=Clock"
+	}
+,
+{
+	  "type": "controls_value",
+	  "message0": "%1",
+	  "args0": [
+	    {
+	      "type": "field_dropdown",
+	      "name": "VALUE",
+	      "options": [
+	        [
+	          "lastClickedButton",
+	          "LASTCLICKED"
+	        ],
+	        [
+	          "lastTypedTextBox",
+	          "LASTTYPEDTEXTBOX"
+	        ]
+	      ]
+	    }
+	  ],
+	  "inputsInline": true,
+	  "output": null,
+	  "colour": 45,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=Controls"
+	}
+,
+{
+	  "type": "controls_events",
+	  "message0": "EVENT %1",
+	  "args0": [
+	    {
+	      "type": "field_dropdown",
+	      "name": "VALUE",
+	      "options": [
+	        [
+	          "buttonClicked",
+	          "BUTTONCLICKED"
+	        ],
+	        [
+	          "textTyped",
+	          "TEXTTYPED"
+	        ]
+	      ]
+	    }
+	  ],
+	  "inputsInline": true,
+	  "output": null,
+	  "colour": 45,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=Controls"
+	}
+,
+{
+	  "type": "desktop_value",
+	  "message0": "%1",
+	  "args0": [
+	    {
+	      "type": "field_dropdown",
+	      "name": "VALUE",
+	      "options": [
+	        [
+	          "width",
+	          "WIDTH"
+	        ],
+	        [
+	          "height",
+	          "HEIGHT"
+	        ]
+	      ]
+	    }
+	  ],
+	  "inputsInline": true,
+	  "output": null,
+	  "colour": 65,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=Desktop"
+	}
+,
+{
+	  "type": "desktop_setwallpaper",
+	  "message0": "set wallpaper %1",
+	  "args0": [
+	    {
+	      "type": "input_value",
+	      "name": "STRING",
+	      "check": "String"
+	    }
+	  ],
+	  "inputsInline": true,
+	  "previousStatement": null,
+	  "nextStatement": null,
+	  "colour": 65,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=Desktop"
+	}
+,
+{
+	  "type": "dictionary_getdefinition",
+	  "message0": "get definition %1",
+	  "args0": [
+	    {
+	      "type": "input_value",
+	      "name": "STRING",
+	      "check": "String"
+	    }
+	  ],
+	  "inputsInline": true,
+	  "output": "String",
+	  "colour": 100,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=Dictionary"
+	}
+,
+{
+	  "type": "flickr_getpictureofmoment",
+	  "message0": "get picture of moment ",
+	  "inputsInline": true,
+	  "output": "String",
+	  "colour": 195,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=Flickr"
+	}
+,
+{
+	  "type": "flickr_getrandompicture",
+	  "message0": "get random picture of %1",
+	  "args0": [
+	    {
+	      "type": "input_value",
+	      "name": "STRING",
+	      "check": "String"
+	    }
+	  ],
+	  "inputsInline": true,
+	  "output": "String",
+	  "colour": 195,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=Flickr"
+	}
+,
+{
+	  "type": "imagelist_loadimage",
+	  "message0": "load image %1",
+	  "args0": [
+	    {
+	      "type": "input_value",
+	      "name": "STRING",
+	      "check": "String"
+	    }
+	  ],
+	  "inputsInline": true,
+	  "output": "String",
+	  "colour": 290,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=ImageList"
+	}
+,
+{
+	  "type": "imagelist_getwidthofimage",
+	  "message0": "get width of image %1",
+	  "args0": [
+	    {
+	      "type": "input_value",
+	      "name": "STRING",
+	      "check": "String"
+	    }
+	  ],
+	  "inputsInline": true,
+	  "output": "Number",
+	  "colour": 290,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=ImageList"
+	}
+,
+{
+	  "type": "imagelist_getheightofimage",
+	  "message0": "get height of image %1",
+	  "args0": [
+	    {
+	      "type": "input_value",
+	      "name": "STRING",
+	      "check": "String"
+	    }
+	  ],
+	  "inputsInline": true,
+	  "output": "Number",
+	  "colour": 290,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=ImageList"
+	}
+,
+{
+	  "type": "math_getdegrees",
+	  "message0": "get degrees of %1",
+	  "args0": [
+	    {
+	      "type": "input_value",
+	      "name": "NUM",
+	      "check": "Number"
+	    }
+	  ],
+	  "inputsInline": true,
+	  "output": "Number",
+	  "colour": 230,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=Math"
+	}
+,
+{
+	  "type": "math_getradians",
+	  "message0": "get radiands of %1",
+	  "args0": [
+	    {
+	      "type": "input_value",
+	      "name": "NUM",
+	      "check": "Number"
+	    }
+	  ],
+	  "inputsInline": true,
+	  "output": "Number",
+	  "colour": 230,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=Math"
+	}
+,
+{
+	  "type": "mouse_value",
+	  "message0": "%1",
+	  "args0": [
+	    {
+	      "type": "field_dropdown",
+	      "name": "VALUE",
+	      "options": [
+	        [
+	          "MouseX",
+	          "MOUSEX"
+	        ],
+	        [
+	          "MouseY",
+	          "MOUSEY"
+	        ],
+	        [
+	          "IsLeftButtonDown",
+	          "ISLEFTBUTTONDOWN"
+	        ],
+	        [
+	          "IsRightButtonDown",
+	          "ISRIGHTBUTTONDOWN"
+	        ]
+	      ]
+	    }
+	  ],
+	  "inputsInline": true,
+	  "output": null,
+	  "colour": 330,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=Mouse"
+	}
+,
+{
+	  "type": "mouse_hidecursor",
+	  "message0": "hide cursor",
+	  "inputsInline": true,
+	  "previousStatement": null,
+	  "nextStatement": null,
+	  "colour": 330,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=Mouse"
+	}
+,
+{
+	  "type": "mouse_showcursor",
+	  "message0": "show cursor",
+	  "inputsInline": true,
+	  "previousStatement": null,
+	  "nextStatement": null,
+	  "colour": 330,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=Mouse"
+	}
+,
+{
+	  "type": "network_downloadfile",
+	  "message0": "download file %1",
+	  "args0": [
+	    {
+	      "type": "input_value",
+	      "name": "STRING",
+	      "check": "String"
+	    }
+	  ],
+	  "inputsInline": true,
+	  "output": "String",
+	  "colour": 0,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=Network"
+	}
+,
+{
+	  "type": "network_getwebpagecontents",
+	  "message0": "get web page contents of %1",
+	  "args0": [
+	    {
+	      "type": "input_value",
+	      "name": "STRING",
+	      "check": "String"
+	    }
+	  ],
+	  "inputsInline": true,
+	  "output": "String",
+	  "colour": 0,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=Network"
+	}
+,
+{
+	  "type": "program_value",
+	  "message0": "%1",
+	  "args0": [
+	    {
+	      "type": "field_dropdown",
+	      "name": "VALUE",
+	      "options": [
+	        [
+	          "ArgumentCount",
+	          "ARGUMENTCOUNT"
+	        ],
+	        [
+	          "Directory",
+	          "DIRECTORY"
+	        ]
+	      ]
+	    }
+	  ],
+	  "inputsInline": true,
+	  "output": null,
+	  "colour": 149,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=Program"
+	}
+,
+{
+	  "type": "program_delay",
+	  "message0": "delay %1",
+	  "args0": [
+	    {
+	      "type": "input_value",
+	      "name": "NUM",
+	      "check": "Number"
+	    }
+	  ],
+	  "inputsInline": true,
+	  "previousStatement": null,
+	  "nextStatement": null,
+	  "colour": 149,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=Program"
+	}
+,
+{
+	  "type": "program_end",
+	  "message0": "ends the program",
+	  "inputsInline": true,
+	  "previousStatement": null,
+	  "nextStatement": null,
+	  "colour": 149,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=Program"
+	}
+,
+{
+	  "type": "program_getargument",
+	  "message0": "get argument of %1",
+	  "args0": [
+	    {
+	      "type": "input_value",
+	      "name": "NUM",
+	      "check": "Number"
+	    }
+	  ],
+	  "inputsInline": true,
+	  "output": "String",
+	  "colour": 149,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=Program"
+	}
+,
+{
+	  "type": "sound_play",
+	  "message0": "%1",
+	  "args0": [
+	    {
+	      "type": "field_dropdown",
+	      "name": "VALUE",
+	      "options": [
+	        [
+	          "play click",
+	          "PLAYCLICK"
+	        ],
+	        [
+	          "play chime",
+	          "PLAYCHIME"
+	        ],
+	        [
+	          "play chimes",
+	          "PLAYCHIMES"
+	        ],
+	        [
+	          "play bellRing",
+	          "PLAYBELLRING"
+	        ]
+	      ]
+	    }
+	  ],
+	  "inputsInline": true,
+	  "previousStatement": null,
+	  "nextStatement": null,
+	  "colour": 275,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=Sound"
+	}
+,
+{
+	  "type": "sound_playwait",
+	  "message0": "%1 And wait",
+	  "args0": [
+	    {
+	      "type": "field_dropdown",
+	      "name": "VALUE",
+	      "options": [
+	        [
+	          "play click",
+	          "PLAYCLICK"
+	        ],
+	        [
+	          "play chime",
+	          "PLAYCHIME"
+	        ],
+	        [
+	          "play chimes",
+	          "PLAYCHIMES"
+	        ],
+	        [
+	          "play bellRing",
+	          "PLAYBELLRING"
+	        ]
+	      ]
+	    }
+	  ],
+	  "inputsInline": true,
+	  "previousStatement": null,
+	  "nextStatement": null,
+	  "colour": 275,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=Sound"
+	}
+,
+{
+	  "type": "sound_playfile",
+	  "message0": "%1 %2 %3",
+	  "args0": [
+	    {
+	      "type": "field_dropdown",
+	      "name": "VALUE",
+	      "options": [
+	        [
+	          "play of",
+	          "PLAY"
+	        ],
+	        [
+	          "play and wait of",
+	          "PLAYCHIME"
+	        ],
+	        [
+	          "pause of",
+	          "PAUSE"
+	        ],
+	        [
+	          "stop of",
+	          "STOP"
+	        ]
+	      ]
+	    },
+	    {
+	      "type": "input_dummy"
+	    },
+	    {
+	      "type": "input_value",
+	      "name": "STRING",
+	      "check": "String"
+	    }
+	  ],
+	  "inputsInline": true,
+	  "previousStatement": null,
+	  "nextStatement": null,
+	  "colour": 275,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=Sound"
+	}
+,
+{
+	  "type": "stack_pushvalue",
+	  "message0": "push %1 %2 in %3",
+	  "args0": [
+	    {
+	      "type": "input_dummy"
+	    },
+	    {
+	      "type": "input_value",
+	      "name": "STRING",
+	      "check": "String"
+	    },
+	    {
+	      "type": "input_value",
+	      "name": "VALUE",
+	      "check": [
+	        "String",
+	        "Number",
+	        "Array"
+	      ]
+	    }
+	  ],
+	  "inputsInline": true,
+	  "previousStatement": null,
+	  "nextStatement": null,
+	  "colour": 310,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=Stack"
+	}
+,
+{
+	  "type": "stack_getcount",
+	  "message0": "get count of %1 %2",
+	  "args0": [
+	    {
+	      "type": "input_dummy"
+	    },
+	    {
+	      "type": "input_value",
+	      "name": "STRING",
+	      "check": "String"
+	    }
+	  ],
+	  "inputsInline": true,
+	  "output": "Number",
+	  "colour": 310,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=Stack"
+	}
+,
+{
+	  "type": "stack_popvalue",
+	  "message0": "pop in %1 %2",
+	  "args0": [
+	    {
+	      "type": "input_dummy"
+	    },
+	    {
+	      "type": "input_value",
+	      "name": "STRING",
+	      "check": "String"
+	    }
+	  ],
+	  "inputsInline": true,
+	  "output": [
+	    "String",
+	    "Number",
+	    "Array"
+	  ],
+	  "colour": 310,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=Stack"
+	}
+,
+{
+	  "type": "timer_interval",
+	  "message0": "interval",
+	  "inputsInline": true,
+	  "output": "Number",
+	  "colour": 80,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=Timer"
+	}
+,
+{
+	  "type": "timer_tick",
+	  "message0": "Tick",
+	  "inputsInline": true,
+	  "output": null,
+	  "colour": 80,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=Timer"
+	}
+,
+{
+	  "type": "timer_pause",
+	  "message0": "pause",
+	  "inputsInline": true,
+	  "previousStatement": null,
+	  "nextStatement": null,
+	  "colour": 80,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=Timer"
+	}
+,
+{
+	  "type": "timer_resume",
+	  "message0": "resume",
+	  "inputsInline": true,
+	  "previousStatement": null,
+	  "nextStatement": null,
+	  "colour": 80,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=Timer"
+	}
+,
+{
+	  "type": "turtle_value",
+	  "message0": "%1",
+	  "args0": [
+	    {
+	      "type": "field_dropdown",
+	      "name": "VALUE",
+	      "options": [
+	        [
+	          "speed",
+	          "SPEED"
+	        ],
+	        [
+	          "angle",
+	          "ANGLE"
+	        ],
+	        [
+	          "x",
+	          "X"
+	        ],
+	        [
+	          "y",
+	          "Y"
+	        ]
+	      ]
+	    }
+	  ],
+	  "inputsInline": true,
+	  "output": null,
+	  "colour": 450,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=Turtle"
+	}
+,
+{
+	  "type": "turtle_show",
+	  "message0": "show",
+	  "inputsInline": true,
+	  "previousStatement": null,
+	  "nextStatement": null,
+	  "colour": 450,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=Turtle"
+	}
+,
+{
+	  "type": "turtle_hide",
+	  "message0": "hide",
+	  "inputsInline": true,
+	  "previousStatement": null,
+	  "nextStatement": null,
+	  "colour": 450,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=Turtle"
+	}
+,
+{
+	  "type": "turtle_pendown",
+	  "message0": "pen down",
+	  "inputsInline": true,
+	  "previousStatement": null,
+	  "nextStatement": null,
+	  "colour": 450,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=Turtle"
+	}
+,
+{
+	  "type": "turtle_penup",
+	  "message0": "pen up",
+	  "inputsInline": true,
+	  "previousStatement": null,
+	  "nextStatement": null,
+	  "colour": 450,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=Turtle"
+	}
+,
+{
+	  "type": "turtle_move",
+	  "message0": "move %1",
+	  "args0": [
+	    {
+	      "type": "input_value",
+	      "name": "NUM",
+	      "check": "Number"
+	    }
+	  ],
+	  "inputsInline": true,
+	  "previousStatement": null,
+	  "nextStatement": null,
+	  "colour": 450,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=Turtle"
+	}
+,
+{
+"type": "turtle_moveto",
+"message0": "move to ( %1 , %2 %3 )",
+"args0": [
+  {
+    "type": "input_value",
+    "name": "NUM",
+    "check": "Number"
+  },
+  {
+    "type": "input_dummy"
+  },
+  {
+    "type": "input_value",
+    "name": "NUM",
+    "check": "Number"
+  }
+],
+"inputsInline": true,
+"previousStatement": null,
+"nextStatement": null,
+"colour": 450,
+"tooltip": "",
+"helpUrl": "http://www.smallbasic.com/doc.aspx?o=Turtle"
+}
+,
+{
+	  "type": "turtle_turn",
+	  "message0": "turn %1",
+	  "args0": [
+	    {
+	      "type": "input_value",
+	      "name": "NUM",
+	      "check": "Number"
+	    }
+	  ],
+	  "inputsInline": true,
+	  "previousStatement": null,
+	  "nextStatement": null,
+	  "colour": 450,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=Turtle"
+	}
+,
+{
+	  "type": "turtle_turndirection",
+	  "message0": "turn %1",
+	  "args0": [
+	    {
+	      "type": "field_dropdown",
+	      "name": "VALUE",
+	      "options": [
+	        [
+	          "right",
+	          "RIGHT"
+	        ],
+	        [
+	          "left",
+	          "LEFT"
+	        ]
+	      ]
+	    }
+	  ],
+	  "inputsInline": true,
+	  "previousStatement": null,
+	  "nextStatement": null,
+	  "colour": 450,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=Turtle"
+	}
+,
+{
+	  "type": "text_issubtext",
+	  "message0": "in text %1 is subtext %2",
+	  "args0": [
+	    {
+	      "type": "input_value",
+	      "name": "STRING",
+	      "check": "String"
+	    },
+	    {
+	      "type": "input_value",
+	      "name": "FIND",
+	      "check": "String"
+	    }
+	  ],
+	  "inputsInline": true,
+	  "output": "Boolean",
+	  "colour": 160,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=Text"
+	}
+,
+{
+	  "type": "text_endswith",
+	  "message0": "in text %1 ends with the subtext %2",
+	  "args0": [
+	    {
+	      "type": "input_value",
+	      "name": "STRING",
+	      "check": "String"
+	    },
+	    {
+	      "type": "input_value",
+	      "name": "FIND",
+	      "check": "String"
+	    }
+	  ],
+	  "inputsInline": true,
+	  "output": "Boolean",
+	  "colour": 160,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=Text"
+	}
+,
+{
+	  "type": "text_startswith",
+	  "message0": "in text %1 starts with the subtext %2",
+	  "args0": [
+	    {
+	      "type": "input_value",
+	      "name": "STRING",
+	      "check": "String"
+	    },
+	    {
+	      "type": "input_value",
+	      "name": "FIND",
+	      "check": "String"
+	    }
+	  ],
+	  "inputsInline": true,
+	  "output": "Boolean",
+	  "colour": 160,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=Text"
+	}
+,
+{
+	  "type": "text_getsubtext",
+	  "message0": "in text %1 get subtext from %2 length %3",
+	  "args0": [
+	    {
+	      "type": "input_value",
+	      "name": "STRING",
+	      "check": "String"
+	    },
+	    {
+	      "type": "input_value",
+	      "name": "FROM",
+	      "check": "Number"
+	    },
+	    {
+	      "type": "input_value",
+	      "name": "NUM",
+	      "check": "Number"
+	    }
+	  ],
+	  "inputsInline": true,
+	  "output": "String",
+	  "colour": 160,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=Text"
+	}
+,
+{
+	  "type": "text_getsubtexttoend",
+	  "message0": "in text %1 get subtext letter # from end %2",
+	  "args0": [
+	    {
+	      "type": "input_value",
+	      "name": "STRING",
+	      "check": "String"
+	    },
+	    {
+	      "type": "input_value",
+	      "name": "FROM",
+	      "check": "Number"
+	    }
+	  ],
+	  "inputsInline": true,
+	  "output": "String",
+	  "colour": 160,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=Text"
+	}
+,
+{
+	  "type": "text_getcharacter",
+	  "message0": "get character of %1",
+	  "args0": [
+	    {
+	      "type": "input_value",
+	      "name": "NUM",
+	      "check": "Number"
+	    }
+	  ],
+	  "inputsInline": true,
+	  "output": [
+		    "Number",
+		    "String"
+		  ],
+	  "colour": 160,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=Text"
+	}
+,
+{
+	  "type": "text_getcharactercode",
+	  "message0": "get character code of %1",
+	  "args0": [
+	    {
+	      "type": "input_value",
+	      "name": "VALUE",
+	      "check": [
+	        "Number",
+	        "String"
+	      ]
+	    }
+	  ],
+	  "inputsInline": true,
+	  "output": "Number",
+	  "colour": 160,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=Text"
+	}
+,
+{
+	  "type": "textwindow_println",
+	  "message0": "println %1",
+	  "args0": [
+	    {
+	      "type": "input_value",
+	      "name": "TEXT"
+	    }
+	  ],
+	  "inputsInline": false,
+	  "previousStatement": null,
+	  "nextStatement": null,
+	  "colour": 35,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=TextWindow"
+	}
+,
+{
+	  "type": "textwindow_value",
+	  "message0": "%1",
+	  "args0": [
+	    {
+	      "type": "field_dropdown",
+	      "name": "VALUE",
+	      "options": [
+	        [
+	          "ForegroundColor",
+	          "FOREGROUNDCOLOR"
+	        ],
+	        [
+	          "BackgroundColor",
+	          "BACKGROUNDCOLOR"
+	        ],
+	        [
+	          "CursorLeft",
+	          "CURSORLEFT"
+	        ],
+	        [
+	          "CursorTop",
+	          "CURSORTOP"
+	        ],
+	        [
+	          "Left",
+	          "LEFT"
+	        ],
+	        [
+	          "Title",
+	          "TITLE"
+	        ],
+	        [
+	          "Top",
+	          "TOP"
+	        ]
+	      ]
+	    }
+	  ],
+	  "inputsInline": false,
+	  "output": null,
+	  "colour": 35,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=TextWindow"
+	}
+,
+{
+	  "type": "textwindow_show",
+	  "message0": "show",
+	  "inputsInline": false,
+	  "previousStatement": null,
+	  "nextStatement": null,
+	  "colour": 35,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=TextWindow"
+	}
+,
+{
+	  "type": "textwindow_hide",
+	  "message0": "hide",
+	  "inputsInline": false,
+	  "previousStatement": null,
+	  "nextStatement": null,
+	  "colour": 35,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=TextWindow"
+	}
+,
+{
+	  "type": "textwindow_clear",
+	  "message0": "clear",
+	  "inputsInline": false,
+	  "previousStatement": null,
+	  "nextStatement": null,
+	  "colour": 35,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=TextWindow"
+	}
+,
+{
+	  "type": "textwindow_pause",
+	  "message0": "pause",
+	  "inputsInline": false,
+	  "previousStatement": null,
+	  "nextStatement": null,
+	  "colour": 35,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=TextWindow"
+	}
+,
+{
+	  "type": "textwindow_pauseifvisible",
+	  "message0": "pause if visible",
+	  "inputsInline": false,
+	  "previousStatement": null,
+	  "nextStatement": null,
+	  "colour": 35,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=TextWindow"
+	}
+,
+{
+	  "type": "textwindow_pausewithoutmessage",
+	  "message0": "pause without message",
+	  "inputsInline": false,
+	  "previousStatement": null,
+	  "nextStatement": null,
+	  "colour": 35,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=TextWindow"
+	}
+,
+{
+	  "type": "textwindow_read",
+	  "message0": "read",
+	  "inputsInline": false,
+	  "output": null,
+	  "colour": 35,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=TextWindow"
+	}
+,
+{
+	  "type": "textwindow_readkey",
+	  "message0": "read single character",
+	  "inputsInline": false,
+	  "output": null,
+	  "colour": 35,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=TextWindow"
+	}
+,
+{
+	  "type": "textwindow_readnumber",
+	  "message0": "read number",
+	  "inputsInline": false,
+	  "output": null,
+	  "colour": 35,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=TextWindow"
+	}
+,
+{
+"type": "shapes_addrectangle",
+"message0": "add rectangle width # %1 height # %2",
+"args0": [
+  {
+    "type": "input_value",
+    "name": "WIDTH",
+    "check": "Number"
+  },
+  {
+    "type": "input_value",
+    "name": "HEIGHT"
+  }
+],
+"inputsInline": true,
+"output": null,
+"colour": 210,
+"tooltip": "",
+"helpUrl": "http://www.smallbasic.com/doc.aspx?o=Shapes"
+}
+,
+{
+	  "type": "shapes_addellipse",
+	  "message0": "add ellipse width # %1 height # %2",
+	  "args0": [
+	    {
+	      "type": "input_value",
+	      "name": "WIDTH",
+	      "check": "Number"
+	    },
+	    {
+	      "type": "input_value",
+	      "name": "HEIGHT",
+	      "check": "Number"
+	    }
+	  ],
+	  "inputsInline": true,
+	  "output": null,
+	  "colour": 210,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=Shapes"
+	}
+,
+{
+	  "type": "shapes_addtriangle",
+	  "message0": "add triangle ( %1 , %2 ) ( %3 , %4 ) ( %5 , %6 )",
+	  "args0": [
+	    {
+	      "type": "input_value",
+	      "name": "X1",
+	      "check": "Number"
+	    },
+	    {
+	      "type": "input_value",
+	      "name": "Y1",
+	      "check": "Number"
+	    },
+	    {
+	      "type": "input_value",
+	      "name": "X2",
+	      "check": "Number"
+	    },
+	    {
+	      "type": "input_value",
+	      "name": "Y2",
+	      "check": "Number"
+	    },
+	    {
+	      "type": "input_value",
+	      "name": "X3",
+	      "check": "Number"
+	    },
+	    {
+	      "type": "input_value",
+	      "name": "Y3",
+	      "check": "Number"
+	    }
+	  ],
+	  "inputsInline": true,
+	  "output": null,
+	  "colour": 210,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=Shapes"
+	}
+,
+{
+	  "type": "shapes_addline",
+	  "message0": "add line ( %1 , %2 ) ( %3 , %4 )",
+	  "args0": [
+	    {
+	      "type": "input_value",
+	      "name": "X1",
+	      "check": "Number"
+	    },
+	    {
+	      "type": "input_value",
+	      "name": "Y1",
+	      "check": "Number"
+	    },
+	    {
+	      "type": "input_value",
+	      "name": "X2",
+	      "check": "Number"
+	    },
+	    {
+	      "type": "input_value",
+	      "name": "Y2",
+	      "check": "Number"
+	    }
+	  ],
+	  "inputsInline": true,
+	  "output": null,
+	  "colour": 210,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=Shapes"
+	}
+,
+{
+	  "type": "shapes_addimage",
+	  "message0": "add image %1",
+	  "args0": [
+	    {
+	      "type": "input_value",
+	      "name": "STRING",
+	      "check": "String"
+	    }
+	  ],
+	  "inputsInline": true,
+	  "output": null,
+	  "colour": 210,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=Shapes"
+	}
+,
+{
+	  "type": "shapes_addtext",
+	  "message0": "add text %1",
+	  "args0": [
+	    {
+	      "type": "input_value",
+	      "name": "STRING",
+	      "check": "String"
+	    }
+	  ],
+	  "inputsInline": true,
+	  "output": null,
+	  "colour": 210,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=Shapes"
+	}
+,
+{
+	  "type": "shapes_settext",
+	  "message0": "set text of shapes %1 text %2",
+	  "args0": [
+	    {
+	      "type": "input_value",
+	      "name": "STRING",
+	      "check": "String"
+	    },
+	    {
+	      "type": "input_value",
+	      "name": "STRING",
+	      "check": "Number"
+	    }
+	  ],
+	  "inputsInline": true,
+	  "previousStatement": null,
+	  "nextStatement": null,
+	  "colour": 210,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=Shapes"
+	}
+,
+{
+	  "type": "shapes_remove",
+	  "message0": "remove shape %1",
+	  "args0": [
+	    {
+	      "type": "input_value",
+	      "name": "STRING",
+	      "check": "String"
+	    }
+	  ],
+	  "inputsInline": true,
+	  "previousStatement": null,
+	  "nextStatement": null,
+	  "colour": 210,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=Shapes"
+	}
+,
+{
+	  "type": "shapes_move",
+	  "message0": "moves the shape %1 to ( %2 , %3 )",
+	  "args0": [
+	    {
+	      "type": "input_value",
+	      "name": "STRING",
+	      "check": "String"
+	    },
+	    {
+	      "type": "input_value",
+	      "name": "X",
+	      "check": "Number"
+	    },
+	    {
+	      "type": "input_value",
+	      "name": "Y",
+	      "check": "Number"
+	    }
+	  ],
+	  "inputsInline": true,
+	  "previousStatement": null,
+	  "nextStatement": null,
+	  "colour": 210,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=Shapes"
+	}
+,
+{
+	  "type": "shapes_rotate",
+	  "message0": "rotates the shape %1 to %2",
+	  "args0": [
+	    {
+	      "type": "input_value",
+	      "name": "STRING",
+	      "check": "String"
+	    },
+	    {
+	      "type": "input_value",
+	      "name": "ANGLE",
+	      "check": "Number"
+	    }
+	  ],
+	  "inputsInline": true,
+	  "previousStatement": null,
+	  "nextStatement": null,
+	  "colour": 210,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=Shapes"
+	}
+,
+{
+	  "type": "shapes_zoom",
+	  "message0": "scales the shape %1 (scaleX # %2 , scaleY # %3 )",
+	  "args0": [
+	    {
+	      "type": "input_value",
+	      "name": "STRING",
+	      "check": "String"
+	    },
+	    {
+	      "type": "input_value",
+	      "name": "NUM",
+	      "check": "Number"
+	    },
+	    {
+	      "type": "input_value",
+	      "name": "NUM",
+	      "check": "Number"
+	    }
+	  ],
+	  "inputsInline": true,
+	  "previousStatement": null,
+	  "nextStatement": null,
+	  "colour": 210,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=Shapes"
+	}
+,
+{
+	  "type": "shapes_animate",
+	  "message0": "animates a shape %1 to ( %2 , %3 ) duration %4",
+	  "args0": [
+	    {
+	      "type": "input_value",
+	      "name": "STRING",
+	      "check": "String"
+	    },
+	    {
+	      "type": "input_value",
+	      "name": "NUM",
+	      "check": "Number"
+	    },
+	    {
+	      "type": "input_value",
+	      "name": "NUM",
+	      "check": "Number"
+	    },
+	    {
+	      "type": "input_value",
+	      "name": "Y",
+	      "check": "Number"
+	    }
+	  ],
+	  "inputsInline": true,
+	  "previousStatement": null,
+	  "nextStatement": null,
+	  "colour": 210,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=Shapes"
+	}
+,
+{
+	  "type": "shapes_getleft",
+	  "message0": "get left of %1",
+	  "args0": [
+	    {
+	      "type": "input_value",
+	      "name": "STRING",
+	      "check": "String"
+	    }
+	  ],
+	  "inputsInline": true,
+	  "output": "Number",
+	  "colour": 210,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=Shapes"
+	}
+,
+{
+	  "type": "shapes_gettop",
+	  "message0": "get top of %1",
+	  "args0": [
+	    {
+	      "type": "input_value",
+	      "name": "STRING",
+	      "check": "String"
+	    }
+	  ],
+	  "inputsInline": true,
+	  "output": "Number",
+	  "colour": 210,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=Shapes"
+	}
+,
+{
+	  "type": "shapes_getopacity",
+	  "message0": "get opacity of %1",
+	  "args0": [
+	    {
+	      "type": "input_value",
+	      "name": "STRING",
+	      "check": "String"
+	    }
+	  ],
+	  "inputsInline": true,
+	  "output": "Number",
+	  "colour": 210,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=Shapes"
+	}
+,
+{
+	  "type": "shapes_setopacity",
+	  "message0": "set opacity of %1 level # %2",
+	  "args0": [
+	    {
+	      "type": "input_value",
+	      "name": "STRING",
+	      "check": "String"
+	    },
+	    {
+	      "type": "input_value",
+	      "name": "NUM",
+	      "check": "Number"
+	    }
+	  ],
+	  "inputsInline": true,
+	  "previousStatement": null,
+	  "nextStatement": null,
+	  "colour": 210,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=Shapes"
+	}
+,
+{
+	  "type": "shapes_hideshape",
+	  "message0": "hide shape of %1",
+	  "args0": [
+	    {
+	      "type": "input_value",
+	      "name": "STRING",
+	      "check": "String"
+	    }
+	  ],
+	  "inputsInline": true,
+	  "previousStatement": null,
+	  "nextStatement": null,
+	  "colour": 210,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=Shapes"
+	}
+,
+{
+	  "type": "shapes_showshape",
+	  "message0": "show shape of %1",
+	  "args0": [
+	    {
+	      "type": "input_value",
+	      "name": "STRING",
+	      "check": "String"
+	    }
+	  ],
+	  "inputsInline": true,
+	  "previousStatement": null,
+	  "nextStatement": null,
+	  "colour": 210,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=Shapes"
+	}
+,
+{
+	  "type": "graphicswindow_value",
+	  "message0": "%1 ",
+	  "args0": [
+	    {
+	      "type": "field_dropdown",
+	      "name": "VALUE",
+	      "options": [
+	        [
+	          "BackgroundColor",
+	          "BACKGROUNDCOLOR"
+	        ],
+	        [
+	          "BrushColor",
+	          "BRUSHCOLOR"
+	        ],
+	        [
+	          "CanResize",
+	          "CANRESIZE"
+	        ],
+	        [
+	          "PenWidth",
+	          "PENWIDTH"
+	        ],
+	        [
+	          "PenColor",
+	          "PENCOLOR"
+	        ],
+	        [
+	          "FontName",
+	          "FONTNAME"
+	        ],
+	        [
+	          "FontSize",
+	          "FONTSIZE"
+	        ],
+	        [
+	          "FontBold",
+	          "FONTBOLD"
+	        ],
+	        [
+	          "FontItalic",
+	          "FONTITALIC"
+	        ],
+	        [
+	          "Title",
+	          "TITLE"
+	        ],
+	        [
+	          "Height",
+	          "HEIGHT"
+	        ],
+	        [
+	          "Width",
+	          "WIDTH"
+	        ],
+	        [
+	          "Left",
+	          "LEFT"
+	        ],
+	        [
+	          "Top",
+	          "TOP"
+	        ],
+	        [
+	          "LastKey ",
+	          "LASTKEY"
+	        ],
+	        [
+	          "LastText ",
+	          "LASTTEXT"
+	        ],
+	        [
+	          "MouseX ",
+	          "MOUSEX"
+	        ],
+	        [
+	          "MouseY",
+	          "MOUSEY"
+	        ]
+	      ]
+	    }
+	  ],
+	  "inputsInline": true,
+	  "output": null,
+	  "colour": 180,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=GraphicsWindow"
+	}
+,
+{
+	  "type": "graphicswindow_events",
+	  "message0": "EVENT  %1",
+	  "args0": [
+	    {
+	      "type": "field_dropdown",
+	      "name": "VALUE",
+	      "options": [
+	        [
+	          "KeyDown",
+	          "KEYDOWN"
+	        ],
+	        [
+	          "KeyUp",
+	          "KEYUP"
+	        ],
+	        [
+	          "MouseDown",
+	          "MOUSEDOWN"
+	        ],
+	        [
+	          "MouseUp",
+	          "MOUSEUP"
+	        ],
+	        [
+	          "MouseMove",
+	          "MOUSEMOVE"
+	        ],
+	        [
+	          "TextInput",
+	          "TEXTINPUT"
+	        ]
+	      ]
+	    }
+	  ],
+	  "inputsInline": true,
+	  "output": null,
+	  "colour": 180,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=GraphicsWindow"
+	}
+,
+{
+	  "type": "graphicswindow_show",
+	  "message0": "show",
+	  "inputsInline": true,
+	  "previousStatement": null,
+	  "nextStatement": null,
+	  "colour": 180,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=GraphicsWindow"
+	}
+,
+{
+	  "type": "graphicswindow_hide",
+	  "message0": "hide",
+	  "inputsInline": true,
+	  "previousStatement": null,
+	  "nextStatement": null,
+	  "colour": 180,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=GraphicsWindow"
+	}
+,
+{
+	  "type": "graphicswindow_drawrectangle",
+	  "message0": "draw rectangle at ( %1 , %2 ) width # %3 height # %4",
+	  "args0": [
+	    {
+	      "type": "input_value",
+	      "name": "X",
+	      "check": "Number"
+	    },
+	    {
+	      "type": "input_value",
+	      "name": "Y",
+	      "check": "Number"
+	    },
+	    {
+	      "type": "input_value",
+	      "name": "WIDTH",
+	      "check": "Number"
+	    },
+	    {
+	      "type": "input_value",
+	      "name": "HEIGHT",
+	      "check": "Number"
+	    }
+	  ],
+	  "inputsInline": true,
+	  "previousStatement": null,
+	  "nextStatement": null,
+	  "colour": 180,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=GraphicsWindow"
+	}
+,
+{
+	  "type": "graphicswindow_fillrectangle",
+	  "message0": "fill rectangle at ( %1 , %2 ) width # %3 height # %4",
+	  "args0": [
+	    {
+	      "type": "input_value",
+	      "name": "X",
+	      "check": "Number"
+	    },
+	    {
+	      "type": "input_value",
+	      "name": "Y",
+	      "check": "Number"
+	    },
+	    {
+	      "type": "input_value",
+	      "name": "WIDTH",
+	      "check": "Number"
+	    },
+	    {
+	      "type": "input_value",
+	      "name": "HEIGHT",
+	      "check": "Number"
+	    }
+	  ],
+	  "inputsInline": true,
+	  "previousStatement": null,
+	  "nextStatement": null,
+	  "colour": 180,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=GraphicsWindow"
+	}
+,
+{
+	  "type": "graphicswindow_drawellipse",
+	  "message0": "draw ellipse at ( %1 , %2 ) width # %3 height # %4",
+	  "args0": [
+	    {
+	      "type": "input_value",
+	      "name": "X",
+	      "check": "Number"
+	    },
+	    {
+	      "type": "input_value",
+	      "name": "Y",
+	      "check": "Number"
+	    },
+	    {
+	      "type": "input_value",
+	      "name": "WIDTH",
+	      "check": "Number"
+	    },
+	    {
+	      "type": "input_value",
+	      "name": "HEIGHT",
+	      "check": "Number"
+	    }
+	  ],
+	  "inputsInline": true,
+	  "previousStatement": null,
+	  "nextStatement": null,
+	  "colour": 180,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=GraphicsWindow"
+	}
+,
+{
+	  "type": "graphicswindow_fillellipse",
+	  "message0": "fill ellipse at ( %1 , %2 ) width # %3 height # %4",
+	  "args0": [
+	    {
+	      "type": "input_value",
+	      "name": "X",
+	      "check": "Number"
+	    },
+	    {
+	      "type": "input_value",
+	      "name": "Y",
+	      "check": "Number"
+	    },
+	    {
+	      "type": "input_value",
+	      "name": "WIDTH",
+	      "check": "Number"
+	    },
+	    {
+	      "type": "input_value",
+	      "name": "HEIGHT",
+	      "check": "Number"
+	    }
+	  ],
+	  "inputsInline": true,
+	  "previousStatement": null,
+	  "nextStatement": null,
+	  "colour": 180,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=GraphicsWindow"
+	}
+,
+{
+	  "type": "graphicswindow_drawtriangle",
+	  "message0": "draw triangle  ( %1 , %2 ) ( %3 , %4 ) ( %5 , %6 )",
+	  "args0": [
+	    {
+	      "type": "input_value",
+	      "name": "X1",
+	      "check": "Number"
+	    },
+	    {
+	      "type": "input_value",
+	      "name": "Y1",
+	      "check": "Number"
+	    },
+	    {
+	      "type": "input_value",
+	      "name": "X2",
+	      "check": "Number"
+	    },
+	    {
+	      "type": "input_value",
+	      "name": "Y2",
+	      "check": "Number"
+	    },
+	    {
+	      "type": "input_value",
+	      "name": "X3",
+	      "check": "Number"
+	    },
+	    {
+	      "type": "input_value",
+	      "name": "Y3",
+	      "check": "Number"
+	    }
+	  ],
+	  "inputsInline": true,
+	  "previousStatement": null,
+	  "nextStatement": null,
+	  "colour": 180,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=GraphicsWindow"
+	}
+,
+{
+	  "type": "graphicswindow_filltriangle",
+	  "message0": "fill triangle  ( %1 , %2 ) ( %3 , %4 ) ( %5 , %6 )",
+	  "args0": [
+	    {
+	      "type": "input_value",
+	      "name": "X1",
+	      "check": "Number"
+	    },
+	    {
+	      "type": "input_value",
+	      "name": "Y1",
+	      "check": "Number"
+	    },
+	    {
+	      "type": "input_value",
+	      "name": "X2",
+	      "check": "Number"
+	    },
+	    {
+	      "type": "input_value",
+	      "name": "Y2",
+	      "check": "Number"
+	    },
+	    {
+	      "type": "input_value",
+	      "name": "X3",
+	      "check": "Number"
+	    },
+	    {
+	      "type": "input_value",
+	      "name": "Y3",
+	      "check": "Number"
+	    }
+	  ],
+	  "inputsInline": true,
+	  "previousStatement": null,
+	  "nextStatement": null,
+	  "colour": 180,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=GraphicsWindow"
+	}
+,
+{
+	  "type": "graphicswindow_drawline",
+	  "message0": "draw line ( %1 , %2 ) ( %3 , %4 )",
+	  "args0": [
+	    {
+	      "type": "input_value",
+	      "name": "X1",
+	      "check": "Number"
+	    },
+	    {
+	      "type": "input_value",
+	      "name": "Y1",
+	      "check": "Number"
+	    },
+	    {
+	      "type": "input_value",
+	      "name": "X2",
+	      "check": "Number"
+	    },
+	    {
+	      "type": "input_value",
+	      "name": "Y2",
+	      "check": "Number"
+	    }
+	  ],
+	  "inputsInline": true,
+	  "previousStatement": null,
+	  "nextStatement": null,
+	  "colour": 180,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=GraphicsWindow"
+	}
+,
+{
+	  "type": "graphicswindow_drawtext",
+	  "message0": "draw text at ( %1 , %2 ) text %3",
+	  "args0": [
+	    {
+	      "type": "input_value",
+	      "name": "X",
+	      "check": "Number"
+	    },
+	    {
+	      "type": "input_value",
+	      "name": "Y",
+	      "check": "Number"
+	    },
+	    {
+	      "type": "input_value",
+	      "name": "STRING",
+	      "check": "String"
+	    }
+	  ],
+	  "inputsInline": true,
+	  "previousStatement": null,
+	  "nextStatement": null,
+	  "colour": 180,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=GraphicsWindow"
+	}
+,
+{
+	  "type": "graphicswindow_drawboundtext",
+	  "message0": "draw boundtext at ( %1 , %2 ) width # %3 text %4",
+	  "args0": [
+	    {
+	      "type": "input_value",
+	      "name": "X",
+	      "check": "Number"
+	    },
+	    {
+	      "type": "input_value",
+	      "name": "Y",
+	      "check": "Number"
+	    },
+	    {
+	      "type": "input_value",
+	      "name": "WIDTH",
+	      "check": "Number"
+	    },
+	    {
+	      "type": "input_value",
+	      "name": "STRING",
+	      "check": "String"
+	    }
+	  ],
+	  "inputsInline": true,
+	  "previousStatement": null,
+	  "nextStatement": null,
+	  "colour": 180,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=GraphicsWindow"
+	}
+,
+{
+	  "type": "graphicswindow_drawresizedimage",
+	  "message0": "draw resized image of %1 at ( %2 , %3 ) width # %4 height # %5",
+	  "args0": [
+	    {
+	      "type": "input_value",
+	      "name": "STRING",
+	      "check": "String"
+	    },
+	    {
+	      "type": "input_value",
+	      "name": "X",
+	      "check": "Number"
+	    },
+	    {
+	      "type": "input_value",
+	      "name": "Y",
+	      "check": "Number"
+	    },
+	    {
+	      "type": "input_value",
+	      "name": "WIDTH",
+	      "check": "Number"
+	    },
+	    {
+	      "type": "input_value",
+	      "name": "HEIGHT",
+	      "check": "Number"
+	    }
+	  ],
+	  "inputsInline": true,
+	  "previousStatement": null,
+	  "nextStatement": null,
+	  "colour": 180,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=GraphicsWindow"
+	}
+,
+{
+	  "type": "graphicswindow_drawimage",
+	  "message0": "draw image of %1 at ( %2 , %3 )",
+	  "args0": [
+	    {
+	      "type": "input_value",
+	      "name": "STRING",
+	      "check": "String"
+	    },
+	    {
+	      "type": "input_value",
+	      "name": "X",
+	      "check": "Number"
+	    },
+	    {
+	      "type": "input_value",
+	      "name": "Y",
+	      "check": "Number"
+	    }
+	  ],
+	  "inputsInline": true,
+	  "previousStatement": null,
+	  "nextStatement": null,
+	  "colour": 180,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=GraphicsWindow"
+	}
+,
+{
+	  "type": "graphicswindow_setpixel",
+	  "message0": "set pixel by ( %1 , %2 ) color pixel # %3",
+	  "args0": [
+	    {
+	      "type": "input_value",
+	      "name": "X",
+	      "check": "Number"
+	    },
+	    {
+	      "type": "input_value",
+	      "name": "Y",
+	      "check": "Number"
+	    },
+	    {
+	      "type": "input_value",
+	      "name": "COLOR",
+	      "check": "Number"
+	    }
+	  ],
+	  "inputsInline": true,
+	  "previousStatement": null,
+	  "nextStatement": null,
+	  "colour": 180,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=GraphicsWindow"
+	}
+,
+{
+	  "type": "graphicswindow_getpixel",
+	  "message0": "get pixel at ( %1 , %2 )",
+	  "args0": [
+	    {
+	      "type": "input_value",
+	      "name": "X",
+	      "check": "Number"
+	    },
+	    {
+	      "type": "input_value",
+	      "name": "Y",
+	      "check": "Number"
+	    }
+	  ],
+	  "inputsInline": true,
+	  "output": [
+	    "Number",
+	    "String"
+	  ],
+	  "colour": 180,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=GraphicsWindow"
+	}
+,
+{
+	  "type": "graphicswindow_getrandomcolor",
+	  "message0": "get random color",
+	  "inputsInline": true,
+	  "output": [
+	    "Number",
+	    "String"
+	  ],
+	  "colour": 180,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=GraphicsWindow"
+	}
+,
+{
+	  "type": "graphicswindow_getcolorfromrgb",
+	  "message0": "get color from ( R # %1 , G # %2 , B # %3 )",
+	  "args0": [
+	    {
+	      "type": "input_value",
+	      "name": "RED",
+	      "check": "Number"
+	    },
+	    {
+	      "type": "input_value",
+	      "name": "GREEN",
+	      "check": "Number"
+	    },
+	    {
+	      "type": "input_value",
+	      "name": "BLUE",
+	      "check": "Number"
+	    }
+	  ],
+	  "inputsInline": true,
+	  "previousStatement": null,
+	  "nextStatement": null,
+	  "colour": 180,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=GraphicsWindow"
+	}
+,
+{
+	  "type": "graphicswindow_clear",
+	  "message0": "clear",
+	  "inputsInline": true,
+	  "previousStatement": null,
+	  "nextStatement": null,
+	  "colour": 180,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=GraphicsWindow"
+	}
+,
+{
+	  "type": "graphicswindow_showmessage",
+	  "message0": "show message of %1 title :  %2",
+	  "args0": [
+	    {
+	      "type": "input_value",
+	      "name": "TEXT",
+	      "check": "String"
+	    },
+	    {
+	      "type": "input_value",
+	      "name": "TITLE",
+	      "check": "String"
+	    }
+	  ],
+	  "inputsInline": true,
+	  "previousStatement": null,
+	  "nextStatement": null,
+	  "colour": 180,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=GraphicsWindow"
+	}
+,
+{
+	  "type": "file_lasterror",
+	  "message0": "LastError",
+	  "inputsInline": true,
+	  "output": null,
+	  "colour": 120,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=File"
+	}
+,
+{
+	  "type": "file_readcontents",
+	  "message0": "read contents of %1",
+	  "args0": [
+	    {
+	      "type": "input_value",
+	      "name": "STRING",
+	      "check": "String"
+	    }
+	  ],
+	  "inputsInline": true,
+	  "output": "String",
+	  "colour": 120,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=File"
+	}
+,
+{
+	  "type": "file_writecontents",
+	  "message0": "write contents into %1 to %2 contents",
+	  "args0": [
+	    {
+	      "type": "input_value",
+	      "name": "PATH",
+	      "check": "String"
+	    },
+	    {
+	      "type": "input_value",
+	      "name": "STRING",
+	      "check": "String"
+	    }
+	  ],
+	  "inputsInline": true,
+	  "output": "String",
+	  "colour": 120,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=File"
+	}
+,
+{
+	  "type": "file_readline",
+	  "message0": "read line of %1 line # %2",
+	  "args0": [
+	    {
+	      "type": "input_value",
+	      "name": "PATH",
+	      "check": "String"
+	    },
+	    {
+	      "type": "input_value",
+	      "name": "STRING",
+	      "check": "Number"
+	    }
+	  ],
+	  "inputsInline": true,
+	  "output": "String",
+	  "colour": 120,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=File"
+	}
+,
+{
+	  "type": "file_writeline",
+	  "message0": "write into %1 at line number %2 to %3 contents",
+	  "args0": [
+	    {
+	      "type": "input_value",
+	      "name": "PATH",
+	      "check": "String"
+	    },
+	    {
+	      "type": "input_value",
+	      "name": "LINENUMBER",
+	      "check": "Number"
+	    },
+	    {
+	      "type": "input_value",
+	      "name": "CONTENTS",
+	      "check": "String"
+	    }
+	  ],
+	  "inputsInline": true,
+	  "output": "String",
+	  "colour": 120,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=File"
+	}
+,
+{
+	  "type": "file_insertline",
+	  "message0": "insert into %1 at line number %2 to %3 contents",
+	  "args0": [
+	    {
+	      "type": "input_value",
+	      "name": "PATH",
+	      "check": "String"
+	    },
+	    {
+	      "type": "input_value",
+	      "name": "LINENUMBER",
+	      "check": "Number"
+	    },
+	    {
+	      "type": "input_value",
+	      "name": "CONTENTS",
+	      "check": "String"
+	    }
+	  ],
+	  "inputsInline": true,
+	  "output": "String",
+	  "colour": 120,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=File"
+	}
+,
+{
+	  "type": "file_appendcontents",
+	  "message0": "append into %1 to %2 contents",
+	  "args0": [
+	    {
+	      "type": "input_value",
+	      "name": "PATH",
+	      "check": "String"
+	    },
+	    {
+	      "type": "input_value",
+	      "name": "CONTENTS",
+	      "check": "String"
+	    }
+	  ],
+	  "inputsInline": true,
+	  "output": "String",
+	  "colour": 120,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=File"
+	}
+,
+{
+	  "type": "file_copyfile",
+	  "message0": "copy file of %1 to %2 file",
+	  "args0": [
+	    {
+	      "type": "input_value",
+	      "name": "PATH1",
+	      "check": "String"
+	    },
+	    {
+	      "type": "input_value",
+	      "name": "PATH2",
+	      "check": "String"
+	    }
+	  ],
+	  "inputsInline": true,
+	  "output": "String",
+	  "colour": 120,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=File"
+	}
+,
+{
+	  "type": "file_deletefile",
+	  "message0": "delete file of %1",
+	  "args0": [
+	    {
+	      "type": "input_value",
+	      "name": "PATH",
+	      "check": "String"
+	    }
+	  ],
+	  "inputsInline": true,
+	  "output": "String",
+	  "colour": 120,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=File"
+	}
+,
+{
+	  "type": "file_createdirectory",
+	  "message0": "create directroy at %1",
+	  "args0": [
+	    {
+	      "type": "input_value",
+	      "name": "PATH",
+	      "check": "String"
+	    }
+	  ],
+	  "inputsInline": true,
+	  "output": "String",
+	  "colour": 120,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=File"
+	}
+,
+{
+	  "type": "file_deletedirectory",
+	  "message0": "delete directroy of %1",
+	  "args0": [
+	    {
+	      "type": "input_value",
+	      "name": "PATH",
+	      "check": "String"
+	    }
+	  ],
+	  "inputsInline": true,
+	  "output": "String",
+	  "colour": 120,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=File"
+	}
+,
+{
+	  "type": "file_getfiles",
+	  "message0": "get files of %1",
+	  "args0": [
+	    {
+	      "type": "input_value",
+	      "name": "PATH",
+	      "check": "String"
+	    }
+	  ],
+	  "inputsInline": true,
+	  "output": "String",
+	  "colour": 120,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=File"
+	}
+,
+{
+	  "type": "file_getdirectories",
+	  "message0": "get directories of %1",
+	  "args0": [
+	    {
+	      "type": "input_value",
+	      "name": "PATH",
+	      "check": "String"
+	    }
+	  ],
+	  "inputsInline": true,
+	  "output": "String",
+	  "colour": 120,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=File"
+	}
+,
+{
+	  "type": "file_gettemporaryfilepath",
+	  "message0": "get temporary file path",
+	  "inputsInline": true,
+	  "output": "String",
+	  "colour": 120,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=File"
+	}
+,
+{
+	  "type": "file_getsettingfilepath",
+	  "message0": "get setting file path",
+	  "inputsInline": true,
+	  "output": "String",
+	  "colour": 120,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=File"
+	}
+,
+{
+	  "type": "controls_addbutton",
+	  "message0": "add button of %1 at ( %2 , %3 )",
+	  "args0": [
+	    {
+	      "type": "input_value",
+	      "name": "CAPTION",
+	      "check": "String"
+	    },
+	    {
+	      "type": "input_value",
+	      "name": "LEFT",
+	      "check": "Number"
+	    },
+	    {
+	      "type": "input_value",
+	      "name": "TOP",
+	      "check": "Number"
+	    }
+	  ],
+	  "inputsInline": true,
+	  "output": "String",
+	  "colour": 45,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=Controls"
+	}
+,
+{
+	  "type": "controls_getbuttoncaption",
+	  "message0": "get button caption of %1",
+	  "args0": [
+	    {
+	      "type": "input_value",
+	      "name": "STRING",
+	      "check": "String"
+	    }
+	  ],
+	  "inputsInline": true,
+	  "output": "String",
+	  "colour": 45,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=Controls"
+	}
+,
+{
+	  "type": "controls_setbuttoncaption",
+	  "message0": "set button of %1 to %2 caption",
+	  "args0": [
+	    {
+	      "type": "input_value",
+	      "name": "STRING",
+	      "check": "String"
+	    },
+	    {
+	      "type": "input_value",
+	      "name": "CAPTION",
+	      "check": "String"
+	    }
+	  ],
+	  "inputsInline": true,
+	  "previousStatement": null,
+	  "nextStatement": null,
+	  "colour": 45,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=Controls"
+	}
+,
+{
+	  "type": "controls_addtextbox",
+	  "message0": "add textbox at ( %1 , %2 )",
+	  "args0": [
+	    {
+	      "type": "input_value",
+	      "name": "LEFT",
+	      "check": "Number"
+	    },
+	    {
+	      "type": "input_value",
+	      "name": "TOP",
+	      "check": "Number"
+	    }
+	  ],
+	  "inputsInline": true,
+	  "output": null,
+	  "colour": 45,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=Controls"
+	}
+,
+{
+	  "type": "controls_addmultilinetextbox",
+	  "message0": "add multi line textbox at ( %1 , %2 )",
+	  "args0": [
+	    {
+	      "type": "input_value",
+	      "name": "LEFT",
+	      "check": "Number"
+	    },
+	    {
+	      "type": "input_value",
+	      "name": "TOP",
+	      "check": "Number"
+	    }
+	  ],
+	  "inputsInline": true,
+	  "output": null,
+	  "colour": 45,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=Controls"
+	}
+,
+{
+	  "type": "controls_gettextboxtext",
+	  "message0": "get textbox text of %1",
+	  "args0": [
+	    {
+	      "type": "input_value",
+	      "name": "STRING",
+	      "check": "String"
+	    }
+	  ],
+	  "inputsInline": true,
+	  "output": "String",
+	  "colour": 45,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=Controls"
+	}
+,
+{
+	  "type": "controls_settextboxtext",
+	  "message0": "set textbox text of %1 to %2 text",
+	  "args0": [
+	    {
+	      "type": "input_value",
+	      "name": "STRING",
+	      "check": "String"
+	    },
+	    {
+	      "type": "input_value",
+	      "name": "TEXT",
+	      "check": "String"
+	    }
+	  ],
+	  "inputsInline": true,
+	  "previousStatement": null,
+	  "nextStatement": null,
+	  "colour": 45,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=Controls"
+	}
+,
+{
+	  "type": "controls_remove",
+	  "message0": "remove of %1",
+	  "args0": [
+	    {
+	      "type": "input_value",
+	      "name": "STRING",
+	      "check": "String"
+	    }
+	  ],
+	  "inputsInline": true,
+	  "previousStatement": null,
+	  "nextStatement": null,
+	  "colour": 45,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=Controls"
+	}
+,
+{
+	  "type": "controls_move",
+	  "message0": "move of %1 to ( %2 , %3 )",
+	  "args0": [
+	    {
+	      "type": "input_value",
+	      "name": "STRING",
+	      "check": "String"
+	    },
+	    {
+	      "type": "input_value",
+	      "name": "X",
+	      "check": "Number"
+	    },
+	    {
+	      "type": "input_value",
+	      "name": "Y",
+	      "check": "Number"
+	    }
+	  ],
+	  "inputsInline": true,
+	  "previousStatement": null,
+	  "nextStatement": null,
+	  "colour": 45,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=Controls"
+	}
+,
+{
+	  "type": "controls_setsize",
+	  "message0": "set size of %1 to ( width # %2 , height # %3 )",
+	  "args0": [
+	    {
+	      "type": "input_value",
+	      "name": "STRING",
+	      "check": "String"
+	    },
+	    {
+	      "type": "input_value",
+	      "name": "X",
+	      "check": "Number"
+	    },
+	    {
+	      "type": "input_value",
+	      "name": "Y",
+	      "check": "Number"
+	    }
+	  ],
+	  "inputsInline": true,
+	  "previousStatement": null,
+	  "nextStatement": null,
+	  "colour": 45,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=Controls"
+	}
+,
+{
+	  "type": "controls_hidecontrol",
+	  "message0": "hide control of  %1",
+	  "args0": [
+	    {
+	      "type": "input_value",
+	      "name": "STRING",
+	      "check": "String"
+	    }
+	  ],
+	  "inputsInline": true,
+	  "previousStatement": null,
+	  "nextStatement": null,
+	  "colour": 45,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=Controls"
+	}
+,
+{
+	  "type": "controls_showcontrol",
+	  "message0": "show control of  %1",
+	  "args0": [
+	    {
+	      "type": "input_value",
+	      "name": "STRING",
+	      "check": "String"
+	    }
+	  ],
+	  "inputsInline": true,
+	  "previousStatement": null,
+	  "nextStatement": null,
+	  "colour": 45,
+	  "tooltip": "",
+	  "helpUrl": "http://www.smallbasic.com/doc.aspx?o=Controls"
+	}
+]);
