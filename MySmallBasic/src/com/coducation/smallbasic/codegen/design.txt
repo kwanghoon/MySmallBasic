@@ -1,30 +1,30 @@
-class GenJava {
+ï»¿class GenJava {
 	
 	public GenJava() {
 		
 	}
 
 	//args[0] : Smallbasic file name
-	//stmt : ½º¸ôº£ÀÌÁ÷ÀÇ AST
+	//stmt : ìŠ¤ëª°ë² ì´ì§ì˜ AST
 	public void codeGen(String[] args, Stmt stmt) {
 		StringBuilder topLevel;
 		ArrayList<Pair<String, StringBuilder>> methods;
 
 		codeGen(topLevel, methods, stmt);
 
-		//½º¸ôº£ÀÌÁ÷ÆÄÀÏ¸í°ú µ¿ÀÏÇÑ .java ÆÄÀÏÀ» ¿ÀÇÂ
+		//ìŠ¤ëª°ë² ì´ì§íŒŒì¼ëª…ê³¼ ë™ì¼í•œ .java íŒŒì¼ì„ ì˜¤í”ˆ
 
-		//1~9¹ø±îÁö Ãâ·Â
-		//Å¾·¹º§ ½º¸ôº£ÀÌÁ÷ ¹®ÀåÀ¸·ÎºÎÅÍ »ý¼ºµÈ ÀÚ¹Ù¹®ÀåÀ» Ãâ·Â
-		//11¹ø Ãâ·Â
-		//½º¸ôº£ÀÌÁ÷ÀÇ °¢ ¼­ºê·çÆ¾À¸·ÎºÎÅÍ »ý¼ºµÈ ÀÚ¹Ù¸Þ¼ÒµåµéÀ» Ãâ·Â
-		//13¹ø Ãâ·Â
+		//1~9ë²ˆê¹Œì§€ ì¶œë ¥
+		//íƒ‘ë ˆë²¨ ìŠ¤ëª°ë² ì´ì§ ë¬¸ìž¥ìœ¼ë¡œë¶€í„° ìƒì„±ëœ ìžë°”ë¬¸ìž¥ì„ ì¶œë ¥
+		//11ë²ˆ ì¶œë ¥
+		//ìŠ¤ëª°ë² ì´ì§ì˜ ê° ì„œë¸Œë£¨í‹´ìœ¼ë¡œë¶€í„° ìƒì„±ëœ ìžë°”ë©”ì†Œë“œë“¤ì„ ì¶œë ¥
+		//13ë²ˆ ì¶œë ¥
 
-		//ÆÄÀÏÀ» ´Ý±â
+		//íŒŒì¼ì„ ë‹«ê¸°
 	}
 
-	//½º¸ôº£ÀÌÁ÷ ¹®ÀåÀ» ¹Þ¾Æ ÀÚ¹Ù¹®Àå¿¡ ´ëÇÑ ¹®ÀÚ¿­À» ¸¸µé°í
-	//topLevel ¶Ç´Â methods¿¡ Ãß°¡
+	//ìŠ¤ëª°ë² ì´ì§ ë¬¸ìž¥ì„ ë°›ì•„ ìžë°”ë¬¸ìž¥ì— ëŒ€í•œ ë¬¸ìžì—´ì„ ë§Œë“¤ê³ 
+	//topLevel ë˜ëŠ” methodsì— ì¶”ê°€
 	public void codeGen(Stmt stmt) {
 
 	}
@@ -53,7 +53,7 @@ class GenJava {
 		}
 	}
 
-	//½º¸ôº£ÀÌÁ÷ ½ÄÀ» ¹Þ¾Æ ÀÚ¹Ù½Ä¿¡ ´ëÇÑ ¹®ÀÚ¿­À» ¸¸µé¾î ¸®ÅÏ
+	//ìŠ¤ëª°ë² ì´ì§ ì‹ì„ ë°›ì•„ ìžë°”ì‹ì— ëŒ€í•œ ë¬¸ìžì—´ì„ ë§Œë“¤ì–´ ë¦¬í„´
 	public String codeGen(Expr expr) {
 
 	}

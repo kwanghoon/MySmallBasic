@@ -5,12 +5,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import com.coducation.smallbasic.ArithExpr;
 import com.coducation.smallbasic.Array;
@@ -31,10 +31,8 @@ import com.coducation.smallbasic.MethodCallExpr;
 import com.coducation.smallbasic.ParenExpr;
 import com.coducation.smallbasic.PropertyExpr;
 import com.coducation.smallbasic.Stmt;
-import com.coducation.smallbasic.StrV;
 import com.coducation.smallbasic.SubCallExpr;
 import com.coducation.smallbasic.SubDef;
-import com.coducation.smallbasic.Value;
 import com.coducation.smallbasic.Var;
 import com.coducation.smallbasic.WhileStmt;
 
@@ -45,13 +43,17 @@ public class GenJava {
 	//ArrayList<Pair<String, StringBuilder>> method;
 	LinkedHashMap<String, StringBuilder> methods;
 	String currentMethod;
+	String emptyMethod;
 	StringBuilder currentMethodBody;
 	int numberOfIndent;
+	HashMap<String, Stmt> trees;
+	private static String[] programArgs;
 	static String className;
-	static final String lib = "com.coducation.smallbasic.lib.";
 
 	public GenJava(BasicBlockEnv bbenv, String[] args) {
 		this();
+		trees = bbenv.getMap();
+		programArgs = args;
 	}
 
 	public GenJava() {
@@ -76,11 +78,39 @@ public class GenJava {
 
 	//args[0] : Smallbasic file name
 	//stmt : 스몰베이직의 AST
-	public void codeGen(String[] args, Stmt stmt) {
+	public void codeGen(String[] args) {
 		String fileName = args[0].split("/")[args[0].split("/").length - 1];
 		className = fileName.substring(0, fileName.length()-3);
 
-		codeGen(true, stmt);
+		Set<Map.Entry<String, Stmt>> set = trees.entrySet();
+		for (Map.Entry<String, Stmt> entry : set) {
+			currentMethod = entry.getKey().substring(1); // tree --> method
+			Stmt stmt = entry.getValue();
+			if(currentMethod.equals("main")) {
+				codeGen(true, stmt);
+			}
+			else {
+
+				if((stmt instanceof BlockStmt)&&(((BlockStmt)stmt).getAL().size() == 0)) {
+					emptyMethod = currentMethod;
+				}
+				else {
+					methods.put(currentMethod, new StringBuilder("    public static void " + currentMethod + "() {\r\n")); // 처음
+					codeGen(false, stmt);
+					if(methods.get(currentMethod) != null) 
+						methods.put(currentMethod, methods.get(currentMethod).append("    }\r\n"));
+					else methods.put(currentMethod, new StringBuilder("    }\r\n"));
+				}
+			}
+		}
+
+		if(emptyMethod != null) { // emptyMethod 제거
+			Set<String> keySet = trees.keySet();
+			for(String s : keySet) {
+				methods.put(s, new StringBuilder(methods.get(s).toString().replaceAll(className + "." + emptyMethod + "();\r\n", "")));
+			}
+		}
+
 
 		OutputStreamWriter osw;
 		try {
@@ -93,6 +123,7 @@ public class GenJava {
 			osw.write("class " + className + " {\r\n");
 			osw.write("\r\n");
 			osw.write("    static Env env;\r\n");
+			osw.write("    static final String lib = \"com.coducation.smallbasic.lib.\";\r\n");
 			osw.write("\r\n");
 			osw.write("    public " + className +"() {\r\n");
 			osw.write("        env = new Env();\r\n");
@@ -110,8 +141,12 @@ public class GenJava {
 			while(it.hasNext()) {
 				osw.write(it.next().getValue().toString());
 			}
+			osw.write(assignVarGen("    "));
+			osw.write(getVarGen("	"));
 			osw.write(assignPropertyExprGen("    "));
 			osw.write(getPropertyExprGen("	"));
+			osw.write(assignArrayGen("    "));
+			osw.write(getArrayGen("	"));
 			//13번 출력
 			osw.write("}\r\n");
 			osw.flush();
@@ -296,9 +331,19 @@ public class GenJava {
 		}
 	}
 
-	public void codeGen(boolean isTopLevel, GotoStmt gotoStmt) {
+	public void codeGen(boolean isTopLevel, GotoStmt gotoStmt) { // subCall role
+		StringBuilder javaStmt = new StringBuilder(printIndent());
 
-		System.out.println(printIndent() + "Goto " + gotoStmt.getTargetLabel());
+		javaStmt.append(className + "." + gotoStmt.getTargetLabel().substring(1) + "();\r\n");
+
+		if(isTopLevel) {
+			topLevel.append(javaStmt);
+		}
+		else {
+			if(methods.get(currentMethod) != null) 
+				methods.put(currentMethod, methods.get(currentMethod).append(javaStmt));
+			else methods.put(currentMethod, javaStmt);
+		}
 	}
 
 	public void codeGen(boolean isTopLevel, IfStmt ifStmt) {
@@ -379,24 +424,7 @@ public class GenJava {
 	}
 
 	public void codeGen(boolean isTopLevel, SubDef subDefStmt) {
-
-		StringBuilder javaStmt = new StringBuilder(printIndent());
-		currentMethod = subDefStmt.getName();
-
-		javaStmt.append("public static void " + currentMethod + "() {\r\n");
-
-		if(methods.get(currentMethod) != null) 
-			methods.put(currentMethod, methods.get(currentMethod).append(javaStmt));
-		else methods.put(currentMethod, javaStmt);
-		javaStmt = new StringBuilder(printIndent());
-
-		codeGen(false, subDefStmt.getBlock());
-
-		javaStmt.append("}\r\n");
-
-		if(methods.get(currentMethod) != null) 
-			methods.put(currentMethod, methods.get(currentMethod).append(javaStmt));
-		else methods.put(currentMethod, javaStmt);
+		throw new CodeGenException("SubDef : Unexpected");
 	}
 
 	public void codeGen(boolean isTopLevel, SubCallExpr subCallExpr) {
@@ -607,10 +635,24 @@ public class GenJava {
 	}
 
 	public String codeGen(Var var) {
-		if (methods.get(var.getVarName()) != null)
+		if (trees.get(var.getVarName()) != null)
 			return var.getVarName();
 		else
 			return "getVar(" + var.getVarName() + ")";
+	}
+
+	public static String methodGen(String indent) throws ClassNotFoundException {
+		StringBuilder javaStmt = new StringBuilder("");
+
+		javaStmt.append(indent);
+		javaStmt.append("public static Class getClass(String name) {\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    return Class.forName(lib + name);");
+		javaStmt.append(indent);
+		javaStmt.append("}\r\n");
+		javaStmt.append("\r\n");
+
+		return javaStmt.toString();
 	}
 
 	public static String getClassGen(String indent) throws ClassNotFoundException {

@@ -16,5 +16,8 @@ public class BasicBlockEnv {
 	public void put(String arg0, Stmt arg1) {
 		map.put(arg0, arg1);
 	}
+	public HashMap<String, Stmt> getMap() {
+		return map;
+	}
 	private HashMap<String, Stmt> map;
 }
