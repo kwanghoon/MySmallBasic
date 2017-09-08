@@ -9,10 +9,7 @@
 <script src="../../blockly_compressed.js"></script>
 <script src="../../blocks_compressed.js"></script>
 <script src="../../javascript_compressed.js"></script>
-<script src="../../python_compressed.js"></script>
-<script src="../../php_compressed.js"></script>
-<script src="../../lua_compressed.js"></script>
-<script src="../../dart_compressed.js"></script>
+
 <script src="code.js"></script>
 
 <script type="text/javascript">
@@ -102,18 +99,126 @@ function saveFile()
 		name="%{BKY_CATLOGIC}" colour="%{BKY_LOGIC_HUE}"> <block
 		type="controls_if"></block> <block type="logic_compare"></block> <block
 		type="logic_operation"></block> <block type="logic_negate"></block> <block
-		type="logic_boolean"></block> <block type="logic_null"></block> <block
-		type="logic_ternary"></block> </category> <category name="%{BKY_CATLOOPS}"
-		colour="%{BKY_LOOPS_HUE}"> <block
-		type="controls_repeat_ext"> <value name="TIMES"> <shadow
-		type="math_number"> <field name="NUM">10</field> </shadow> </value> </block> <block
-		type="controls_whileUntil"></block> <block type="controls_for">
+		type="logic_boolean"></block> </category> 
+		
+		<category name="%{BKY_CATLOOPS}"
+		colour="%{BKY_LOOPS_HUE}"><block
+		type="controls_while"></block> <block type="controls_for">
 	<value name="FROM"> <shadow type="math_number"> <field
 		name="NUM">1</field> </shadow> </value> <value name="TO"> <shadow
 		type="math_number"> <field name="NUM">10</field> </shadow> </value> <value
 		name="BY"> <shadow type="math_number"> <field
-		name="NUM">1</field> </shadow> </value> </block> <block type="controls_forEach"></block> <block
-		type="controls_flow_statements"></block> </category> <category
+		name="NUM">1</field> </shadow> </value> </block> </category>
+		
+		
+		
+			<category name="%{BKY_CATVARIABLES}" colour="%{BKY_VARIABLES_HUE}"
+		custom="VARIABLE"></category> 
+		
+		
+		<sep></sep>
+		
+		<category
+		name="%{BKY_CATLISTS}" colour="%{BKY_LISTS_HUE}"><block
+		type="lists_create_with"> <mutation items="0"></mutation> </block>  <block type="lists_length"></block> <block
+		type="lists_isArray"></block> <block type="lists_getIndex">
+	<value name="VALUE"> <block type="variables_get"> <field
+		name="VAR">{listVariable}</field> </block> </value> </block>
+		<block type="lists_setvalue"><value name="LIST"> <block type="variables_get"> <field
+		name="VAR">{listVariable}</field> </block> </value> </block>
+		<block type="lists_containsindex"><value name="LIST"> <block type="variables_get"> <field
+		name="VAR">{listVariable}</field> </block> </value></block>
+		<block type="lists_containsvalue"><value name="LIST"> <block type="variables_get"> <field
+		name="VAR">{listVariable}</field> </block> </value></block>
+		<block type="lists_getallindices"><value name="LIST"> <block type="variables_get"> <field
+		name="VAR">{listVariable}</field> </block> </value></block>
+		 </category>
+		
+		<category name = "Clock" colour="20">
+		<block type="clock_value"></block>
+		</category>
+		
+		<category name = "Controls" colour="45">
+		<block type="controls_value"></block>
+		<block type="controls_events"></block>
+		<block type="controls_addbutton"></block>
+		<block type="controls_getbuttoncaption"></block>
+		<block type="controls_setbuttoncaption"></block>
+		<block type="controls_addtextbox"></block>
+		<block type="controls_addmultilinetextbox"></block>
+		<block type="controls_gettextboxtext"></block>
+		<block type="controls_settextboxtext"></block>
+		<block type="controls_remove"></block>
+		<block type="controls_move"></block>
+		<block type="controls_setsize"></block>
+		<block type="controls_hidecontrol"></block>
+		<block type="controls_showcontrol"></block>
+		</category>
+		
+		<category name = "Desktop" colour="65">
+		<block type="desktop_value"></block>
+		<block type="desktop_setwallpaper"></block>
+		</category>
+		
+		<category name = "Dictionary" colour="100">
+		<block type="dictionary_getdefinition"></block>
+		</category>
+		
+		<category name = "File" colour="120">
+		<block type = "file_lasterror"></block>
+		<block type = "file_readcontents"></block>
+		<block type = "file_writecontents"></block>
+		<block type = "file_readline"></block>
+		<block type = "file_writeline"></block>
+		<block type = "file_insertline"></block>
+		<block type = "file_appendcontents"></block>
+		<block type = "file_copyfile"></block>
+		<block type = "file_deletefile"></block>
+		<block type = "file_createdirectory"></block>
+		<block type = "file_deletedirectory"></block>
+		<block type = "file_getfiles"></block>
+		<block type = "file_getdirectories"></block>
+		<block type = "file_gettemporaryfilepath"></block>
+		<block type = "file_getsettingfilepath"></block>
+		</category>
+		
+		<category name = "Filckr" colour="195">
+		<block type="flickr_getpictureofmoment"></block>
+		<block type="flickr_getrandompicture"></block>
+		</category>
+		
+		<category name = "GraphicsWindow" colour="180">
+		<block type="graphicswindow_value"></block>
+		<block type="graphicswindow_events"></block>
+		<block type="graphicswindow_show"></block>
+		<block type="graphicswindow_hide"></block>
+		<block type="graphicswindow_drawrectangle"></block>
+		<block type="graphicswindow_fillrectangle"></block>
+		<block type="graphicswindow_drawellipse"></block>
+		<block type="graphicswindow_fillellipse"></block>
+		<block type="graphicswindow_drawtriangle"></block>
+		<block type="graphicswindow_drawline"></block>
+		<block type="graphicswindow_drawtext"></block>
+		<block type="graphicswindow_drawboundtext"></block>
+		<block type="graphicswindow_drawresizedimage"></block>
+		<block type="graphicswindow_drawimage"></block>
+		<block type="graphicswindow_setpixel"></block>
+		<block type="graphicswindow_getpixel"></block>
+		<block type="graphicswindow_getrandomcolor"></block>
+		<block type="graphicswindow_getcolorfromrgb"></block>
+		<block type="graphicswindow_clear"></block>
+		<block type="graphicswindow_showmessage"></block>
+		</category>
+		
+		<category name = "ImageList" colour="290">
+		<block type="imagelist_loadimage"></block>
+		<block type="imagelist_getwidthofimage"></block>
+		<block type="imagelist_getheightofimage"></block>
+		</category>
+		
+	
+		
+		 <category
 		name="%{BKY_CATMATH}" colour="%{BKY_MATH_HUE}"> <block
 		type="math_number"></block> <block type="math_arithmetic"> <value
 		name="A"> <shadow type="math_number"> <field
@@ -123,77 +228,166 @@ function saveFile()
 		type="math_number"> <field name="NUM">9</field> </shadow> </value> </block> <block
 		type="math_trig"> <value name="NUM"> <shadow
 		type="math_number"> <field name="NUM">45</field> </shadow> </value> </block> <block
-		type="math_constant"></block> <block type="math_number_property">
-	<value name="NUMBER_TO_CHECK"> <shadow type="math_number">
-	<field name="NUM">0</field> </shadow> </value> </block> <block type="math_round"> <value
+		type="math_constant"></block> <block type="math_round"> <value
 		name="NUM"> <shadow type="math_number"> <field
 		name="NUM">3.1</field> </shadow> </value> </block> <block type="math_on_list"></block> <block
 		type="math_modulo"> <value name="DIVIDEND"> <shadow
 		type="math_number"> <field name="NUM">64</field> </shadow> </value> <value
 		name="DIVISOR"> <shadow type="math_number"> <field
-		name="NUM">10</field> </shadow> </value> </block> <block type="math_constrain"> <value
-		name="VALUE"> <shadow type="math_number"> <field
-		name="NUM">50</field> </shadow> </value> <value name="LOW"> <shadow
-		type="math_number"> <field name="NUM">1</field> </shadow> </value> <value
-		name="HIGH"> <shadow type="math_number"> <field
-		name="NUM">100</field> </shadow> </value> </block> <block type="math_random_int"> <value
+		name="NUM">10</field> </shadow> </value> </block> <block type="math_random_int"> <value
 		name="FROM"> <shadow type="math_number"> <field
 		name="NUM">1</field> </shadow> </value> <value name="TO"> <shadow
 		type="math_number"> <field name="NUM">100</field> </shadow> </value> </block> <block
-		type="math_random_float"></block> </category> <category name="%{BKY_CATTEXT}"
-		colour="%{BKY_TEXTS_HUE}"> <block type="text"></block> <block
-		type="text_join"></block> <block type="text_append"> <value
+		type="math_random_float"></block> 
+		<block type="math_getdegrees"> <value name="NUM"> <shadow
+		type="math_number"> <field name="NUM">20</field> </shadow> </value> </block>
+		<block type="math_getradians"> <value name="NUM"> <shadow
+		type="math_number"> <field name="NUM">45</field> </shadow> </value> </block>
+		</category> 
+		
+		<category name = "Mouse" colour="330">
+		<block type="mouse_value"></block>
+		<block type="mouse_hidecursor"></block>
+		<block type="mouse_showcursor"></block>
+		</category>
+		
+		<category name = "Network" colour="360">
+		<block type="network_downloadfile"></block>
+		<block type="network_getwebpagecontents"></block>
+		</category>
+		
+		<category name = "Program" colour="149">
+		<block type="program_value"></block>
+		<block type="program_delay"></block>
+		<block type="program_end"></block>
+		<block type="program_getargument"></block>
+		</category>
+		
+		<category name = "Shapes" colour="210">
+		<block type="shapes_addrectangle"></block>
+		<block type="shapes_addellipse"></block>
+		<block type="shapes_addtriangle"></block>
+		<block type="shapes_addline"></block>
+		<block type="shapes_addimage"></block>
+		<block type="shapes_addtext"></block>
+		<block type="shapes_settext"></block>
+		<block type="shapes_remove"></block>
+		<block type="shapes_move"></block>
+		<block type="shapes_rotate"></block>
+		<block type="shapes_zoom"></block>
+		<block type="shapes_animate"></block>
+		<block type="shapes_getleft"></block>
+		<block type="shapes_gettop"></block>
+		<block type="shapes_getopacity"></block>
+		<block type="shapes_setopacity"></block>
+		<block type="shapes_hideshape"></block>
+		<block type="shapes_showshape"></block>
+		</category>
+		
+		<category name = "Sound" colour="275">
+		<block type="sound_play"></block>
+		<block type="sound_playwait"></block>
+		<block type="sound_playfile"></block>
+		</category>
+		
+		<category name = "Stack" colour="310">
+		<block type="stack_pushvalue"></block>
+		<block type="stack_getcount"></block>
+		<block type="stack_popvalue"></block>
+		</category>
+		
+		<category name = "TextWindow" colour="35">
+		<block type="textwindow_value"></block>
+		<block type="text_print"> <value name="TEXT"> <shadow
+		type="text"> <field name="TEXT">abc</field> </shadow> </value> </block>
+		<block type="textwindow_println"> <value name="TEXT"> <shadow
+		type="text"> <field name="TEXT">abc</field> </shadow> </value> </block>
+		<block type="textwindow_show"></block>
+		<block type="textwindow_hide"></block>
+		<block type="textwindow_clear"></block>
+		<block type="textwindow_pause"></block>
+		<block type="textwindow_pauseifvisible"></block>
+		<block type="textwindow_pausewithoutmessage"></block>
+		<block type="textwindow_read"></block>
+		<block type="textwindow_readkey"></block>
+		<block type="textwindow_readnumber"></block>
+		</category>
+		
+		<category name="%{BKY_CATTEXT}"
+		colour="%{BKY_TEXTS_HUE}"> <block type="text"></block>  <block type="text_append"> <value
 		name="TEXT"> <shadow type="text"></shadow> </value> </block> <block
 		type="text_length"> <value name="VALUE"> <shadow
-		type="text"> <field name="TEXT">abc</field> </shadow> </value> </block> <block
-		type="text_isEmpty"> <value name="VALUE"> <shadow
-		type="text"> <field name="TEXT"></field> </shadow> </value> </block> <block
+		type="text"> <field name="TEXT">abc</field> </shadow> </value> </block>
+		
+		<block type="text_issubtext"><value name="STRING"> <block
+		type="variables_get"> <field name="VAR">{textVariable}</field>
+	</block> </value> <value name="FIND"> <shadow type="text"> <field
+		name="TEXT">abc</field> </shadow> </value> </block>
+		
+	<block type="text_endswith"><value name="STRING"> <block
+		type="variables_get"> <field name="VAR">{textVariable}</field>
+	</block> </value> <value name="FIND"> <shadow type="text"> <field
+		name="TEXT">abc</field> </shadow> </value> </block>
+		
+		<block type="text_startswith"><value name="STRING"> <block
+		type="variables_get"> <field name="VAR">{textVariable}</field>
+	</block> </value> <value name="FIND"> <shadow type="text"> <field
+		name="TEXT">abc</field> </shadow> </value> </block>
+		
+		<block type="text_getsubtext"><value name="STRING"> <block
+		type="variables_get"> <field name="VAR">{textVariable}</field>
+	</block> </value> <value name="FROM"><shadow type="math_number"><field
+		name="NUM">3</field></shadow> </value> <value name="NUM"><shadow type="math_number"><field
+		name="NUM">5</field> </shadow></value></block>
+		
+		
+		<block type="text_getsubtexttoend"><value name="STRING"> <block
+		type="variables_get"> <field name="VAR">{textVariable}</field>
+	</block> </value> <value name="FROM"><shadow type="math_number"><field
+		name="NUM">3</field></shadow> </value></block>
+		
+		  <block
 		type="text_indexOf"> <value name="VALUE"> <block
 		type="variables_get"> <field name="VAR">{textVariable}</field>
 	</block> </value> <value name="FIND"> <shadow type="text"> <field
-		name="TEXT">abc</field> </shadow> </value> </block> <block type="text_charAt"> <value
-		name="VALUE"> <block type="variables_get"> <field
-		name="VAR">{textVariable}</field> </block> </value> </block> <block type="text_getSubstring">
-	<value name="STRING"> <block type="variables_get"> <field
-		name="VAR">{textVariable}</field> </block> </value> </block> <block type="text_changeCase">
+		name="TEXT">abc</field> </shadow> </value> </block>  <block type="text_changeCase">
 	<value name="TEXT"> <shadow type="text"> <field
-		name="TEXT">abc</field> </shadow> </value> </block> <block type="text_trim"> <value
-		name="TEXT"> <shadow type="text"> <field name="TEXT">abc</field>
-	</shadow> </value> </block> <block type="text_print"> <value name="TEXT"> <shadow
-		type="text"> <field name="TEXT">abc</field> </shadow> </value> </block> <block
-		type="text_prompt_ext"> <value name="TEXT"> <shadow
-		type="text"> <field name="TEXT">abc</field> </shadow> </value> </block> </category> <category
-		name="%{BKY_CATLISTS}" colour="%{BKY_LISTS_HUE}"> <block
-		type="lists_create_with"> <mutation items="0"></mutation> </block> <block
-		type="lists_create_with"></block> <block type="lists_repeat">
-	<value name="NUM"> <shadow type="math_number"> <field
-		name="NUM">5</field> </shadow> </value> </block> <block type="lists_length"></block> <block
-		type="lists_isEmpty"></block> <block type="lists_indexOf"> <value
-		name="VALUE"> <block type="variables_get"> <field
-		name="VAR">{listVariable}</field> </block> </value> </block> <block type="lists_getIndex">
-	<value name="VALUE"> <block type="variables_get"> <field
-		name="VAR">{listVariable}</field> </block> </value> </block> <block type="lists_setIndex">
-	<value name="LIST"> <block type="variables_get"> <field
-		name="VAR">{listVariable}</field> </block> </value> </block> <block type="lists_getSublist">
-	<value name="LIST"> <block type="variables_get"> <field
-		name="VAR">{listVariable}</field> </block> </value> </block> <block type="lists_split">
-	<value name="DELIM"> <shadow type="text"> <field
-		name="TEXT">,</field> </shadow> </value> </block> <block type="lists_sort"></block> </category> <category
-		name="%{BKY_CATCOLOUR}" colour="%{BKY_COLOUR_HUE}"> <block
-		type="colour_picker"></block> <block type="colour_random"></block> <block
-		type="colour_rgb"> <value name="RED"> <shadow
-		type="math_number"> <field name="NUM">100</field> </shadow> </value> <value
-		name="GREEN"> <shadow type="math_number"> <field
-		name="NUM">50</field> </shadow> </value> <value name="BLUE"> <shadow
-		type="math_number"> <field name="NUM">0</field> </shadow> </value> </block> <block
-		type="colour_blend"> <value name="COLOUR1"> <shadow
-		type="colour_picker"> <field name="COLOUR">#ff0000</field> </shadow> </value>
-	<value name="COLOUR2"> <shadow type="colour_picker"> <field
-		name="COLOUR">#3333ff</field> </shadow> </value> <value name="RATIO"> <shadow
-		type="math_number"> <field name="NUM">0.5</field> </shadow> </value> </block> </category> <sep></sep>
-	<category name="%{BKY_CATVARIABLES}" colour="%{BKY_VARIABLES_HUE}"
-		custom="VARIABLE"></category> <category name="%{BKY_CATFUNCTIONS}"
-		colour="%{BKY_PROCEDURES_HUE}" custom="PROCEDURE"></category> </xml>
+		name="TEXT">abc</field> </shadow> </value> </block> 
+		
+		<block type="text_getcharacter"><value name="NUM"><shadow type="math_number"><field
+		name="NUM">50</field></shadow> </value></block>
+		
+		<block type="text_getcharactercode"><value name="VALUE"><shadow type="math_number"><field
+		name="NUM">50</field></shadow> </value></block>
+		
+		</category> 
+		
+		<category name = "Timer" colour="80">
+		<block type="timer_interval"></block>
+		<block type="timer_tick"></block>
+		<block type="timer_pause"></block>
+		<block type="timer_resume"></block>
+		</category>
+		
+		<category name = "Turtle" colour="450">
+		<block type="turtle_value"></block>
+		<block type="turtle_show"></block>
+		<block type="turtle_hide"></block>
+		<block type="turtle_pendown"></block>
+		<block type="turtle_penup"></block>
+		<block type="turtle_move"></block>
+		<block type="turtle_moveto"></block>
+		<block type="turtle_turn"></block>
+		<block type="turtle_turndirection"></block>
+		</category>
+		
+		
+		
+		 
+		
+		
+	
+	</xml>
 
 
 

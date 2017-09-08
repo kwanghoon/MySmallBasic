@@ -10,7 +10,7 @@ var MSG = {
   catLoops: "Loops",
   catMath: "Math",
   catText: "Text",
-  catLists: "Lists",
+  catLists: "Array",
   catColour: "Colour",
   catVariables: "Variables",
   catFunctions: "Functions",
