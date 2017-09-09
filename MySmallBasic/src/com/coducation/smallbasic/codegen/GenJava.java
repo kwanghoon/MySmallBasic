@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -14,10 +15,14 @@ import java.util.Set;
 
 import com.coducation.smallbasic.ArithExpr;
 import com.coducation.smallbasic.Array;
+import com.coducation.smallbasic.ArrayV;
 import com.coducation.smallbasic.Assign;
 import com.coducation.smallbasic.BasicBlockEnv;
 import com.coducation.smallbasic.BlockStmt;
 import com.coducation.smallbasic.CompExpr;
+import com.coducation.smallbasic.DoubleV;
+import com.coducation.smallbasic.Env;
+import com.coducation.smallbasic.Eval;
 import com.coducation.smallbasic.Expr;
 import com.coducation.smallbasic.ExprStmt;
 import com.coducation.smallbasic.ForStmt;
@@ -31,8 +36,10 @@ import com.coducation.smallbasic.MethodCallExpr;
 import com.coducation.smallbasic.ParenExpr;
 import com.coducation.smallbasic.PropertyExpr;
 import com.coducation.smallbasic.Stmt;
+import com.coducation.smallbasic.StrV;
 import com.coducation.smallbasic.SubCallExpr;
 import com.coducation.smallbasic.SubDef;
+import com.coducation.smallbasic.Value;
 import com.coducation.smallbasic.Var;
 import com.coducation.smallbasic.WhileStmt;
 
@@ -47,12 +54,16 @@ public class GenJava {
 	StringBuilder currentMethodBody;
 	int numberOfIndent;
 	HashMap<String, Stmt> trees;
+	Env env;
+	Eval Eval;
 	private static String[] programArgs;
 	static String className;
+	static ArrayList<String> idx_s;
 
-	public GenJava(BasicBlockEnv bbenv, String[] args) {
+	public GenJava(BasicBlockEnv bbenv, Env env, String[] args) {
 		this();
 		trees = bbenv.getMap();
+		this.env = env;
 		programArgs = args;
 	}
 
@@ -60,6 +71,7 @@ public class GenJava {
 		globalVar = new StringBuilder("");
 		topLevel = new StringBuilder("");
 		methods = new LinkedHashMap<String, StringBuilder>();
+		idx_s = new ArrayList<String>();
 	}
 
 	public String printIndent() {
@@ -210,7 +222,7 @@ public class GenJava {
 
 		if(lhs instanceof Var) {
 			Var var = (Var)lhs;
-			javaStmt.append("assignVar(" + var.getVarName() + ", new StrV(" + codeGen(rhs) + ");\r\n");
+			javaStmt.append("assignVar(" + var.getVarName() + ", " + codeGen(rhs) + ");\r\n");
 
 		}
 		else if(lhs instanceof PropertyExpr) {
@@ -220,9 +232,22 @@ public class GenJava {
 		}
 		else if(lhs instanceof Array) {
 			Array arr = (Array) lhs;
+			idx_s.clear();
 
 			for (int i = 0; i < arr.getDim(); i++) {
+				Expr idx = arr.getIndex(i);
+				Value v = Eval.eval(env, idx);
+
+				if (v == null || v.toString().trim().equals(""))
+					idx_s.add("0");
+				else if (v instanceof StrV || v instanceof DoubleV) {
+					idx_s.add(v.toString());
+				} else {
+					throw new CodeGenException("Unexpected Index" + v);
+				}
 			}
+			
+			javaStmt.append("assignArray(" + arr.getVar() + ", " + codeGen(rhs) + ");\r\n");
 		}
 		else {
 			throw new CodeGenException("Assign : Unknown lhs " + lhs);
@@ -535,13 +560,28 @@ public class GenJava {
 	public String codeGen(Array arrayExpr) {
 
 		StringBuilder javaExpr = new StringBuilder("");
-		javaExpr.append(arrayExpr.getVar());
+		idx_s.clear();
 
 		for (int i = 0; i < arrayExpr.getDim(); i++) {
-			javaExpr.append("[" + arrayExpr.getIndex(i) + "]");
-		}
-		return javaExpr.toString();
+			Expr idx = arrayExpr.getIndex(i);
+			Value v = Eval.eval(env, idx);
 
+			if (v == null || v.toString().trim().equals(""))
+				idx_s.add("0");
+			else if (v instanceof StrV || v instanceof DoubleV) {
+				idx_s.add(v.toString());
+			} else {
+				throw new CodeGenException("Unexpected Index" + v);
+			}
+		}
+		
+		javaExpr.append("getArray(" + arrayExpr.getVar() + ");\r\n");
+
+		/*for (int i = 0; i < arrayExpr.getDim(); i++) {
+			javaExpr.append("[" + arrayExpr.getIndex(i) + "]");
+		}*/
+		
+		return javaExpr.toString();
 	}
 
 	public String codeGen(CompExpr compExpr) {
@@ -647,7 +687,7 @@ public class GenJava {
 		javaStmt.append(indent);
 		javaStmt.append("public static Class getClass(String name) {\r\n");
 		javaStmt.append(indent);
-		javaStmt.append("    return Class.forName(lib + name);");
+		javaStmt.append("    return Class.forName(lib + name);\r\n");
 		javaStmt.append(indent);
 		javaStmt.append("}\r\n");
 		javaStmt.append("\r\n");
@@ -661,7 +701,7 @@ public class GenJava {
 		javaStmt.append(indent);
 		javaStmt.append("public static Class getClass(String name) {\r\n");
 		javaStmt.append(indent);
-		javaStmt.append("    return Class.forName(lib + name);");
+		javaStmt.append("    return Class.forName(lib + name);\r\n");
 		javaStmt.append(indent);
 		javaStmt.append("}\r\n");
 		javaStmt.append("\r\n");
@@ -673,9 +713,9 @@ public class GenJava {
 		StringBuilder javaStmt = new StringBuilder("");
 
 		javaStmt.append(indent);
-		javaStmt.append("public static void assignVar(String varName, Value rhsValue) {\r\n");
+		javaStmt.append("public static void assignVar(String varName, String rhsValue) {\r\n");
 		javaStmt.append(indent);
-		javaStmt.append("    env.put(varName, rhsValue);");
+		javaStmt.append("    env.put(varName, new StrV(rhsValue));\r\n");
 		javaStmt.append(indent);
 		javaStmt.append("}\r\n");
 		javaStmt.append("\r\n");
@@ -689,13 +729,7 @@ public class GenJava {
 		javaStmt.append(indent);
 		javaStmt.append("public static String getVar(String varName) {\r\n");
 		javaStmt.append(indent);
-		javaStmt.append("    if (env.get(varName).toString().equals(\"\"))");
-		javaStmt.append(indent);
-		javaStmt.append("        return varName;");
-		javaStmt.append(indent);
-		javaStmt.append("    else");
-		javaStmt.append(indent);
-		javaStmt.append("        return env.get(varName).toString();");
+		javaStmt.append("        return env.get(varName).toString();\r\n");
 		javaStmt.append(indent);
 		javaStmt.append("}\r\n");
 		javaStmt.append("\r\n");
@@ -811,9 +845,67 @@ public class GenJava {
 		StringBuilder javaStmt = new StringBuilder("");
 
 		javaStmt.append(indent);
-		javaStmt.append("public static void assignArray(String varName, Value rhsValue) {\r\n");
+		javaStmt.append("public static void assignArray(String arrayName, String rhsValue) {\r\n");
 		javaStmt.append(indent);
-		javaStmt.append("    env.put(varName, rhsValue);");
+		javaStmt.append("    Value arrValue = env.get(arrayName);\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    ArrayV elem;\r\n");
+		javaStmt.append("\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    if (arrValue == null)\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        elem = null;\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    else if (arrValue instanceof ArrayV)\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        elem = (ArrayV) arrValue;\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    else {\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        elem = null;\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    }\r\n");
+		javaStmt.append("\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    if (elem == null) {\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        elem = new ArrayV();\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        env.put(arrayName, elem);\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    }\r\n");
+		javaStmt.append("\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    ArrayList<String> idx_s = new ArrayList<String>();\r\n");
+		for(int i=0;i<idx_s.size();i++) {
+			javaStmt.append(indent);
+			javaStmt.append("    idx_s.add(" + idx_s.get(i) + ")\r\n");
+		}
+		javaStmt.append("\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    for (int i = 0; i < idx_s.size(); i++) {\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        if (i < idx_s.size() - 1) {\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("            ArrayV elem_elem = (ArrayV) elem.get(idx_s.get(i));\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("            if (elem_elem == null) {\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("                elem_elem = new ArrayV();\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("                elem.put(idx_s.get(i), elem_elem);\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("            }\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("            elem = elem_elem;\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        } else {\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("            elem.put(idx_s.get(i), new StrV(rhsValue));\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        }\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    }\r\n");
 		javaStmt.append(indent);
 		javaStmt.append("}\r\n");
 		javaStmt.append("\r\n");
@@ -825,9 +917,49 @@ public class GenJava {
 		StringBuilder javaStmt = new StringBuilder("");
 
 		javaStmt.append(indent);
-		javaStmt.append("public static void getArray(String varName, Value rhsValue) {\r\n");
+		javaStmt.append("public static void getArray(String arrayName) {\r\n");
 		javaStmt.append(indent);
-		javaStmt.append("    env.put(varName, rhsValue);");
+		javaStmt.append("    ArrayV arrV;\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    Value elem = null;\r\n");
+		javaStmt.append("\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    if (env.get(arrayName) instanceof ArrayV) {\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        arrV = (ArrayV) env.get(arrayName);\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        elem = arrV;\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    }\r\n");
+		javaStmt.append("\r\n");
+		javaStmt.append("    ArrayList<String> idx_s = new ArrayList<String>();\r\n");
+		for(int i=0;i<idx_s.size();i++) {
+			javaStmt.append(indent);
+			javaStmt.append("    idx_s.add(" + idx_s.get(i) + ")\r\n");
+		}
+		javaStmt.append("\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    for (int i = 0; i < idx_s.size(); i++) {\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        if (elem == null)\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("            break;\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        else if (elem instanceof StrV) {\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        } else\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("            elem = ((ArrayV) elem).get(idx_s);\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    }\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    if (elem == null)\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        return new StrV(\"\");\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    else\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        return elem;\r\n");
 		javaStmt.append(indent);
 		javaStmt.append("}\r\n");
 		javaStmt.append("\r\n");
