@@ -5,19 +5,24 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import com.coducation.smallbasic.ArithExpr;
 import com.coducation.smallbasic.Array;
+import com.coducation.smallbasic.ArrayV;
 import com.coducation.smallbasic.Assign;
 import com.coducation.smallbasic.BasicBlockEnv;
 import com.coducation.smallbasic.BlockStmt;
 import com.coducation.smallbasic.CompExpr;
+import com.coducation.smallbasic.DoubleV;
+import com.coducation.smallbasic.Env;
+import com.coducation.smallbasic.Eval;
 import com.coducation.smallbasic.Expr;
 import com.coducation.smallbasic.ExprStmt;
 import com.coducation.smallbasic.ForStmt;
@@ -31,8 +36,10 @@ import com.coducation.smallbasic.MethodCallExpr;
 import com.coducation.smallbasic.ParenExpr;
 import com.coducation.smallbasic.PropertyExpr;
 import com.coducation.smallbasic.Stmt;
+import com.coducation.smallbasic.StrV;
 import com.coducation.smallbasic.SubCallExpr;
 import com.coducation.smallbasic.SubDef;
+import com.coducation.smallbasic.Value;
 import com.coducation.smallbasic.Var;
 import com.coducation.smallbasic.WhileStmt;
 
@@ -43,19 +50,28 @@ public class GenJava {
 	//ArrayList<Pair<String, StringBuilder>> method;
 	LinkedHashMap<String, StringBuilder> methods;
 	String currentMethod;
+	String emptyMethod;
 	StringBuilder currentMethodBody;
 	int numberOfIndent;
-	String className;
-	static final String lib = "com.coducation.smallbasic.lib.";
+	HashMap<String, Stmt> trees;
+	Env env;
+	Eval Eval;
+	private static String[] programArgs;
+	static String className;
+	static ArrayList<String> idx_s;
 
-	public GenJava(BasicBlockEnv bbenv, String[] args) {
+	public GenJava(BasicBlockEnv bbenv, Env env, String[] args) {
 		this();
+		trees = bbenv.getMap();
+		this.env = env;
+		programArgs = args;
 	}
 
 	public GenJava() {
 		globalVar = new StringBuilder("");
 		topLevel = new StringBuilder("");
 		methods = new LinkedHashMap<String, StringBuilder>();
+		idx_s = new ArrayList<String>();
 	}
 
 	public String printIndent() {
@@ -74,11 +90,39 @@ public class GenJava {
 
 	//args[0] : Smallbasic file name
 	//stmt : 스몰베이직의 AST
-	public void codeGen(String[] args, Stmt stmt) {
+	public void codeGen(String[] args) {
 		String fileName = args[0].split("/")[args[0].split("/").length - 1];
 		className = fileName.substring(0, fileName.length()-3);
 
-		codeGen(true, stmt);
+		Set<Map.Entry<String, Stmt>> set = trees.entrySet();
+		for (Map.Entry<String, Stmt> entry : set) {
+			currentMethod = entry.getKey().substring(1); // tree --> method
+			Stmt stmt = entry.getValue();
+			if(currentMethod.equals("main")) {
+				codeGen(true, stmt);
+			}
+			else {
+
+				if((stmt instanceof BlockStmt)&&(((BlockStmt)stmt).getAL().size() == 0)) {
+					emptyMethod = currentMethod;
+				}
+				else {
+					methods.put(currentMethod, new StringBuilder("    public static void " + currentMethod + "() {\r\n")); // 처음
+					codeGen(false, stmt);
+					if(methods.get(currentMethod) != null) 
+						methods.put(currentMethod, methods.get(currentMethod).append("    }\r\n"));
+					else methods.put(currentMethod, new StringBuilder("    }\r\n"));
+				}
+			}
+		}
+
+		if(emptyMethod != null) { // emptyMethod 제거
+			Set<String> keySet = trees.keySet();
+			for(String s : keySet) {
+				methods.put(s, new StringBuilder(methods.get(s).toString().replaceAll(className + "." + emptyMethod + "();\r\n", "")));
+			}
+		}
+
 
 		OutputStreamWriter osw;
 		try {
@@ -91,6 +135,7 @@ public class GenJava {
 			osw.write("class " + className + " {\r\n");
 			osw.write("\r\n");
 			osw.write("    static Env env;\r\n");
+			osw.write("    static final String lib = \"com.coducation.smallbasic.lib.\";\r\n");
 			osw.write("\r\n");
 			osw.write("    public " + className +"() {\r\n");
 			osw.write("        env = new Env();\r\n");
@@ -102,11 +147,18 @@ public class GenJava {
 			osw.write(topLevel.toString());
 			//11번 출력
 			osw.write("    }\r\n");
+			osw.write("\r\n");
 			//스몰베이직의 각 서브루틴으로부터 생성된 자바메소드들을 출력
 			Iterator<Entry<String, StringBuilder>> it = methods.entrySet().iterator();
 			while(it.hasNext()) {
 				osw.write(it.next().getValue().toString());
 			}
+			osw.write(assignVarGen("    "));
+			osw.write(getVarGen("	"));
+			osw.write(assignPropertyExprGen("    "));
+			osw.write(getPropertyExprGen("	"));
+			osw.write(assignArrayGen("    "));
+			osw.write(getArrayGen("	"));
 			//13번 출력
 			osw.write("}\r\n");
 			osw.flush();
@@ -168,7 +220,49 @@ public class GenJava {
 		javaStmt.append(codeGen(rhs));
 		javaStmt.append(";\r\n");
 
+		if(lhs instanceof Var) {
+			Var var = (Var)lhs;
+			javaStmt.append("assignVar(" + var.getVarName() + ", " + codeGen(rhs) + ");\r\n");
+
+		}
+		else if(lhs instanceof PropertyExpr) {
+			PropertyExpr propertyExpr = (PropertyExpr)lhs;
+			javaStmt.append("assignPropertyExpr(" + propertyExpr.getObj() + ", " + propertyExpr.getName() + ", " + codeGen(rhs) + ");\r\n");
+
+		}
+		else if(lhs instanceof Array) {
+			Array arr = (Array) lhs;
+			idx_s.clear();
+
+			for (int i = 0; i < arr.getDim(); i++) {
+				Expr idx = arr.getIndex(i);
+				Value v = Eval.eval(env, idx);
+
+				if (v == null || v.toString().trim().equals(""))
+					idx_s.add("0");
+				else if (v instanceof StrV || v instanceof DoubleV) {
+					idx_s.add(v.toString());
+				} else {
+					throw new CodeGenException("Unexpected Index" + v);
+				}
+			}
+			
+			javaStmt.append("assignArray(" + arr.getVar() + ", " + codeGen(rhs) + ");\r\n");
+		}
+		else {
+			throw new CodeGenException("Assign : Unknown lhs " + lhs);
+		}
+
 		if(isTopLevel) {
+			topLevel.append(javaStmt);
+		}
+		else {
+			if(methods.get(currentMethod) != null) 
+				methods.put(currentMethod, methods.get(currentMethod).append(javaStmt));
+			else methods.put(currentMethod, javaStmt);
+		}
+
+		/*if(isTopLevel) {
 			if(lhs instanceof Var || lhs instanceof Array) {
 				topLevel.append(javaStmt);
 			}
@@ -181,39 +275,6 @@ public class GenJava {
 			if(methods.get(currentMethod) != null) 
 				methods.put(currentMethod, methods.get(currentMethod).append(javaStmt));
 			else methods.put(currentMethod, javaStmt);
-		}
-
-		/*if(lhs instanceof Var) {
-			Var v = (Var)lhs;
-			String javaStmt = v.getVarName() + " = " + codeGen(rhs) + ";\r\n";
-
-			if(isTopLevel) {
-				topLevel.append(javaStmt);
-			}
-			else {
-				methods.put(currentMethod, methods.get(currentMethod).append(javaStmt));
-			}
-
-		}
-		else if(lhs instanceof PropertyExpr) {
-			PropertyExpr propertyExpr = (PropertyExpr)lhs;
-			String javaStmt = propertyExpr.getObj() + "." + propertyExpr.getName() + " = " + codeGen(rhs) + ";\r\n";
-
-			if(isTopLevel) {
-				topLevel.append(javaStmt);
-			}
-			else {
-				methods.put(currentMethod, methods.get(currentMethod).append(javaStmt));
-			}
-		}
-		else if(lhs instanceof Array) {
-			Array arr = (Array) lhs;
-
-			for (int i = 0; i < arr.getDim(); i++) {
-			}
-		}
-		else {
-			throw new CodeGenException("Assign : Unknown lhs " + lhs);
 		}*/
 	}
 
@@ -295,9 +356,19 @@ public class GenJava {
 		}
 	}
 
-	public void codeGen(boolean isTopLevel, GotoStmt gotoStmt) {
+	public void codeGen(boolean isTopLevel, GotoStmt gotoStmt) { // subCall role
+		StringBuilder javaStmt = new StringBuilder(printIndent());
 
-		System.out.println(printIndent() + "Goto " + gotoStmt.getTargetLabel());
+		javaStmt.append(className + "." + gotoStmt.getTargetLabel().substring(1) + "();\r\n");
+
+		if(isTopLevel) {
+			topLevel.append(javaStmt);
+		}
+		else {
+			if(methods.get(currentMethod) != null) 
+				methods.put(currentMethod, methods.get(currentMethod).append(javaStmt));
+			else methods.put(currentMethod, javaStmt);
+		}
 	}
 
 	public void codeGen(boolean isTopLevel, IfStmt ifStmt) {
@@ -378,24 +449,7 @@ public class GenJava {
 	}
 
 	public void codeGen(boolean isTopLevel, SubDef subDefStmt) {
-
-		StringBuilder javaStmt = new StringBuilder(printIndent());
-		currentMethod = subDefStmt.getName();
-
-		javaStmt.append("public static void " + currentMethod + "() {\r\n");
-
-		if(methods.get(currentMethod) != null) 
-			methods.put(currentMethod, methods.get(currentMethod).append(javaStmt));
-		else methods.put(currentMethod, javaStmt);
-		javaStmt = new StringBuilder(printIndent());
-
-		codeGen(false, subDefStmt.getBlock());
-
-		javaStmt.append("}\r\n");
-
-		if(methods.get(currentMethod) != null) 
-			methods.put(currentMethod, methods.get(currentMethod).append(javaStmt));
-		else methods.put(currentMethod, javaStmt);
+		throw new CodeGenException("SubDef : Unexpected");
 	}
 
 	public void codeGen(boolean isTopLevel, SubCallExpr subCallExpr) {
@@ -506,13 +560,28 @@ public class GenJava {
 	public String codeGen(Array arrayExpr) {
 
 		StringBuilder javaExpr = new StringBuilder("");
-		javaExpr.append(arrayExpr.getVar());
+		idx_s.clear();
 
 		for (int i = 0; i < arrayExpr.getDim(); i++) {
-			javaExpr.append("[" + arrayExpr.getIndex(i) + "]");
-		}
-		return javaExpr.toString();
+			Expr idx = arrayExpr.getIndex(i);
+			Value v = Eval.eval(env, idx);
 
+			if (v == null || v.toString().trim().equals(""))
+				idx_s.add("0");
+			else if (v instanceof StrV || v instanceof DoubleV) {
+				idx_s.add(v.toString());
+			} else {
+				throw new CodeGenException("Unexpected Index" + v);
+			}
+		}
+		
+		javaExpr.append("getArray(" + arrayExpr.getVar() + ");\r\n");
+
+		/*for (int i = 0; i < arrayExpr.getDim(); i++) {
+			javaExpr.append("[" + arrayExpr.getIndex(i) + "]");
+		}*/
+		
+		return javaExpr.toString();
 	}
 
 	public String codeGen(CompExpr compExpr) {
@@ -599,67 +668,303 @@ public class GenJava {
 	}
 
 	public String codeGen(PropertyExpr propertyExpr) {
+		StringBuilder javaExpr = new StringBuilder("");
+		javaExpr.append("getPropertyExpr(" + propertyExpr.getObj() + ", " + propertyExpr.getName() + ")");
 
-		return propertyExpr.getObj() + "." + propertyExpr.getName();
+		return javaExpr.toString();
 	}
 
 	public String codeGen(Var var) {
-
-		return var.getVarName();
-	}
-    
-	public static Class getClass(String name) throws ClassNotFoundException {
-		return Class.forName(lib + name);
+		if (trees.get(var.getVarName()) != null)
+			return var.getVarName();
+		else
+			return "getVar(" + var.getVarName() + ")";
 	}
 
-	public static String assignPropertyExpr(String indent, Expr lhs, String rhsValue) throws ClassNotFoundException {
+	public static String methodGen(String indent) throws ClassNotFoundException {
 		StringBuilder javaStmt = new StringBuilder("");
-		
-		javaStmt.append("try {\r\n");
+
 		javaStmt.append(indent);
-		javaStmt.append("    String clzName = ((PropertyExpr) " + lhs + ").getObj();\r\n");
+		javaStmt.append("public static Class getClass(String name) {\r\n");
 		javaStmt.append(indent);
-		javaStmt.append("	 Class clz = getClass(clzName);\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("	 Field fld = clz.getField(((PropertyExpr) " + lhs + ").getName());\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("	 fld.set(null, " + rhsValue + ");\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("	 Method mth = clz.getMethod(notifyFieldAssign, String.class);\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("	 mth.invoke(null, ((PropertyExpr) " + lhs + ").getName());\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("} catch (NoSuchFieldException | SecurityException e) {\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("	 throw new InterpretException(\"Assign : \" + e.toString());\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("} catch (IllegalArgumentException e) {\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("	 throw new InterpretException(\"Assign : \" + e.toString());\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("} catch (IllegalAccessException e) {\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("	 throw new InterpretException(\"Assign : \" + e.toString());\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("} catch (ClassNotFoundException e) {\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("	 throw new InterpretException(\"Class Not Found \" + e.toString());\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("} catch (NoSuchMethodException e) {\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("	 throw new InterpretException(\"Method Not Found \" + e.toString());\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("} catch (InvocationTargetException e) {\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("	 throw new InterpretException(\"Target Not Found \" + e.toString() + \": \");\r\n");
+		javaStmt.append("    return Class.forName(lib + name);\r\n");
 		javaStmt.append(indent);
 		javaStmt.append("}\r\n");
+		javaStmt.append("\r\n");
 
 		return javaStmt.toString();
 	}
 
-	public static String assignArray(String indent) throws ClassNotFoundException {
-		return "";
+	public static String getClassGen(String indent) throws ClassNotFoundException {
+		StringBuilder javaStmt = new StringBuilder("");
+
+		javaStmt.append(indent);
+		javaStmt.append("public static Class getClass(String name) {\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    return Class.forName(lib + name);\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("}\r\n");
+		javaStmt.append("\r\n");
+
+		return javaStmt.toString();
+	}
+
+	public static String assignVarGen(String indent) {
+		StringBuilder javaStmt = new StringBuilder("");
+
+		javaStmt.append(indent);
+		javaStmt.append("public static void assignVar(String varName, String rhsValue) {\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    env.put(varName, new StrV(rhsValue));\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("}\r\n");
+		javaStmt.append("\r\n");
+
+		return javaStmt.toString();
+	}
+
+	public static String getVarGen(String indent) {
+		StringBuilder javaStmt = new StringBuilder("");
+
+		javaStmt.append(indent);
+		javaStmt.append("public static String getVar(String varName) {\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        return env.get(varName).toString();\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("}\r\n");
+		javaStmt.append("\r\n");
+
+		return javaStmt.toString();
+	}
+
+	public static String assignPropertyExprGen(String indent) {
+		StringBuilder javaStmt = new StringBuilder("");
+
+		javaStmt.append(indent);
+		javaStmt.append("public static void assignPropertyExpr(String lhsObj, String lhsName, String rhsValue) {\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    try {\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        String clzName = lhsObj;\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("	     Class clz = getClass(clzName);\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("	     Field fld = clz.getField(lhsName);\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("	     fld.set(null, rhsValue);\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("	     Method mth = clz.getMethod(notifyFieldAssign, String.class);\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("	     mth.invoke(null, lhsName);\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    } catch (NoSuchFieldException | SecurityException e) {\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("	     throw new CodeGenException(\"Assign : \" + e.toString());\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    } catch (IllegalArgumentException e) {\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("	     throw new CodeGenException(\"Assign : \" + e.toString());\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    } catch (IllegalAccessException e) {\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("	     throw new CodeGenException(\"Assign : \" + e.toString());\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    } catch (ClassNotFoundException e) {\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("	     throw new CodeGenException(\"Class Not Found \" + e.toString());\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    } catch (NoSuchMethodException e) {\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("	     throw new CodeGenException(\"Method Not Found \" + e.toString());\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    } catch (InvocationTargetException e) {\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("	     throw new CodeGenException(\"Target Not Found \" + e.toString() + \": \");\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    }\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("}\r\n");
+		javaStmt.append("\r\n");
+
+		return javaStmt.toString();
+	}
+
+	public static String getPropertyExprGen(String indent) {
+		StringBuilder javaStmt = new StringBuilder("");
+
+		javaStmt.append(indent);
+		javaStmt.append("public static String getPropertyExpr(String obj, String name) {\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    try {\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        String clzName = obj;\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("	     Class clz = getClass(clzName);\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("	     Field fld = clz.getField(name);\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("	     Method mth = clz.getMethod(notifyFieldAssign, String.class);\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("	     mth.invoke(null, name);\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("	     return (Value) fld.get(null);\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    } catch (NoSuchFieldException | SecurityException e) {\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("	     throw new CodeGenException(\"PropertyExpr : \" + e.toString());\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    } catch (IllegalArgumentException e) {\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("	     throw new CodeGenException(\"PropertyExpr : \" + e.toString());\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    } catch (IllegalAccessException e) {\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("	     throw new CodeGenException(\"PropertyExpr : \" + e.toString());\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    } catch (ClassNotFoundException e) {\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("	     throw new CodeGenException(\"Class Not Found \" + e.toString());\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    } catch (NoSuchMethodException e) {\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("	     throw new CodeGenException(\"Method Not Found \" + e.toString());\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    } catch (InvocationTargetException e) {\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("	     throw new CodeGenException(\"Target Not Found \" + e.toString() + \": \");\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    }\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("}\r\n");
+		javaStmt.append("\r\n");
+
+		return javaStmt.toString();
+	}
+
+	public static String assignArrayGen(String indent) {
+		StringBuilder javaStmt = new StringBuilder("");
+
+		javaStmt.append(indent);
+		javaStmt.append("public static void assignArray(String arrayName, String rhsValue) {\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    Value arrValue = env.get(arrayName);\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    ArrayV elem;\r\n");
+		javaStmt.append("\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    if (arrValue == null)\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        elem = null;\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    else if (arrValue instanceof ArrayV)\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        elem = (ArrayV) arrValue;\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    else {\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        elem = null;\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    }\r\n");
+		javaStmt.append("\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    if (elem == null) {\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        elem = new ArrayV();\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        env.put(arrayName, elem);\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    }\r\n");
+		javaStmt.append("\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    ArrayList<String> idx_s = new ArrayList<String>();\r\n");
+		for(int i=0;i<idx_s.size();i++) {
+			javaStmt.append(indent);
+			javaStmt.append("    idx_s.add(" + idx_s.get(i) + ")\r\n");
+		}
+		javaStmt.append("\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    for (int i = 0; i < idx_s.size(); i++) {\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        if (i < idx_s.size() - 1) {\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("            ArrayV elem_elem = (ArrayV) elem.get(idx_s.get(i));\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("            if (elem_elem == null) {\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("                elem_elem = new ArrayV();\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("                elem.put(idx_s.get(i), elem_elem);\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("            }\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("            elem = elem_elem;\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        } else {\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("            elem.put(idx_s.get(i), new StrV(rhsValue));\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        }\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    }\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("}\r\n");
+		javaStmt.append("\r\n");
+
+		return javaStmt.toString();
+	}
+
+	public static String getArrayGen(String indent) {
+		StringBuilder javaStmt = new StringBuilder("");
+
+		javaStmt.append(indent);
+		javaStmt.append("public static void getArray(String arrayName) {\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    ArrayV arrV;\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    Value elem = null;\r\n");
+		javaStmt.append("\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    if (env.get(arrayName) instanceof ArrayV) {\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        arrV = (ArrayV) env.get(arrayName);\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        elem = arrV;\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    }\r\n");
+		javaStmt.append("\r\n");
+		javaStmt.append("    ArrayList<String> idx_s = new ArrayList<String>();\r\n");
+		for(int i=0;i<idx_s.size();i++) {
+			javaStmt.append(indent);
+			javaStmt.append("    idx_s.add(" + idx_s.get(i) + ")\r\n");
+		}
+		javaStmt.append("\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    for (int i = 0; i < idx_s.size(); i++) {\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        if (elem == null)\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("            break;\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        else if (elem instanceof StrV) {\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        } else\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("            elem = ((ArrayV) elem).get(idx_s);\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    }\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    if (elem == null)\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        return new StrV(\"\");\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    else\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        return elem;\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("}\r\n");
+		javaStmt.append("\r\n");
+
+		return javaStmt.toString();
 	}
 
 
