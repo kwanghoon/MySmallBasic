@@ -30,10 +30,11 @@ Our project is released under [LGPL 3.0 Licence]. If you want to use as commerci
 We open our google group: ... where you can ask questions or you can give us suggestions.
 
 ## Roadmap
-- A *Graduation* function for Small Basic programmers to move to other programming languages such as Python, Java, and so
-- A block-based coding environment based on Blockly
-- A *Publish* function for people easy to share their Small Basic programs with others
-- A sample curriculum for a lecture on Computational Thinking, which we plans to open at Chonnam National University, Spring 2018.
+- A sample curriculum for lectures on *Computational Thinking*, which we plan to open at Chonnam National University, Spring 2018.
+- New libraries for lists, trees, and graphs.
+- A block-based coding environment based on Blockly.
+- A *Publish* function for people easy to share their Small Basic programs with others.
+- A *Graduation* function for Small Basic programmers to move to other programming languages such as Python, Java, and so.
 
 ## Credits
 - Kwanghoon Choi <kwanghoon.choi@jnu.ac.kr>
