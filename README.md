@@ -1,5 +1,5 @@
 # MySmallBasic for Everyone
-MySmallBasic is the first open-source software for Small Basic coding environment. This project aims at pushing Small Basic as the first computer language for people who like to learn computer programmingcoding. It is started by SWLAB at Chonnam National University, Gwangju, Korea.
+MySmallBasic is the first open-source software for Small Basic coding environment. This project aims at pushing Small Basic as the first computer language for people who like to learn computer programming. It is started by SWLAB at Chonnam National University, Gwangju, Korea.
 
 ## Demo Video
 - ...
