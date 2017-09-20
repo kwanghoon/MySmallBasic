@@ -4,7 +4,7 @@ MySmallBasic is the first open-source software for Small Basic coding environmen
 ## Demo Video
 - ...
 
-[![Video Demo](https://github.com/kwanghoon/images/blob/mysmallbasic/___.PNG)](https://youtu.be/KTYCjc8aoMU "title")
+[![Video Demo](https://github.com/kwanghoon/images/blob/mysmallbasic/___.PNG)](https://youtu.be/ "title")
 
 ## Features
 - A Java-based implementation that can run not only on Windows, but also on other operating systems such as Linux and Mac.
