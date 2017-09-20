@@ -3,7 +3,7 @@
   associations="false" dependencies="false" nesting-relationships="true" router="FAN">  
   <class id="1" language="java" name="com.coducation.smallbasic.Array" project="MySmallBasic" 
     file="/MySmallBasic/src/com/coducation/smallbasic/Array.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="913" y="310"/>    
+    <position height="-1" width="-1" x="912" y="316"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
@@ -21,7 +21,7 @@
   </class>  
   <class id="3" language="java" name="com.coducation.smallbasic.ArithExpr" project="MySmallBasic" 
     file="/MySmallBasic/src/com/coducation/smallbasic/ArithExpr.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="1076" y="310"/>    
+    <position height="-1" width="-1" x="1075" y="316"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
@@ -39,7 +39,7 @@
   </class>  
   <class id="5" language="java" name="com.coducation.smallbasic.CompExpr" project="MySmallBasic" 
     file="/MySmallBasic/src/com/coducation/smallbasic/CompExpr.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="261" y="403"/>    
+    <position height="-1" width="-1" x="260" y="409"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
@@ -48,7 +48,7 @@
   </class>  
   <class id="6" language="java" name="com.coducation.smallbasic.CondExpr" project="MySmallBasic" 
     file="/MySmallBasic/src/com/coducation/smallbasic/CondExpr.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="261" y="310"/>    
+    <position height="-1" width="-1" x="260" y="316"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
@@ -75,7 +75,7 @@
   </class>  
   <class id="9" language="java" name="com.coducation.smallbasic.Expr" project="MySmallBasic" 
     file="/MySmallBasic/src/com/coducation/smallbasic/Expr.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="669" y="217"/>    
+    <position height="-1" width="-1" x="668" y="223"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
@@ -129,7 +129,7 @@
   </class>  
   <class id="15" language="java" name="com.coducation.smallbasic.Lit" project="MySmallBasic" 
     file="/MySmallBasic/src/com/coducation/smallbasic/Lit.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="424" y="403"/>    
+    <position height="-1" width="-1" x="423" y="409"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
@@ -138,7 +138,7 @@
   </class>  
   <class id="16" language="java" name="com.coducation.smallbasic.LogicalExpr" project="MySmallBasic" 
     file="/MySmallBasic/src/com/coducation/smallbasic/LogicalExpr.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="98" y="403"/>    
+    <position height="-1" width="-1" x="97" y="409"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
@@ -147,7 +147,7 @@
   </class>  
   <class id="17" language="java" name="com.coducation.smallbasic.MethodCallExpr" project="MySmallBasic" 
     file="/MySmallBasic/src/com/coducation/smallbasic/MethodCallExpr.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="750" y="310"/>    
+    <position height="-1" width="-1" x="749" y="316"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
@@ -156,7 +156,7 @@
   </class>  
   <class id="18" language="java" name="com.coducation.smallbasic.ParenExpr" project="MySmallBasic" 
     file="/MySmallBasic/src/com/coducation/smallbasic/ParenExpr.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="424" y="310"/>    
+    <position height="-1" width="-1" x="423" y="316"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
@@ -201,7 +201,7 @@
   </class>  
   <class id="23" language="java" name="com.coducation.smallbasic.Var" project="MySmallBasic" 
     file="/MySmallBasic/src/com/coducation/smallbasic/Var.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="587" y="310"/>    
+    <position height="-1" width="-1" x="586" y="316"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
@@ -227,92 +227,92 @@
     </display>  
   </class>  
   <generalization id="26">    
-    <end type="SOURCE" refId="12"/>    
-    <end type="TARGET" refId="19"/>  
-  </generalization>  
-  <generalization id="27">    
-    <end type="SOURCE" refId="2"/>    
-    <end type="TARGET" refId="19"/>  
-  </generalization>  
-  <generalization id="28">    
-    <end type="SOURCE" refId="18"/>    
-    <end type="TARGET" refId="9"/>  
-  </generalization>  
-  <generalization id="29">    
-    <end type="SOURCE" refId="13"/>    
-    <end type="TARGET" refId="19"/>  
-  </generalization>  
-  <generalization id="30">    
     <end type="SOURCE" refId="20"/>    
     <end type="TARGET" refId="25"/>  
   </generalization>  
-  <generalization id="31">    
+  <generalization id="27">    
     <end type="SOURCE" refId="11"/>    
     <end type="TARGET" refId="19"/>  
   </generalization>  
-  <generalization id="32">    
-    <end type="SOURCE" refId="22"/>    
-    <end type="TARGET" refId="19"/>  
-  </generalization>  
-  <generalization id="33">    
-    <end type="SOURCE" refId="7"/>    
-    <end type="TARGET" refId="19"/>  
-  </generalization>  
-  <generalization id="34">    
-    <end type="SOURCE" refId="16"/>    
-    <end type="TARGET" refId="6"/>  
-  </generalization>  
-  <generalization id="35">    
-    <end type="SOURCE" refId="14"/>    
-    <end type="TARGET" refId="19"/>  
-  </generalization>  
-  <generalization id="36">    
-    <end type="SOURCE" refId="21"/>    
-    <end type="TARGET" refId="19"/>  
-  </generalization>  
-  <generalization id="37">    
-    <end type="SOURCE" refId="17"/>    
-    <end type="TARGET" refId="9"/>  
-  </generalization>  
-  <generalization id="38">    
+  <generalization id="28">    
     <end type="SOURCE" refId="15"/>    
     <end type="TARGET" refId="6"/>  
   </generalization>  
-  <generalization id="39">    
-    <end type="SOURCE" refId="10"/>    
+  <generalization id="29">    
+    <end type="SOURCE" refId="23"/>    
+    <end type="TARGET" refId="9"/>  
+  </generalization>  
+  <generalization id="30">    
+    <end type="SOURCE" refId="12"/>    
     <end type="TARGET" refId="19"/>  
   </generalization>  
-  <generalization id="40">    
-    <end type="SOURCE" refId="4"/>    
-    <end type="TARGET" refId="25"/>  
-  </generalization>  
-  <generalization id="41">    
-    <end type="SOURCE" refId="8"/>    
-    <end type="TARGET" refId="25"/>  
-  </generalization>  
-  <generalization id="42">    
-    <end type="SOURCE" refId="5"/>    
-    <end type="TARGET" refId="6"/>  
-  </generalization>  
-  <generalization id="43">    
+  <generalization id="31">    
     <end type="SOURCE" refId="24"/>    
     <end type="TARGET" refId="19"/>  
   </generalization>  
-  <generalization id="44">    
-    <end type="SOURCE" refId="1"/>    
-    <end type="TARGET" refId="9"/>  
+  <generalization id="32">    
+    <end type="SOURCE" refId="13"/>    
+    <end type="TARGET" refId="19"/>  
   </generalization>  
-  <generalization id="45">    
+  <generalization id="33">    
+    <end type="SOURCE" refId="21"/>    
+    <end type="TARGET" refId="19"/>  
+  </generalization>  
+  <generalization id="34">    
+    <end type="SOURCE" refId="22"/>    
+    <end type="TARGET" refId="19"/>  
+  </generalization>  
+  <generalization id="35">    
+    <end type="SOURCE" refId="7"/>    
+    <end type="TARGET" refId="19"/>  
+  </generalization>  
+  <generalization id="36">    
     <end type="SOURCE" refId="3"/>    
     <end type="TARGET" refId="9"/>  
   </generalization>  
-  <generalization id="46">    
+  <generalization id="37">    
     <end type="SOURCE" refId="6"/>    
     <end type="TARGET" refId="9"/>  
   </generalization>  
-  <generalization id="47">    
-    <end type="SOURCE" refId="23"/>    
+  <generalization id="38">    
+    <end type="SOURCE" refId="8"/>    
+    <end type="TARGET" refId="25"/>  
+  </generalization>  
+  <generalization id="39">    
+    <end type="SOURCE" refId="2"/>    
+    <end type="TARGET" refId="19"/>  
+  </generalization>  
+  <generalization id="40">    
+    <end type="SOURCE" refId="18"/>    
     <end type="TARGET" refId="9"/>  
+  </generalization>  
+  <generalization id="41">    
+    <end type="SOURCE" refId="1"/>    
+    <end type="TARGET" refId="9"/>  
+  </generalization>  
+  <generalization id="42">    
+    <end type="SOURCE" refId="17"/>    
+    <end type="TARGET" refId="9"/>  
+  </generalization>  
+  <generalization id="43">    
+    <end type="SOURCE" refId="14"/>    
+    <end type="TARGET" refId="19"/>  
+  </generalization>  
+  <generalization id="44">    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="25"/>  
+  </generalization>  
+  <generalization id="45">    
+    <end type="SOURCE" refId="10"/>    
+    <end type="TARGET" refId="19"/>  
+  </generalization>  
+  <generalization id="46">    
+    <end type="SOURCE" refId="5"/>    
+    <end type="TARGET" refId="6"/>  
+  </generalization>  
+  <generalization id="47">    
+    <end type="SOURCE" refId="16"/>    
+    <end type="TARGET" refId="6"/>  
   </generalization>  
   <classifier-display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
     sort-features="false" accessors="true" visibility="true">    
