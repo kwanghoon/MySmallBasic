@@ -11,6 +11,8 @@ import java.util.Scanner;
 import java.util.Set;
 import java.util.StringTokenizer;
 
+import com.coducation.smallbasic.codegen.GenJava;
+
 public class MySmallBasicMain {
 
 	public static void main(String[] args) throws IOException {
@@ -97,6 +99,10 @@ public class MySmallBasicMain {
 					new PrettyPrinter(stmt).prettyPrint();
 				}
 				System.out.println();
+				
+				String[] s = {Filename};
+				GenJava g = new GenJava(new BasicBlockEnv(map), args);
+				g.codeGen(s);
 	
 				System.out.println("Execution");
 				try {
