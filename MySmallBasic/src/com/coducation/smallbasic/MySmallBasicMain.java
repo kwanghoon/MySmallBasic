@@ -100,9 +100,9 @@ public class MySmallBasicMain {
 				}
 				System.out.println();
 				
-				String[] s = {Filename};
-				GenJava g = new GenJava(new BasicBlockEnv(map), args);
-				g.codeGen(s);
+//				String[] s = {Filename};
+//				GenJava g = new GenJava(new BasicBlockEnv(map), args);
+//				g.codeGen(s);
 	
 				System.out.println("Execution");
 				try {
