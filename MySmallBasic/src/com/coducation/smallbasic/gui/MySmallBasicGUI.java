@@ -5,6 +5,7 @@ import java.awt.Desktop;
 import java.awt.FileDialog;
 import java.awt.GridLayout;
 import java.awt.Image;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -51,6 +52,7 @@ public class MySmallBasicGUI extends JFrame implements MySmallBasicDebuggerClien
 
 	// 저장관련 변수
 	private boolean isTempFile = true; // 임시파일인지
+	private boolean isNew = true;		//새로 만든 파일인지
 	private String filePath = TEMP_PATH; // 파일의 경로
 	private boolean isTextAreaChanged = false;
 
@@ -68,7 +70,7 @@ public class MySmallBasicGUI extends JFrame implements MySmallBasicDebuggerClien
 	}
 
 	public MySmallBasicGUI() {
-				
+		
 		//gui 창 종료시 이벤트
 		addWindowListener(new WindowAdapter(){
 			public void windowClosing(WindowEvent e)
@@ -79,6 +81,7 @@ public class MySmallBasicGUI extends JFrame implements MySmallBasicDebuggerClien
 			}
 		});
 		setTitle("MySmallBasic");
+		setIconImage(Toolkit.getDefaultToolkit().getImage(System.getProperty("user.dir") + "/resource/GUI/SB_icon.png"));
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -123,6 +126,7 @@ public class MySmallBasicGUI extends JFrame implements MySmallBasicDebuggerClien
 				filePath = TEMP_PATH; // 임시 tmp 파일경로
 
 				isTempFile = true;
+				isNew = true;
 				isTextAreaChanged = true;
 
 				textAreaMaker.clearBreakPointInfo();
@@ -157,6 +161,7 @@ public class MySmallBasicGUI extends JFrame implements MySmallBasicDebuggerClien
 				}
 
 				isTempFile = false;
+				isNew = false;
 				isTextAreaChanged = false;
 
 				textAreaMaker.clearBreakPointInfo();
@@ -191,14 +196,14 @@ public class MySmallBasicGUI extends JFrame implements MySmallBasicDebuggerClien
 		JPanel webPanel = new JPanel();
 		toolBar.add(webPanel);
 		webPanel.setLayout(new GridLayout(2, 1, 0, 0));
-		// fetch button - 이미지 적당한거 못찾음
+		// fetch button
 		JButton fetchButton = new JButton("가져오기");
-		fetchButton.setIcon(resizeImg(System.getProperty("user.dir") + "/resource/GUI/saveAs.png", 25, 25));
+		fetchButton.setIcon(resizeImg(System.getProperty("user.dir") + "/resource/GUI/import.png", 25, 25));
 		fetchButton.setIconTextGap(2);
 		webPanel.add(fetchButton);
-		// publish button - 이미지 적당한 거 못찾음
+		// publish button
 		JButton publishButton = new JButton("출판");
-		publishButton.setIcon(resizeImg(System.getProperty("user.dir") + "/resource/GUI/saveAs.png", 25, 25));
+		publishButton.setIcon(resizeImg(System.getProperty("user.dir") + "/resource/GUI/export.png", 25, 25));
 		publishButton.setIconTextGap(2);
 		webPanel.add(publishButton);
 
@@ -315,7 +320,6 @@ public class MySmallBasicGUI extends JFrame implements MySmallBasicDebuggerClien
 				debugToolBar = new JToolBar();
 				debugToolBar.setToolTipText("디버그 메뉴");
 				debugPanel.add(debugToolBar, BorderLayout.NORTH);
-				// toolBarPanel.add(debugToolBar, BorderLayout.SOUTH);
 				debugToolBar.setSize(1024, 20);
 
 				// 변수 모니터링 창 추가
@@ -324,7 +328,7 @@ public class MySmallBasicGUI extends JFrame implements MySmallBasicDebuggerClien
 				contentPane.add(debugPanel, BorderLayout.EAST);
 
 				// 디버그관련 버튼
-				JButton stepButton = addButton("다음줄", "/resource/GUI/play.png", debugToolBar, 20);
+				JButton stepButton = addButton("다음줄", "/resource/GUI/step_over.png", debugToolBar, 20);
 				stepButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						synchronized (debuggerThread) {
@@ -334,7 +338,7 @@ public class MySmallBasicGUI extends JFrame implements MySmallBasicDebuggerClien
 						}
 					}
 				});
-				JButton continueButton = addButton("계속", "/resource/GUI/play.png", debugToolBar, 20);
+				JButton continueButton = addButton("계속", "/resource/GUI/step_into.png", debugToolBar, 20);
 				continueButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						synchronized (debuggerThread) {
@@ -357,6 +361,7 @@ public class MySmallBasicGUI extends JFrame implements MySmallBasicDebuggerClien
 		});
 
 		//block button
+		/* 오픈소프트웨어 개발자 대회출품을 위해 잠시 주석처리합니다
 		blockButton = addButton("block", "/resource/Blockly/block.png", toolBar, 50);
 		blockButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -370,7 +375,7 @@ public class MySmallBasicGUI extends JFrame implements MySmallBasicDebuggerClien
 				}
 			}
 		});
-		
+		*/
 		setSize(1024, 800);
 	}
 
@@ -432,12 +437,13 @@ public class MySmallBasicGUI extends JFrame implements MySmallBasicDebuggerClien
 
 		isTextAreaChanged = false;
 		isTempFile = false;
+		isNew = false;
 	}
 
 	private void fileCheckForRun() {
 
 		// 내용이 변경되었으면 저장
-		if (isTextAreaChanged) {
+		if (isTextAreaChanged || isNew) {
 			// 임시 파일로 작성한 경우
 			if (isTempFile) {
 				try {
@@ -447,6 +453,7 @@ public class MySmallBasicGUI extends JFrame implements MySmallBasicDebuggerClien
 				} catch (Exception e2) {}
 
 				isTextAreaChanged = false;
+				isNew = false;
 			}
 			// 변경된 내용이 있으면 저장
 			else
