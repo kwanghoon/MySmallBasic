@@ -45,7 +45,7 @@ public class LexerAnalyzer
 			int i_index = 0;
 			Token CurrToken = Token.NONE;
 			
-			while(i_index < line.length()) // repeat from first character to final, in one line. 
+			while(line != null && i_index < line.length()) // repeat from first character to final, in one line. 
 			{
 				char ch = line.charAt(i_index);
 				int front_index = i_index+1;

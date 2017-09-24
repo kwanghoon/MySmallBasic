@@ -85,7 +85,7 @@ public class Parser
 			
 			if(a.getTokenInfo() == Token.END_OF_TOKENS) // if firstToken is END_OF_TOKENS, File Parsing Success.
 			{
-				System.out.println("Parsing Success." + " " + (line_index-1) + " lines.");
+				// System.out.println("Parsing Success." + " " + (line_index-1) + " lines.");
 				return (Nonterminal)stack.get(1);
 			}
 			

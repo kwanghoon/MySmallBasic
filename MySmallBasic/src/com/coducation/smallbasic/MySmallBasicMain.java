@@ -87,24 +87,25 @@ public class MySmallBasicMain {
 			// Parser Test Routine.
 			Nonterminal stack = Parsing.Parsing();
 			if (stack.getTree() instanceof BlockStmt) {
-				PrettyPrinter printer = new PrettyPrinter((BlockStmt) stack.getTree());
-				printer.prettyPrint();
-	
+//				PrettyPrinter printer = new PrettyPrinter((BlockStmt) stack.getTree());
+//				printer.prettyPrint();
+//	
 				HashMap<String, Stmt> map = new Continuous().transform((BlockStmt) stack.getTree());
-				Set<Map.Entry<String, Stmt>> set = map.entrySet();
-				for (Map.Entry<String, Stmt> entry : set) {
-					String key = entry.getKey();
-					Stmt stmt = entry.getValue();
-					System.out.println(key + ":");
-					new PrettyPrinter(stmt).prettyPrint();
-				}
-				System.out.println();
+				
+//				Set<Map.Entry<String, Stmt>> set = map.entrySet();
+//				for (Map.Entry<String, Stmt> entry : set) {
+//					String key = entry.getKey();
+//					Stmt stmt = entry.getValue();
+//					System.out.println(key + ":");
+//					new PrettyPrinter(stmt).prettyPrint();
+//				}
+//				System.out.println();
 				
 //				String[] s = {Filename};
 //				GenJava g = new GenJava(new BasicBlockEnv(map), args);
 //				g.codeGen(s);
 	
-				System.out.println("Execution");
+//				System.out.println("Execution");
 				try {
 					new Eval(new BasicBlockEnv(map)).eval(args);
 				} catch (InterpretException exn) {
