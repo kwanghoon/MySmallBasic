@@ -16,11 +16,13 @@ public class Assert {
 				// do nothing
 			}
 			else {
-				throw new InterpretException("Assert.assertion fail : " + str_arg + " == " + bool_arg);
+				System.err.println("ASSERT FAIL: " + str_arg + " == " + bool_arg);
+				// throw new InterpretException("Assert.assertion fail : " + str_arg + " == " + bool_arg);
 			}
 		}
 		else {
-			throw new InterpretException("Assert.assertion : # of args == " + args.size());
+			System.err.println("ASSERT FAIL: # of args == " + args.size());
+			// throw new InterpretException("Assert.assertion : # of args == " + args.size());
 		}
 		return null;
 	}
