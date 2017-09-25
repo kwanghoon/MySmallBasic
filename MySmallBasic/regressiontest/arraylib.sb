@@ -36,23 +36,23 @@ TextWindow.WriteLine(g)
 
 TextWindow.WriteLine("*GetAllIndices() Test*")
 
-'@assert h=1=0;2=2;3=4;
+'@assert h = 1=0;2=2;3=4;
 h = Array.GetAllIndices(arr)
 TextWindow.WriteLine(h)
 
 TextWindow.WriteLine("*GetItemCount() Test*")
 
-'@assert i=3
+'@assert i = 3
 i = Array.GetItemCount(arr)
 TextWindow.WriteLine(i)
 
-'@assert j=3
+'@assert j = 3
 j = Array.GetItemCount(arr)
 TextWindow.WriteLine(j)
 
 TextWindow.WriteLine("*IsArray() Test*")
 
-'@assert k=true
+'@assert k = true
 k = Array.IsArray(h)
 TextWindow.WriteLine(k)
 
@@ -67,15 +67,14 @@ Array.SetValue(arr,"is","yeong")
 
 TextWindow.WriteLine("*GetValue() Test*")
 
-'@asset l=7
+'@asset l = 7
 l = Array.GetValue(arr,"os")
 TextWindow.WriteLine(l)
 
-'@assert m=ssss
+'@assert m = ssss
 m = Array.GetValue("arr","5")
 TextWindow.WriteLine(m)
 
 TextWindow.WriteLine("*RemoveValue() Test*")
 
-'@assert arr=6=4;7=se;0s=7;is=yeong;
 Array.RemoveValue("arr",5)
