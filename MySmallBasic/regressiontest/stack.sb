@@ -3,12 +3,16 @@
 Stack.PushValue("Stack", 1)
 Stack.PushValue("Stack", "hi")
 TextWindow.WriteLine("push 1, push hi")
-TextWindow.WriteLine("pop : " + Stack.PopValue("Stack"))
+
+a = Stack.PopValue("Stack")
+'@assert a = "hi"
+TextWindow.WriteLine("pop : " + a)
 
 
 'different type item in stack test
 
 TextWindow.WriteLine("========================================")
+
 
 TextWindow.WriteLine("myStack num : " + Stack.GetCount("myStack"))
 
@@ -16,15 +20,24 @@ Stack.PushValue("myStack", 1)
 Stack.PushValue("myStack", "hi")
 TextWindow.WriteLine("push 1 , push hi")
 
-TextWindow.WriteLine("myStack num : " + Stack.GetCount("myStack"))
-TextWindow.WriteLine("myStack pop : " + Stack.PopValue("myStack"))
-TextWindow.WriteLine("myStack pop : " + Stack.PopValue("myStack"))
-TextWindow.WriteLine("myStack num : " + Stack.GetCount("myStack"))
+b = Stack.GetCount("myStack")
+'@assert b = 2
+TextWindow.WriteLine("myStack num : " + b)
+c = Stack.PopValue("myStack")
+'@assert c = "hi"
+TextWindow.WriteLine("myStack pop : " + c)
+d = Stack.PopValue("myStack")
+'@assert d= 1
+TextWindow.WriteLine("myStack pop : " + d)
+e = Stack.GetCount("myStack")
+'@assert e= 0
+TextWindow.WriteLine("myStack num : " + e)
 
 
 'numberValue stackName test
 
 TextWindow.WriteLine("========================================")
+
 
 num1 = 1
 num2 = 2
@@ -37,6 +50,8 @@ TextWindow.WriteLine("myStack2 : push 1, push 2, push 3")
 
 pop1 = Stack.PopValue("myStack2")
 pop2 = Stack.PopValue("myStack2")
+'@assert pop1 = 3
+'@assert pop2 = 2
 
 TextWindow.WriteLine("pop1 + pop2 = " + (pop1 + pop2))
 
@@ -45,12 +60,18 @@ TextWindow.WriteLine("pop1 + pop2 = " + (pop1 + pop2))
 
 TextWindow.WriteLine("========================================")
 
+
 Stack.PushValue(1,1)
 Stack.PushValue("1",2)
 TextWindow.WriteLine("PushValue(1, 1) PushValue(string 1, 2)")
 
-TextWindow.WriteLine("pop 1 : " + Stack.PopValue(1))
-TextWindow.WriteLine("pop 1 : " + Stack.PopValue(1))
+pop1 = Stack.PopValue(1)
+pop2 = Stack.PopValue(1)
+'@assert pop1 = 2
+'@assert pop2 = 1
+
+TextWindow.WriteLine("pop 1 : " + pop1)
+TextWindow.WriteLine("pop 2 : " + pop2)
 
 'if stackName is array
 
@@ -63,4 +84,6 @@ Stack.PushValue(myArr, 1)
 Stack.PushValue(myArr, 2)
 TextWindow.WriteLine("push 1, push 2")
 TextWindow.WriteLine("myArr.toString : " + myArr)
-TextWindow.WriteLine("pop : " + Stack.PopValue(myArr))
+g = Stack.PopValue(myArr)
+'@assert g = 2
+TextWindow.WriteLine("pop : " + g)
