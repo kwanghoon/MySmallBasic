@@ -82,7 +82,7 @@ public class LexerAnalyzer
 //						System.out.println("expr_str " + expr_str);
 //						System.out.println("last_ch " + last_ch);
 						
-						line = "Assert.assertion(" + "\"" + expr_str.replace("\"", "\\\"") + "\"" + ", " + expr_str + ")" + last_ch;
+						line = "Assert.assertion(" + "\"" + expr_str.replace("\"", "''") + "\"" + ", " + expr_str + ")" + last_ch;
 						i_index = 0;
 						I = "";
 						
@@ -206,16 +206,17 @@ public class LexerAnalyzer
 						i_index++;
 						ch = line.charAt(i_index);
 						
-						if (ch == '\\') {
-							i_index++;
-							ch = line.charAt(i_index);
+						// for Escape sequence of characters
+//						if (ch == '\\') {
+//							i_index++;
+//							ch = line.charAt(i_index);
+//							I = I + ch;
+//							
+//							ch = '\\'; // reset 
+//						}
+//						else {
 							I = I + ch;
-							
-							ch = '\\'; // reset 
-						}
-						else {
-							I = I + ch;
-						}
+//						}
 					}while(ch != '"');
 					
 					i_index++;
