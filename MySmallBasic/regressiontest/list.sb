@@ -1,47 +1,24 @@
-list = List.Single(123)
+list1 = List.List(1, 2, 3, 4, 5, 6)
+list2 = List.List(5, 4, 3, 2, 1)
 
-TextWindow.WriteLine(list)
+list3 = List.Concat(list1, list2)
 
-TextWindow.WriteLine(List.Head(list))
+h1 = List.Head(list1)
+t1 = List.Tail(list1)
 
-TextWindow.WriteLine(List.IndexAt(list,1))
+TextWindow.WriteLine(h1)
+List.Print(t1)
 
-TextWindow.WriteLine(List.Tail(list))
+TextWindow.WriteLine(t1)
 
-TextWindow.WriteLine(List.Head(list))
+List.Print(list3)
 
-TextWindow.WriteLine(List.IsEmpty(list))
+For i = 0 To 15
+	TextWindow.WriteLine(List.IndexAt(list3, i))
+EndFor
 
-list1 = List.Single(1)
+list4 = List.List()
 
-list2 = List.Single(2)
 
-list3 = List.Single(3)
 
-List.Concat(list1, list2)
-
-List.Concat(list1, list3)
-
-TextWindow.WriteLine(list1)
-TextWindow.WriteLine(list2)
-TextWindow.WriteLine(list3)
-
-TextWindow.WriteLine(List.Head(list1))
-List.Tail(list1)
-TextWindow.WriteLine(List.Head(list1))
-List.Tail(list1)
-TextWindow.WriteLine(List.Head(list1))
-List.Tail(list1)
-TextWindow.WriteLine(List.Head(list1))
-
-List.Add(list1, 1)
-List.Add(list1, 2)
-List.Add(list1, 3)
-
-TextWindow.WriteLine(List.Head(list1))
-List.Tail(list1)
-TextWindow.WriteLine(List.Head(list1))
-List.Tail(list1)
-TextWindow.WriteLine(List.Head(list1))
-List.Tail(list1)
-TextWindow.WriteLine(List.Head(list1))
+TextWindow.WriteLine(List.IsEmpty(list4))
