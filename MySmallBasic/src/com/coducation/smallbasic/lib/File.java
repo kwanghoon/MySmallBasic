@@ -102,7 +102,7 @@ public class File {
 					while((b=br.readLine())!=null) {
 						n++;
 						if((n+"").equals(arg1))
-							s.append(b+"\r\n");
+							s.append(b);
 					}
 					br.close();
 				}
@@ -308,7 +308,7 @@ public class File {
 		if (args.size() == 1) {
 			if(args.get(0) instanceof StrV) {
 				java.io.File f = new java.io.File(args.get(0).toString());
-				if( (f.delete() && f.isFile()) || !f.exists() ) return new StrV("SUCCESS");
+				if( (f.isFile() && f.delete()) || !f.exists() ) return new StrV("SUCCESS");
 				else return new StrV("FAILED");
 			}
 			else throw new InterpretException("DeleteFile: Unexpected arg(0)");
@@ -334,7 +334,11 @@ public class File {
 		if (args.size() == 1) {
 			if(args.get(0) instanceof StrV) {
 				java.io.File directory = new java.io.File(args.get(0).toString());
-				if(directory.delete() && directory.isDirectory()) return new StrV("SUCCESS");
+				if(directory.isDirectory()) {
+					innerDelete(directory);
+					directory.delete();
+					return new StrV("SUCCESS");
+				}
 				else return new StrV("FAILED");
 			}
 			else throw new InterpretException("DeleteDirectory: Unexpected arg(0)");
@@ -343,63 +347,51 @@ public class File {
 	}
 
 	public static Value GetFiles(ArrayList<Value> args) {
-		// 지정한 디렉토리 경로안의 모든 파일들의 경로을 가져옴 성공하면 파일들이 배열로서 반환
-		try {
-			if (args.size() == 1) {
-				if(args.get(0) instanceof StrV) {
-					java.io.File directory = new java.io.File(args.get(0).toString());
-					if(directory.isDirectory()) {
-						java.io.File[] files = directory.listFiles();
-						if(files.length!=0) {
-							ArrayV v = new ArrayV();
-							for(int i=0;i<files.length;i++) {
-								int j=0;
-								if(files[i].isFile())
-									v.put(j++ + "",new StrV(files[i].getCanonicalPath()));
-							}
-							return v;
+		if (args.size() == 1) {
+			if(args.get(0) instanceof StrV) {
+				java.io.File directory = new java.io.File(args.get(0).toString());
+				if(directory.isDirectory()) {
+					java.io.File[] files = directory.listFiles();
+					if(files.length!=0) {
+						ArrayV v = new ArrayV();
+						for(int i=0;i<files.length;i++) {
+							int j=1;
+							if(files[i].isFile())
+								v.put(j++ + "",new StrV(files[i].getPath()));
 						}
-						return new StrV("");
+						return v;
 					}
+					return new StrV("");
 				}
-				else throw new InterpretException("GetFiles: Unexpected arg(0)");
 			}
-			else throw new InterpretException("GetFiles: Unexpected # of args: " + args.size());
+			else throw new InterpretException("GetFiles: Unexpected arg(0)");
 		}
-		catch (IOException e) {
-			e.printStackTrace();
-		}
+		else throw new InterpretException("GetFiles: Unexpected # of args: " + args.size());
 
 		return new StrV("FAILED");
 	}
 
 	public static Value GetDirectories(ArrayList<Value> args) {
-		// 지정한 디렉토리 경로 안에 있는 모든 디렉토리들의 경로를 가져옴 성공하면 디렉토리경로들이 배열로서 반환
-		try {
-			if (args.size() == 1) {
-				if(args.get(0) instanceof StrV) {
-					java.io.File directory = new java.io.File(args.get(0).toString());
-					if(directory.isDirectory()) {
-						java.io.File[] files = directory.listFiles();
-						if(files.length!=0) {
-							ArrayV v = new ArrayV();
-							for(int i=0;i<files.length;i++) {
-								int j=0;
-								if(files[i].isDirectory())
-									v.put(j++ + "",new StrV(files[i].getCanonicalPath()));
-							}
-							return v;
+		if (args.size() == 1) {
+			if(args.get(0) instanceof StrV) {
+				java.io.File directory = new java.io.File(args.get(0).toString());
+				if(directory.isDirectory()) {
+					java.io.File[] files = directory.listFiles();
+					if(files.length!=0) {
+						ArrayV v = new ArrayV();
+						for(int i=0;i<files.length;i++) {
+							int j=1;
+							if(files[i].isDirectory())
+								v.put(j++ + "",new StrV(files[i].getPath()));
 						}
-						return new StrV("");
+						return v;
 					}
+					return new StrV("");
 				}
-				else throw new InterpretException("GetDirectories: Unexpected arg(0)");
 			}
-			else throw new InterpretException("GetDirectories: Unexpected # of args: " + args.size());
+			else throw new InterpretException("GetDirectories: Unexpected arg(0)");
 		}
-		catch (IOException e) {
-			e.printStackTrace();
-		}
+		else throw new InterpretException("GetDirectories: Unexpected # of args: " + args.size());
 
 		return new StrV("FAILED");
 	}
@@ -426,6 +418,18 @@ public class File {
 
 
 		return new StrV("SUCCESS");
+	}
+
+	public static void innerDelete(java.io.File directory) {
+		java.io.File[] files = directory.listFiles();
+		
+		if(files!=null && files.length!=0) {
+			for(int i=0;i<files.length;i++) {
+				innerDelete(files[i]);
+				files[i].delete();
+			}
+		}
+		else directory.delete();
 	}
 
 }
