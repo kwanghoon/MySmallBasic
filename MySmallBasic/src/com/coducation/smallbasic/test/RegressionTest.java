@@ -13,7 +13,7 @@ import java.util.Set;
 import org.junit.Test;
 
 import com.coducation.smallbasic.BlockStmt;
-import com.coducation.smallbasic.Continuous;
+import com.coducation.smallbasic.BBTransform;
 import com.coducation.smallbasic.LexerAnalyzer;
 import com.coducation.smallbasic.Nonterminal;
 import com.coducation.smallbasic.Parser;
@@ -48,7 +48,7 @@ public class RegressionTest {
 					printer.prettyPrint();
 					
 					System.out.println("Transformation - Continuation blocks.");
-					HashMap<String,Stmt> map = new Continuous().transform((BlockStmt)stack.getTree());
+					HashMap<String,Stmt> map = new BBTransform().transform((BlockStmt)stack.getTree());
 					Set<Map.Entry<String,Stmt>> set = map.entrySet();
 					for (Map.Entry<String,Stmt> entry : set) {
 						String key = entry.getKey();
