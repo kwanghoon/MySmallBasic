@@ -50,6 +50,7 @@ public class GenJava {
 	HashMap<String, Stmt> trees;
 	private static String[] programArgs;
 	static String className;
+	static String fileName;
 	static ArrayList<String> idx_s;
 
 	public GenJava(BasicBlockEnv bbenv, String[] args) {
@@ -82,8 +83,8 @@ public class GenJava {
 	//args[0] : Smallbasic file name
 	//stmt : 스몰베이직의 AST
 	public void codeGen(String[] args) {
-		String fileName = args[0].split("/")[args[0].split("/").length - 1];
-		className = fileName.substring(0, fileName.length()-3);
+		fileName = args[0].split("/")[args[0].split("/").length - 1];
+		className = fileName.substring(0,1).toUpperCase() + fileName.substring(1, fileName.length()-3);
 
 		Set<Map.Entry<String, Stmt>> set = trees.entrySet();
 		for (Map.Entry<String, Stmt> entry : set) {
@@ -124,7 +125,7 @@ public class GenJava {
 		try {
 			//스몰베이직파일명과 동일한 .java 파일을 오픈
 
-			osw = new OutputStreamWriter(new FileOutputStream(args[0].substring(0, args[0].length()-3) + ".java"), "UTF-8");
+			osw = new OutputStreamWriter(new FileOutputStream(args[0].substring(0, args[0].length()-fileName.length()) + className +".java"), "UTF-8");
 			System.out.println(className);
 
 			//1~9번까지 출력

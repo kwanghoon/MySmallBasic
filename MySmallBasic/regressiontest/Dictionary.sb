@@ -1,2 +1,4 @@
 TextWindow.WriteLine("GetDefinition")
-TextWindow.WriteLine(Dictionary.GetDefinition("eye"))
+a = Dictionary.GetDefinition("eye")
+'@assert
+TextWindow.WriteLine(a)
