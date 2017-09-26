@@ -15,6 +15,8 @@ MySmallBasic is the first open-source software for Small Basic coding environmen
 
 ## For a Quick Start
  - Download and run ...
+ - cd MySmallBasic
+ - java -cp "lib/*;bin/" com.coducation.smallbasic.gui.MySmallBasicGUI
   [Quick Start Guide](https://github.com/kwanghoon)
  - Resources for Small Basic programming
 
