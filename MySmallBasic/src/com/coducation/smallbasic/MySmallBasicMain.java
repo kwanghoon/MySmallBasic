@@ -90,7 +90,7 @@ public class MySmallBasicMain {
 //				PrettyPrinter printer = new PrettyPrinter((BlockStmt) stack.getTree());
 //				printer.prettyPrint();
 //	
-				HashMap<String, Stmt> map = new Continuous().transform((BlockStmt) stack.getTree());
+				HashMap<String, Stmt> map = new BBTransform().transform((BlockStmt) stack.getTree());
 				
 //				Set<Map.Entry<String, Stmt>> set = map.entrySet();
 //				for (Map.Entry<String, Stmt> entry : set) {
