@@ -36,7 +36,7 @@ TextWindow.WriteLine(g)
 
 TextWindow.WriteLine("*GetAllIndices() Test*")
 
-'@assert h = 1=0;2=2;3=4;
+'@assert h = "1=0;2=2;3=4;"
 h = Array.GetAllIndices(arr)
 TextWindow.WriteLine(h)
 
@@ -58,7 +58,7 @@ TextWindow.WriteLine(k)
 
 TextWindow.WriteLine("*setValue() Test*")
 
-'@assert arr = 5=ssss;6=4;7=se;0s=7;is=yeong;
+'@assert arr = "5=ssss;6=4;7=se;os=7;is=yeong;"
 Array.SetValue("arr",5,"ssss")
 Array.SetValue("arr",6,4)
 Array.SetValue(arr,7,"se")
