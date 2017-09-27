@@ -5,33 +5,45 @@ import java.util.HashMap;
 
 import com.coducation.smallbasic.DoubleV;
 import com.coducation.smallbasic.InterpretException;
+import com.coducation.smallbasic.NullTree;
 import com.coducation.smallbasic.StrV;
+import com.coducation.smallbasic.TreeNode;
+import com.coducation.smallbasic.TreeV;
 import com.coducation.smallbasic.Value;
 
 public class Tree {
 	
-	private static HashMap<String, Node> tree_map = new HashMap<>();
-	
+	private static HashMap<String, TreeV> tree_map = new HashMap<>();
 	private static int key = 1 ;
 	
 	public static Value Tree(ArrayList<Value> args) {
 		
-		if (args.size() == 1) {
+		if (args.size() == 0) {
 			
-			Node node = new Node(args.get(0));
-			tree_map.put("Tree" + key, node);
+			TreeV tree = new NullTree();
+			tree_map.put("Tree" + key, tree);
+			
+		} else if (args.size() == 1) {
+			
+			TreeV tree = new TreeNode(args.get(0));
+			tree_map.put("Tree" + key, tree);
 
 		} else if (args.size() > 1) {
 			
-			Node node = new Node(args.get(0));
+			String str_arg ;
 			
-			for ( int i = 1 ; i < args.size() ; i++ ) {
+			TreeV tree;
+			ArrayList<TreeV> child = new ArrayList<TreeV>();
+			
+			for ( int i = 1; i < args.size(); i++) {
 				
-				node.child.add(new Node(args.get(i)));
+				str_arg = ((StrV) args.get(i)).getValue();
+				child.add(tree_map.get(str_arg));
 				
 			}
 			
-			tree_map.put("Tree" + key, node);
+			tree = new TreeNode(args.get(0), child);
+			tree_map.put("Tree" + key, tree);
 			
 		} else {
 			
@@ -45,14 +57,14 @@ public class Tree {
 	public static Value Root(ArrayList<Value> args) {
 		
 		String str_arg;
-		Node node;
+		TreeV tree;
 		
 		Value v;
 		
 		if (args.size() == 1) {
 			
 			str_arg = ((StrV) args.get(0)).getValue();
-			node = tree_map.get(str_arg);
+			tree = tree_map.get(str_arg);
 
 		} else
 			
@@ -60,7 +72,7 @@ public class Tree {
 		
 		try {
 			
-			v = node.v;
+			v = tree.value();
 			
 		} catch (Exception e) {
 			
@@ -76,8 +88,8 @@ public class Tree {
 		String str_arg;
 		double dbl_arg;
 		
-		Node node;
-		int index;
+		TreeV tree;
+		TreeV subTree;
 		
 		if (args.size() == 2) {
 			
@@ -111,7 +123,7 @@ public class Tree {
 				
 			} else {
 
-				throw new InterpretException("IndexAt : Unexpected 2nd argument");
+				throw new InterpretException("ChildAt : Unexpected 2nd argument");
 
 			}
 			
@@ -119,16 +131,39 @@ public class Tree {
 			
 			throw new InterpretException("ChildAt : Unexpected # of args: " + args.size());
 		
-		node = tree_map.get(str_arg);
-		index = (int)dbl_arg - 1;
+		tree = tree_map.get(str_arg);
+		subTree = tree.childAt((int)dbl_arg - 1);
 		
-		if (index < 0) index = 0;
-		
-		Node sub_tree = node.child.get(index);
-		
-		tree_map.put("Tree" + key, sub_tree);
+		tree_map.put("Tree" + key, subTree);
 		
 		return new StrV("Tree" + key++);
+	}
+	
+	public static Value Print(ArrayList<Value> args) {
+		
+		String str_arg;
+		
+		TreeV tree;
+		
+		if (args.size()==1) {
+			
+			if (args.size() == 1) {
+				
+				str_arg = ((StrV) args.get(0)).getValue();
+				tree = tree_map.get(str_arg);
+
+			} else
+				
+				throw new InterpretException("Root : Unexpected # of args : " + args.size());
+			
+		} else
+			
+			throw new InterpretException("Root : Unexpected # of args : " + args.size());
+		
+		tree.print();
+		System.out.println();
+		
+		return null;
 	}
 	
 	public static void notifyFieldAssign(String fieldName) {
@@ -139,16 +174,4 @@ public class Tree {
 
 	}
 
-}
-
-class Node {
-	
-	Value v;
-	ArrayList<Node> child;
-	
-	Node (Value v) {
-		this.v = v;
-		this.child = new ArrayList<Node>();
-	}
-	
 }
