@@ -1,9 +1,13 @@
+GraphicsWindow.Height = 600
 GraphicsWindow.Show()
 
 Controls.ButtonClicked = button
 playButton = Controls.AddButton("play",30,30)
 pauseButton = Controls.AddButton("pause",160,30)
 resumeButton = Controls.AddButton("stop",290,30)
+
+ImageAlbum = ImageList.LoadImage(".\resource\shinee.jpg")
+GraphicsWindow.DrawImage(ImageAlbum, 30, 60)
 
 Sub button
   lastButton = Controls.LastClickedButton
