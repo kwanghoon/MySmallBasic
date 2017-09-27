@@ -1,0 +1,7 @@
+blockly_LICENSE: Apache License Version 2.0
+jansi-1.16 LICENSE: Apache License Version 2.0
+jdiScript_LICENSE: Apache License Version 2.0
+jl_LICENSE: GNU LESSER GENERAL PUBLIC LICENSE
+json_simple-1.1 LICENSE-2.0: Apache License Version 2.0
+tools.jar_LICENSE: Oracle Binary Code License Agreement for the Java SE Platform Products and JavaFX
+weka3.6_LICENSE: GNU GENERAL PUBLIC LICENSE
