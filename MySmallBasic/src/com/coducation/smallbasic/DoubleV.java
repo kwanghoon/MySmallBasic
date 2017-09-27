@@ -1,6 +1,7 @@
 package com.coducation.smallbasic;
 
 public class DoubleV extends Value {
+	
 	public DoubleV(double value) {
 		this.value = value;
 	}

@@ -1,0 +1,30 @@
+t1 = Tree.Tree(1)
+t2 = Tree.Tree(2)
+t3 = Tree.Tree(3)
+
+t = Tree.Tree(0, t1, t2, t3)
+
+tt = t
+
+t = Tree.Tree(100, t, t)
+
+t = Tree.Tree(123, t, t)
+
+TextWindow.WriteLine(Tree.Root(t))
+TextWindow.WriteLine(Tree.Root(t1))
+TextWindow.WriteLine(Tree.Root(t2))
+TextWindow.WriteLine(Tree.Root(t3))
+
+t1 = Tree.ChildAt(t, 1)
+
+TextWindow.WriteLine(Tree.Root(t1))
+
+t2 = Tree.ChildAt(t, 2)
+
+TextWindow.WriteLine(Tree.Root(t2))
+
+TextWindow.WriteLine("---------------------")
+
+Tree.Print(t)
+
+TextWindow.WriteLine("---------------------")

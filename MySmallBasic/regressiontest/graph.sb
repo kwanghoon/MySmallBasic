@@ -1,0 +1,45 @@
+g1 = Graph.Graph(1, 2, 3, 4)
+g2 = Graph.Graph(4, 2)
+g3 = Graph.Graph(4, 3, 2, 1)
+
+g4 = Graph.Union(g3, Graph.Union(g1, g2))
+
+TextWindow.WriteLine(g1)
+TextWindow.WriteLine(g2)
+TextWindow.WriteLine(g3)
+TextWindow.WriteLine(g4)
+
+Graph.printVertex(g1)
+TextWindow.WriteLine()
+Graph.printVertex(g2)
+TextWindow.WriteLine()
+Graph.printVertex(g3)
+TextWindow.WriteLine()
+Graph.printVertex(g4)
+
+l1 = Graph.Neighbors(g4, 1)
+l2 = Graph.Neighbors(g4, 2)
+l3 = Graph.Neighbors(g4, 3)
+l4 = Graph.Neighbors(g4, 4)
+
+TextWindow.WriteLine()
+
+List.Print(l1)
+List.Print(l2)
+List.Print(l3)
+List.Print(l4)
+
+TextWindow.WriteLine()
+
+Graph.Print(g4)
+
+'visitList = List.List()
+
+'current = 1
+'While List.Length(visitList) < 4
+'	visitList = List.Concat(visitList, List.List(current))
+'	nlist = Graph.Neighbors(g4, current)
+'	For i = 1 To List.Length(nlist) 
+'		n = List.IndexAt(nlist, i)
+'	EndFor
+'EndWhile
