@@ -4,61 +4,71 @@ arr[4] = "123"
 
 TextWindow.WriteLine("*ContainsIndex() Test*")
 
-'@assert a = false
+
 a = Array.ContainsIndex(arr,1)
+'@assert a = "false"
 TextWindow.WriteLine(a)
 
-'@assert b = true
+
 b = Array.ContainsIndex(arr,2)
+'@assert b = "true"
 TextWindow.WriteLine(b)
 
-'@assert c = false
+
 c = Array.ContainsIndex(arr,"1")
+'@assert c = "false"
 TextWindow.WriteLine(c)
 
-'@assert d = true 
+
 d = Array.ContainsIndex(arr,"2")
+'@assert d = "true" 
 TextWindow.WriteLine(d)
 
 TextWindow.WriteLine("*ContainsValue() Test*")
 
-'@assert e = true
+
 e = Array.ContainsValue(arr,"hello")
+'@assert e = "true"
 TextWindow.WriteLine(e)
 
-'@assert f = false
+
 f = Array.ContainsValue(arr,2)
+'@assert f = "false"
 TextWindow.WriteLine(f)
 
-'@assert g = true
+
 g = Array.ContainsValue(arr,123)
+'@assert g = "true"
 TextWindow.WriteLine(g)
 
 TextWindow.WriteLine("*GetAllIndices() Test*")
 
-'@assert h = "1=0;2=2;3=4;"
+
 h = Array.GetAllIndices(arr)
+'@assert h = "1=0; 2=2; 3=4;"
 TextWindow.WriteLine(h)
 
 TextWindow.WriteLine("*GetItemCount() Test*")
 
-'@assert i = 3
+
 i = Array.GetItemCount(arr)
+'@assert i = 3
 TextWindow.WriteLine(i)
 
-'@assert j = 3
+
 j = Array.GetItemCount(arr)
+'@assert j = 3
 TextWindow.WriteLine(j)
 
 TextWindow.WriteLine("*IsArray() Test*")
 
-'@assert k = true
+
 k = Array.IsArray(h)
+'@assert k = "true"
 TextWindow.WriteLine(k)
 
 TextWindow.WriteLine("*setValue() Test*")
 
-'@assert arr = "5=ssss;6=4;7=se;os=7;is=yeong;"
 Array.SetValue("arr",5,"ssss")
 Array.SetValue("arr",6,4)
 Array.SetValue(arr,7,"se")
@@ -67,12 +77,13 @@ Array.SetValue(arr,"is","yeong")
 
 TextWindow.WriteLine("*GetValue() Test*")
 
-'@asset l = 7
-l = Array.GetValue(arr,"os")
+l = Array.GetValue(arr,"7")
+'@asset l = "se"
 TextWindow.WriteLine(l)
 
-'@assert m = ssss
+
 m = Array.GetValue("arr","5")
+'@assert m = "ssss"
 TextWindow.WriteLine(m)
 
 TextWindow.WriteLine("*RemoveValue() Test*")
