@@ -3,7 +3,7 @@ MySmallBasic is the first open-source software for Small Basic coding environmen
 
 ## Video Demo
 - ![](https://github.com/kwanghoon/MySmallBasic/blob/master/MySmallBasic/docs/SCREENSHOT/gui_tetris.JPG =320x)
-- ![](https://youtu.be/5GE5OvxxhKA)
+- [![Click Here]](https://youtu.be/5GE5OvxxhKA)
 
 ## Features
 - All features of Small Basic (SB) and the standard library		  - All features of Small Basic (SB) and the standard library
