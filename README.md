@@ -19,17 +19,15 @@ Please see [Developer's Guide](https://github.com/kwanghoon/MySmallBasic/wiki/De
 
 
 ## Licence
-Our project is released under [LGPL 3.0 Licence]. If you want to use as commercial, contact us.
-
-## Community
-We open our google group: ... where you can ask questions or you can give us suggestions.
+Our project is released under [GPL 3.0 Licence]. Contact us for commercial uses.
 
 ## Roadmap
-- A sample curriculum for lectures on *Computational Thinking*, which we plan to open at Chonnam National University, Spring 2018.
-- New libraries for lists, trees, and graphs.
-- A block-based coding environment based on Blockly.
-- A *Publish* function for people easy to share their Small Basic programs with others.
-- A *Graduation* function for Small Basic programmers to move to other programming languages such as Python, Java, and so.
+- Auto completion in MySmallBasic GUI
+- Internationalization 
+- MySmallBasic on Android mobile/tablet or web browser
+- SmallBasic to Java/Python translators for graduation
+- A Scratch-like block programming GUI
+- Social coding 
 
 ## Credits
 - Kwanghoon Choi <kwanghoon.choi@jnu.ac.kr>
