@@ -1,9 +1,10 @@
 # MySmallBasic for Everyone
 MySmallBasic is the first open-source software for Small Basic coding environment. This project aims at pushing Small Basic as the first computer language for people who like to learn computer programming. It is started by SWLAB at Chonnam National University, Gwangju, Korea.
 
-## Demo Video
+## Video Demo
+- "MySmallBasic in Action"
 
-[![Video Demo](https://github.com/kwanghoon/MySmallBasic/docs/SCREENSHOT/gui.JPG)](https://youtu.be/5GE5OvxxhKA "MySmallBasic in Action")
+[![Video Demo](/SCREENSHOT/gui.JPG)](https://youtu.be/5GE5OvxxhKA "MySmallBasic in Action")
 
 ## Features
 - All features of Small Basic (SB) and the standard library
