@@ -4,14 +4,13 @@ MySmallBasic is the first open-source software for Small Basic coding environmen
 ## Demo Video
 - ...
 
-[![Video Demo](https://github.com/kwanghoon/images/blob/mysmallbasic/___.PNG)](https://youtu.be/ "title")
+[![Video Demo](https://github.com/kwanghoon/images/blob/mysmallbasic/___.PNG)](https://youtu.be/5GE5OvxxhKA "MySmallBasic in Action")
 
 ## Features
-- A Java-based implementation that can run not only on Windows, but also on other operating systems such as Linux and Mac.
-- Supports the standard library of Small Basic (Array, Clock, Controls, Desktop, Dictionary, File, Flickr, GraphicsWindow, ImageList, Math, Mouse, Network, Program, Shapes, Sound, Stack, TextWindow, Text, Timer, and Turtle)
-- Supports a "super-easy" development of new Small Basic libraries, for example, two library extensions for Hamster robot and Weka-based data mining
-- Supports a Small Basic debugger (set/unset breakpoints, step, continue, and start/stop debugging) with a GUI environment
-- Supports two language extensions, (recursive) functions and assertion, that can be converted into the standard Small Basic language without the extended features
+- All features of Small Basic (SB) and the standard library
+- A Java-based implementation on Windows, Linux and Mac
+- Easy to extend with new SB language features and easy to develop new SB libraries
+- Debugger for Small Basic program
 
 ## For a Quick Start
  - Download and run ...
