@@ -6,7 +6,7 @@ MySmallBasic is the first open-source software for Small Basic coding environmen
 - <a href="https://youtu.be/5GE5OvxxhKA">MySmallBasic in action with a series of demo programs</a>
 
 ## Features
-- All features of Small Basic (SB) and the standard library		  - All features of Small Basic (SB) and the standard library
+- All features of Small Basic (SB) and the standard library	
 - Easy to extend with new SB language features and easy to develop new SB libraries		
 - An IDE with a debugger for Small Basic programs		
 - A Java-based implementation on Windows, Linux and Mac
