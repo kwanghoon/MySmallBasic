@@ -157,6 +157,7 @@ public class GenJava {
 			osw.write(getArrayGen("    "));
 			osw.write(getClassGen("    "));
 			osw.write(getListGen("    "));
+			osw.write(isNumberGen("    "));
 			//13번 출력
 			osw.write("}\r\n");
 			osw.flush();
@@ -215,12 +216,12 @@ public class GenJava {
 
 		if(lhs instanceof Var) {
 			Var var = (Var)lhs;
-			javaStmt.append("assignVar(\"" + var.getVarName() + "\", " + codeGen(rhs) + ");\r\n");
+			javaStmt.append("assignVar(\"" + var.getVarName() + "\", " + codeGen(rhs) + " + \"\");\r\n");
 
 		}
 		else if(lhs instanceof PropertyExpr) {
 			PropertyExpr propertyExpr = (PropertyExpr)lhs;
-			javaStmt.append("assignPropertyExpr(\"" + propertyExpr.getObj() + "\", \"" + propertyExpr.getName() + "\", " + codeGen(rhs) + ");\r\n");
+			javaStmt.append("assignPropertyExpr(\"" + propertyExpr.getObj() + "\", \"" + propertyExpr.getName() + "\", " + codeGen(rhs) + " + \"\");\r\n");
 
 		}
 		else if(lhs instanceof Array) {
@@ -251,9 +252,9 @@ public class GenJava {
 			}
 
 			javaStmt.append("assignArray(\"" + arr.getVar() + "\", ");
-			javaStmt.append(codeGen(rhs));
+			javaStmt.append(codeGen(rhs) + " + \"\"");
 			for(int i=0;i<idx_s.size();i++) {
-				javaStmt.append(", " + idx_s.get(i));
+				javaStmt.append(", " + idx_s.get(i) + " + \"\"");
 			}
 			javaStmt.append(");\r\n");
 		}
@@ -597,7 +598,7 @@ public class GenJava {
 			javaExpr.append("[" + arrayExpr.getIndex(i) + "]");
 		}*/
 
-		return javaExpr.toString();
+		return "isNumber(" + javaExpr.toString() + ".toString())? Double.parseDouble(" + javaExpr.toString() + ".toString()): " + javaExpr.toString();
 	}
 
 	public String codeGen(CompExpr compExpr) {
@@ -635,9 +636,10 @@ public class GenJava {
 
 	public String codeGen(Lit litExpr) {
 		String javaExpr = litExpr.gets();
-		//if(javaExpr.contains("\""))
-			return javaExpr;
-		//else return "\""+javaExpr+"\"";
+		String r_javaExpr = javaExpr.replaceAll("\"", "");
+		if(isNumber(r_javaExpr))
+			return r_javaExpr;
+		else return javaExpr;
 	}
 
 	public String codeGen(LogicalExpr logicalExpr) {
@@ -691,14 +693,14 @@ public class GenJava {
 		StringBuilder javaExpr = new StringBuilder("");
 		javaExpr.append("getPropertyExpr(\"" + propertyExpr.getObj() + "\", \"" + propertyExpr.getName() + "\")");
 
-		return javaExpr.toString();
+		return "isNumber(" + javaExpr.toString() + ".toString())? " + javaExpr.toString() + ".getNumber(): " + javaExpr.toString() + ".toString()";
 	}
 
 	public String codeGen(Var var) {
 		if (trees.get(var.getVarName()) != null)
 			return var.getVarName();
 		else
-			return "getVar(\"" + var.getVarName() + "\")";
+			return "isNumber(getVar(\"" + var.getVarName() + "\").toString())?getVar(\"" + var.getVarName() + "\").getNumber():getVar(\"" + var.getVarName() + "\").toString()";
 	}
 	
 	public static String classEnvGen(String indent) {
@@ -818,7 +820,13 @@ public class GenJava {
 		javaStmt.append(indent);
 		javaStmt.append("        Field fld = clz.getField(lhsName);\r\n");
 		javaStmt.append(indent);
-		javaStmt.append("        fld.set(null, rhsValue);\r\n");
+		javaStmt.append("    if(isNumber(rhsValue))\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        fld.set(null, new DoubleV(Double.parseDouble(rhsValue)));\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    else\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        fld.set(null, new StrV(rhsValue));\r\n");
 		javaStmt.append(indent);
 		javaStmt.append("        Method mth = clz.getMethod(notifyFieldAssign, String.class);\r\n");
 		javaStmt.append(indent);
@@ -860,7 +868,7 @@ public class GenJava {
 		StringBuilder javaStmt = new StringBuilder("");
 
 		javaStmt.append(indent);
-		javaStmt.append("public static String getPropertyExpr(String obj, String name) {\r\n");
+		javaStmt.append("public static Value getPropertyExpr(String obj, String name) {\r\n");
 		javaStmt.append(indent);
 		javaStmt.append("    try {\r\n");
 		javaStmt.append(indent);
@@ -961,6 +969,12 @@ public class GenJava {
 		javaStmt.append(indent);
 		javaStmt.append("        } else {\r\n");
 		javaStmt.append(indent);
+		javaStmt.append("    if(isNumber(rhsValue))\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("            elem.put(idx_s[i], new DoubleV(Double.parseDouble(rhsValue)));\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    else\r\n");
+		javaStmt.append(indent);
 		javaStmt.append("            elem.put(idx_s[i], new StrV(rhsValue));\r\n");
 		javaStmt.append(indent);
 		javaStmt.append("        }\r\n");
@@ -1047,10 +1061,6 @@ public class GenJava {
 		javaStmt.append(indent);
 		javaStmt.append("    try {\r\n");
 		javaStmt.append(indent);
-		javaStmt.append("    if (\"\".equals(v)) \r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        return true;\r\n");
-		javaStmt.append(indent);
 		javaStmt.append("    Double.parseDouble(v);\r\n");
 		javaStmt.append(indent);
 		javaStmt.append("    return true;\r\n");
@@ -1065,6 +1075,15 @@ public class GenJava {
 		javaStmt.append("\r\n");
 
 		return javaStmt.toString();
+	}
+	
+	public static boolean isNumber(String s) {
+		try {
+			Double.parseDouble(s);
+			return true;
+		} catch(NumberFormatException e) {
+			return false;
+		}
 	}
 
 
