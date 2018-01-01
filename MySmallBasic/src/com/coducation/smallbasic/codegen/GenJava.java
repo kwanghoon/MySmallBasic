@@ -116,7 +116,7 @@ public class GenJava {
 					s = l.substring(1);
 				else s = l;
 				if(!s.equals(emptyMethod))
-					methods.put(s, new StringBuilder(methods.get(s).toString().replace("env.label(" + className + "_C.getMethod(\"" + emptyMethod + "\", null))", "env.label(null)")));
+					methods.put(s, new StringBuilder(methods.get(s).toString().replace("env.label_M(" + className + "_C.getMethod(\"" + emptyMethod + "\", null))", "env.label_M(null)")));
 			}
 		}
 
@@ -216,12 +216,12 @@ public class GenJava {
 
 		if(lhs instanceof Var) {
 			Var var = (Var)lhs;
-			javaStmt.append("assignVar(\"" + var.getVarName() + "\", (" + codeGen(rhs) + " + \"\"));\r\n");
+			javaStmt.append("assignVar(\"" + var.getVarName() + "\", " + codeGen(rhs) + ");\r\n");
 
 		}
 		else if(lhs instanceof PropertyExpr) {
 			PropertyExpr propertyExpr = (PropertyExpr)lhs;
-			javaStmt.append("assignPropertyExpr(\"" + propertyExpr.getObj() + "\", \"" + propertyExpr.getName() + "\", (" + codeGen(rhs) + " + \"\"));\r\n");
+			javaStmt.append("assignPropertyExpr(\"" + propertyExpr.getObj() + "\", \"" + propertyExpr.getName() + "\", " + codeGen(rhs) + ");\r\n");
 
 		}
 		else if(lhs instanceof Array) {
@@ -251,10 +251,10 @@ public class GenJava {
 				}*/
 			}
 
-			javaStmt.append("assignArray(\"" + arr.getVar() + "\", (");
-			javaStmt.append(codeGen(rhs) + " + \"\")");
+			javaStmt.append("assignArray(\"" + arr.getVar() + "\", ");
+			javaStmt.append(codeGen(rhs));
 			for(int i=0;i<idx_s.size();i++) {
-				javaStmt.append(", " + idx_s.get(i) + " + \"\"");
+				javaStmt.append(", " + idx_s.get(i));
 			}
 			javaStmt.append(");\r\n");
 		}
@@ -369,7 +369,15 @@ public class GenJava {
 	public void codeGen(boolean isTopLevel, GotoStmt gotoStmt) { // subCall role
 		StringBuilder javaStmt = new StringBuilder(printIndent());
 
-		javaStmt.append("env.label(" + className + "_C.getMethod(\"" + gotoStmt.getTargetLabel().substring(1) + "\", null));\r\n");
+		javaStmt.append("try {\r\n");
+		javaStmt.append(printIndent());
+		javaStmt.append("    env.label_M(" + className + "_C.getMethod(\"" + gotoStmt.getTargetLabel().substring(1) + "\", null));\r\n");
+		javaStmt.append(printIndent());
+		javaStmt.append("} catch (NoSuchMethodException | SecurityException e) {\r\n");
+		javaStmt.append(printIndent());
+		javaStmt.append("    e.printStackTrace();\r\n");
+		javaStmt.append(printIndent());
+		javaStmt.append("}\r\n");
 		//javaStmt.append(className + "." + gotoStmt.getTargetLabel().substring(1) + "();\r\n");
 
 		if(isTopLevel) {
@@ -590,7 +598,7 @@ public class GenJava {
 
 		javaExpr.append("getArray(\"" + arrayExpr.getVar() + "\"");
 		for(int i=0;i<idx_s.size();i++) {
-			javaExpr.append(", \"" + idx_s.get(i) + "\"" );
+			javaExpr.append(", " + idx_s.get(i));
 		}
 		javaExpr.append(")");
 
@@ -598,38 +606,51 @@ public class GenJava {
 			javaExpr.append("[" + arrayExpr.getIndex(i) + "]");
 		}*/
 
-		return "(isNumber(" + javaExpr.toString() + ".toString())? Double.parseDouble(" + javaExpr.toString() + ".toString()): " + javaExpr.toString() + ".toString())";
+		return javaExpr.toString();
 	}
 
 	public String codeGen(CompExpr compExpr) {
 
 		StringBuilder javaExpr = new StringBuilder("");
-		javaExpr.append(codeGen(compExpr.GetOperand()[0]));
+		//javaExpr.append(codeGen(compExpr.GetOperand()[0]));
 
 		switch (compExpr.GetOp()) {
 		case CompExpr.GREATER_THAN:
-			javaExpr.append(" > ");
+			//javaExpr.append(" > ");
+			javaExpr.append("Eval.greaterThan(");
+			javaExpr.append(codeGen(compExpr.GetOperand()[0]));
 			break;
 		case CompExpr.LESS_THAN:
-			javaExpr.append(" < ");
+			//javaExpr.append(" < ");
+			javaExpr.append("Eval.lessThan(");
+			javaExpr.append(codeGen(compExpr.GetOperand()[0]));
 			break;
 		case CompExpr.GREATER_EQUAL:
-			javaExpr.append(" >= ");
+			//javaExpr.append(" >= ");
+			javaExpr.append("Eval.greaterEqual(");
+			javaExpr.append(codeGen(compExpr.GetOperand()[0]));
 			break;
 		case CompExpr.LESS_EQUAL:
-			javaExpr.append(" <= ");
+			//javaExpr.append(" <= ");
+			javaExpr.append("Eval.lessEqual(");
+			javaExpr.append(codeGen(compExpr.GetOperand()[0]));
 			break;
 		case CompExpr.EQUAL:
-			javaExpr.append(" = ");
+			//javaExpr.append(" = ");
+			javaExpr.append("Eval.equal(");
+			javaExpr.append(codeGen(compExpr.GetOperand()[0]));
 			break;
 		case CompExpr.NOT_EQUAL:
-			javaExpr.append(" <> ");
+			//javaExpr.append(" <> ");
+			javaExpr.append("Eval.notEqual(");
+			javaExpr.append(codeGen(compExpr.GetOperand()[0]));
 			break;
 		default:
 			System.err.println("Unknown CompExpr Operator " + compExpr.GetOp());
 			break;
 		}
-		javaExpr.append(codeGen(compExpr.GetOperand()[1]));
+		javaExpr.append(", ");
+		javaExpr.append(codeGen(compExpr.GetOperand()[1])+")");
 
 		return javaExpr.toString();
 	}
@@ -638,8 +659,8 @@ public class GenJava {
 		String javaExpr = litExpr.gets();
 		String r_javaExpr = javaExpr.replaceAll("\"", "");
 		if(isNumber(r_javaExpr))
-			return r_javaExpr;
-		else return javaExpr;
+			return "new DoubleV(" + r_javaExpr + ")";
+		else return "new StrV(" + javaExpr + ")";
 	}
 
 	public String codeGen(LogicalExpr logicalExpr) {
@@ -672,7 +693,7 @@ public class GenJava {
 		if (methodCallExpr.getArgs() != null) {
 			int size = methodCallExpr.getArgs().size();
 			for (int i = 0; i < size; i++) {
-				javaExpr.append("new StrV(" + codeGen(methodCallExpr.getArgs().get(i)) + " + \"\")");
+				javaExpr.append(codeGen(methodCallExpr.getArgs().get(i)));
 				if (i != size - 1)
 					javaExpr.append(", ");
 			}
@@ -693,14 +714,14 @@ public class GenJava {
 		StringBuilder javaExpr = new StringBuilder("");
 		javaExpr.append("getPropertyExpr(\"" + propertyExpr.getObj() + "\", \"" + propertyExpr.getName() + "\")");
 
-		return "(isNumber(" + javaExpr.toString() + ".toString())? " + javaExpr.toString() + ".getNumber(): " + javaExpr.toString() + ".toString())";
+		return javaExpr.toString();
 	}
 
 	public String codeGen(Var var) {
 		if (trees.get(var.getVarName()) != null)
 			return var.getVarName();
 		else
-			return "(isNumber(getVar(\"" + var.getVarName() + "\").toString())?getVar(\"" + var.getVarName() + "\").getNumber():getVar(\"" + var.getVarName() + "\").toString())";
+			return "getVar(\"" + var.getVarName() + "\")";
 	}
 	
 	public static String classEnvGen(String indent) {
@@ -714,14 +735,14 @@ public class GenJava {
 		javaStmt.append("    private static final String label = \"$label\";\r\n");
 		javaStmt.append("\r\n");
 		javaStmt.append(indent);
-		javaStmt.append("    public Method label() {\r\n");
+		javaStmt.append("    public Method label_M() {\r\n");
 		javaStmt.append(indent);
 		javaStmt.append("        return labels.get(label + Thread.currentThread().getId());\r\n");
 		javaStmt.append(indent);
 		javaStmt.append("    }\r\n");
 		javaStmt.append("\r\n");
 		javaStmt.append(indent);
-		javaStmt.append("    public void label(Method _label) {\r\n");
+		javaStmt.append("    public void label_M(Method _label) {\r\n");
 		javaStmt.append(indent);
 		javaStmt.append("        labels.put(label + Thread.currentThread().getId(), _label);\r\n");
 		javaStmt.append(indent);
@@ -739,16 +760,36 @@ public class GenJava {
 		javaStmt.append(indent);
 		javaStmt.append("public static void main(String[] args) {\r\n");
 		javaStmt.append(indent);
-		javaStmt.append("    Method m = " + className + "_C.getMethod(\"main\");\r\n");
+		javaStmt.append("    try {\r\n");
 		javaStmt.append(indent);
-		javaStmt.append("    env.label(m);\r\n");
+		javaStmt.append("        Method m = " + className + "_C.getMethod(\"main\");\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        env.label_M(m);\r\n");
 		javaStmt.append("\r\n");
 		javaStmt.append(indent);
-		javaStmt.append("    while (env.label() != null) {\r\n");
+		javaStmt.append("        while (env.label_M() != null) {\r\n");
 		javaStmt.append(indent);
-		javaStmt.append("        env.label(null);\r\n");
+		javaStmt.append("            env.label_M(null);\r\n");
 		javaStmt.append(indent);
-		javaStmt.append("        m.invoke(null);\r\n");
+		javaStmt.append("            m.invoke(null);\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        }\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    } catch (NoSuchMethodException | SecurityException e) {\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        e.printStackTrace();\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    } catch (IllegalAccessException e) {\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        e.printStackTrace();\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    } catch (IllegalArgumentException e) {\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        e.printStackTrace();\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    } catch (InvocationTargetException e) {\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        e.printStackTrace();\r\n");
 		javaStmt.append(indent);
 		javaStmt.append("    }\r\n");
 		javaStmt.append(indent);
@@ -784,15 +825,9 @@ public class GenJava {
 		StringBuilder javaStmt = new StringBuilder("");
 
 		javaStmt.append(indent);
-		javaStmt.append("public static void assignVar(String varName, String rhsValue) {\r\n");
+		javaStmt.append("public static void assignVar(String varName, Value rhsValue) {\r\n");
 		javaStmt.append(indent);
-		javaStmt.append("    if(isNumber(rhsValue))\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        env.put(varName, new DoubleV(Double.parseDouble(rhsValue)));\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    else\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        env.put(varName, new StrV(rhsValue));\r\n");
+		javaStmt.append("    env.put(varName, rhsValue);\r\n");
 		javaStmt.append(indent);
 		javaStmt.append("}\r\n");
 		javaStmt.append("\r\n");
@@ -818,7 +853,7 @@ public class GenJava {
 		StringBuilder javaStmt = new StringBuilder("");
 
 		javaStmt.append(indent);
-		javaStmt.append("public static void assignPropertyExpr(String lhsObj, String lhsName, String rhsValue) {\r\n");
+		javaStmt.append("public static void assignPropertyExpr(String lhsObj, String lhsName, Value rhsValue) {\r\n");
 		javaStmt.append(indent);
 		javaStmt.append("    try {\r\n");
 		javaStmt.append(indent);
@@ -828,13 +863,7 @@ public class GenJava {
 		javaStmt.append(indent);
 		javaStmt.append("        Field fld = clz.getField(lhsName);\r\n");
 		javaStmt.append(indent);
-		javaStmt.append("    if(isNumber(rhsValue))\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        fld.set(null, new DoubleV(Double.parseDouble(rhsValue)));\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    else\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        fld.set(null, new StrV(rhsValue));\r\n");
+		javaStmt.append("        fld.set(null, rhsValue);\r\n");
 		javaStmt.append(indent);
 		javaStmt.append("        Method mth = clz.getMethod(notifyFieldAssign, String.class);\r\n");
 		javaStmt.append(indent);
@@ -920,7 +949,7 @@ public class GenJava {
 		StringBuilder javaStmt = new StringBuilder("");
 
 		javaStmt.append(indent);
-		javaStmt.append("public static void assignArray(String arrayName, String rhsValue, String... idx_s) {\r\n");
+		javaStmt.append("public static void assignArray(String arrayName, Value rhsValue, Value... idx_s) {\r\n");
 		javaStmt.append(indent);
 		javaStmt.append("    Value arrValue = env.get(arrayName);\r\n");
 		javaStmt.append(indent);
@@ -955,13 +984,13 @@ public class GenJava {
 		javaStmt.append(indent);
 		javaStmt.append("        if (i < idx_s.length - 1) {\r\n");
 		javaStmt.append(indent);
-		javaStmt.append("            ArrayV elem_elem = (ArrayV) elem.get(idx_s[i]);\r\n");
+		javaStmt.append("            ArrayV elem_elem = (ArrayV) elem.get(idx_s[i].toString());\r\n");
 		javaStmt.append(indent);
 		javaStmt.append("            if (elem_elem == null) {\r\n");
 		javaStmt.append(indent);
 		javaStmt.append("                elem_elem = new ArrayV();\r\n");
 		javaStmt.append(indent);
-		javaStmt.append("                elem.put(idx_s[i], elem_elem);\r\n");
+		javaStmt.append("                elem.put(idx_s[i].toString(), elem_elem);\r\n");
 		javaStmt.append(indent);
 		javaStmt.append("            }\r\n");
 		javaStmt.append(indent);
@@ -969,13 +998,7 @@ public class GenJava {
 		javaStmt.append(indent);
 		javaStmt.append("        } else {\r\n");
 		javaStmt.append(indent);
-		javaStmt.append("    if(isNumber(rhsValue))\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("            elem.put(idx_s[i], new DoubleV(Double.parseDouble(rhsValue)));\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    else\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("            elem.put(idx_s[i], new StrV(rhsValue));\r\n");
+		javaStmt.append("            elem.put(idx_s[i].toString(), rhsValue);\r\n");
 		javaStmt.append(indent);
 		javaStmt.append("        }\r\n");
 		javaStmt.append(indent);
@@ -991,7 +1014,7 @@ public class GenJava {
 		StringBuilder javaStmt = new StringBuilder("");
 
 		javaStmt.append(indent);
-		javaStmt.append("public static Value getArray(String arrayName, String... idx_s) {\r\n");
+		javaStmt.append("public static Value getArray(String arrayName, Value... idx_s) {\r\n");
 		javaStmt.append(indent);
 		javaStmt.append("    ArrayV arrV;\r\n");
 		javaStmt.append(indent);
@@ -1017,7 +1040,7 @@ public class GenJava {
 		javaStmt.append(indent);
 		javaStmt.append("        } else\r\n");
 		javaStmt.append(indent);
-		javaStmt.append("            elem = ((ArrayV) elem).get(idx_s[i]);\r\n");
+		javaStmt.append("            elem = ((ArrayV) elem).get(idx_s[i].toString());\r\n");
 		javaStmt.append(indent);
 		javaStmt.append("    }\r\n");
 		javaStmt.append(indent);
@@ -1039,7 +1062,7 @@ public class GenJava {
 		StringBuilder javaStmt = new StringBuilder("");
 
 		javaStmt.append(indent);
-		javaStmt.append("public static ArrayList<Value> getList(StrV... args) {\r\n");
+		javaStmt.append("public static ArrayList<Value> getList(Value... args) {\r\n");
 		javaStmt.append(indent);
 		javaStmt.append("    ArrayList<Value> list = new ArrayList<Value>();\r\n");
 		javaStmt.append(indent);
