@@ -13,29 +13,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import com.coducation.smallbasic.ArithExpr;
-import com.coducation.smallbasic.Array;
-import com.coducation.smallbasic.Assign;
-import com.coducation.smallbasic.BasicBlockEnv;
-import com.coducation.smallbasic.BlockStmt;
-import com.coducation.smallbasic.CompExpr;
-import com.coducation.smallbasic.Expr;
-import com.coducation.smallbasic.ExprStmt;
-import com.coducation.smallbasic.ForStmt;
-import com.coducation.smallbasic.GotoStmt;
-import com.coducation.smallbasic.IfStmt;
-import com.coducation.smallbasic.InterpretException;
-import com.coducation.smallbasic.Label;
-import com.coducation.smallbasic.Lit;
-import com.coducation.smallbasic.LogicalExpr;
-import com.coducation.smallbasic.MethodCallExpr;
-import com.coducation.smallbasic.ParenExpr;
-import com.coducation.smallbasic.PropertyExpr;
-import com.coducation.smallbasic.Stmt;
-import com.coducation.smallbasic.SubCallExpr;
-import com.coducation.smallbasic.SubDef;
-import com.coducation.smallbasic.Var;
-import com.coducation.smallbasic.WhileStmt;
+import com.coducation.smallbasic.*;
+import com.coducation.smallbasic.CodeGen2.*;
 
 public class GenJava {
 
@@ -116,7 +95,7 @@ public class GenJava {
 					s = l.substring(1);
 				else s = l;
 				if(!s.equals(emptyMethod))
-					methods.put(s, new StringBuilder(methods.get(s).toString().replace("env.label_M(" + className + "_C.getMethod(\"" + emptyMethod + "\", null))", "env.label_M(null)")));
+					methods.put(s, new StringBuilder(methods.get(s).toString().replaceAll("try [{](\\s)*?env[.]label_M[(]" + className + "_C[.]getMethod[(]\"" + emptyMethod + "\", null[)](.|\r\n)*?e[()]+;(\\s)*?}", "env.label_M(null);")));
 			}
 		}
 
@@ -550,28 +529,27 @@ public class GenJava {
 
 		switch (arithExpr.GetOp()) {
 		case 1:
-			javaExpr.append(codeGen(arithExpr.GetOperand()[0]));
-			javaExpr.append(" + ");
+			javaExpr.append("plus(");
 			break;
 		case 2:
-			javaExpr.append(codeGen(arithExpr.GetOperand()[0]));
-			javaExpr.append(" - ");
+			javaExpr.append("minus(");
 			break;
 		case 3:
-			javaExpr.append(codeGen(arithExpr.GetOperand()[0]));
-			javaExpr.append(" * ");
+			javaExpr.append("multiply(");
 			break;
 		case 4:
-			javaExpr.append(codeGen(arithExpr.GetOperand()[0]));
-			javaExpr.append(" / ");
+			javaExpr.append("divide(");
 			break;
 		case 5:
-			javaExpr.append("- ");
-			javaExpr.append(codeGen(arithExpr.GetOperand()[0]));
+			javaExpr.append("unary_Minus(");
 			break;
 		}
-		if (arithExpr.GetOperand()[1] != null)
+		javaExpr.append(codeGen(arithExpr.GetOperand()[0]));
+		if (arithExpr.GetOperand()[1] != null) {
+			javaExpr.append(", ");
 			javaExpr.append(codeGen(arithExpr.GetOperand()[1]));
+		}
+		javaExpr.append(")");
 
 		return javaExpr.toString();
 	}
@@ -613,6 +591,7 @@ public class GenJava {
 
 		StringBuilder javaExpr = new StringBuilder("");
 		//javaExpr.append(codeGen(compExpr.GetOperand()[0]));
+		javaExpr.append("new StrV(Boolean.toString(");
 
 		switch (compExpr.GetOp()) {
 		case CompExpr.GREATER_THAN:
@@ -637,7 +616,7 @@ public class GenJava {
 			break;
 		case CompExpr.EQUAL:
 			//javaExpr.append(" = ");
-			javaExpr.append("Eval.equal(");
+			javaExpr.append("equal(");
 			javaExpr.append(codeGen(compExpr.GetOperand()[0]));
 			break;
 		case CompExpr.NOT_EQUAL:
@@ -650,7 +629,7 @@ public class GenJava {
 			break;
 		}
 		javaExpr.append(", ");
-		javaExpr.append(codeGen(compExpr.GetOperand()[1])+")");
+		javaExpr.append(codeGen(compExpr.GetOperand()[1]) + ")))");
 
 		return javaExpr.toString();
 	}
@@ -666,20 +645,21 @@ public class GenJava {
 	public String codeGen(LogicalExpr logicalExpr) {
 
 		StringBuilder javaExpr = new StringBuilder("");
-		javaExpr.append(codeGen(logicalExpr.GetOperand()[0]));
 
 		switch (logicalExpr.GetOp()) {
 		case 1:
-			javaExpr.append(" && ");
+			javaExpr.append("AND(");
 			break;
 		case 2:
-			javaExpr.append(" || ");
+			javaExpr.append("OR(");
 			break;
 		default:
 			System.err.println("Unknown Logical Operator " + logicalExpr.GetOp());
 			break;
 		}
-		javaExpr.append(codeGen(logicalExpr.GetOperand()[1]));
+		javaExpr.append(codeGen(logicalExpr.GetOperand()[0]));
+		javaExpr.append(", ");
+		javaExpr.append(codeGen(logicalExpr.GetOperand()[1]) + ")");
 
 		return javaExpr.toString();
 	}
@@ -728,7 +708,7 @@ public class GenJava {
 		StringBuilder javaStmt = new StringBuilder("");
 
 		javaStmt.append(indent);
-		javaStmt.append("class Env extends com.coducation.smallbasic.Env {\r\n");
+		javaStmt.append("static class Env extends com.coducation.smallbasic.Env {\r\n");
 		javaStmt.append(indent);
 		javaStmt.append("    private HashMap<String,Method> labels;\r\n");
 		javaStmt.append(indent);
@@ -761,6 +741,8 @@ public class GenJava {
 		javaStmt.append("public static void main(String[] args) {\r\n");
 		javaStmt.append(indent);
 		javaStmt.append("    try {\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        env = new Env();\r\n");
 		javaStmt.append(indent);
 		javaStmt.append("        Method m = " + className + "_C.getMethod(\"main\");\r\n");
 		javaStmt.append(indent);
@@ -807,7 +789,11 @@ public class GenJava {
 		javaStmt.append(indent);
 		javaStmt.append("    try {\r\n");
 		javaStmt.append(indent);
-		javaStmt.append("        return Class.forName(lib + name);\r\n");
+		javaStmt.append("    if(name.equals(\"" + className + "\"))\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        return Class.forName(\"com.coducation.smallbasic.\" + name);\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    else return Class.forName(lib + name);\r\n");
 		javaStmt.append(indent);
 		javaStmt.append("    } catch (ClassNotFoundException e) {;\r\n");
 		javaStmt.append(indent);
@@ -1051,6 +1037,389 @@ public class GenJava {
 		javaStmt.append("    else\r\n");
 		javaStmt.append(indent);
 		javaStmt.append("        return elem;\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("}\r\n");
+		javaStmt.append("\r\n");
+
+		return javaStmt.toString();
+	}
+	
+	public static String arithGen(String indent) {
+		StringBuilder javaStmt = new StringBuilder("");
+
+		javaStmt.append(indent);
+		javaStmt.append("public static Value plus(Value v1, Value v2) {\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    Double dv1 = 0.0, dv2 = 0.0;\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    boolean numplus = true;\r\n");
+		javaStmt.append("\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    if (v1 == null)\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        dv1 = 0.0;\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    else if (v1 instanceof DoubleV)\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        dv1 = ((DoubleV) v1).getValue();\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    else if(v1 instanceof StrV && v1.toString().equals(\"\"))\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        numplus = false;\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    else if (v1 instanceof StrV && ((StrV) v1).isNumber())\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        dv1 = ((StrV) v1).parseDouble();\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    else if (v1 instanceof StrV)\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        numplus = false;\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    else if (v1 instanceof ArrayV)\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        numplus = false;\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    else\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        throw new CodeGenException(\"PLUS 1st operand unexpected\" + v1);\r\n");
+		javaStmt.append("\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    if (v2 == null)\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        dv2 = 0.0;\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    else if (v2 instanceof DoubleV)\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        dv2 = ((DoubleV) v2).getValue();\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    else if (v2 instanceof StrV && ((StrV) v2).isNumber())\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        dv2 = ((StrV) v2).parseDouble();\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    else if (v2 instanceof StrV)\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        numplus = false;\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    else if (v2 instanceof ArrayV)\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        numplus = false;\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    else\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        throw new CodeGenException(\"PLUS 2nd operand unexpected\" + v2);\r\n");
+		javaStmt.append("\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    if (numplus == true)\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        return new DoubleV(dv1 + dv2);\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    else\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        return new StrV(v1.toString() + v2.toString());\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("}\r\n");
+		javaStmt.append("\r\n");
+		
+		javaStmt.append(indent);
+		javaStmt.append("public static Value minus(Value v1, Value v2) {\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    Double dv1 = 0.0, dv2 = 0.0;\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    if (v1 == null)\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        dv1 = 0.0;\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    else if (v1 instanceof DoubleV)\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        dv1 = ((DoubleV) v1).getValue();\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    else if (v1 instanceof StrV && ((StrV) v1).isNumber())\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        dv1 = ((StrV) v1).parseDouble();\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    else if (v1 instanceof StrV)\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        dv1 = 0.0;\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    else\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        throw new CodeGenException(\"MINUS 1st operand unexpected\" + v1);\r\n");
+		javaStmt.append("\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    if (v2 == null)\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        dv2 = 0.0;\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    else if (v2 instanceof DoubleV)\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        dv2 = ((DoubleV) v2).getValue();\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    else if (v2 instanceof StrV && ((StrV) v2).isNumber())\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        dv2 = ((StrV) v2).parseDouble();\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    else if (v2 instanceof StrV)\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        dv2 = 0.0;\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    else\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        throw new CodeGenException(\"MINUS 2nd operand unexpected\" + v2);\r\n");
+		javaStmt.append("\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    return new DoubleV(dv1 - dv2);\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("}\r\n");
+		javaStmt.append("\r\n");
+		
+		javaStmt.append(indent);
+		javaStmt.append("public static Value multiply(Value v1, Value v2) {\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    Double dv1 = 0.0, dv2 = 0.0;\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    if (v1 == null)\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        dv1 = 0.0;\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    else if (v1 instanceof DoubleV)\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        dv1 = ((DoubleV) v1).getValue();\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    else if (v1 instanceof StrV && ((StrV) v1).isNumber())\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        dv1 = ((StrV) v1).parseDouble();\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    else if (v1 instanceof StrV)\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        dv1 = 0.0;\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    else\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        throw new CodeGenException(\"MULTIFLY 1st operand unexpected\" + v1);\r\n");
+		javaStmt.append("\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    if (v2 == null)\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        dv2 = 0.0;\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    else if (v2 instanceof DoubleV)\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        dv2 = ((DoubleV) v2).getValue();\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    else if (v2 instanceof StrV && ((StrV) v2).isNumber())\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        dv2 = ((StrV) v2).parseDouble();\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    else if (v2 instanceof StrV)\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        dv2 = 0.0;\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    else\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        throw new CodeGenException(\"MULTIFLY 2nd operand unexpected\" + v2);\r\n");
+		javaStmt.append("\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    return new DoubleV(dv1 * dv2);\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("}\r\n");
+		javaStmt.append("\r\n");
+		
+		javaStmt.append(indent);
+		javaStmt.append("public static Value divide(Value v1, Value v2) {\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    Double dv1 = 0.0, dv2 = 0.0;\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    if (v1 == null)\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        dv1 = 0.0;\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    else if (v1 instanceof DoubleV)\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        dv1 = ((DoubleV) v1).getValue();\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    else if (v1 instanceof StrV && ((StrV) v1).isNumber())\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        dv1 = ((StrV) v1).parseDouble();\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    else if (v1 instanceof StrV)\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        dv1 = 0.0;\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    else\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        throw new CodeGenException(\"DIVIDE 1st operand unexpected\" + v1);\r\n");
+		javaStmt.append("\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    if (v2 == null)\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        dv2 = 0.0;\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    else if (v2 instanceof DoubleV)\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        dv2 = ((DoubleV) v2).getValue();\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    else if (v2 instanceof StrV && ((StrV) v2).isNumber())\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        dv2 = ((StrV) v2).parseDouble();\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    else if (v2 instanceof StrV)\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        dv2 = 0.0;\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    else\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        throw new CodeGenException(\"DIVIDE 2nd operand unexpected\" + v2);\r\n");
+		javaStmt.append("\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    if (dv2 == 0)\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        throw new CodeGenException(\"DIVIDE 2nd operand is 0\");\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    return new DoubleV(dv1 / dv2);\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("}\r\n");
+		javaStmt.append("\r\n");
+		
+		javaStmt.append(indent);
+		javaStmt.append("public static Value unary_Minus(Value v1) {\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    if (v1 instanceof DoubleV) {\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        DoubleV d1 = new DoubleV(v1.getNumber());\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        return new DoubleV(-d1.getValue());\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    }\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    else if(v1 instanceof StrV && ((StrV) v1).isNumber())\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        return new DoubleV(((StrV) v1).parseDouble());\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    else if(v1 instanceof StrV)\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        return new DoubleV(0);\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    else\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        throw new CodeGenException(\"UNARY_MINUS 1st operand unexpected \" + v1);\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("}\r\n");
+		javaStmt.append("\r\n");
+
+		return javaStmt.toString();
+	}
+	
+	public static String compGen(String indent) {
+		StringBuilder javaStmt = new StringBuilder("");
+
+		javaStmt.append(indent);
+		javaStmt.append("public static boolean equal(Value v1, Value v2) {\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    if (v1 instanceof StrV && v2 instanceof StrV) {\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        StrV s1 = (StrV) v1;\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        StrV s2 = (StrV) v2;\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        if (s1.getValue().equals(s2.getValue()))\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("            return true;\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    } else if (v1 instanceof DoubleV && v2 instanceof DoubleV) {\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        DoubleV d1 = (DoubleV) v1;\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        DoubleV d2 = (DoubleV) v2;\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        if (d1.getValue() == d2.getValue())\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("            return true;\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    } else if (v1 instanceof StrV && v2 instanceof DoubleV) {\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        String s1 = ((StrV) v1).getValue();\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        String s2 = ((DoubleV) v2).toString();\r\n");
+		javaStmt.append("\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        if (s1.equals(s2))\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("            return true;\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    } else if (v1 instanceof DoubleV && v2 instanceof StrV) {\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        String s1 = ((DoubleV) v1).toString();\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        String s2 = ((StrV) v2).getValue();\r\n");
+		javaStmt.append("\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        if (s1.equals(s2))\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("            return true;\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    }\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    return false;\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("}\r\n");
+		javaStmt.append("\r\n");
+
+		return javaStmt.toString();
+	}
+	
+	public static String logicalGen(String indent) {
+		StringBuilder javaStmt = new StringBuilder("");
+
+		javaStmt.append(indent);
+		javaStmt.append("public static Value AND(Value v1, Value v2) {\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    StrV s1, s2;\r\n");
+		javaStmt.append("\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    if (v1 instanceof StrV && v2 instanceof StrV) {\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        s1 = (StrV) v1;\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        s2 = (StrV) v2;\r\n");
+		javaStmt.append("\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        if (s1.getValue().equalsIgnoreCase(\"true\") && s2.getValue().equalsIgnoreCase(\"true\"))\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("            return new StrV(\"true\");\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    }\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    return new StrV(\"false\");\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("}\r\n");
+		javaStmt.append("\r\n");
+		
+		javaStmt.append(indent);
+		javaStmt.append("public static Value OR(Value v1, Value v2) {\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    StrV s1, s2;\r\n");
+		javaStmt.append("\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    if (v1 instanceof StrV && v2 instanceof StrV) {\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        s1 = (StrV) v1;\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        s2 = (StrV) v2;\r\n");
+		javaStmt.append("\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        if (s1.getValue().equalsIgnoreCase(\"true\") || s2.getValue().equalsIgnoreCase(\"true\"))\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("            return new StrV(\"true\");\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    }\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    return new StrV(\"false\");\r\n");
 		javaStmt.append(indent);
 		javaStmt.append("}\r\n");
 		javaStmt.append("\r\n");
