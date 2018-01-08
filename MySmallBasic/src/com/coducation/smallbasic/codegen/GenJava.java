@@ -14,7 +14,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import com.coducation.smallbasic.*;
-import com.coducation.smallbasic.CodeGen2.*;
 
 public class GenJava {
 
@@ -751,6 +750,8 @@ public class GenJava {
 		javaStmt.append(indent);
 		javaStmt.append("        while (env.label_M() != null) {\r\n");
 		javaStmt.append(indent);
+		javaStmt.append("            m = env.label_M();\r\n");
+		javaStmt.append(indent);
 		javaStmt.append("            env.label_M(null);\r\n");
 		javaStmt.append(indent);
 		javaStmt.append("            m.invoke(null);\r\n");
@@ -813,6 +814,13 @@ public class GenJava {
 		javaStmt.append(indent);
 		javaStmt.append("public static void assignVar(String varName, Value rhsValue) {\r\n");
 		javaStmt.append(indent);
+		javaStmt.append("    if (rhsValue instanceof ArrayV) {\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        rhsValue = ((ArrayV)rhsValue).copy();\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    }\r\n");
+		javaStmt.append("\r\n");
+		javaStmt.append(indent);
 		javaStmt.append("    env.put(varName, rhsValue);\r\n");
 		javaStmt.append(indent);
 		javaStmt.append("}\r\n");
@@ -840,6 +848,13 @@ public class GenJava {
 
 		javaStmt.append(indent);
 		javaStmt.append("public static void assignPropertyExpr(String lhsObj, String lhsName, Value rhsValue) {\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    if (rhsValue instanceof ArrayV) {\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        rhsValue = ((ArrayV)rhsValue).copy();\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    }\r\n");
+		javaStmt.append("\r\n");
 		javaStmt.append(indent);
 		javaStmt.append("    try {\r\n");
 		javaStmt.append(indent);
@@ -897,7 +912,7 @@ public class GenJava {
 		javaStmt.append(indent);
 		javaStmt.append("        Field fld = clz.getField(name);\r\n");
 		javaStmt.append(indent);
-		javaStmt.append("        Method mth = clz.getMethod(notifyFieldAssign, String.class);\r\n");
+		javaStmt.append("        Method mth = clz.getMethod(notifyFieldRead, String.class);\r\n");
 		javaStmt.append(indent);
 		javaStmt.append("        mth.invoke(null, name);\r\n");
 		javaStmt.append(indent);
@@ -936,6 +951,13 @@ public class GenJava {
 
 		javaStmt.append(indent);
 		javaStmt.append("public static void assignArray(String arrayName, Value rhsValue, Value... idx_s) {\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    if (rhsValue instanceof ArrayV) {\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        rhsValue = ((ArrayV)rhsValue).copy();\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    }\r\n");
+		javaStmt.append("\r\n");
 		javaStmt.append(indent);
 		javaStmt.append("    Value arrValue = env.get(arrayName);\r\n");
 		javaStmt.append(indent);
