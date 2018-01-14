@@ -107,6 +107,20 @@ public class GenJava {
 			System.out.println(className);
 
 			//1~9번까지 출력
+			osw.write("package com.coducation.smallbasic;\r\n");
+			osw.write("\r\n");
+			osw.write("import java.lang.reflect.*;\r\n");
+			osw.write("import java.util.*;\r\n");
+			osw.write("\r\n");
+			osw.write("import com.coducation.smallbasic.codegen.*;\r\n");
+			osw.write("import com.coducation.smallbasic.lib.*;\r\n");
+			osw.write("import com.coducation.smallbasic.lib.Math;\r\n");
+			osw.write("import com.coducation.smallbasic.lib.File;\r\n");
+			osw.write("import com.coducation.smallbasic.lib.Array;\r\n");
+			osw.write("import com.coducation.smallbasic.lib.List;\r\n");
+			osw.write("import com.coducation.smallbasic.lib.Stack;\r\n");
+			osw.write("import com.coducation.smallbasic.lib.Timer;\r\n");
+			osw.write("\r\n");
 			osw.write("public class " + className + " {\r\n");
 			osw.write("\r\n");
 			osw.write("    static Env env;\r\n");
@@ -372,9 +386,9 @@ public class GenJava {
 
 		StringBuilder javaStmt = new StringBuilder(printIndent());
 
-		javaStmt.append("if(");
+		javaStmt.append("if(Util.isTrue(");
 		javaStmt.append(codeGen(ifStmt.getCond()));
-		javaStmt.append(") {\r\n");
+		javaStmt.append(")) {\r\n");
 
 		if(isTopLevel) {
 			topLevel.append(javaStmt);
@@ -527,20 +541,20 @@ public class GenJava {
 		StringBuilder javaExpr = new StringBuilder("");
 
 		switch (arithExpr.GetOp()) {
-		case 1:
-			javaExpr.append("plus(");
+		case ArithExpr.PLUS:
+			javaExpr.append("Util.plus(");
 			break;
-		case 2:
-			javaExpr.append("minus(");
+		case ArithExpr.MINUS:
+			javaExpr.append("Util.minus(");
 			break;
-		case 3:
-			javaExpr.append("multiply(");
+		case ArithExpr.MULTIFLY:
+			javaExpr.append("Util.multiply(");
 			break;
-		case 4:
-			javaExpr.append("divide(");
+		case ArithExpr.DIVIDE:
+			javaExpr.append("Util.divide(");
 			break;
-		case 5:
-			javaExpr.append("unary_Minus(");
+		case ArithExpr.UNARY_MINUS:
+			javaExpr.append("Util.unary_Minus(");
 			break;
 		}
 		javaExpr.append(codeGen(arithExpr.GetOperand()[0]));
@@ -590,37 +604,37 @@ public class GenJava {
 
 		StringBuilder javaExpr = new StringBuilder("");
 		//javaExpr.append(codeGen(compExpr.GetOperand()[0]));
-		javaExpr.append("new StrV(Boolean.toString(");
+		//javaExpr.append("new StrV(Boolean.toString(");
 
 		switch (compExpr.GetOp()) {
 		case CompExpr.GREATER_THAN:
 			//javaExpr.append(" > ");
-			javaExpr.append("Eval.greaterThan(");
+			javaExpr.append("Util.greaterThan(");
 			javaExpr.append(codeGen(compExpr.GetOperand()[0]));
 			break;
 		case CompExpr.LESS_THAN:
 			//javaExpr.append(" < ");
-			javaExpr.append("Eval.lessThan(");
+			javaExpr.append("Util.lessThan(");
 			javaExpr.append(codeGen(compExpr.GetOperand()[0]));
 			break;
 		case CompExpr.GREATER_EQUAL:
 			//javaExpr.append(" >= ");
-			javaExpr.append("Eval.greaterEqual(");
+			javaExpr.append("Util.greaterEqual(");
 			javaExpr.append(codeGen(compExpr.GetOperand()[0]));
 			break;
 		case CompExpr.LESS_EQUAL:
 			//javaExpr.append(" <= ");
-			javaExpr.append("Eval.lessEqual(");
+			javaExpr.append("Util.lessEqual(");
 			javaExpr.append(codeGen(compExpr.GetOperand()[0]));
 			break;
 		case CompExpr.EQUAL:
 			//javaExpr.append(" = ");
-			javaExpr.append("equal(");
+			javaExpr.append("Util.equal(");
 			javaExpr.append(codeGen(compExpr.GetOperand()[0]));
 			break;
 		case CompExpr.NOT_EQUAL:
 			//javaExpr.append(" <> ");
-			javaExpr.append("Eval.notEqual(");
+			javaExpr.append("Util.notEqual(");
 			javaExpr.append(codeGen(compExpr.GetOperand()[0]));
 			break;
 		default:
@@ -628,7 +642,7 @@ public class GenJava {
 			break;
 		}
 		javaExpr.append(", ");
-		javaExpr.append(codeGen(compExpr.GetOperand()[1]) + ")))");
+		javaExpr.append(codeGen(compExpr.GetOperand()[1]) + ")");
 
 		return javaExpr.toString();
 	}
@@ -636,9 +650,10 @@ public class GenJava {
 	public String codeGen(Lit litExpr) {
 		String javaExpr = litExpr.gets();
 		String r_javaExpr = javaExpr.replaceAll("\"", "");
+		String s_javaExpr = javaExpr.replace("\\", "\\\\");
 		if(isNumber(r_javaExpr))
 			return "new DoubleV(" + r_javaExpr + ")";
-		else return "new StrV(" + javaExpr + ")";
+		else return "new StrV(" + s_javaExpr + ")";
 	}
 
 	public String codeGen(LogicalExpr logicalExpr) {
@@ -647,10 +662,10 @@ public class GenJava {
 
 		switch (logicalExpr.GetOp()) {
 		case 1:
-			javaExpr.append("AND(");
+			javaExpr.append("Util.AND(");
 			break;
 		case 2:
-			javaExpr.append("OR(");
+			javaExpr.append("Util.OR(");
 			break;
 		default:
 			System.err.println("Unknown Logical Operator " + logicalExpr.GetOp());
@@ -697,8 +712,8 @@ public class GenJava {
 	}
 
 	public String codeGen(Var var) {
-		if (trees.get(var.getVarName()) != null)
-			return var.getVarName();
+		if (trees.get(var.getVarName()) != null) // Subroutine name !!
+			return "new StrV(\"" + var.getVarName() + "\")";
 		else
 			return "getVar(\"" + var.getVarName() + "\")";
 	}
@@ -712,6 +727,13 @@ public class GenJava {
 		javaStmt.append("    private HashMap<String,Method> labels;\r\n");
 		javaStmt.append(indent);
 		javaStmt.append("    private static final String label = \"$label\";\r\n");
+		javaStmt.append("\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    public Env() {\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("        labels = new HashMap<String,Method>();\r\n");
+		javaStmt.append(indent);
+		javaStmt.append("    }\r\n");
 		javaStmt.append("\r\n");
 		javaStmt.append(indent);
 		javaStmt.append("    public Method label_M() {\r\n");
@@ -796,7 +818,7 @@ public class GenJava {
 		javaStmt.append(indent);
 		javaStmt.append("    else return Class.forName(lib + name);\r\n");
 		javaStmt.append(indent);
-		javaStmt.append("    } catch (ClassNotFoundException e) {;\r\n");
+		javaStmt.append("    } catch (ClassNotFoundException e) {\r\n");
 		javaStmt.append(indent);
 		javaStmt.append("        throw new CodeGenException(\"Class Not Found \" + e.toString());\r\n");
 		javaStmt.append(indent);
