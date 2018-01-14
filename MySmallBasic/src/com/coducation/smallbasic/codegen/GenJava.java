@@ -117,6 +117,9 @@ public class GenJava {
 			osw.write("import com.coducation.smallbasic.lib.Math;\r\n");
 			osw.write("import com.coducation.smallbasic.lib.File;\r\n");
 			osw.write("import com.coducation.smallbasic.lib.Array;\r\n");
+			osw.write("import com.coducation.smallbasic.lib.List;\r\n");
+			osw.write("import com.coducation.smallbasic.lib.Stack;\r\n");
+			osw.write("import com.coducation.smallbasic.lib.Timer;\r\n");
 			osw.write("\r\n");
 			osw.write("public class " + className + " {\r\n");
 			osw.write("\r\n");
