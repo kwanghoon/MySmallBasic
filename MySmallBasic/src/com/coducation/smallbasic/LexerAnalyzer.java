@@ -1,17 +1,17 @@
 package com.coducation.smallbasic;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 public class LexerAnalyzer
 {
 	private int lineno;
 	
-	public LexerAnalyzer(FileReader fr)
+	public LexerAnalyzer(InputStreamReader isr)
 	{
-		this.br = new BufferedReader(fr);
+		this.br = new BufferedReader(isr);
 		this.strarr = new ArrayList<String>();
 		this.Lexer = new ArrayList<ArrayList<Terminal>>();
 	}

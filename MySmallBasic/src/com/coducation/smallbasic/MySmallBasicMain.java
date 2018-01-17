@@ -1,17 +1,17 @@
 package com.coducation.smallbasic;
 
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.Map;
 import java.util.Scanner;
-import java.util.Set;
 import java.util.StringTokenizer;
 
-import com.coducation.smallbasic.codegen.GenJava;
+import org.mozilla.universalchardet.UniversalDetector;
 
 public class MySmallBasicMain {
 
@@ -80,8 +80,24 @@ public class MySmallBasicMain {
 		}
 
 		try {
-			FileReader fr = new FileReader(Filename);
-			LexerAnalyzer Lexing = new LexerAnalyzer(fr);
+			//get encoding
+			byte[] buf = new byte[4096];
+	    	FileInputStream fis = new FileInputStream(Filename);
+	    	UniversalDetector detector = new UniversalDetector(null); 
+	    	int nread; 
+	    	while ((nread = fis.read(buf)) > 0 && !detector.isDone()) {   		
+	    		detector.handleData(buf, 0, nread); 
+	    	} 
+	    	detector.dataEnd();
+	    	String encoding = detector.getDetectedCharset();
+	    	detector.reset();
+	    	
+	    	InputStreamReader isr = null;
+	    	if(encoding != null)
+	    		isr = new InputStreamReader(new FileInputStream(Filename), encoding);
+	    	else
+	    		isr = new InputStreamReader(new FileInputStream(Filename));
+			LexerAnalyzer Lexing = new LexerAnalyzer(isr);
 			Parser Parsing = new Parser(Lexing);
 	
 			// Parser Test Routine.

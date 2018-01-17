@@ -10,5 +10,6 @@
 	<classpathentry kind="lib" path="lib/jansi-1.16.jar"/>
 	<classpathentry kind="lib" path="lib/jdiScript.jar"/>
 	<classpathentry kind="lib" path="lib/tools.jar"/>
+	<classpathentry kind="lib" path="lib/juniversalchardet-1.0.3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
