@@ -30,6 +30,7 @@ public class GenJava {
 	static String className;
 	static String fileName;
 	static ArrayList<String> idx_s;
+	static final String lib = "com.coducation.smallbasic.lib.";
 
 	public GenJava(BasicBlockEnv bbenv, String[] args) {
 		this();
@@ -62,7 +63,7 @@ public class GenJava {
 	//stmt : 스몰베이직의 AST
 	public void codeGen(String[] args) {
 		fileName = args[0].split("/")[args[0].split("/").length - 1];
-		className = fileName.substring(0,1).toUpperCase() + fileName.substring(1, fileName.length()-3);
+		className = "Java_" + fileName.substring(0,1).toUpperCase() + fileName.substring(1, fileName.length()-3);
 
 		Set<Map.Entry<String, Stmt>> set = trees.entrySet();
 		for (Map.Entry<String, Stmt> entry : set) {
@@ -94,7 +95,7 @@ public class GenJava {
 					s = l.substring(1);
 				else s = l;
 				if(!s.equals(emptyMethod))
-					methods.put(s, new StringBuilder(methods.get(s).toString().replaceAll("try [{](\\s)*?env[.]label_M[(]" + className + "_C[.]getMethod[(]\"" + emptyMethod + "\", null[)](.|\r\n)*?e[()]+;(\\s)*?}", "env.label_M(null);")));
+					methods.put(s, new StringBuilder(methods.get(s).toString().replaceAll("try [{](\\s)*?Util[.]env[.]label_M[(]" + className + "_C[.]getMethod[(]\"" + emptyMethod + "\", null[)](.|\r\n)*?e[()]+;(\\s)*?}", "Util.env.label_M(null);")));
 			}
 		}
 
@@ -123,15 +124,16 @@ public class GenJava {
 			osw.write("\r\n");
 			osw.write("public class " + className + " {\r\n");
 			osw.write("\r\n");
-			osw.write("    static Env env;\r\n");
-			osw.write("    static final String lib = \"com.coducation.smallbasic.lib.\";\r\n");
-			osw.write("    static final String notifyFieldAssign = \"notifyFieldAssign\";\r\n");
-			osw.write("    static final String notifyFieldRead = \"notifyFieldRead\";\r\n");
-			osw.write("    static final Class "+ className +"_C = getClass(\"" + className + "\");\r\n");
+			//osw.write("    static Env env;\r\n");
+			//osw.write("    static final String lib = \"com.coducation.smallbasic.lib.\";\r\n");
+			//osw.write("    static final String notifyFieldAssign = \"notifyFieldAssign\";\r\n");
+			//osw.write("    static final String notifyFieldRead = \"notifyFieldRead\";\r\n");
+			osw.write("    static String className = \"" + className + "\";\r\n");
+			osw.write("    static Class "+ className +"_C;\r\n");
 			osw.write("\r\n");
-			osw.write(classEnvGen("    ")); // Env Class 생성
+			//osw.write(classEnvGen("    ")); // Env Class 생성
 			osw.write("    public " + className +"() {\r\n");
-			osw.write("        env = new Env();\r\n");
+			//osw.write("        env = new Env();\r\n");
 			osw.write("    }\r\n");
 			osw.write("\r\n");
 			osw.write(mainGen("    ")); // main Method 생성
@@ -141,15 +143,15 @@ public class GenJava {
 				osw.write(it.next().getValue().toString());
 				osw.write("\r\n");
 			}
-			osw.write(assignVarGen("    "));
-			osw.write(getVarGen("    "));
-			osw.write(assignPropertyExprGen("    "));
-			osw.write(getPropertyExprGen("    "));
-			osw.write(assignArrayGen("    "));
-			osw.write(getArrayGen("    "));
-			osw.write(getClassGen("    "));
-			osw.write(getListGen("    "));
-			osw.write(isNumberGen("    "));
+//			osw.write(assignVarGen("    "));
+//			osw.write(getVarGen("    "));
+//			osw.write(assignPropertyExprGen("    "));
+//			osw.write(getPropertyExprGen("    "));
+//			osw.write(assignArrayGen("    "));
+//			osw.write(getArrayGen("    "));
+//			osw.write(getClassGen("    "));
+//			osw.write(getListGen("    "));
+//			osw.write(isNumberGen("    "));
 			//13번 출력
 			osw.write("}\r\n");
 			osw.flush();
@@ -208,12 +210,12 @@ public class GenJava {
 
 		if(lhs instanceof Var) {
 			Var var = (Var)lhs;
-			javaStmt.append("assignVar(\"" + var.getVarName() + "\", " + codeGen(rhs) + ");\r\n");
+			javaStmt.append("Util.assignVar(\"" + var.getVarName() + "\", " + codeGen(rhs) + ");\r\n");
 
 		}
 		else if(lhs instanceof PropertyExpr) {
 			PropertyExpr propertyExpr = (PropertyExpr)lhs;
-			javaStmt.append("assignPropertyExpr(\"" + propertyExpr.getObj() + "\", \"" + propertyExpr.getName() + "\", " + codeGen(rhs) + ");\r\n");
+			javaStmt.append("Util.assignPropertyExpr(\"" + propertyExpr.getObj() + "\", \"" + propertyExpr.getName() + "\", " + codeGen(rhs) + ");\r\n");
 
 		}
 		else if(lhs instanceof Array) {
@@ -243,7 +245,7 @@ public class GenJava {
 				}*/
 			}
 
-			javaStmt.append("assignArray(\"" + arr.getVar() + "\", ");
+			javaStmt.append("Util.assignArray(\"" + arr.getVar() + "\", ");
 			javaStmt.append(codeGen(rhs));
 			for(int i=0;i<idx_s.size();i++) {
 				javaStmt.append(", " + idx_s.get(i));
@@ -363,7 +365,7 @@ public class GenJava {
 
 		javaStmt.append("try {\r\n");
 		javaStmt.append(printIndent());
-		javaStmt.append("    env.label_M(" + className + "_C.getMethod(\"" + gotoStmt.getTargetLabel().substring(1) + "\", null));\r\n");
+		javaStmt.append("    Util.env.label_M(" + className + "_C.getMethod(\"" + gotoStmt.getTargetLabel().substring(1) + "\", null));\r\n");
 		javaStmt.append(printIndent());
 		javaStmt.append("} catch (NoSuchMethodException | SecurityException e) {\r\n");
 		javaStmt.append(printIndent());
@@ -587,7 +589,7 @@ public class GenJava {
 			}
 		}
 
-		javaExpr.append("getArray(\"" + arrayExpr.getVar() + "\"");
+		javaExpr.append("Util.getArray(\"" + arrayExpr.getVar() + "\"");
 		for(int i=0;i<idx_s.size();i++) {
 			javaExpr.append(", " + idx_s.get(i));
 		}
@@ -681,8 +683,8 @@ public class GenJava {
 	public String codeGen(MethodCallExpr methodCallExpr) {
 
 		StringBuilder javaExpr = new StringBuilder("");
-		javaExpr.append(methodCallExpr.getObj() + "." + methodCallExpr.getName() + "(");
-		javaExpr.append("getList(");
+		javaExpr.append(lib + methodCallExpr.getObj() + "." + methodCallExpr.getName() + "(");
+		javaExpr.append("Util.getList(");
 
 		if (methodCallExpr.getArgs() != null) {
 			int size = methodCallExpr.getArgs().size();
@@ -706,7 +708,7 @@ public class GenJava {
 
 	public String codeGen(PropertyExpr propertyExpr) {
 		StringBuilder javaExpr = new StringBuilder("");
-		javaExpr.append("getPropertyExpr(\"" + propertyExpr.getObj() + "\", \"" + propertyExpr.getName() + "\")");
+		javaExpr.append("Util.getPropertyExpr(\"" + propertyExpr.getObj() + "\", \"" + propertyExpr.getName() + "\")");
 
 		return javaExpr.toString();
 	}
@@ -715,7 +717,7 @@ public class GenJava {
 		if (trees.get(var.getVarName()) != null) // Subroutine name !!
 			return "new StrV(\"" + var.getVarName() + "\")";
 		else
-			return "getVar(\"" + var.getVarName() + "\")";
+			return "Util.getVar(\"" + var.getVarName() + "\")";
 	}
 	
 	public static String classEnvGen(String indent) {
@@ -761,42 +763,11 @@ public class GenJava {
 		javaStmt.append(indent);
 		javaStmt.append("public static void main(String[] args) {\r\n");
 		javaStmt.append(indent);
-		javaStmt.append("    try {\r\n");
+		javaStmt.append("    Util.className = className;\r\n");
 		javaStmt.append(indent);
-		javaStmt.append("        env = new Env();\r\n");
+		javaStmt.append("    " + className + "_C = Util.getClass(className);\r\n");
 		javaStmt.append(indent);
-		javaStmt.append("        Method m = " + className + "_C.getMethod(\"main\");\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        env.label_M(m);\r\n");
-		javaStmt.append("\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        while (env.label_M() != null) {\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("            m = env.label_M();\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("            env.label_M(null);\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("            m.invoke(null);\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        }\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    } catch (NoSuchMethodException | SecurityException e) {\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        e.printStackTrace();\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    } catch (IllegalAccessException e) {\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        e.printStackTrace();\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    } catch (IllegalArgumentException e) {\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        e.printStackTrace();\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    } catch (InvocationTargetException e) {\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        e.printStackTrace();\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    }\r\n");
+		javaStmt.append("    Util.main(className);\r\n");
 		javaStmt.append(indent);
 		javaStmt.append("}\r\n");
 		javaStmt.append("\r\n");
@@ -812,11 +783,7 @@ public class GenJava {
 		javaStmt.append(indent);
 		javaStmt.append("    try {\r\n");
 		javaStmt.append(indent);
-		javaStmt.append("    if(name.equals(\"" + className + "\"))\r\n");
-		javaStmt.append(indent);
 		javaStmt.append("        return Class.forName(\"com.coducation.smallbasic.\" + name);\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    else return Class.forName(lib + name);\r\n");
 		javaStmt.append(indent);
 		javaStmt.append("    } catch (ClassNotFoundException e) {\r\n");
 		javaStmt.append(indent);
