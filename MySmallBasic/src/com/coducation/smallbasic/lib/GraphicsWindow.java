@@ -2,6 +2,7 @@ package com.coducation.smallbasic.lib;
 
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Cursor;
@@ -21,6 +22,8 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -31,6 +34,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -47,7 +51,11 @@ import com.coducation.smallbasic.StrV;
 import com.coducation.smallbasic.Value;
 import com.coducation.smallbasic.util.Pair;
 
+import uk.co.caprica.vlcj.component.EmbeddedMediaPlayerComponent;
+
 public class GraphicsWindow {
+	private static EmbeddedMediaPlayerComponent mediaPlayerComponent;
+	
 	public static void Clear(ArrayList<Value> args) {
 		// 그래픽 창에 표시된 모든 것을 지움
 		panel.cmdList.clear();
@@ -58,6 +66,93 @@ public class GraphicsWindow {
 			container.repaint();
 		}
 		panel.repaint();
+	}
+	
+	public static void AddVideo(ArrayList<Value> args) {
+		String s = "";
+		String s2 = "";
+		if(args.size() == 1) {
+			s = (String)((StrV)args.get(0)).getValue();
+		}else if(args.size() == 2) {
+			s = (String)((StrV)args.get(0)).getValue();
+			s2 = (String)((StrV)args.get(1)).getValue();
+		}
+
+		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		frame.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				mediaPlayerComponent.release();
+				System.exit(0);
+			}
+		});
+
+		JPanel contentPane = new JPanel();
+		contentPane.setLayout(new BorderLayout());
+		mediaPlayerComponent = new EmbeddedMediaPlayerComponent();
+		contentPane.add(mediaPlayerComponent, BorderLayout.CENTER);
+
+		if(s.equals("controls") || s2.equals("controls")) {
+			JPanel controlsPane = new JPanel();
+			JButton pauseButton = new JButton("Pause");
+			controlsPane.add(pauseButton);
+
+			JButton rewindButton = new JButton("Rewind");
+			controlsPane.add(rewindButton);
+
+			JButton skipButton = new JButton("Skip");
+			controlsPane.add(skipButton);
+
+			contentPane.add(controlsPane, BorderLayout.SOUTH);
+
+			pauseButton.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					mediaPlayerComponent.getMediaPlayer().pause();
+				}
+			});
+
+			rewindButton.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					mediaPlayerComponent.getMediaPlayer().skip(-10000);
+				}
+			});
+
+			skipButton.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					mediaPlayerComponent.getMediaPlayer().skip(10000);
+				}
+			});
+		}
+
+		if(args.size() == 0 || s.equals("controls")) {
+			JPanel text = new JPanel();
+			JLabel jl = new JLabel("PATH : ");
+			JTextField tf = new JTextField(10);
+			JButton jb = new JButton("Send");
+
+			text.add(jl);
+			text.add(tf);
+			text.add(jb);
+			contentPane.add(text, BorderLayout.NORTH);
+
+			jb.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					String text = tf.getText();
+					mediaPlayerComponent.getMediaPlayer().setPlaySubItems(true);
+					mediaPlayerComponent.getMediaPlayer().playMedia(text);
+				}
+			});
+		}
+		frame.setContentPane(contentPane);
+		frame.setVisible(true);
+		if(args.size() != 0){
+			mediaPlayerComponent.getMediaPlayer().setPlaySubItems(true);
+			mediaPlayerComponent.getMediaPlayer().playMedia(s);
+		}
 	}
 
 	public static void DrawBoundText(ArrayList<Value> args) {
