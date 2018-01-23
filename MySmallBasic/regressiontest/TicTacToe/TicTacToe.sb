@@ -23,11 +23,12 @@ arff = "" ' arff 경로
 random = 0
 teachMode = 0
 count = 0
-fortest = "\regressiontest\TicTacToe"
-Image1 = ImageList.LoadImage( Program.Directory+fortest+"\Image\BackGround.jpg" )
-BoardImage = ImageList.LoadImage(Program.Directory+fortest+"\Image\Board.png")
-Image3 = ImageList.LoadImage( Program.Directory+fortest+"\Image\BackGround1.png" )
-Image2 = ImageList.LoadImage( Program.Directory+fortest+"\Image\Help.jpg" )
+fortest = "\\regressiontest\\TicTacToe"
+Image1 = ImageList.LoadImage( Program.Directory + fortest + "\\Image\\BackGround.jpg" )
+'TextWindow.WriteLine(Program.Directory + fortest + "\\Image\\BackGround.jpg")
+BoardImage = ImageList.LoadImage( Program.Directory + fortest + "\\Image\\Board.png" )
+Image3 = ImageList.LoadImage( Program.Directory + fortest + "\\Image\\BackGround1.png" )
+Image2 = ImageList.LoadImage( Program.Directory + fortest + "\\Image\\Help.jpg" )
 
 MainPage()  '메인 화면 실행
 Controls.ButtonClicked = ButtonClick
@@ -43,15 +44,15 @@ Sub MainPage
   GraphicsWindow.FontBold = "True"
   GraphicsWindow.FontSize = 150
   GraphicsWindow.BrushColor = "Black"
-  GraphicsWindow.DrawText(167, 67, "Tic Tac Toe")
+  GraphicsWindow.DrawText(152, 32, "Tic Tac Toe")
 
   GraphicsWindow.BrushColor = "White"
-  GraphicsWindow.DrawText(165, 65, "Tic Tac Toe")
+  GraphicsWindow.DrawText(150, 30, "Tic Tac Toe")
 
   GraphicsWindow.FontName = "Bradley Hand ITC" 
   GraphicsWindow.FontBold = "True"
   GraphicsWindow.FontSize = 50
-  GraphicsWindow.BrushColor = "White"
+  GraphicsWindow.BrushColor = "BLACK"
 
   Start = Controls.AddButton("Start", 175, 295)
   Teach = Controls.AddButton("Teach", 175, 405)
@@ -72,6 +73,7 @@ Sub HelpPage
     GraphicsWindow.BrushColor = "White"
     GraphicsWindow.DrawText(80,35,"Help")
     GraphicsWindow.FontSize = 50
+    GraphicsWindow.BrushColor = "BLACK"
     Back = Controls.AddButton("Main", 50, 650)  
   
 EndSub
@@ -83,6 +85,7 @@ Sub SelectMode ' mode select
   GraphicsWindow.FontSize = 70
   GraphicsWindow.DrawText(180,35,"Please Select Mode!!!")
   GraphicsWindow.FontSize = 50
+  GraphicsWindow.BrushColor = "BLACK"
   Hard = Controls.AddButton("Hard Game", 175, 180)
   Easy = Controls.AddButton("Easy Game", 175, 280)
   Custom = Controls.AddButton("Custom Game", 175, 380)
@@ -119,7 +122,7 @@ Sub ButtonClick
   
   If Controls.LastClickedButton = Update Then
     arff = Program.Directory+fortest+"\Arff\tic-tac-toe(Custom).arff"
-    Learning()
+    'Learning()
     GraphicsWindow.Clear()
     GraphicsWindow.DrawImage(Image3, 0, 0)
     GraphicsWindow.DrawResizedImage(BoardImage,200,200,500,500)
@@ -146,11 +149,11 @@ Sub ButtonClick
   EndIf
   
   If Controls.LastClickedButton = Custom Then
-    GraphicsWindow.Clear()
-    arff = Program.Directory+fortest+"\Arff\tic-tac-toe(Custom).arff"
-    GraphicsWindow.DrawImage(Image3, 0, 0)
-    GraphicsWindow.DrawResizedImage(BoardImage,200,200,500,500)
-    Game()
+    'GraphicsWindow.Clear()
+    'arff = Program.Directory+fortest+"\Arff\tic-tac-toe(Custom).arff"
+    'GraphicsWindow.DrawImage(Image3, 0, 0)
+    'GraphicsWindow.DrawResizedImage(BoardImage,200,200,500,500)
+    'Game()
   EndIf
   
   If Controls.LastClickedButton = User Then
@@ -168,15 +171,15 @@ Sub TeachMe
   teachMode = 1 ' Data Update Mode On
   GraphicsWindow.FontName = "Bradley Hand ITC"
   GraphicsWindow.FontBold = "True"
-  GraphicsWindow.FontSize = 150
+  GraphicsWindow.FontSize = 120
   GraphicsWindow.BrushColor = "White"
   GraphicsWindow.DrawText(150, 20, "Tic Tac Toe")
   GraphicsWindow.FontSize = 60
-  GraphicsWindow.BrushColor = "White"
-  Back = Controls.AddButton("Main", 720, 400)
+  GraphicsWindow.BrushColor = "BLACK"
+  Back = Controls.AddButton("Main", 720, 460)
   GraphicsWindow.FontSize = 60
-  GraphicsWindow.BrushColor = "White"
-  Update = Controls.AddButton("Update", 720, 300)
+  GraphicsWindow.BrushColor = "BLACK"
+  Update = Controls.AddButton("Update", 720, 360)
   GraphicsWindow.FontSize = 40
   GraphicsWindow.BrushColor = "White"
   GraphicsWindow.DrawText(720, 600, "Teach Me!!!")
@@ -201,11 +204,11 @@ Sub Game ' 게임화면
   teachMode = 0 ' Data Update Mode Off
   GraphicsWindow.FontName = "Bradley Hand ITC" 
   GraphicsWindow.FontBold = "True"
-  GraphicsWindow.FontSize = 150
+  GraphicsWindow.FontSize = 120
   GraphicsWindow.BrushColor = "White"
   GraphicsWindow.DrawText(150, 20, "Tic Tac Toe")
   GraphicsWindow.FontSize = 60
-  GraphicsWindow.BrushColor = "White"
+  GraphicsWindow.BrushColor = "BLACK"
   Back = Controls.AddButton("Main", 720, 400)
   GraphicsWindow.MouseDown = OnGameU
   
@@ -251,10 +254,10 @@ Sub Check
     TextWindow.WriteLine("empty실행")
     GraphicsWindow.PenColor = "LightGray"
     GraphicsWindow.PenWidth = 50
-    GraphicsWindow.DrawRectangle(730, 200, 200, 30)
+    GraphicsWindow.DrawRectangle(730, 260, 200, 30)
     GraphicsWindow.FontSize = 40
     GraphicsWindow.BrushColor = "DarkSlateGray"
-    GraphicsWindow.DrawText(710, 190, "User-o Win!")
+    GraphicsWindow.DrawText(710, 250, "User-o Win!")
     For i_Check=0 To count-1
       hboard[i_Check][9] = 0
     EndFor
@@ -264,10 +267,10 @@ Sub Check
     GraphicsWindow.MouseDown = Empty
     GraphicsWindow.PenColor = "LightGray"
     GraphicsWindow.PenWidth = 50
-    GraphicsWindow.DrawRectangle(730, 200, 200, 30)
+    GraphicsWindow.DrawRectangle(730, 260, 200, 30)
     GraphicsWindow.FontSize = 40
     GraphicsWindow.BrushColor = "DarkSlateGray"
-    GraphicsWindow.DrawText(710, 190, "User-x Win!")
+    GraphicsWindow.DrawText(710, 250, "User-x Win!")
     For i_Check=0 To count-1
       hboard[i_Check][9] = 100
     EndFor
@@ -282,10 +285,10 @@ Sub Check
       GraphicsWindow.MouseDown = Empty
       GraphicsWindow.PenColor = "LightGray"
       GraphicsWindow.PenWidth = 50
-      GraphicsWindow.DrawRectangle(730, 200, 200, 30)
+      GraphicsWindow.DrawRectangle(730, 260, 200, 30)
       GraphicsWindow.FontSize = 40
       GraphicsWindow.BrushColor = "DarkSlateGray"
-      GraphicsWindow.DrawText(720, 190, "Game Over")
+      GraphicsWindow.DrawText(720, 250, "Game Over")
     EndIf
     
   EndIf
@@ -353,34 +356,34 @@ Sub Showturn
     If turn = 1 Then
       GraphicsWindow.PenColor = "LightGray"
       GraphicsWindow.PenWidth = 50
-      GraphicsWindow.DrawRectangle(730, 200, 200, 30)
+      GraphicsWindow.DrawRectangle(730, 260, 200, 30)
       GraphicsWindow.FontSize = 40
       GraphicsWindow.BrushColor = "DarkSlateGray"
-      GraphicsWindow.DrawText(715, 190, "Com's turn!")
+      GraphicsWindow.DrawText(715, 250, "Com's turn!")
     ElseIf turn = 2 Then
       GraphicsWindow.PenColor = "LightGray"
       GraphicsWindow.PenWidth = 50
-      GraphicsWindow.DrawRectangle(730, 200, 200, 30)
+      GraphicsWindow.DrawRectangle(730, 260, 200, 30)
       GraphicsWindow.FontSize = 40
       GraphicsWindow.BrushColor = "DarkSlateGray"
-      GraphicsWindow.DrawText(725, 190, "Your turn!")
+      GraphicsWindow.DrawText(725, 250, "Your turn!")
     EndIf
   ElseIf computer = 2 Then
     ' Earlier User Play 
     If turn = 1 Then
       GraphicsWindow.PenColor = "LightGray"
       GraphicsWindow.PenWidth = 50
-      GraphicsWindow.DrawRectangle(730, 200, 200, 30)
+      GraphicsWindow.DrawRectangle(730, 260, 200, 30)
       GraphicsWindow.FontSize = 40
       GraphicsWindow.BrushColor = "DarkSlateGray"
-      GraphicsWindow.DrawText(725, 190, "Your turn!")
+      GraphicsWindow.DrawText(725, 250, "Your turn!")
     ElseIf turn = 2 Then
       GraphicsWindow.PenColor = "LightGray"
       GraphicsWindow.PenWidth = 50
-      GraphicsWindow.DrawRectangle(730, 200, 200, 30)
+      GraphicsWindow.DrawRectangle(730, 260, 200, 30)
       GraphicsWindow.FontSize = 40
       GraphicsWindow.BrushColor = "DarkSlateGray"
-      GraphicsWindow.DrawText(715, 190, "Com's turn!")  
+      GraphicsWindow.DrawText(715, 250, "Com's turn!")  
     EndIf
   EndIf
 EndSub
@@ -398,7 +401,7 @@ Sub OnGameC
    GraphicsWindow.MouseDown = Empty
    
    If Array.ContainsValue(board, "o") Then
-     'Program.Delay(3000)
+     Program.Delay(3000)
    EndIf
    predict() 
    Draw()

@@ -1,92 +1,52 @@
 package com.coducation.smallbasic.lib;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 
 import com.coducation.smallbasic.DoubleV;
 import com.coducation.smallbasic.InterpretException;
+import com.coducation.smallbasic.ListV;
+import com.coducation.smallbasic.NullList;
+import com.coducation.smallbasic.Pair;
 import com.coducation.smallbasic.StrV;
 import com.coducation.smallbasic.Value;
 
 public class List {
-
-	private static HashMap<String, java.util.List<Value>> list_map = new HashMap<>();
 	
-	private static int key = 1 ;
+	private static HashMap<String, ListV> list_map = new HashMap<>();
+	private static int key = 1;
 	
-	public static Value Empty(ArrayList<Value> args) {
+	public static Value List(ArrayList<Value> args) {
 		
-		if (args.size() == 0) {
+		ListV new_list = new NullList();
+		
+		for ( int i = args.size() -1 ; i >= 0 ; i-- ) {
 			
-			java.util.List<Value> list = new ArrayList<Value>();
+			new_list = new Pair(args.get(i), new_list);
 			
-			list_map.put("List" + key, list);
-
-		} else
-
-			throw new InterpretException("Empty : Unexpected # of args : " + args.size());	
+		}
+		
+		list_map.put("List" + key, new_list);
 		
 		return new StrV("List" + key++);
-	}
-	
-	public static Value Single(ArrayList<Value> args) {
-		
-		if (args.size() == 1 ) {
-			
-			java.util.List<Value> list = new ArrayList<Value>();
-			list.add(args.get(0));
-			
-			list_map.put("List" + key, list);
-			
-		} else
-			
-			throw new InterpretException("Single : Unexpected # of args : " + args.size());
-		
-		return new StrV("List" + key++);
-	}
-	
-	public static Value Add(ArrayList<Value> args) {
-		
-		java.util.List<Value> list;
-		String str_arg;
-		
-		if (args.size() == 2) {
-			
-			if (args.get(0) instanceof StrV) {
-
-				str_arg = ((StrV) args.get(0)).getValue();
-				list = list_map.get(str_arg);
-
-			} else {
-
-				throw new InterpretException("Concat : Unexpected 1st argument");
-
-			}
-			
-		} else
-			
-			throw new InterpretException("Concat : Unexpected # of args : " + args.size());
-		
-		list.add(args.get(1));
-		
-		return null;
 	}
 	
 	public static Value Concat(ArrayList<Value> args) {
 		
-		java.util.List<Value> list;
-		java.util.List<Value> list_add;
-		
 		String str_arg0;
 		String str_arg1;
+		
+		ListV list0;
+		ListV list1;
+		
+		ListV new_list;
 		
 		if (args.size() == 2) {
 			
 			if (args.get(0) instanceof StrV) {
 
 				str_arg0 = ((StrV) args.get(0)).getValue();
-				list = list_map.get(str_arg0);
+				list0 = list_map.get(str_arg0);
 
 			} else {
 
@@ -97,7 +57,7 @@ public class List {
 			if (args.get(1) instanceof StrV) {
 
 				str_arg1 = ((StrV) args.get(1)).getValue();
-				list_add = list_map.get(str_arg1);
+				list1 = list_map.get(str_arg1);
 
 			} else {
 
@@ -109,22 +69,18 @@ public class List {
 			
 			throw new InterpretException("Concat : Unexpected # of args : " + args.size());
 		
-		for (int i = 0 ; i < list_add.size() ; i++ ) {
-			
-			list.add(list_add.get(i));
-			
-		}
+		new_list = list0.concat(list1);
 		
-		list_map.remove(str_arg0);
-		list_map.put(str_arg0, list);
+		list_map.put("List" + key, new_list);
 		
-		return new StrV(str_arg0);
+		return new StrV("List" + key++);
 	}
 	
 	public static Value Head(ArrayList<Value> args) {
 		
 		String str_arg;
-		java.util.List<Value> list;
+		
+		ListV list;
 		
 		Value v;
 		
@@ -145,23 +101,21 @@ public class List {
 			
 			throw new InterpretException("Head : Unexpected # of args : " + args.size());
 		
-		try {
+		if( list.isNull() )
 			
-			v = list.get(0);
+			return new StrV("Null");
 			
-		} catch (IndexOutOfBoundsException e) {
+		v = list.first();
 			
-			return new StrV("Empty");
-			
-		}
-		
-		return v;
+		return v;	
 	}
 	
 	public static Value Tail(ArrayList<Value> args) {
 		
 		String str_arg;
-		java.util.List<Value> list;
+		
+		ListV list;
+		ListV new_list;
 		
 		if (args.size() == 1) {
 			
@@ -179,13 +133,11 @@ public class List {
 		} else
 			
 			throw new InterpretException("Tail : Unexpected # of args : " + args.size());
+
+		new_list = list.second();
+		list_map.put("List" + key, new_list);
 		
-		list.remove(0);
-		
-		list_map.remove(str_arg);
-		list_map.put(str_arg, list);
-		
-		return new StrV(str_arg);
+		return new StrV("List" + key++);
 	}
 	
 	public static Value IndexAt(ArrayList<Value> args) {
@@ -193,14 +145,16 @@ public class List {
 		String str_arg;
 		double dbl_arg;
 		
-		java.util.List<Value> list;
-		int index;
+		ListV list;
+		
+		Value v;
 		
 		if (args.size() == 2) {
 
 			if (args.get(0) instanceof StrV) {
 				
 				str_arg = ((StrV) args.get(0)).getValue();
+				list = list_map.get(str_arg);
 
 			} else {
 			
@@ -236,20 +190,27 @@ public class List {
 			
 			throw new InterpretException("IndexAt : Unexpected # of args: " + args.size());
 		
-		list = list_map.get(str_arg);
-		index = (int)dbl_arg - 1;
-		
-		if (index < 0) index = 0;
-		
-		Value v = list.get(index);
-		
-		return v;
+		if ( (int)dbl_arg > 0 && (int)dbl_arg <= list.length() ) {
+			
+			for ( int i = 1; i < (int)dbl_arg; i++ ) {
+				list = list.second();
+			}
+			
+			v = list.first();
+
+			return v;
+			
+		} else {
+			
+			return new StrV("Null");
+			
+		}
 	}
 	
 	public static Value IsEmpty(ArrayList<Value> args) {
 		
 		String str_arg;
-		java.util.List<Value> list;
+		ListV list;
 		
 		if (args.size() == 1) {
 			
@@ -268,13 +229,21 @@ public class List {
 			
 			throw new InterpretException("IsEmpty : Unexpected # of args : " + args.size());
 		
-		if (list.size() == 0) 
-			
+		if ( list.isNull() )
 			return new StrV("True"); 
-
 		else 
-			
 			return new StrV("False");
+	}
+	
+	public static Value Print(ArrayList<Value> args) {
+		
+		String str_arg = ((StrV) args.get(0)).getValue();
+		ListV list = list_map.get(str_arg);
+		
+		list.print();
+		
+		return null;
+
 	}
 	
 	public static void notifyFieldAssign(String fieldName) {
@@ -284,5 +253,5 @@ public class List {
 	public static void notifyFieldRead(String fieldName) {
 
 	}
-
+	
 }

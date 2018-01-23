@@ -19,13 +19,13 @@ TextWindow.WriteLine("Math.Floor(0.99999) = " + b)
 '@assert c = 30
 TextWindow.WriteLine("Math.GetDegrees(Math.Pi/6) = " + c)
 
-'@assert d = Math.Pi / 6
+'@assert d = 0.523598775598299
 TextWindow.WriteLine("Math.GetRadians(30) = " + d)
 
 '@assert e = 2
 TextWindow.WriteLine("Math.Log(100) = " + e)
 
-'@assert f = 1
+'@assert f = 0.999999327347282
 TextWindow.WriteLine("Math.NaturalLog(2.71828) = " + f)
 
 '@assert g = 32

@@ -50,16 +50,16 @@ public class MySmallBasicDebugger extends MySmallBasicDebuggerModel implements R
 			pb = new ProcessBuilder(shellCmd, "/c", "start java.exe", javaCmd, "-gui", filePath);
 		}
 
-		for (String c : pb.command())
-			System.out.println(c);
+//		for (String c : pb.command())
+//			System.out.println(c);
 
 		Map<String, String> env = pb.environment();
 		classpath.append(HOME + "/bin");
 		addJarFile(classpath, HOME, HOME + "/lib");
 		env.put("CLASSPATH", classpath.toString());
 
-		for (Map.Entry<String, String> entry : env.entrySet())
-			System.out.println(entry.getKey() + " : " + entry.getValue());
+//		for (Map.Entry<String, String> entry : env.entrySet())
+//			System.out.println(entry.getKey() + " : " + entry.getValue());
 
 		pb.directory(new File(HOME));
 		try {

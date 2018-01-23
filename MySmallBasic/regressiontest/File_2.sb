@@ -1,40 +1,84 @@
-'ÆÄÀÏÁ¸ÀçÇÏÁö¾ÊÀ¸¸é ½ÇÆĞ
+'íŒŒì¼ì¡´ì¬í•˜ì§€ì•Šìœ¼ë©´ ì‹¤íŒ¨
+'ê°™ì€ ì´ë¦„ì˜ ë””ë ‰í† ë¦¬ê°€ ìˆìœ¼ë©´ ì„±ê³µì¸ë° íŒŒì¼ì€ ìƒì„± ì•ˆë¨
 TextWindow.WriteLine("CopyFile")
-TextWindow.WriteLine(File.CopyFile("555.txt", "C:\Users\Administrator\Desktop\dir\444.txt"))
+File.WriteContents("555.txt", "abcd")
+a = File.CopyFile("555.txt", ".\dir\444.txt")
 
-'µğ·ºÅä¸®»èÁ¦½Ã ½ÇÆĞ
-'¾ø´ÂÆÄÀÏ»èÁ¦½Ã ¼º°ø
+'@assert a = "SUCCESS"
+
+TextWindow.WriteLine(a)
+
+'ë””ë ‰í† ë¦¬ì‚­ì œì‹œ ì‹¤íŒ¨
+'ì—†ëŠ”íŒŒì¼ì‚­ì œì‹œ ì„±ê³µ
 TextWindow.WriteLine("")
 TextWindow.WriteLine("DeleteFile")
-TextWindow.WriteLine(File.DeleteFile("C:\Users\Administrator\Desktop\dir\444.txt"))
-TextWindow.WriteLine(File.DeleteFile("C:\Users\Administrator\Desktop\dir\222.txt"))
+b = File.DeleteFile(".\dir\444.txt")
+c = File.DeleteFile(".\dir\222.txt")
 
-'ÇÏÀ§°æ·Î±îÁö »ı¼º
+'@assert b = "SUCCESS"
+'@assert c = "SUCCESS"
+
+TextWindow.WriteLine(b)
+TextWindow.WriteLine(c)
+
+'í•˜ìœ„ê²½ë¡œê¹Œì§€ ìƒì„±
+'ê°™ì€ ì´ë¦„ìˆìœ¼ë©´ ì‹¤íŒ¨
 TextWindow.WriteLine("")
 TextWindow.WriteLine("CreateDirectory")
-TextWindow.WriteLine(File.CreateDirectory("C:\Users\Administrator\Desktop\dir\444.txt"))
-TextWindow.WriteLine(File.CreateDirectory("C:\Users\Administrator\Desktop\dir\4441.txt"))
+d = File.CreateDirectory(".\dir\444\333")
+e = File.CreateDirectory(".\dir\4441.txt")
 
-'ÆÄÀÏ»èÁ¦½Ã ½ÇÆĞ
+'@assert d = "SUCCESS"
+'@assert e = "SUCCESS"
+
+TextWindow.WriteLine(d)
+TextWindow.WriteLine(e)
+
+'íŒŒì¼ì‚­ì œì‹œ ì‹¤íŒ¨
 TextWindow.WriteLine("")
 TextWindow.WriteLine("DeleteDirectory")
-TextWindow.WriteLine(File.DeleteDirectory("C:\Users\Administrator\Desktop\dir\4441.txt"))
-TextWindow.WriteLine(File.DeleteDirectory("C:\Users\Administrator\Desktop\dir\11.txt"))
+f = File.DeleteDirectory(".\dir\4441.txt")
+g = File.DeleteDirectory(".\dir\11.txt")
 
-'ÁöÁ¤ÇÑ °æ·Î°¡ Á¸ÀçÇÏÁö¾ÊÀ¸¸é ½ÇÆĞ
-'ÁöÁ¤ÇÑ °æ·Î°¡ Á¸ÀçÇÏ³ª ±× Æú´õ¾È¿¡ ÆÄÀÏÀÌ Á¸ÀçÇÏÁö¾ÊÀ¸¸é ""
-'»õ·ÎºÙ´Â °æ·Î´Â \\
-'±âÁ¸¿¡ ÀÖ´ø °æ·Î´Â ±âÁ¸ µğ·ºÅä¸® Âü°í \´Â \\·Î ¹İÈ¯, /´Â /·Î ¹İÈ¯
+'@assert f = "SUCCESS"
+'@assert g = "FAILED"
+
+TextWindow.WriteLine(f)
+TextWindow.WriteLine(g)
+
+'ì§€ì •í•œ ê²½ë¡œê°€ ì¡´ì¬í•˜ì§€ì•Šìœ¼ë©´ ì‹¤íŒ¨
+'ì§€ì •í•œ ê²½ë¡œê°€ ì¡´ì¬í•˜ë‚˜ ê·¸ í´ë”ì•ˆì— íŒŒì¼ì´ ì¡´ì¬í•˜ì§€ì•Šìœ¼ë©´ ""
+'ìƒˆë¡œë¶™ëŠ” ê²½ë¡œëŠ” \\
+'ê¸°ì¡´ì— ìˆë˜ ê²½ë¡œëŠ” ê¸°ì¡´ ë””ë ‰í† ë¦¬ ì°¸ê³  \ëŠ” \\ë¡œ ë°˜í™˜, /ëŠ” /ë¡œ ë°˜í™˜
 TextWindow.WriteLine("")
 TextWindow.WriteLine("GetFiles")
-TextWindow.WriteLine(File.GetFiles("C:\Users\Administrator\Desktop\dir\444.txt"))
-TextWindow.WriteLine(File.GetFiles("C:\Users\Administrator\Desktop\dirs"))
+File.WriteContents(".\dir\333.txt", "aaa")
+h = File.GetFiles(".\dir")
+i = File.GetFiles(".\dirs")
+
+'@assert h = "1=.\\dir\\333.txt;"
+'@assert i = "FAILED"
+
+TextWindow.WriteLine(h)
+TextWindow.WriteLine(i)
 
 TextWindow.WriteLine("")
 TextWindow.WriteLine("GetDirectories")
-TextWindow.WriteLine(File.GetDirectories("C:\Users\Administrator\Desktop\dir\444.txt"))
-TextWindow.WriteLine(File.GetDirectories("C:\Users\Administrator\Desktop\dir"))
+j = File.GetDirectories(".\dir\444")
+k = File.GetDirectories(".\dir\333")
+
+'@assert j = "1=.\\dir\\444\\333;"
+'@assert k = "FAILED"
+
+TextWindow.WriteLine(j)
+TextWindow.WriteLine(k)
 
 TextWindow.WriteLine("")
 TextWindow.WriteLine("GetTemporaryFilePath")
-TextWindow.WriteLine(File.GetTemporaryFilePath())
+l = File.GetTemporaryFilePath()
+
+'@assert
+
+TextWindow.WriteLine(l)
+File.DeleteFile("555.txt")
+File.DeleteDirectory(".\dir")

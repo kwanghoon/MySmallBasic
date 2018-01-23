@@ -3,13 +3,13 @@ package com.coducation.smallbasic;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class Continuous {
+public class BBTransform {
 	HashMap<String, Stmt> kMap;
 	public static final String label = "$L";
 	public static final String mainLabel = "$main";
 	int count = 0;
 
-	public Continuous() {
+	public BBTransform() {
 		kMap = new HashMap<>();
 	}
 	public BasicBlockEnv blocks() {

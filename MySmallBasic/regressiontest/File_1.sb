@@ -1,42 +1,91 @@
 TextWindow.WriteLine("WriteContents/ReadContents")
-TextWindow.WriteLine(File.WriteContents("555.txt", "abcd"))
-TextWindow.WriteLine("FileContents : "+ File.ReadContents("555.txt"))
-' escape sequence 
-TextWindow.WriteLine(File.WriteContents("555.txt", "\r\nabcd")) 
-TextWindow.WriteLine("FileContents : "+ File.ReadContents("555.txt"))
+a = File.WriteContents("555.txt", "abcd")
+b = File.ReadContents("555.txt")
+c = File.WriteContents("555.txt", "\r\nabcd")
+d = File.ReadContents("555.txt")
 
-'writeline »ç¿ë ½Ã ¾Æ·¡¿¡ ºóÁÙ »ı¼º
-'ÆÄÀÏÀÌ Á¸ÀçÇÏÁö¾ÊÀ» °æ¿ì ¶óÀÎ¿¡ °ü°è¾øÀÌ Ã¹ÁÙ¿¡ ÆÄÀÏ³»¿ë »ı¼º
-'ÃÑ n¶óÀÎ Áß n+1À» ÃÊ°úÇÑ ÀÎ¼ö¸¦ ÁÙ °æ¿ì n+1¶óÀÎ¿¡ ³»¿ë »ğÀÔ
+'@assert a = "SUCCESS"
+'@assert b = "abcd"
+'@assert c = "SUCCESS"
+'@assert d = "\r\nabcd"
+
+TextWindow.WriteLine(a)
+TextWindow.WriteLine("FileContents : "+ b)
+' escape sequence 
+TextWindow.WriteLine(c) 
+TextWindow.WriteLine("FileContents : "+ d)
+
+'writeline ì‚¬ìš© ì‹œ ì•„ë˜ì— ë¹ˆì¤„ ìƒì„±
+'íŒŒì¼ì´ ì¡´ì¬í•˜ì§€ì•Šì„ ê²½ìš° ë¼ì¸ì— ê´€ê³„ì—†ì´ ì²«ì¤„ì— íŒŒì¼ë‚´ìš© ìƒì„±
+'ì´ në¼ì¸ ì¤‘ n+1ì„ ì´ˆê³¼í•œ ì¸ìˆ˜ë¥¼ ì¤„ ê²½ìš° n+1ë¼ì¸ì— ë‚´ìš© ì‚½ì…
 TextWindow.WriteLine("")
 TextWindow.WriteLine("WriteLine")
-TextWindow.WriteLine(File.WriteLine("555.txt", 2, "two"))
-TextWindow.WriteLine(File.WriteLine("555.txt", 1, "one"))
-TextWindow.WriteLine(File.WriteLine("555.txt", 5, "five"))
-TextWindow.WriteLine("FileContents : "+ File.ReadContents("555.txt"))
+e = File.WriteLine("555.txt", 2, "two")
+f = File.WriteLine("555.txt", 1, "one")
+g = File.WriteLine("555.txt", 5, "five")
+h = File.ReadContents("555.txt")
 
-'readline »ç¿ë ½Ã line 0°ú 1ÀÇ ³»¿ëÀÌ °°À½
+'@assert e = "SUCCESS"
+'@assert f = "SUCCESS"
+'@assert g = "SUCCESS"
+'@assert
+
+TextWindow.WriteLine(e)
+TextWindow.WriteLine(f)
+TextWindow.WriteLine(g)
+TextWindow.WriteLine("FileContents : "+ h)
+
+'readline ì‚¬ìš© ì‹œ line 0ê³¼ 1ì˜ ë‚´ìš©ì´ ê°™ìŒ
 TextWindow.WriteLine("")
 TextWindow.WriteLine("ReadLine")
-TextWindow.WriteLine(File.ReadLine("555.txt", -1))
-TextWindow.WriteLine(File.ReadLine("555.txt", 0))
-TextWindow.WriteLine(File.ReadLine("555.txt", 1))
-TextWindow.WriteLine(File.ReadLine("555.txt", 2))
+i = File.ReadLine("555.txt", -1)
+j = File.ReadLine("555.txt", 0)
+k = File.ReadLine("555.txt", 1)
+l = File.ReadLine("555.txt", 2)
 
-'InsertLine »ç¿ë ½Ã ¾Æ·¡¿¡ ºóÁÙ »ı¼º
-'ÆÄÀÏÀÌ Á¸ÀçÇÏÁö¾ÊÀ» °æ¿ì ¶óÀÎ¿¡ °ü°è¾øÀÌ Ã¹ÁÙ¿¡ ÆÄÀÏ³»¿ë »ı¼º
-'ÃÑ n¶óÀÎ Áß n+1À» ÃÊ°úÇÑ ÀÎ¼ö¸¦ ÁÙ °æ¿ì n+1¶óÀÎ¿¡ ³»¿ë »ğÀÔ
+'@assert i = ""
+'@assert j = "one"
+'@assert k = "one"
+'@assert l = "two"
+
+TextWindow.WriteLine(i)
+TextWindow.WriteLine(j)
+TextWindow.WriteLine(k)
+TextWindow.WriteLine(l)
+
+'InsertLine ì‚¬ìš© ì‹œ ì•„ë˜ì— ë¹ˆì¤„ ìƒì„±
+'íŒŒì¼ì´ ì¡´ì¬í•˜ì§€ì•Šì„ ê²½ìš° ë¼ì¸ì— ê´€ê³„ì—†ì´ ì²«ì¤„ì— íŒŒì¼ë‚´ìš© ìƒì„±
+'ì´ në¼ì¸ ì¤‘ n+1ì„ ì´ˆê³¼í•œ ì¸ìˆ˜ë¥¼ ì¤„ ê²½ìš° n+1ë¼ì¸ì— ë‚´ìš© ì‚½ì…
 TextWindow.WriteLine("")
 TextWindow.WriteLine("InsertLine")
-TextWindow.WriteLine(File.InsertLine("test1.txt", 0, "test1"))
-TextWindow.WriteLine(File.InsertLine("test1.txt", 3, "test3"))
-TextWindow.WriteLine("FileContents : "+ File.ReadContents("test1.txt"))
+m = File.InsertLine("test1.txt", 0, "test1")
+n = File.ReadContents("test1.txt")
+o = File.InsertLine("test1.txt", 3, "test3")
+p = File.ReadContents("test1.txt")
+
+'@assert m = "SUCCESS"
+'@assert
+'@assert o = "SUCCESS"
+'@assert
+
+TextWindow.WriteLine(m)
+TextWindow.WriteLine("FileContents : "+ n)
+TextWindow.WriteLine(o)
+TextWindow.WriteLine("FileContents : "+ p)
 File.WriteContents("test1.txt", "")
 
-'AppendContents »ç¿ë ½Ã ¾Æ·¡¿¡ ºóÁÙ »ı¼º
-'ÆÄÀÏÀÌ Á¸ÀçÇÏÁö¾ÊÀ» °æ¿ì ¶óÀÎ¿¡ °ü°è¾øÀÌ Ã¹ÁÙ¿¡ ÆÄÀÏ³»¿ë »ı¼º
-'Ä¿¼­ÀÇ À§Ä¡¿¡ ¿µÇâÀ» ¹ŞÀ½
+'AppendContents ì‚¬ìš© ì‹œ ì•„ë˜ì— ë¹ˆì¤„ ìƒì„±
+'íŒŒì¼ì´ ì¡´ì¬í•˜ì§€ì•Šì„ ê²½ìš° ë¼ì¸ì— ê´€ê³„ì—†ì´ ì²«ì¤„ì— íŒŒì¼ë‚´ìš© ìƒì„±
+'ì»¤ì„œì˜ ìœ„ì¹˜ì— ì˜í–¥ì„ ë°›ìŒ
 TextWindow.WriteLine("")
 TextWindow.WriteLine("AppendContents")
-TextWindow.WriteLine(File.AppendContents("555.txt", "three"))
-TextWindow.WriteLine("FileContents : "+ File.ReadContents("555.txt"))
+q = File.AppendContents("555.txt", "three")
+r = File.ReadContents("555.txt")
+
+'@assert q = "SUCCESS"
+'@assert
+
+TextWindow.WriteLine(q)
+TextWindow.WriteLine("FileContents : "+ r)
+File.DeleteFile("555.txt")
+File.DeleteFile("test1.txt")

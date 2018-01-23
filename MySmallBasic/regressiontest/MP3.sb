@@ -1,3 +1,4 @@
+GraphicsWindow.Height = 600
 GraphicsWindow.Show()
 
 Controls.ButtonClicked = button
@@ -5,15 +6,18 @@ playButton = Controls.AddButton("play",30,30)
 pauseButton = Controls.AddButton("pause",160,30)
 resumeButton = Controls.AddButton("stop",290,30)
 
+ImageAlbum = ImageList.LoadImage(".\resource\shinee.jpg")
+GraphicsWindow.DrawImage(ImageAlbum, 30, 60)
+
 Sub button
   lastButton = Controls.LastClickedButton
   If playButton = lastButton Then
-    Sound.Play("resource/ox.wav")
+    Sound.Play("resource\ox.wav")
   EndIf
   If pauseButton = lastButton Then
-    Sound.Pause("resource/ox.wav")
+    Sound.Pause("resource\ox.wav")
   EndIf
   If resumeButton = lastButton Then
-    Sound.Stop("resource/ox.wav")
+    Sound.Stop("resource\ox.wav")
   EndIf
 EndSub

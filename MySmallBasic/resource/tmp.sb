@@ -1,17 +1,42 @@
-GraphicsWindow.Show()
+i = 0
+c = 0
 
-TextWindow.WriteLine(Mouse.IsLeftButtonDown)
-TextWindow.WriteLine(Mouse.IsRightButtonDown)
-TextWindow.WriteLine(GraphicsWindow.MouseX)
-TextWindow.WriteLine(GraphicsWindow.MouseY)
+While i <= 1
+  
+  TextWindow.Clear()
 
-GraphicsWindow.MouseDown = OnMouseDown
+  TextWindow.CursorTop = 5
+  TextWindow.CursorLeft = 10
+  
+  If c = 0 Then
+    TextWindow.ForegroundColor = "Red"
+  EndIf
+  
+  If c = 1 Then
+    TextWindow.ForegroundColor = "Yellow"
+  EndIf
+  
+  If c = 2 Then
+    TextWindow.ForegroundColor = "blue"
+  EndIf
+  
+  If c = 3 Then
+    TextWindow.ForegroundColor = "gREen"
+    c = -1
+  EndIf
+  
+  TextWindow.WriteLine("***********************************")
+  TextWindow.CursorLeft = 10
+  TextWindow.WriteLine("*                                 *")
+  TextWindow.CursorLeft = 10
+  TextWindow.WriteLine("*   CHONNAM NATIONAL UNIVERSITY   *")
+  TextWindow.CursorLeft = 10
+  TextWindow.WriteLine("*                                 *")
+  TextWindow.CursorLeft = 10
+  TextWindow.WriteLine("***********************************")
+  TextWindow.WriteLine("")
+  
+  Program.Delay(300)
+  c = c + 1
 
-Sub OnMouseDown
-  TextWindow.WriteLine("왼쪽 마우스 클릭 : " + Mouse.IsLeftButtonDown)
-  TextWindow.WriteLine("오른쪽 마우스 클릭 : " + Mouse.IsRightButtonDown)
-  TextWindow.Write("Mouse.MouseX : " + Mouse.MouseX + ", ")
-  TextWindow.WriteLine("Mouse.MouseY : " + Mouse.MouseY)
-  TextWindow.Write("GraphicsWindow.MouseX : " + GraphicsWindow.MouseX + ", ")
-  TextWindow.WriteLine("GraphicsWindow.MouseY : " + GraphicsWindow.MouseY)
-EndSub
+EndWhile
