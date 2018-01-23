@@ -3,5 +3,5 @@ script: javac -cp "./lib/*" @sources.txt
 
 before_script:
  - cd MySmallBasic
- - find . -name "*.java" > sources.txt
+ - find ./src -name "*.java" > sources.txt
  - wget -O ./lib/junit-4.12.jar http://search.maven.org/remotecontent?filepath=junit/junit/4.12/junit-4.12.jar
