@@ -101,7 +101,7 @@ public class ArrayV extends Value {
 		return arr;
 	}
 	
-	ArrayV copy() {
+	public ArrayV copy() {
 		ArrayV arr = new ArrayV();
 		Iterator<Entry<String, Value>> iterator = arrmap.entrySet().iterator();
 		while (iterator.hasNext()) {
