@@ -104,23 +104,17 @@ public class GenJava {
 		try {
 			//스몰베이직파일명과 동일한 .java 파일을 오픈
 
-			osw = new OutputStreamWriter(new FileOutputStream(args[0].substring(0, args[0].length()-fileName.length()) + className +".java"), "UTF-8");
+			//osw = new OutputStreamWriter(new FileOutputStream(args[0].substring(0, args[0].length()-fileName.length()) + className +".java"), "UTF-8");
+			osw = new OutputStreamWriter(new FileOutputStream("./output/" + className +".java"), "UTF-8");
 			System.out.println(className);
 
 			//1~9번까지 출력
-			osw.write("package com.coducation.smallbasic;\r\n");
+			//osw.write("package com.coducation.smallbasic;\r\n");
 			osw.write("\r\n");
 			osw.write("import java.lang.reflect.*;\r\n");
 			osw.write("import java.util.*;\r\n");
 			osw.write("\r\n");
-			osw.write("import com.coducation.smallbasic.codegen.*;\r\n");
-			osw.write("import com.coducation.smallbasic.lib.*;\r\n");
-			osw.write("import com.coducation.smallbasic.lib.Math;\r\n");
-			osw.write("import com.coducation.smallbasic.lib.File;\r\n");
-			osw.write("import com.coducation.smallbasic.lib.Array;\r\n");
-			osw.write("import com.coducation.smallbasic.lib.List;\r\n");
-			osw.write("import com.coducation.smallbasic.lib.Stack;\r\n");
-			osw.write("import com.coducation.smallbasic.lib.Timer;\r\n");
+			osw.write("import com.coducation.smallbasic.*;\r\n");
 			osw.write("\r\n");
 			osw.write("public class " + className + " {\r\n");
 			osw.write("\r\n");
@@ -763,7 +757,7 @@ public class GenJava {
 		javaStmt.append(indent);
 		javaStmt.append("public static void main(String[] args) {\r\n");
 		javaStmt.append(indent);
-		javaStmt.append("    Util.className = className;\r\n");
+		javaStmt.append("    Util.setClassName(className);\r\n");
 		javaStmt.append(indent);
 		javaStmt.append("    " + className + "_C = Util.getClass(className);\r\n");
 		javaStmt.append(indent);
