@@ -2,7 +2,6 @@ package com.coducation.smallbasic.lib;
 
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Cursor;
@@ -22,8 +21,6 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -34,7 +31,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -52,10 +48,9 @@ import com.coducation.smallbasic.Value;
 import com.coducation.smallbasic.util.Pair;
 
 import uk.co.caprica.vlcj.component.EmbeddedMediaPlayerComponent;
+import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
 
-public class GraphicsWindow {
-	private static EmbeddedMediaPlayerComponent mediaPlayerComponent;
-	
+public class GraphicsWindow {	
 	public static void Clear(ArrayList<Value> args) {
 		// 그래픽 창에 표시된 모든 것을 지움
 		panel.cmdList.clear();
@@ -68,93 +63,6 @@ public class GraphicsWindow {
 		panel.repaint();
 	}
 	
-	public static void AddVideo(ArrayList<Value> args) {
-		String s = "";
-		String s2 = "";
-		if(args.size() == 1) {
-			s = (String)((StrV)args.get(0)).getValue();
-		}else if(args.size() == 2) {
-			s = (String)((StrV)args.get(0)).getValue();
-			s2 = (String)((StrV)args.get(1)).getValue();
-		}
-
-		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		frame.addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowClosing(WindowEvent e) {
-				mediaPlayerComponent.release();
-				System.exit(0);
-			}
-		});
-
-		JPanel contentPane = new JPanel();
-		contentPane.setLayout(new BorderLayout());
-		mediaPlayerComponent = new EmbeddedMediaPlayerComponent();
-		contentPane.add(mediaPlayerComponent, BorderLayout.CENTER);
-
-		if(s.equals("controls") || s2.equals("controls")) {
-			JPanel controlsPane = new JPanel();
-			JButton pauseButton = new JButton("Pause");
-			controlsPane.add(pauseButton);
-
-			JButton rewindButton = new JButton("Rewind");
-			controlsPane.add(rewindButton);
-
-			JButton skipButton = new JButton("Skip");
-			controlsPane.add(skipButton);
-
-			contentPane.add(controlsPane, BorderLayout.SOUTH);
-
-			pauseButton.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					mediaPlayerComponent.getMediaPlayer().pause();
-				}
-			});
-
-			rewindButton.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					mediaPlayerComponent.getMediaPlayer().skip(-10000);
-				}
-			});
-
-			skipButton.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					mediaPlayerComponent.getMediaPlayer().skip(10000);
-				}
-			});
-		}
-
-		if(args.size() == 0 || s.equals("controls")) {
-			JPanel text = new JPanel();
-			JLabel jl = new JLabel("PATH : ");
-			JTextField tf = new JTextField(10);
-			JButton jb = new JButton("Send");
-
-			text.add(jl);
-			text.add(tf);
-			text.add(jb);
-			contentPane.add(text, BorderLayout.NORTH);
-
-			jb.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					String text = tf.getText();
-					mediaPlayerComponent.getMediaPlayer().setPlaySubItems(true);
-					mediaPlayerComponent.getMediaPlayer().playMedia(text);
-				}
-			});
-		}
-		frame.setContentPane(contentPane);
-		frame.setVisible(true);
-		if(args.size() != 0){
-			mediaPlayerComponent.getMediaPlayer().setPlaySubItems(true);
-			mediaPlayerComponent.getMediaPlayer().playMedia(s);
-		}
-	}
-
 	public static void DrawBoundText(ArrayList<Value> args) {
 		// 그래픽 창의 지정한 위치에 지정한 길이 범위 안에서 글자를 표시함
 		// x, y, width, text
@@ -444,7 +352,7 @@ public class GraphicsWindow {
 							DrawBoundTextCmd dbtc = (DrawBoundTextCmd) cmd;
 							FontMetrics dbtcMetrics = g2.getFontMetrics(dbtc.font);
 							color = ((StrV) hexColor((StrV) dbtc.brushcolor, new StrV("#000000"))).toString();
-							;
+							
 							g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) dbtc.opacity));
 							g2.rotate(java.lang.Math.toRadians(dbtc.degree));
 							g2.scale(dbtc.scaleX, dbtc.scaleY);
@@ -456,7 +364,7 @@ public class GraphicsWindow {
 						case DRAWELLIPSE:
 							DrawEllipseCmd dec = (DrawEllipseCmd) cmd;
 							color = ((StrV) hexColor((StrV) dec.pencolor, new StrV("#000000"))).toString();
-							;
+							
 							g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) dec.opacity));
 							g2.rotate(java.lang.Math.toRadians(dec.degree), (dec.x + dec.w / 2) * zoomX,
 									(dec.y + dec.h / 2) * zoomY);
@@ -484,7 +392,7 @@ public class GraphicsWindow {
 						case DRAWLINE:
 							DrawLineCmd dlc = (DrawLineCmd) cmd;
 							color = ((StrV) hexColor((StrV) dlc.pencolor, new StrV("#000000"))).toString();
-							;
+							
 							g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) dlc.opacity));
 							g2.rotate(java.lang.Math.toRadians(dlc.degree), ((dlc.x1 + dlc.x2) / 2) * zoomX,
 									((dlc.y1 + dlc.y2) / 2) * zoomY);
@@ -498,7 +406,7 @@ public class GraphicsWindow {
 						case DRAWRECTANGLE:
 							DrawRectangleCmd drc = (DrawRectangleCmd) cmd;
 							color = ((StrV) hexColor((StrV) drc.pencolor, new StrV("#000000"))).toString();
-							;
+							
 							g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) drc.opacity));
 							g2.rotate(java.lang.Math.toRadians(drc.degree), (drc.x + drc.w / 2) * zoomX,
 									(drc.y + drc.h / 2) * zoomY);
@@ -539,7 +447,7 @@ public class GraphicsWindow {
 						case DRAWTRIANGLE:
 							DrawTriangleCmd dtrc = (DrawTriangleCmd) cmd;
 							color = ((StrV) hexColor((StrV) dtrc.pencolor, new StrV("#000000"))).toString();
-							;
+							
 							g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) dtrc.opacity));
 							Point dt = getCircumcenter(dtrc.xs[0], dtrc.ys[0], dtrc.xs[1], dtrc.ys[1], dtrc.xs[2],
 									dtrc.ys[2]);
@@ -554,7 +462,7 @@ public class GraphicsWindow {
 						case FILLELLIPSE:
 							FillEllipseCmd fec = (FillEllipseCmd) cmd;
 							color = ((StrV) hexColor((StrV) fec.brushcolor, new StrV("#000000"))).toString();
-							;
+							
 							g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) fec.opacity));
 							g2.rotate(java.lang.Math.toRadians(fec.degree), (fec.x + fec.w / 2) * zoomX,
 									(fec.y + fec.h / 2) * zoomY);
@@ -566,7 +474,7 @@ public class GraphicsWindow {
 						case FILLRECTANGLE:
 							FillRectangleCmd frc = (FillRectangleCmd) cmd;
 							color = ((StrV) hexColor((StrV) frc.brushcolor, new StrV("#000000"))).toString();
-							;
+							
 							g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) frc.opacity));
 							g2.rotate(java.lang.Math.toRadians(frc.degree), (frc.x + frc.w / 2) * zoomX,
 									(frc.y + frc.h / 2) * zoomY);
@@ -578,7 +486,7 @@ public class GraphicsWindow {
 						case FILLTRIANGLE:
 							FillTriangleCmd ftc = (FillTriangleCmd) cmd;
 							color = ((StrV) hexColor((StrV) ftc.brushcolor, new StrV("#000000"))).toString();
-							;
+							
 							g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) ftc.opacity));
 							Point ft = getCircumcenter(ftc.xs[0], ftc.ys[0], ftc.xs[1], ftc.ys[1], ftc.xs[2],
 									ftc.ys[2]);
@@ -2660,5 +2568,72 @@ public class GraphicsWindow {
 		Mouse.IsRightButtonDown = new StrV(right);
 	}
 	// End of Supporting Mouse Library
+	
+	// Supporting Video Library
 
+	private static final String videoIdLabel = "Video";
+	private static int videoId = 1;
+
+	private static EmbeddedMediaPlayerComponent mediaPlayerComponent;
+	private static HashMap<String, EmbeddedMediaPlayerComponent> videoMap = new HashMap<>();
+	private static Container videoContainer;
+
+	static String addVideo(String path) {
+		if (frame == null)
+			Show(new ArrayList<Value>());
+		
+		mediaPlayerComponent = new EmbeddedMediaPlayerComponent();
+		EmbeddedMediaPlayer videoPlayer = mediaPlayerComponent.getMediaPlayer();
+		
+		mediaPlayerComponent.setSize(mediaPlayerComponent.getPreferredSize());
+		mediaPlayerComponent.setLocation(0, 0);
+		
+		panel.add(mediaPlayerComponent);
+
+		videoContainer = mediaPlayerComponent.getParent();
+		videoContainer.revalidate();
+		videoContainer.repaint();
+		
+		String id = videoIdLabel + videoId;
+		videoId++;
+
+		videoMap.put(id, mediaPlayerComponent);
+		
+		return id;
+	}
+	
+	static void addVideoControl(String videoName) {
+		// path 입력 필드, path 전송 버튼
+		// play, pause, stop 버튼
+	}
+	
+	static void setPath(String videoName, String videoPath) {
+		EmbeddedMediaPlayerComponent videoComp = videoMap.get(videoName);
+		
+		if (videoComp != null) {
+			videoComp.getMediaPlayer().setPlaySubItems(true);
+			videoComp.getMediaPlayer().playMedia(videoPath);
+		}
+	}
+	
+	static void setSize(String videoName, int width, int height) {
+		EmbeddedMediaPlayerComponent videoComp = videoMap.get(videoName);
+		
+		if (videoComp != null) {
+			videoComp.setSize(width, height);
+			
+			videoContainer = videoComp.getParent();
+			videoContainer.repaint();
+		}
+	}
+	
+	static void setLocation(String videoName, int x, int y) {
+		EmbeddedMediaPlayerComponent videoComp = videoMap.get(videoName);
+		
+		if (videoComp != null) {
+			videoComp.setLocation(x, y);
+		}
+	}
+	// End of Supporting Video Library
+	
 }
