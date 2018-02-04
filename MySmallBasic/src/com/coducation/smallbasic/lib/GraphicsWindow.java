@@ -3,10 +3,13 @@ package com.coducation.smallbasic.lib;
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
+import java.awt.Canvas;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Container;
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
@@ -52,10 +55,12 @@ import com.coducation.smallbasic.Value;
 import com.coducation.smallbasic.util.Pair;
 
 import uk.co.caprica.vlcj.component.EmbeddedMediaPlayerComponent;
+import uk.co.caprica.vlcj.discovery.NativeDiscovery;
+import uk.co.caprica.vlcj.player.MediaPlayerFactory;
+import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
 
 public class GraphicsWindow {
-	private static EmbeddedMediaPlayerComponent mediaPlayerComponent;
-	
+
 	public static void Clear(ArrayList<Value> args) {
 		// 그래픽 창에 표시된 모든 것을 지움
 		panel.cmdList.clear();
@@ -66,93 +71,6 @@ public class GraphicsWindow {
 			container.repaint();
 		}
 		panel.repaint();
-	}
-	
-	public static void AddVideo(ArrayList<Value> args) {
-		String s = "";
-		String s2 = "";
-		if(args.size() == 1) {
-			s = (String)((StrV)args.get(0)).getValue();
-		}else if(args.size() == 2) {
-			s = (String)((StrV)args.get(0)).getValue();
-			s2 = (String)((StrV)args.get(1)).getValue();
-		}
-
-		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		frame.addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowClosing(WindowEvent e) {
-				mediaPlayerComponent.release();
-				System.exit(0);
-			}
-		});
-
-		JPanel contentPane = new JPanel();
-		contentPane.setLayout(new BorderLayout());
-		mediaPlayerComponent = new EmbeddedMediaPlayerComponent();
-		contentPane.add(mediaPlayerComponent, BorderLayout.CENTER);
-
-		if(s.equals("controls") || s2.equals("controls")) {
-			JPanel controlsPane = new JPanel();
-			JButton pauseButton = new JButton("Pause");
-			controlsPane.add(pauseButton);
-
-			JButton rewindButton = new JButton("Rewind");
-			controlsPane.add(rewindButton);
-
-			JButton skipButton = new JButton("Skip");
-			controlsPane.add(skipButton);
-
-			contentPane.add(controlsPane, BorderLayout.SOUTH);
-
-			pauseButton.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					mediaPlayerComponent.getMediaPlayer().pause();
-				}
-			});
-
-			rewindButton.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					mediaPlayerComponent.getMediaPlayer().skip(-10000);
-				}
-			});
-
-			skipButton.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					mediaPlayerComponent.getMediaPlayer().skip(10000);
-				}
-			});
-		}
-
-		if(args.size() == 0 || s.equals("controls")) {
-			JPanel text = new JPanel();
-			JLabel jl = new JLabel("PATH : ");
-			JTextField tf = new JTextField(10);
-			JButton jb = new JButton("Send");
-
-			text.add(jl);
-			text.add(tf);
-			text.add(jb);
-			contentPane.add(text, BorderLayout.NORTH);
-
-			jb.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					String text = tf.getText();
-					mediaPlayerComponent.getMediaPlayer().setPlaySubItems(true);
-					mediaPlayerComponent.getMediaPlayer().playMedia(text);
-				}
-			});
-		}
-		frame.setContentPane(contentPane);
-		frame.setVisible(true);
-		if(args.size() != 0){
-			mediaPlayerComponent.getMediaPlayer().setPlaySubItems(true);
-			mediaPlayerComponent.getMediaPlayer().playMedia(s);
-		}
 	}
 
 	public static void DrawBoundText(ArrayList<Value> args) {
@@ -638,7 +556,7 @@ public class GraphicsWindow {
 
 					int[] arr = img.getRaster().getPixel(values[0], values[1], new int[4]);
 					String color = Integer.toHexString(arr[0]) + Integer.toHexString(arr[1])
-							+ Integer.toHexString(arr[2]);
+					+ Integer.toHexString(arr[2]);
 					StrV rgbColor = new StrV("#" + color);
 
 					return rgbColor;
@@ -1513,15 +1431,15 @@ public class GraphicsWindow {
 		Cmd() {
 			layer = 2; // 2nd layer for draw... and fill... method
 		}
-		
+
 		void setLayerforShapesOrControls() {
 			layer = 3;
 		}
-		
+
 		int getLayer() {
 			return layer;
 		}
-		
+
 		void Move(double x, double y) {
 			this.x = x;
 			this.y = y;
@@ -1691,7 +1609,7 @@ public class GraphicsWindow {
 	private static final boolean isMouseIn = (Mouse.MouseY.getNumber() >= Top.getNumber()
 			&& Mouse.MouseY.getNumber() <= Top.getNumber() + Height.getNumber())
 			&& (Mouse.MouseX.getNumber() >= Left.getNumber() + 7
-					&& Mouse.MouseX.getNumber() <= Left.getNumber() + Width.getNumber());
+			&& Mouse.MouseX.getNumber() <= Left.getNumber() + Width.getNumber());
 
 	private static final Value defaultMouseX = new DoubleV(
 			isMouseIn ? (int) Mouse.MouseX.getNumber() - Left.getNumber() - 7 : 0);
@@ -1924,7 +1842,7 @@ public class GraphicsWindow {
 		GraphicsWindow.DrawRectangle(grArgs);
 		Cmd drawCmd = panel.getCmdList().get(panel.getCmdList().size() - 1);
 		drawCmd.setLayerforShapesOrControls();
-		
+
 		ArrayList<Cmd> cmds = new ArrayList<>();
 		cmds.add(fillCmd);
 		cmds.add(drawCmd);
@@ -1953,7 +1871,7 @@ public class GraphicsWindow {
 		GraphicsWindow.DrawEllipse(grArgs);
 		Cmd drawCmd = panel.getCmdList().get(panel.getCmdList().size() - 1);
 		drawCmd.setLayerforShapesOrControls();
-		
+
 		ArrayList<Cmd> cmds = new ArrayList<>();
 		cmds.add(fillCmd);
 		cmds.add(drawCmd);
@@ -2660,5 +2578,104 @@ public class GraphicsWindow {
 		Mouse.IsRightButtonDown = new StrV(right);
 	}
 	// End of Supporting Mouse Library
+
+	
+	// Supporting Video Library
+	private static final String videoIdLable = "Video";
+	private static int videoId = 1;
+
+	private static EmbeddedMediaPlayer mediaPlayerComponent[] = new EmbeddedMediaPlayer[100];
+	private static MediaPlayerFactory mf[] = new MediaPlayerFactory[100];
+	private static Canvas videoCanvas[] = new Canvas[100];
+	private static HashMap<String,Integer> videoMap = new HashMap<>();
+	private static Container videoContainer;
+	static String vid[] = {""};
+
+	static void AddCanvas(){
+		String id = videoIdLable + videoId;
+		videoMap.put(id,videoId);
+		SetID(id);
+		
+		videoCanvas[videoId] = new Canvas();
+		videoCanvas[videoId].setSize(500, 300);
+		videoCanvas[videoId].setLocation(10,10);
+		
+		
+		panel.add(videoCanvas[videoId]);
+		mf[videoId] = new MediaPlayerFactory();
+		mediaPlayerComponent[videoId] = mf[videoId].newEmbeddedMediaPlayer();
+		mediaPlayerComponent[videoId].setVideoSurface(mf[videoId].newVideoSurface(videoCanvas[videoId]));
+		videoId++;
+
+		
+	}
+
+	static void AddVideo(String path){
+		if (frame == null)
+			Show(new ArrayList<Value>());
+		
+		int vID = videoMap.get(GetID());
+		
+		mediaPlayerComponent[vID].setPlaySubItems(true);
+		mediaPlayerComponent[vID].playMedia(path);
+		
+		videoContainer = videoCanvas[vID].getParent();
+		videoContainer.revalidate();
+		videoContainer.repaint();
+	}
+	
+	static void SetID(String id){
+		vid[0] = id;
+	}
+
+	static String GetID(){
+		return vid[0];
+	}
+
+	static void VideoPause(String videoName){
+		int vID = videoMap.get(videoName);
+		mediaPlayerComponent[vID].pause();
+	}
+
+	static void VideoRewind(String videoName){
+		int vID = videoMap.get(videoName);
+		mediaPlayerComponent[vID].skip(-10000);
+	}
+
+	static void VideoSkip(String videoName){
+		int vID = videoMap.get(videoName);
+		mediaPlayerComponent[vID].skip(10000);
+
+	}
+	
+	static void VideoStop(String videoName){
+		int vID = videoMap.get(videoName);
+		mediaPlayerComponent[vID].stop();
+	}
+
+	static void SetVideoPath(String videoName, String path){
+		int vID = videoMap.get(videoName);
+		
+		mediaPlayerComponent[vID].setPlaySubItems(true);
+		mediaPlayerComponent[vID].playMedia(path);
+		videoContainer = videoCanvas[vID].getParent();
+		videoContainer.revalidate();
+		videoContainer.repaint();
+		
+	}
+
+	static void SetVideoSize(String videoName, int width, int height){
+		
+		int vID = videoMap.get(videoName);
+		videoCanvas[vID].setSize(width, height);
+	}
+
+	static void SetVideoLocation(String videoName, int x, int y){
+
+		int vID = videoMap.get(videoName);
+		videoCanvas[vID].setLocation(x, y);
+	}
+	// End of Supporting Video Library
+
 
 }
