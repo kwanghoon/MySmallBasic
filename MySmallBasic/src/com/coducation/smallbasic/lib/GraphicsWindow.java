@@ -2665,13 +2665,11 @@ public class GraphicsWindow {
 	}
 
 	static void SetVideoSize(String videoName, int width, int height){
-		
 		int vID = videoMap.get(videoName);
 		videoCanvas[vID].setSize(width, height);
 	}
 
 	static void SetVideoLocation(String videoName, int x, int y){
-
 		int vID = videoMap.get(videoName);
 		videoCanvas[vID].setLocation(x, y);
 	}

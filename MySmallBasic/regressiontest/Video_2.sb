@@ -23,6 +23,7 @@ stopButton = Controls.AddButton("stop",480,50)
 text  = Controls.AddTextBox(10, 10)
 send = Controls.AddButton("path",170,10)
 
+
 Sub button
   lastButton = Controls.LastClickedButton
   If pauseButton = lastButton Then
