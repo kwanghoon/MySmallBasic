@@ -19,7 +19,6 @@ public class GenJava {
 
 	StringBuilder globalVar;
 	StringBuilder topLevel;
-	//ArrayList<Pair<String, StringBuilder>> method;
 	LinkedHashMap<String, StringBuilder> methods;
 	String currentMethod;
 	String emptyMethod;
@@ -103,13 +102,10 @@ public class GenJava {
 		OutputStreamWriter osw;
 		try {
 			//스몰베이직파일명과 동일한 .java 파일을 오픈
-
-			//osw = new OutputStreamWriter(new FileOutputStream(args[0].substring(0, args[0].length()-fileName.length()) + className +".java"), "UTF-8");
 			osw = new OutputStreamWriter(new FileOutputStream("./output/" + className +".java"), "UTF-8");
 			System.out.println(className);
 
 			//1~9번까지 출력
-			//osw.write("package com.coducation.smallbasic;\r\n");
 			osw.write("\r\n");
 			osw.write("import java.lang.reflect.*;\r\n");
 			osw.write("import java.util.*;\r\n");
@@ -118,16 +114,10 @@ public class GenJava {
 			osw.write("\r\n");
 			osw.write("public class " + className + " {\r\n");
 			osw.write("\r\n");
-			//osw.write("    static Env env;\r\n");
-			//osw.write("    static final String lib = \"com.coducation.smallbasic.lib.\";\r\n");
-			//osw.write("    static final String notifyFieldAssign = \"notifyFieldAssign\";\r\n");
-			//osw.write("    static final String notifyFieldRead = \"notifyFieldRead\";\r\n");
 			osw.write("    static String className = \"" + className + "\";\r\n");
 			osw.write("    static Class "+ className +"_C;\r\n");
 			osw.write("\r\n");
-			//osw.write(classEnvGen("    ")); // Env Class 생성
 			osw.write("    public " + className +"() {\r\n");
-			//osw.write("        env = new Env();\r\n");
 			osw.write("    }\r\n");
 			osw.write("\r\n");
 			osw.write(mainGen("    ")); // main Method 생성
@@ -137,15 +127,6 @@ public class GenJava {
 				osw.write(it.next().getValue().toString());
 				osw.write("\r\n");
 			}
-//			osw.write(assignVarGen("    "));
-//			osw.write(getVarGen("    "));
-//			osw.write(assignPropertyExprGen("    "));
-//			osw.write(getPropertyExprGen("    "));
-//			osw.write(assignArrayGen("    "));
-//			osw.write(getArrayGen("    "));
-//			osw.write(getClassGen("    "));
-//			osw.write(getListGen("    "));
-//			osw.write(isNumberGen("    "));
 			//13번 출력
 			osw.write("}\r\n");
 			osw.flush();
@@ -230,13 +211,6 @@ public class GenJava {
 					throw new CodeGenException("Unexpected Index" + idx_s);
 				}
 
-				/*if (v == null || v.toString().trim().equals(""))
-					idx_s.add("0");
-				else if (v instanceof StrV || v instanceof DoubleV) {
-					idx_s.add(v.toString());
-				} else {
-					throw new CodeGenException("Unexpected Index" + v);
-				}*/
 			}
 
 			javaStmt.append("Util.assignArray(\"" + arr.getVar() + "\", ");
@@ -259,20 +233,6 @@ public class GenJava {
 			else methods.put(currentMethod, javaStmt);
 		}
 
-		/*if(isTopLevel) {
-			if(lhs instanceof Var || lhs instanceof Array) {
-				topLevel.append(javaStmt);
-			}
-			else {
-				topLevel.append(javaStmt);
-			}
-
-		}
-		else {
-			if(methods.get(currentMethod) != null) 
-				methods.put(currentMethod, methods.get(currentMethod).append(javaStmt));
-			else methods.put(currentMethod, javaStmt);
-		}*/
 	}
 
 	public void codeGen(boolean isTopLevel, BlockStmt blockStmt) {
@@ -571,7 +531,6 @@ public class GenJava {
 		for (int i = 0; i < arrayExpr.getDim(); i++) {
 			Expr idx = arrayExpr.getIndex(i);
 			String s_idx = codeGen(idx);
-			//Value v = Eval.eval(env, idx);
 
 			if (s_idx == null || s_idx.equals(""))
 				idx_s.add("0");
@@ -589,47 +548,35 @@ public class GenJava {
 		}
 		javaExpr.append(")");
 
-		/*for (int i = 0; i < arrayExpr.getDim(); i++) {
-			javaExpr.append("[" + arrayExpr.getIndex(i) + "]");
-		}*/
-
 		return javaExpr.toString();
 	}
 
 	public String codeGen(CompExpr compExpr) {
 
 		StringBuilder javaExpr = new StringBuilder("");
-		//javaExpr.append(codeGen(compExpr.GetOperand()[0]));
-		//javaExpr.append("new StrV(Boolean.toString(");
 
 		switch (compExpr.GetOp()) {
 		case CompExpr.GREATER_THAN:
-			//javaExpr.append(" > ");
 			javaExpr.append("Util.greaterThan(");
 			javaExpr.append(codeGen(compExpr.GetOperand()[0]));
 			break;
 		case CompExpr.LESS_THAN:
-			//javaExpr.append(" < ");
 			javaExpr.append("Util.lessThan(");
 			javaExpr.append(codeGen(compExpr.GetOperand()[0]));
 			break;
 		case CompExpr.GREATER_EQUAL:
-			//javaExpr.append(" >= ");
 			javaExpr.append("Util.greaterEqual(");
 			javaExpr.append(codeGen(compExpr.GetOperand()[0]));
 			break;
 		case CompExpr.LESS_EQUAL:
-			//javaExpr.append(" <= ");
 			javaExpr.append("Util.lessEqual(");
 			javaExpr.append(codeGen(compExpr.GetOperand()[0]));
 			break;
 		case CompExpr.EQUAL:
-			//javaExpr.append(" = ");
 			javaExpr.append("Util.equal(");
 			javaExpr.append(codeGen(compExpr.GetOperand()[0]));
 			break;
 		case CompExpr.NOT_EQUAL:
-			//javaExpr.append(" <> ");
 			javaExpr.append("Util.notEqual(");
 			javaExpr.append(codeGen(compExpr.GetOperand()[0]));
 			break;
@@ -713,43 +660,6 @@ public class GenJava {
 		else
 			return "Util.getVar(\"" + var.getVarName() + "\")";
 	}
-	
-	public static String classEnvGen(String indent) {
-		StringBuilder javaStmt = new StringBuilder("");
-
-		javaStmt.append(indent);
-		javaStmt.append("static class Env extends com.coducation.smallbasic.Env {\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    private HashMap<String,Method> labels;\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    private static final String label = \"$label\";\r\n");
-		javaStmt.append("\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    public Env() {\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        labels = new HashMap<String,Method>();\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    }\r\n");
-		javaStmt.append("\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    public Method label_M() {\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        return labels.get(label + Thread.currentThread().getId());\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    }\r\n");
-		javaStmt.append("\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    public void label_M(Method _label) {\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        labels.put(label + Thread.currentThread().getId(), _label);\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    }\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("}\r\n");
-		javaStmt.append("\r\n");
-
-		return javaStmt.toString();
-	}
 
 	public static String mainGen(String indent) {
 		StringBuilder javaStmt = new StringBuilder("");
@@ -768,711 +678,6 @@ public class GenJava {
 
 		return javaStmt.toString();
 	}
-
-	public static String getClassGen(String indent) {
-		StringBuilder javaStmt = new StringBuilder("");
-
-		javaStmt.append(indent);
-		javaStmt.append("public static Class getClass(String name) {\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    try {\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        return Class.forName(\"com.coducation.smallbasic.\" + name);\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    } catch (ClassNotFoundException e) {\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        throw new CodeGenException(\"Class Not Found \" + e.toString());\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    }\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("}\r\n");
-		javaStmt.append("\r\n");
-
-		return javaStmt.toString();
-	}
-
-	public static String assignVarGen(String indent) {
-		StringBuilder javaStmt = new StringBuilder("");
-
-		javaStmt.append(indent);
-		javaStmt.append("public static void assignVar(String varName, Value rhsValue) {\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    if (rhsValue instanceof ArrayV) {\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        rhsValue = ((ArrayV)rhsValue).copy();\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    }\r\n");
-		javaStmt.append("\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    env.put(varName, rhsValue);\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("}\r\n");
-		javaStmt.append("\r\n");
-
-		return javaStmt.toString();
-	}
-
-	public static String getVarGen(String indent) {
-		StringBuilder javaStmt = new StringBuilder("");
-
-		javaStmt.append(indent);
-		javaStmt.append("public static Value getVar(String varName) {\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    return env.get(varName);\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("}\r\n");
-		javaStmt.append("\r\n");
-
-		return javaStmt.toString();
-	}
-
-	public static String assignPropertyExprGen(String indent) {
-		StringBuilder javaStmt = new StringBuilder("");
-
-		javaStmt.append(indent);
-		javaStmt.append("public static void assignPropertyExpr(String lhsObj, String lhsName, Value rhsValue) {\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    if (rhsValue instanceof ArrayV) {\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        rhsValue = ((ArrayV)rhsValue).copy();\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    }\r\n");
-		javaStmt.append("\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    try {\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        String clzName = lhsObj;\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        Class clz = getClass(clzName);\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        Field fld = clz.getField(lhsName);\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        fld.set(null, rhsValue);\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        Method mth = clz.getMethod(notifyFieldAssign, String.class);\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        mth.invoke(null, lhsName);\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    } catch (NoSuchFieldException | SecurityException e) {\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        throw new CodeGenException(\"Assign : \" + e.toString());\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    } catch (IllegalArgumentException e) {\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        throw new CodeGenException(\"Assign : \" + e.toString());\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    } catch (IllegalAccessException e) {\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        throw new CodeGenException(\"Assign : \" + e.toString());\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    } catch (NoSuchMethodException e) {\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        throw new CodeGenException(\"Method Not Found \" + e.toString());\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    } catch (InvocationTargetException e) {\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        throw new CodeGenException(\"Target Not Found \" + e.toString() + \": \");\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    }\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("}\r\n");
-		javaStmt.append("\r\n");
-
-		return javaStmt.toString();
-	}
-
-	public static String getPropertyExprGen(String indent) {
-		StringBuilder javaStmt = new StringBuilder("");
-
-		javaStmt.append(indent);
-		javaStmt.append("public static Value getPropertyExpr(String obj, String name) {\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    try {\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        String clzName = obj;\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        Class clz = getClass(clzName);\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        Field fld = clz.getField(name);\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        Method mth = clz.getMethod(notifyFieldRead, String.class);\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        mth.invoke(null, name);\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        return (Value) fld.get(null);\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    } catch (NoSuchFieldException | SecurityException e) {\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        throw new CodeGenException(\"PropertyExpr : \" + e.toString());\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    } catch (IllegalArgumentException e) {\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        throw new CodeGenException(\"PropertyExpr : \" + e.toString());\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    } catch (IllegalAccessException e) {\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        throw new CodeGenException(\"PropertyExpr : \" + e.toString());\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    } catch (NoSuchMethodException e) {\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        throw new CodeGenException(\"Method Not Found \" + e.toString());\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    } catch (InvocationTargetException e) {\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        throw new CodeGenException(\"Target Not Found \" + e.toString() + \": \");\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    }\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("}\r\n");
-		javaStmt.append("\r\n");
-
-		return javaStmt.toString();
-	}
-
-	public static String assignArrayGen(String indent) {
-		StringBuilder javaStmt = new StringBuilder("");
-
-		javaStmt.append(indent);
-		javaStmt.append("public static void assignArray(String arrayName, Value rhsValue, Value... idx_s) {\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    if (rhsValue instanceof ArrayV) {\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        rhsValue = ((ArrayV)rhsValue).copy();\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    }\r\n");
-		javaStmt.append("\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    Value arrValue = env.get(arrayName);\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    ArrayV elem;\r\n");
-		javaStmt.append("\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    if (arrValue == null)\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        elem = null;\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    else if (arrValue instanceof ArrayV)\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        elem = (ArrayV) arrValue;\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    else {\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        elem = null;\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    }\r\n");
-		javaStmt.append("\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    if (elem == null) {\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        elem = new ArrayV();\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        env.put(arrayName, elem);\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    }\r\n");
-		javaStmt.append("\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    for (int i = 0; i < idx_s.length; i++) {\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        if (i < idx_s.length - 1) {\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("            ArrayV elem_elem = (ArrayV) elem.get(idx_s[i].toString());\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("            if (elem_elem == null) {\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("                elem_elem = new ArrayV();\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("                elem.put(idx_s[i].toString(), elem_elem);\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("            }\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("            elem = elem_elem;\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        } else {\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("            elem.put(idx_s[i].toString(), rhsValue);\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        }\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    }\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("}\r\n");
-		javaStmt.append("\r\n");
-
-		return javaStmt.toString();
-	}
-
-	public static String getArrayGen(String indent) {
-		StringBuilder javaStmt = new StringBuilder("");
-
-		javaStmt.append(indent);
-		javaStmt.append("public static Value getArray(String arrayName, Value... idx_s) {\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    ArrayV arrV;\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    Value elem = null;\r\n");
-		javaStmt.append("\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    if (env.get(arrayName) instanceof ArrayV) {\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        arrV = (ArrayV) env.get(arrayName);\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        elem = arrV;\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    }\r\n");
-		javaStmt.append("\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    for (int i = 0; i < idx_s.length; i++) {\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        if (elem == null)\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("            break;\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        else if (elem instanceof StrV) {\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        } else\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("            elem = ((ArrayV) elem).get(idx_s[i].toString());\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    }\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    if (elem == null)\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        return new StrV(\"\");\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    else\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        return elem;\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("}\r\n");
-		javaStmt.append("\r\n");
-
-		return javaStmt.toString();
-	}
-	
-	public static String arithGen(String indent) {
-		StringBuilder javaStmt = new StringBuilder("");
-
-		javaStmt.append(indent);
-		javaStmt.append("public static Value plus(Value v1, Value v2) {\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    Double dv1 = 0.0, dv2 = 0.0;\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    boolean numplus = true;\r\n");
-		javaStmt.append("\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    if (v1 == null)\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        dv1 = 0.0;\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    else if (v1 instanceof DoubleV)\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        dv1 = ((DoubleV) v1).getValue();\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    else if(v1 instanceof StrV && v1.toString().equals(\"\"))\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        numplus = false;\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    else if (v1 instanceof StrV && ((StrV) v1).isNumber())\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        dv1 = ((StrV) v1).parseDouble();\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    else if (v1 instanceof StrV)\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        numplus = false;\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    else if (v1 instanceof ArrayV)\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        numplus = false;\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    else\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        throw new CodeGenException(\"PLUS 1st operand unexpected\" + v1);\r\n");
-		javaStmt.append("\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    if (v2 == null)\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        dv2 = 0.0;\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    else if (v2 instanceof DoubleV)\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        dv2 = ((DoubleV) v2).getValue();\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    else if (v2 instanceof StrV && ((StrV) v2).isNumber())\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        dv2 = ((StrV) v2).parseDouble();\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    else if (v2 instanceof StrV)\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        numplus = false;\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    else if (v2 instanceof ArrayV)\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        numplus = false;\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    else\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        throw new CodeGenException(\"PLUS 2nd operand unexpected\" + v2);\r\n");
-		javaStmt.append("\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    if (numplus == true)\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        return new DoubleV(dv1 + dv2);\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    else\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        return new StrV(v1.toString() + v2.toString());\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("}\r\n");
-		javaStmt.append("\r\n");
-		
-		javaStmt.append(indent);
-		javaStmt.append("public static Value minus(Value v1, Value v2) {\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    Double dv1 = 0.0, dv2 = 0.0;\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    if (v1 == null)\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        dv1 = 0.0;\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    else if (v1 instanceof DoubleV)\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        dv1 = ((DoubleV) v1).getValue();\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    else if (v1 instanceof StrV && ((StrV) v1).isNumber())\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        dv1 = ((StrV) v1).parseDouble();\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    else if (v1 instanceof StrV)\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        dv1 = 0.0;\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    else\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        throw new CodeGenException(\"MINUS 1st operand unexpected\" + v1);\r\n");
-		javaStmt.append("\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    if (v2 == null)\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        dv2 = 0.0;\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    else if (v2 instanceof DoubleV)\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        dv2 = ((DoubleV) v2).getValue();\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    else if (v2 instanceof StrV && ((StrV) v2).isNumber())\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        dv2 = ((StrV) v2).parseDouble();\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    else if (v2 instanceof StrV)\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        dv2 = 0.0;\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    else\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        throw new CodeGenException(\"MINUS 2nd operand unexpected\" + v2);\r\n");
-		javaStmt.append("\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    return new DoubleV(dv1 - dv2);\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("}\r\n");
-		javaStmt.append("\r\n");
-		
-		javaStmt.append(indent);
-		javaStmt.append("public static Value multiply(Value v1, Value v2) {\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    Double dv1 = 0.0, dv2 = 0.0;\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    if (v1 == null)\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        dv1 = 0.0;\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    else if (v1 instanceof DoubleV)\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        dv1 = ((DoubleV) v1).getValue();\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    else if (v1 instanceof StrV && ((StrV) v1).isNumber())\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        dv1 = ((StrV) v1).parseDouble();\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    else if (v1 instanceof StrV)\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        dv1 = 0.0;\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    else\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        throw new CodeGenException(\"MULTIFLY 1st operand unexpected\" + v1);\r\n");
-		javaStmt.append("\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    if (v2 == null)\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        dv2 = 0.0;\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    else if (v2 instanceof DoubleV)\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        dv2 = ((DoubleV) v2).getValue();\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    else if (v2 instanceof StrV && ((StrV) v2).isNumber())\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        dv2 = ((StrV) v2).parseDouble();\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    else if (v2 instanceof StrV)\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        dv2 = 0.0;\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    else\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        throw new CodeGenException(\"MULTIFLY 2nd operand unexpected\" + v2);\r\n");
-		javaStmt.append("\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    return new DoubleV(dv1 * dv2);\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("}\r\n");
-		javaStmt.append("\r\n");
-		
-		javaStmt.append(indent);
-		javaStmt.append("public static Value divide(Value v1, Value v2) {\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    Double dv1 = 0.0, dv2 = 0.0;\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    if (v1 == null)\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        dv1 = 0.0;\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    else if (v1 instanceof DoubleV)\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        dv1 = ((DoubleV) v1).getValue();\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    else if (v1 instanceof StrV && ((StrV) v1).isNumber())\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        dv1 = ((StrV) v1).parseDouble();\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    else if (v1 instanceof StrV)\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        dv1 = 0.0;\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    else\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        throw new CodeGenException(\"DIVIDE 1st operand unexpected\" + v1);\r\n");
-		javaStmt.append("\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    if (v2 == null)\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        dv2 = 0.0;\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    else if (v2 instanceof DoubleV)\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        dv2 = ((DoubleV) v2).getValue();\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    else if (v2 instanceof StrV && ((StrV) v2).isNumber())\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        dv2 = ((StrV) v2).parseDouble();\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    else if (v2 instanceof StrV)\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        dv2 = 0.0;\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    else\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        throw new CodeGenException(\"DIVIDE 2nd operand unexpected\" + v2);\r\n");
-		javaStmt.append("\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    if (dv2 == 0)\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        throw new CodeGenException(\"DIVIDE 2nd operand is 0\");\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    return new DoubleV(dv1 / dv2);\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("}\r\n");
-		javaStmt.append("\r\n");
-		
-		javaStmt.append(indent);
-		javaStmt.append("public static Value unary_Minus(Value v1) {\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    if (v1 instanceof DoubleV) {\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        DoubleV d1 = new DoubleV(v1.getNumber());\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        return new DoubleV(-d1.getValue());\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    }\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    else if(v1 instanceof StrV && ((StrV) v1).isNumber())\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        return new DoubleV(((StrV) v1).parseDouble());\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    else if(v1 instanceof StrV)\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        return new DoubleV(0);\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    else\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        throw new CodeGenException(\"UNARY_MINUS 1st operand unexpected \" + v1);\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("}\r\n");
-		javaStmt.append("\r\n");
-
-		return javaStmt.toString();
-	}
-	
-	public static String compGen(String indent) {
-		StringBuilder javaStmt = new StringBuilder("");
-
-		javaStmt.append(indent);
-		javaStmt.append("public static boolean equal(Value v1, Value v2) {\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    if (v1 instanceof StrV && v2 instanceof StrV) {\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        StrV s1 = (StrV) v1;\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        StrV s2 = (StrV) v2;\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        if (s1.getValue().equals(s2.getValue()))\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("            return true;\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    } else if (v1 instanceof DoubleV && v2 instanceof DoubleV) {\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        DoubleV d1 = (DoubleV) v1;\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        DoubleV d2 = (DoubleV) v2;\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        if (d1.getValue() == d2.getValue())\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("            return true;\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    } else if (v1 instanceof StrV && v2 instanceof DoubleV) {\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        String s1 = ((StrV) v1).getValue();\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        String s2 = ((DoubleV) v2).toString();\r\n");
-		javaStmt.append("\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        if (s1.equals(s2))\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("            return true;\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    } else if (v1 instanceof DoubleV && v2 instanceof StrV) {\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        String s1 = ((DoubleV) v1).toString();\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        String s2 = ((StrV) v2).getValue();\r\n");
-		javaStmt.append("\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        if (s1.equals(s2))\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("            return true;\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    }\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    return false;\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("}\r\n");
-		javaStmt.append("\r\n");
-
-		return javaStmt.toString();
-	}
-	
-	public static String logicalGen(String indent) {
-		StringBuilder javaStmt = new StringBuilder("");
-
-		javaStmt.append(indent);
-		javaStmt.append("public static Value AND(Value v1, Value v2) {\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    StrV s1, s2;\r\n");
-		javaStmt.append("\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    if (v1 instanceof StrV && v2 instanceof StrV) {\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        s1 = (StrV) v1;\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        s2 = (StrV) v2;\r\n");
-		javaStmt.append("\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        if (s1.getValue().equalsIgnoreCase(\"true\") && s2.getValue().equalsIgnoreCase(\"true\"))\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("            return new StrV(\"true\");\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    }\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    return new StrV(\"false\");\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("}\r\n");
-		javaStmt.append("\r\n");
-		
-		javaStmt.append(indent);
-		javaStmt.append("public static Value OR(Value v1, Value v2) {\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    StrV s1, s2;\r\n");
-		javaStmt.append("\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    if (v1 instanceof StrV && v2 instanceof StrV) {\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        s1 = (StrV) v1;\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        s2 = (StrV) v2;\r\n");
-		javaStmt.append("\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("        if (s1.getValue().equalsIgnoreCase(\"true\") || s2.getValue().equalsIgnoreCase(\"true\"))\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("            return new StrV(\"true\");\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    }\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    return new StrV(\"false\");\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("}\r\n");
-		javaStmt.append("\r\n");
-
-		return javaStmt.toString();
-	}
-	
-	public static String getListGen(String indent) {
-		StringBuilder javaStmt = new StringBuilder("");
-
-		javaStmt.append(indent);
-		javaStmt.append("public static ArrayList<Value> getList(Value... args) {\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    ArrayList<Value> list = new ArrayList<Value>();\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    Collections.addAll(list, args);\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    return list;\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("}\r\n");
-		javaStmt.append("\r\n");
-
-		return javaStmt.toString();
-	}
-	
-	public static String isNumberGen(String indent) {
-		StringBuilder javaStmt = new StringBuilder("");
-
-		javaStmt.append(indent);
-		javaStmt.append("public static boolean isNumber(String v) {\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    try {\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    Double.parseDouble(v);\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    return true;\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    } catch(NumberFormatException e) {\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    return false;\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("    }\r\n");
-		javaStmt.append(indent);
-		javaStmt.append("}\r\n");
-		javaStmt.append("\r\n");
-
-		return javaStmt.toString();
-	}
 	
 	public static boolean isNumber(String s) {
 		try {
@@ -1482,6 +687,5 @@ public class GenJava {
 			return false;
 		}
 	}
-
 
 }
