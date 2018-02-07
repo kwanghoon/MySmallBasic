@@ -1,9 +1,11 @@
-GraphicsWindow.Height = 600
 GraphicsWindow.Show()
+GraphicsWindow.Width= 800
+GraphicsWindow.Height = 800
 
 video = Video.Play("https://www.youtube.com/watch?v=exgXp0sRzFs")
 videoT=  Video.Play("https://www.youtube.com/watch?v=imBCmhsxny4")
 videoH = Video.Play()
+videoV=  Video.Play("resource/hamster.mp4")
 
 Video.SetSize(video,200,200)
 Video.SetLocation(video,100,100)
@@ -14,6 +16,9 @@ Video.SetLocation(videoT,300,300)
 Video.SetSize(videoH,200,200)
 Video.SetLocation(videoH,500,500)
 
+Video.SetSize(videoV,200,200)
+Video.SetLocation(videoV,500,100)
+
 Controls.ButtonClicked = button
 textBox = Controls.AddTextBox(10, 50)
 pauseButton = Controls.AddButton("pause",180,50)
@@ -22,7 +27,6 @@ skipButton = Controls.AddButton("skip",380,50)
 stopButton = Controls.AddButton("stop",480,50)
 text  = Controls.AddTextBox(10, 10)
 send = Controls.AddButton("path",170,10)
-
 
 Sub button
   lastButton = Controls.LastClickedButton

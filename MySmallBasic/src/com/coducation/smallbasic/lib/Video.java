@@ -9,8 +9,9 @@ import com.coducation.smallbasic.StrV;
 import com.coducation.smallbasic.Value;
 
 import uk.co.caprica.vlcj.discovery.NativeDiscovery;
- 
+
 public class Video {
+
 
 	public static Value Play(ArrayList<Value> args){
 		new NativeDiscovery().discover();
