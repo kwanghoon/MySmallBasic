@@ -1,251 +1,533 @@
 package com.coducation.smallbasic.lib;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
 
+import com.coducation.smallbasic.ArrayV;
 import com.coducation.smallbasic.DoubleV;
 import com.coducation.smallbasic.InterpretException;
-import com.coducation.smallbasic.ListV;
-import com.coducation.smallbasic.NullList;
-import com.coducation.smallbasic.Pair;
 import com.coducation.smallbasic.StrV;
 import com.coducation.smallbasic.Value;
 
 public class List {
 	
-	private static HashMap<String, ListV> list_map = new HashMap<>();
-	private static int key = 1;
+	private static HashMap<String, LinkedList<Value>> lists = new HashMap();
 	
-	public static Value List(ArrayList<Value> args) {
+	//List.Add(listName, [value...])
+	public static Value Add(ArrayList<Value> args){
 		
-		ListV new_list = new NullList();
+		//check args
+		if(args.size() == 0)
+			throw new InterpretException("Error in # of Arguments: " + args.size());
 		
-		for ( int i = args.size() -1 ; i >= 0 ; i-- ) {
-			
-			new_list = new Pair(args.get(i), new_list);
-			
+		//check listName
+		String listName = args.get(0).toString();	//listName
+		if(!lists.containsKey(listName))
+			lists.put(listName, new LinkedList<Value>());
+		LinkedList<Value> list = lists.get(listName);
+		
+		//add values
+		for(int i = 1; i < args.size(); i++){
+			Value value = args.get(i);
+			list.add(value);
 		}
-		
-		list_map.put("List" + key, new_list);
-		
-		return new StrV("List" + key++);
-	}
-	
-	public static Value Concat(ArrayList<Value> args) {
-		
-		String str_arg0;
-		String str_arg1;
-		
-		ListV list0;
-		ListV list1;
-		
-		ListV new_list;
-		
-		if (args.size() == 2) {
-			
-			if (args.get(0) instanceof StrV) {
-
-				str_arg0 = ((StrV) args.get(0)).getValue();
-				list0 = list_map.get(str_arg0);
-
-			} else {
-
-				throw new InterpretException("Concat : Unexpected 1st argument");
-
-			}
-			
-			if (args.get(1) instanceof StrV) {
-
-				str_arg1 = ((StrV) args.get(1)).getValue();
-				list1 = list_map.get(str_arg1);
-
-			} else {
-
-				throw new InterpretException("Concat : Unexpected 2nd argument");
-
-			}
-			
-		} else
-			
-			throw new InterpretException("Concat : Unexpected # of args : " + args.size());
-		
-		new_list = list0.concat(list1);
-		
-		list_map.put("List" + key, new_list);
-		
-		return new StrV("List" + key++);
-	}
-	
-	public static Value Head(ArrayList<Value> args) {
-		
-		String str_arg;
-		
-		ListV list;
-		
-		Value v;
-		
-		if (args.size() == 1) {
-			
-			if (args.get(0) instanceof StrV) {
-
-				str_arg = ((StrV) args.get(0)).getValue();
-				list = list_map.get(str_arg);
-
-			} else {
-
-				throw new InterpretException("Head : Unexpected arg");
-
-			}
-			
-		} else
-			
-			throw new InterpretException("Head : Unexpected # of args : " + args.size());
-		
-		if( list.isNull() )
-			
-			return new StrV("Null");
-			
-		v = list.first();
-			
-		return v;	
-	}
-	
-	public static Value Tail(ArrayList<Value> args) {
-		
-		String str_arg;
-		
-		ListV list;
-		ListV new_list;
-		
-		if (args.size() == 1) {
-			
-			if (args.get(0) instanceof StrV) {
-
-				str_arg = ((StrV) args.get(0)).getValue();
-				list = list_map.get(str_arg);
-
-			} else {
-
-				throw new InterpretException("Tail : Unexpected arg");
-
-			}
-			
-		} else
-			
-			throw new InterpretException("Tail : Unexpected # of args : " + args.size());
-
-		new_list = list.second();
-		list_map.put("List" + key, new_list);
-		
-		return new StrV("List" + key++);
-	}
-	
-	public static Value IndexAt(ArrayList<Value> args) {
-		
-		String str_arg;
-		double dbl_arg;
-		
-		ListV list;
-		
-		Value v;
-		
-		if (args.size() == 2) {
-
-			if (args.get(0) instanceof StrV) {
-				
-				str_arg = ((StrV) args.get(0)).getValue();
-				list = list_map.get(str_arg);
-
-			} else {
-			
-				throw new InterpretException("IndexAt : Unexpected 1st argument");
-				
-			}
-
-			if (args.get(1) instanceof DoubleV) {
-
-				dbl_arg = ((DoubleV) args.get(1)).getValue();
-
-			} else if (args.get(1) instanceof StrV) {
-
-				String arg = ((StrV) args.get(1)).getValue();
-
-				try {
-
-					dbl_arg = new StrV(arg).parseDouble();
-
-				} catch (NumberFormatException e) {
-
-					throw new InterpretException("IndexAt : Unexpected StrV 2nd argument : " + arg);
-
-				}
-
-			} else {
-
-				throw new InterpretException("IndexAt : Unexpected 2nd argument");
-
-			}
-
-		} else
-			
-			throw new InterpretException("IndexAt : Unexpected # of args: " + args.size());
-		
-		if ( (int)dbl_arg > 0 && (int)dbl_arg <= list.length() ) {
-			
-			for ( int i = 1; i < (int)dbl_arg; i++ ) {
-				list = list.second();
-			}
-			
-			v = list.first();
-
-			return v;
-			
-		} else {
-			
-			return new StrV("Null");
-			
-		}
-	}
-	
-	public static Value IsEmpty(ArrayList<Value> args) {
-		
-		String str_arg;
-		ListV list;
-		
-		if (args.size() == 1) {
-			
-			if (args.get(0) instanceof StrV) {
-
-				str_arg = ((StrV) args.get(0)).getValue();
-				list = list_map.get(str_arg);
-
-			} else {
-
-				throw new InterpretException("IsEmpty : Unexpected arg");
-
-			}
-			
-		} else
-			
-			throw new InterpretException("IsEmpty : Unexpected # of args : " + args.size());
-		
-		if ( list.isNull() )
-			return new StrV("True"); 
-		else 
-			return new StrV("False");
-	}
-	
-	public static Value Print(ArrayList<Value> args) {
-		
-		String str_arg = ((StrV) args.get(0)).getValue();
-		ListV list = list_map.get(str_arg);
-		
-		list.print();
 		
 		return null;
-
 	}
-	
+	//List.Concat(listName1,listName2, [listName3...])
+	public static Value Concat(ArrayList<Value> args){
+		//check args
+		if(args.size() < 2)
+			throw new InterpretException("Error in # of Arguments: " + args.size());
+		
+		//check listName1
+		String listName = args.get(0).toString();	//listName
+		if(!lists.containsKey(listName))
+			lists.put(listName, new LinkedList<Value>());
+		LinkedList<Value> list = lists.get(listName);
+		
+		//add listName2 to listName1
+		for(int i = 1; i < args.size(); i++){
+			//get listeNmae2
+			String addedListName = args.get(i).toString();
+			LinkedList<Value> addedList = null;
+			if(!lists.containsKey(listName))
+				continue;
+			addedList = lists.get(addedListName);
+			
+			list.addAll(addedList);
+		}
+		
+		return null;
+	}
+	//List.Head(listName, [newListName])
+	//return : listName's Head
+	public static Value Head(ArrayList<Value> args){
+		//check args
+		if(args.size() == 0 || args.size() > 2)
+			throw new InterpretException("Error in # of Arguments: " + args.size());
+		
+		//check listName
+		String listName = args.get(0).toString();	//listName
+		if(!lists.containsKey(listName))
+			return new StrV("[]");
+		LinkedList<Value> list = lists.get(listName);
+		
+		Value head = list.getFirst();
+		
+		//check newListName
+		if(args.size() == 2){
+			//check newListName
+			String newListName = args.get(1).toString();	//listName
+			if(lists.containsKey(newListName))
+				lists.get(newListName).clear();
+			else
+				lists.put(newListName, new LinkedList<Value>());
+			
+			LinkedList<Value> newList = lists.get(newListName);
+			newList.add(head);
+		}				
+		return (Value)(new StrV('[' + head.toString() + ']'));
+	}
+	//List.Tail(listName, [newListName])
+	//return : listName's Tail
+	public static Value Tail(ArrayList<Value> args){
+		//check args
+		if(args.size() == 0 || args.size() > 2)
+			throw new InterpretException("Error in # of Arguments: " + args.size());
+		
+		//check listName
+		String listName = args.get(0).toString();	//listName
+		if(!lists.containsKey(listName))
+			return new StrV("[]");
+		LinkedList<Value> list = lists.get(listName);
+		if(list.size() == 1)
+			return new StrV("[]");
+		
+		Value head = list.getFirst();
+		
+		//check newListName
+		LinkedList<Value> newList = null;
+		if(args.size() == 2){
+			//check newListName
+			String newListName = args.get(1).toString();	//listName
+			if(lists.containsKey(newListName))
+				lists.get(newListName).clear();
+			else
+				lists.put(newListName, new LinkedList<Value>());
+			
+			newList = lists.get(newListName);
+		}	
+		
+		//get Tail
+		StringBuilder ret = new StringBuilder("[");
+		Iterator<Value> iter = list.iterator();
+		iter.next();	//head
+		
+		//2
+		Value value = iter.next();
+		ret.append(value.toString());
+		if(newList != null)
+			newList.add(value);
+		//3~n
+		while(iter.hasNext()){
+			value = iter.next();
+			ret.append(',' + value.toString());
+			
+			if(newList != null)
+				newList.add(value);
+		}
+		ret.append(']');
+		
+		//if newList is empty, cancel in the list
+		if(newList != null && newList.size() == 0)
+			lists.remove(newList);
+		
+		return (Value)(new StrV(ret.toString()));
+	}	
+	//List.IsEmpty(listName)
+	//return : "True" or "False"
+	public static Value IsEmpty(ArrayList<Value> args){
+		//check args
+		if(args.size() != 1)
+			throw new InterpretException("Error in # of Arguments: " + args.size());
+		
+		//check listName
+		String listName = args.get(0).toString();	//listName
+		if(!lists.containsKey(listName))
+			return (Value)(new StrV("True"));
+		LinkedList<Value> list = lists.get(listName);
+		
+		if(list.isEmpty())
+			return (Value)(new StrV("True"));
+		else
+			return (Value)(new StrV("False"));
+	}
+	//List.Clear(listName)
+	public static Value Clear(ArrayList<Value> args){
+		//check args
+		if(args.size() != 1)
+			throw new InterpretException("Error in # of Arguments: " + args.size());
+		
+		//check listName
+		String listName = args.get(0).toString();	//listName
+		if(!lists.containsKey(listName))
+			return null;
+		lists.remove(listName);
+		
+		return null;
+	}
+	//List.Contains(listName, value)
+	public static Value Contains(ArrayList<Value> args){
+		//check args
+		if(args.size() != 2)
+			throw new InterpretException("Error in # of Arguments: " + args.size());
+		//check listName
+		String listName = args.get(0).toString();	//listName
+		if(!lists.containsKey(listName))
+			return (Value)(new StrV("False"));
+		LinkedList<Value> list = lists.get(listName);
+		
+		//check value
+		String value = args.get(1).toString();
+		Iterator iter = list.iterator();
+		while(iter.hasNext()){
+			if(value.equals(iter.next().toString()))
+				return (Value)(new StrV("True"));
+		}
+		
+		return (Value)(new StrV("False"));
+	}
+	//List.Copy(listName, newListName)
+	public static Value Copy(ArrayList<Value> args){
+		//check args
+		if(args.size() != 2)
+			throw new InterpretException("Error in # of Arguments: " + args.size());
+		//check listName
+		String listName = args.get(0).toString();	//listName
+		if(!lists.containsKey(listName))
+			return null;
+		LinkedList<Value> list = lists.get(listName);
+		
+		//check newListName
+		String newListName = args.get(1).toString();	//listName
+		if(lists.containsKey(newListName))
+			lists.remove(newListName);
+		else
+			lists.put(newListName, new LinkedList<Value>());
+		
+		//copy
+		lists.put(newListName, (LinkedList<Value>) list.clone());
+		
+		return null;
+	}
+	//List.Count(listName)
+	//return : count of list element
+	public static Value Count(ArrayList<Value> args){
+		//check args
+		if(args.size() != 1)
+			throw new InterpretException("Error in # of Arguments: " + args.size());
+		//check listName
+		String listName = args.get(0).toString();	//listName
+		if(!lists.containsKey(listName))
+			return new DoubleV(0);
+		LinkedList<Value> list = lists.get(listName);
+		
+		return new DoubleV(list.size());
+	}
+	//List.GetAt(listName, index)
+	//return : listName's element of index
+	public static Value GetAt(ArrayList<Value> args){
+		//check args
+		if(args.size() != 2)
+			throw new InterpretException("Error in # of Arguments: " + args.size());
+		//check listName
+		String listName = args.get(0).toString();	//listName
+		if(!lists.containsKey(listName))
+			throw new InterpretException("Error in index of Arguments: " + listName + " is empty list");
+		LinkedList<Value> list = lists.get(listName);
+		
+		//get index
+		int index;
+		try{
+			index = Integer.parseInt(args.get(1).toString());	//listName
+		}catch(NumberFormatException e){
+			throw new InterpretException("Error in index of Arguments: " + args.get(1) + " is not number");
+		}
+		
+		Value value = null;
+		//java index start : 0, smallbasic index start : 1 
+		try{
+			value = list.get(index-1);
+		}catch(IndexOutOfBoundsException e){
+			throw new InterpretException("Error in index of Arguments: " + index + " is out of bounds");
+		}
+		
+		return value;	
+	}
+	//List.IndexOf(listName, value)
+	//return : index of value in list.  if not contains, return ""
+	public static Value IndexOf(ArrayList<Value> args){
+		//check args
+		if(args.size() != 2)
+			throw new InterpretException("Error in # of Arguments: " + args.size());
+		//check listName
+		String listName = args.get(0).toString();	//listName
+		if(!lists.containsKey(listName))
+			return (Value)(new StrV(""));
+		LinkedList<Value> list = lists.get(listName);
+				
+		//check value
+		String value = args.get(1).toString();
+		for(int i = 0; i < list.size(); i++){
+			if(value.equals(list.get(i).toString()))
+				return (Value)(new DoubleV(i+1));	//smallbasic index is start at 1
+		}
+			
+		return (Value)(new StrV(""));
+	}
+	//List.InsertAt(listName, index, value)
+	public static Value InsertAt(ArrayList<Value> args){
+		//check args
+		if(args.size() != 3)
+			throw new InterpretException("Error in # of Arguments: " + args.size());
+		
+		//check index
+		int index;
+		try{
+			index = Integer.parseInt(args.get(1).toString());	//listName
+		}catch(NumberFormatException e){
+			throw new InterpretException("Error in index of Arguments: " + args.get(1) + " is not number");
+		}
+		//check listName
+		String listName = args.get(0).toString();	//listName
+		if(!lists.containsKey(listName))
+			throw new InterpretException("Error in index of Arguments: " + index + " is out of bounds");
+		LinkedList<Value> list = lists.get(listName);
+		
+		//list index check
+		if(list.size() < index)
+			throw new InterpretException("Error in index of Arguments: " + index + " is out of bounds");
+		
+		//check value
+		Value value = args.get(2);
+		list.add(index-1, value);
+		
+		return null;
+	}
+	//List.Remove(listName, match)
+	public static Value Remove(ArrayList<Value> args){
+		//check args
+		if(args.size() != 2)
+			throw new InterpretException("Error in # of Arguments: " + args.size());
+		//check listName
+		String listName = args.get(0).toString();	//listName
+		if(!lists.containsKey(listName))
+			return (Value)(new StrV("False"));
+		LinkedList<Value> list = lists.get(listName);
+		
+		//check match
+		String match = args.get(1).toString();
+		Iterator iter = list.iterator();
+		while(iter.hasNext()){
+			if(match.equals(iter.next().toString())){
+				iter.remove();
+				return null;
+			}
+		}
+		
+		return null;
+	}	
+	//List.RemoveAt(listName, index)
+	public static Value RemoveAt(ArrayList<Value> args){
+		//check args
+		if(args.size() != 2)
+			throw new InterpretException("Error in # of Arguments: " + args.size());
+		
+		//check index
+		int index;
+		try{
+			index = Integer.parseInt(args.get(1).toString());
+		}catch(NumberFormatException e){
+			throw new InterpretException("Error in index of Arguments: " + args.get(1) + " is not number");
+		}
+		//check listName
+		String listName = args.get(0).toString();	//listName
+		if(!lists.containsKey(listName))
+			throw new InterpretException("Error in index of Arguments: " + index + " is out of bounds");
+		LinkedList<Value> list = lists.get(listName);
+		
+		//list index check
+		if(list.size() < index)
+			throw new InterpretException("Error in index of Arguments: " + index + " is out of bounds");
+		
+		//remove
+		list.remove(index-1);
+		
+		return null;
+	}	
+	//List.Reverse(listName)
+	public static Value Reverse(ArrayList<Value> args){
+		//check args
+		if(args.size() != 1)
+			throw new InterpretException("Error in # of Arguments: " + args.size());
+		//check listName
+		String listName = args.get(0).toString();	//listName
+		if(!lists.containsKey(listName))
+			return null;
+		LinkedList<Value> list = lists.get(listName);
+		
+		//reverse
+		Collections.reverse(list);
+		
+		return null;
+	}
+	//List.SetAt(listName, index, value)
+	public static Value SetAt(ArrayList<Value> args){
+		if(args.size() != 3)
+			throw new InterpretException("Error in # of Arguments: " + args.size());
+		
+		//check index
+		int index;
+		try{
+			index = Integer.parseInt(args.get(1).toString());
+		}catch(NumberFormatException e){
+			throw new InterpretException("Error in index of Arguments: " + args.get(1) + " is not number");
+		}
+		//check listName
+		String listName = args.get(0).toString();	//listName
+		if(!lists.containsKey(listName))
+			throw new InterpretException("Error in index of Arguments: " + index + " is out of bounds");
+		LinkedList<Value> list = lists.get(listName);
+				
+		//list index check
+		if(list.size() < index)
+			throw new InterpretException("Error in index of Arguments: " + index + " is out of bounds");
+		
+		//value
+		Value value = args.get(2);
+		list.set(index-1, value);
+		
+		return null;
+	}
+	//List.SubList(listName, fromIndex, toIndex, [newListName])
+	//return : subList
+	public static Value SubList(ArrayList<Value> args){
+		//check args
+		if(args.size() != 3 && args.size() != 4)
+			throw new InterpretException("Error in # of Arguments: " + args.size());
+		
+		//check start, length
+		int fromIndex, toIndex;
+		try{
+			fromIndex = Integer.parseInt(args.get(1).toString());
+			toIndex = Integer.parseInt(args.get(2).toString());		
+			
+			if(fromIndex > toIndex)
+				throw new InterpretException("Error in index of Arguments: fromIndex(" + fromIndex + ") is bigger than toIndex(" + toIndex + ")");
+		}catch(NumberFormatException e){
+			throw new InterpretException("Error in index of Arguments: " + args.get(1) + " is not number");
+		}
+		
+		//check listName
+		String listName = args.get(0).toString();	//listName
+		if(!lists.containsKey(listName))
+			throw new InterpretException("Error in index of Arguments: " + fromIndex + " is out of bounds");
+		LinkedList<Value> list = lists.get(listName);
+		
+		//new ListName
+		LinkedList<Value> newList = null;
+		if(args.size() == 4){
+			String newListName = args.get(3).toString();
+			if(!lists.containsKey(newListName))
+				lists.put(newListName, new LinkedList<Value>());
+			newList = lists.get(newListName);			
+		}
+		
+		//get subList
+		StringBuilder ret = new StringBuilder("[");
+		java.util.List<Value> sub = list.subList(fromIndex-1, toIndex-1);
+		if(sub.size() != 0){
+			//index 1
+			Iterator<Value> iter = sub.iterator();
+			Value next = iter.next();
+			ret.append(next.toString());
+			if(newList != null)
+				newList.add(next);
+			
+			//index 2~
+			if(iter.hasNext()){
+				next = iter.next();
+				ret.append(", " + next.toString());
+				if(newList != null)
+					newList.add(next);
+			}
+				
+		}else{
+			lists.remove(newList);	//because empty
+		}
+		ret.append("]");
+		
+		
+		return null;
+	}
+	//List.ToArray(listName)
+	public static Value ToArray(ArrayList<Value> args){
+		//check args
+		if(args.size() != 1)
+			throw new InterpretException("Error in # of Arguments: " + args.size());
+		
+		//check listName
+		String listName = args.get(0).toString();	//listName
+		if(!lists.containsKey(listName))
+			return new ArrayV();
+		LinkedList<Value> list = lists.get(listName);
+		
+		//insert element
+		ArrayV ret = new ArrayV();
+		int index = 1;
+		Iterator<Value> iter = list.iterator();
+		while(iter.hasNext()){
+			ret.put(Integer.toString(index), iter.next());
+			index++;
+		}
+		
+		return ret;
+	}	
+	//List.Print(listName)
+	public static Value Print(ArrayList<Value> args){
+		
+		//check args
+		if(args.size() != 1)
+			throw new InterpretException("Error in # of Arguments: " + args.size());
+		
+		//check listName
+		String listName = args.get(0).toString();	//listName
+		if(!lists.containsKey(listName)){
+			System.out.println("[]");
+			return null;
+		}
+		LinkedList<Value> list = lists.get(listName);		
+		
+		//print list values
+		System.out.print('[');
+		Iterator<Value> iter = list.iterator();
+		if(iter.hasNext()){
+			Value value = iter.next();
+			System.out.print(value);
+		}
+		while(iter.hasNext()){
+			Value value = iter.next();
+			System.out.print(","+ value);
+		}
+		System.out.println(']');
+		
+		return null;
+	}
+
 	public static void notifyFieldAssign(String fieldName) {
 
 	}
