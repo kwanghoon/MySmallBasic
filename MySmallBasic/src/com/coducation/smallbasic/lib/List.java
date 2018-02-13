@@ -253,7 +253,7 @@ public class List {
 		//get index
 		int index;
 		try{
-			index = Integer.parseInt(args.get(1).toString());	//listName
+			index = Integer.parseInt(args.get(1).toString());
 		}catch(NumberFormatException e){
 			throw new InterpretException("Error in index of Arguments: " + args.get(1) + " is not number");
 		}
@@ -298,7 +298,7 @@ public class List {
 		//check index
 		int index;
 		try{
-			index = Integer.parseInt(args.get(1).toString());	//listName
+			index = Integer.parseInt(args.get(1).toString());
 		}catch(NumberFormatException e){
 			throw new InterpretException("Error in index of Arguments: " + args.get(1) + " is not number");
 		}
