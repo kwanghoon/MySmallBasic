@@ -1,30 +1,75 @@
-t1 = Tree.Tree(1)
-t2 = Tree.Tree(2)
-t3 = Tree.Tree(3)
+'tree create test
+TextWindow.WriteLine("===tree create test===")
+t1 = Tree.Create("a")
+t2 = Tree.Create("b")
+t3 = Tree.Create("c")
+t4 = Tree.Create("d", t1, t2, t3)
+Tree.Print(t1)
+Tree.Print(t4)
 
-t = Tree.Tree(0, t1, t2, t3)
+'addChild test
+TextWindow.WriteLine("===addChild Test===")
+t1 = Tree.Create("a")
+t2 = Tree.Create("b")
+t3 = Tree.Create("c")
+Tree.AddChild(t1, t2, t3)
+Tree.Print(t1)
 
-tt = t
+'addChildAt test
+TextWindow.WriteLine("===addChildAt Test===")
+t1 = Tree.Create("a")
+t2 = Tree.Create("b")
+t3 = Tree.Create("c")
+Tree.AddChildAt(t1, 1, t2)
+Tree.Print(t1)
+Tree.AddChildAt(t1, 1, t3)
+Tree.Print(t1)
 
-t = Tree.Tree(100, t, t)
+'removeChild Test
+TextWindow.WriteLine("===removeChild Test===")
+t1 = Tree.Create("a")
+t2 = Tree.Create("b")
+t3 = Tree.Create("c")
+t4 = Tree.Create("d", t1, t2, t3)
+Tree.Print(t4)
+Tree.RemoveChild(t4, t3)
+Tree.Print(t4)
 
-t = Tree.Tree(123, t, t)
+'removeChildAt Test
+TextWindow.WriteLine("===removeChildAt Test===")
+t1 = Tree.Create("a")
+t2 = Tree.Create("b")
+t3 = Tree.Create("c")
+t4 = Tree.Create("d", t1, t2, t3)
+Tree.Print(t4)
+Tree.RemoveChildAt(t4, 2)
+Tree.Print(t4)
 
-TextWindow.WriteLine(Tree.Root(t))
-TextWindow.WriteLine(Tree.Root(t1))
-TextWindow.WriteLine(Tree.Root(t2))
-TextWindow.WriteLine(Tree.Root(t3))
+'get root value Test
+TextWindow.WriteLine("===get root value Test===")
+t1 = Tree.Create("a")
+t2 = Tree.Create("b")
+t3 = Tree.Create("c")
+t4 = Tree.Create("d", t1, t2, t3)
+Tree.Print(t4)
+TextWindow.WriteLine(Tree.GetRootValue(t4))
 
-t1 = Tree.ChildAt(t, 1)
+'set root value Test
+TextWindow.WriteLine("===set root value Test===")
+t1 = Tree.Create("a")
+t2 = Tree.Create("b")
+t3 = Tree.Create("c")
+t4 = Tree.Create("d", t1, t2, t3)
+Tree.Print(t4)
+Tree.SetRootValue(t4, "e")
+Tree.Print(t4)
 
-TextWindow.WriteLine(Tree.Root(t1))
-
-t2 = Tree.ChildAt(t, 2)
-
-TextWindow.WriteLine(Tree.Root(t2))
-
-TextWindow.WriteLine("---------------------")
-
-Tree.Print(t)
-
-TextWindow.WriteLine("---------------------")
+'get child test
+TextWindow.WriteLine("===get child Test===")
+t1 = Tree.Create("a")
+t2 = Tree.Create("b")
+t3 = Tree.Create("c")
+t4 = Tree.Create("d", t1, t2, t3)
+Tree.Print(t4)
+arr = Tree.GetChild(t4)
+TextWindow.WriteLine(arr)

@@ -154,8 +154,8 @@ public class Graph {
 				neighbor_list.add(e.destination.getValue());
 			}
 		}
-		
-		StrV str_key = (StrV)List.List(neighbor_list);
+		StrV str_key = null;
+		//StrV str_key = (StrV)List.List(neighbor_list);
 		
 		return str_key;
 	}
