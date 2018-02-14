@@ -1,11 +1,7 @@
 package com.coducation.smallbasic.lib;
 
-import java.awt.Font;
 import java.util.ArrayList;
-import java.util.HashMap;
 
-import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -14,7 +10,6 @@ import com.coducation.smallbasic.DoubleV;
 import com.coducation.smallbasic.InterpretException;
 import com.coducation.smallbasic.StrV;
 import com.coducation.smallbasic.Value;
-import com.sun.org.apache.xpath.internal.Arg;
 
 public class Controls {
 	public static Value AddButton(ArrayList<Value> args) {
