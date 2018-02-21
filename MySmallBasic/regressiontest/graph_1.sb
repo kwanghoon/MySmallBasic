@@ -1,0 +1,15 @@
+Graph.InsertVertex("myGraph", "v1", "v2", "v3", "v4")
+Graph.InsertEdge("myGraph", "v1", "v2", "e1")
+Graph.InsertEdge("myGraph", "v1", "v3", "e2")
+Graph.InsertEdge("myGraph", "v1", "v4", "e3")
+
+'3
+TextWindow.WriteLine(Graph.NumberOfEdge("myGraph", "v1"))
+'e1
+TextWindow.WriteLine(Graph.GetEdgeAt("myGraph", "v1", "v2", 1))
+'e3
+TextWindow.WriteLine(Graph.GetEdgeAt("myGraph", "v1", 3))
+'1=v1;2=v2;3=v3;4=v4;
+TextWindow.WriteLine(Graph.GetAllVertex("myGraph"))
+
+Graph.Show("myGraph")

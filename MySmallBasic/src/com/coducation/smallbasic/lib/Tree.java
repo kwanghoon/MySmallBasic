@@ -148,9 +148,9 @@ public class Tree {
 		
 		return args.get(0);		
 	}
-	//Tree.GetRootValue(treeRef)
+	//Tree.GetValue(treeRef)
 	//return : rootValue
-	public static Value GetRootValue(ArrayList<Value> args) {
+	public static Value GetValue(ArrayList<Value> args) {
 		//args size check
 		if(args.size() != 1)
 			throw new InterpretException("Error in # of Arguments: " + args.size());
@@ -164,9 +164,9 @@ public class Tree {
 		
 		return treeNode.getValue();
 	}
-	//Tree.SetRootValue(treeRef, value)
+	//Tree.SetValue(treeRef, value)
 	//return treeRef
-	public static Value SetRootValue(ArrayList<Value> args){
+	public static Value SetValue(ArrayList<Value> args){
 		//args size check
 		if(args.size() != 2)
 			throw new InterpretException("Error in # of Arguments: " + args.size());
@@ -208,8 +208,10 @@ public class Tree {
 		
 		return childArray;
 	}
-	public static Value ChildAt(ArrayList<Value> args) {
-
+	//Tree.GetChildAt(treeRef, index)
+	public static Value GetChildAt(ArrayList<Value> args) {
+		
+		
 		return null;
 	}
 	//Tree.Print(treeRef)

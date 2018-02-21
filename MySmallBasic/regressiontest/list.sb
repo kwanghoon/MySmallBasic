@@ -1,33 +1,43 @@
 'concat Test
 TextWindow.WriteLine("====concat Test====")
-List.Add("myList", 1, 2, 3)
+List.Add("myList1", 1, 2, 3)
 List.Add("myList2", 2, 5)
-List.Concat("myList", "myList2")
-List.Print("myList")
+List.Add("myList3", 6, 7, 8)
+List.Concat("myList1", "myList2", "myList3")
+'[1,2,3,4,5,6,7,8]
+List.Print("myList1")
+List.Clear("myList1")
+List.Clear("myList2")
+List.Clear("myList3")
 
 'Head Tail Test
 TextWindow.WriteLine("====Head Tail Test====")
-List.Add("myList3", 1, 2, 3)
-TextWindow.WriteLine(List.Head("myList3", "myList5"))
-List.Print("myList5")
-TextWindow.WriteLine(List.Tail("myList3", "myList6"))
-List.Print("myList6")
+List.Add("myList1", 1, 2, 3)
+'[1]
+TextWindow.WriteLine(List.Head("myList1", "myList2"))
+List.Print("myList2")
+'[2,3]
+TextWindow.WriteLine(List.Tail("myList1", "myList3"))
+List.Print("myList3")
+List.Clear("myList1")
+List.Clear("myList2")
+List.Clear("myList3")
 
 'empty clear Test
 TextWindow.WriteLine("====empty clear Test====")
+'True
 TextWindow.WriteLine(List.IsEmpty("myList7"))
+List.Add("myList1", 1, 2, 3)
 List.Clear("myList1")
+'[]
 List.Print("myList1")
-List.Clear("myList2")
-List.Clear("myList3")
-List.Clear("myList4")
-List.Clear("myList5")
-List.Clear("myList6")
+
 
 'contains Test
 TextWindow.WriteLine("====contains Test====")
 val1 = 10
-List.Add("myList1", 1, "10")
+List.Add("myList1", 1, 10)
+'True
 TextWindow.WriteLine(List.Contains("myList1", val1))
 List.Clear("myList1")
 
@@ -36,6 +46,7 @@ TextWindow.WriteLine("====copy Test====")
 List.Add("myList1", 1, 2, 3)
 List.Copy("myList1", "myList2")
 List.Add("myList1", 4)
+'[1,2,3]
 List.Print("myList2")
 List.Clear("myList1")
 List.Clear("myList2")
@@ -43,18 +54,21 @@ List.Clear("myList2")
 'size Test
 TextWindow.WriteLine("====size Test====")
 List.Add("myList1", 1, 2, 3, 4, 5)
+'5
 TextWindow.WriteLine(List.Count("myList1"))
 List.Clear("myList1")
 
 'getAt Test
 TextWindow.WriteLine("====getAt Test====")
 List.Add("myList1", "a", "b", "c")
+'b
 TextWindow.WriteLine(List.GetAt("myList1", 2))
 List.Clear("myList1")
 
 'index of Test
 TextWindow.WriteLine("====index of Test====")
 List.Add("myList1", "a", "b", "c")
+'2
 TextWindow.WriteLine(List.IndexOf("myList1", "b"))
 List.Clear("myList1")
 
@@ -62,6 +76,7 @@ List.Clear("myList1")
 TextWindow.WriteLine("====insert at Test====")
 List.Add("myList1", "a", "b", "c")
 List.InsertAt("myList1", 3, "hi")
+'[a,b,hi,c]
 List.Print("myList1")
 List.Clear("myList1")
 
@@ -70,6 +85,7 @@ List.Clear("myList1")
 TextWindow.WriteLine("====remove Test====")
 List.Add("myList1", "a", "b", "c")
 List.Remove("myList1", "b")
+'[a,c]
 List.Print("myList1")
 List.Clear("myList1")
 
@@ -77,6 +93,7 @@ List.Clear("myList1")
 TextWindow.WriteLine("====remove at Test====")
 List.Add("myList1", "a", "b", "c")
 List.RemoveAt("myList1", 2)
+'[a,c]
 List.Print("myList1")
 List.Clear("myList1")
 
@@ -84,6 +101,7 @@ List.Clear("myList1")
 TextWindow.WriteLine("====reverse Test====")
 List.Add("myList1", "a", "b", "c")
 List.Reverse("myList1")
+'[c,b,a]
 List.Print("myList1")
 List.Clear("myList1")
 
@@ -91,6 +109,7 @@ List.Clear("myList1")
 TextWindow.WriteLine("====set at Test====")
 List.Add("myList1", "a", "b", "c")
 List.SetAt("myList1", 2, "d")
+'[a,d,c]
 List.Print("myList1")
 List.Clear("myList1")
 
@@ -98,6 +117,7 @@ List.Clear("myList1")
 TextWindow.WriteLine("====subList Test====")
 List.Add("myList1", "a", "b", "c", "d", "e")
 List.SubList("myList1", 3, 5, "myList2")
+'[c,d]
 List.Print("myList2")
 List.Clear("myList1")
 List.Clear("myList2")
@@ -106,5 +126,8 @@ List.Clear("myList2")
 TextWindow.WriteLine("====toArray Test====")
 List.Add("myList1", "a", "b", "c")
 arr = List.ToArray("myList1")
+'1=a;2=b;3=c
 TextWindow.WriteLine(arr)
+'b
+TextWindow.WriteLine(arr[2])
 List.Clear("myList1")

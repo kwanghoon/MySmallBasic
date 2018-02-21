@@ -16,5 +16,6 @@
 	<classpathentry kind="lib" path="lib/slf4j-jdk14-1.7.25.jar"/>
 	<classpathentry kind="lib" path="lib/vlcj.jar"/>
 	<classpathentry kind="lib" path="lib/juniversalchardet-1.0.3.jar"/>
+	<classpathentry kind="lib" path="lib/gs-core-1.3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
