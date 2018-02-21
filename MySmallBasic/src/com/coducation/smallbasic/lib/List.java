@@ -247,7 +247,7 @@ public class List {
 		//check listName
 		String listName = args.get(0).toString();	//listName
 		if(!lists.containsKey(listName))
-			throw new InterpretException("Error in index of Arguments: " + listName + " is empty list");
+			return null;	//empty list
 		LinkedList<Value> list = lists.get(listName);
 		
 		//get index
@@ -263,7 +263,7 @@ public class List {
 		try{
 			value = list.get(index-1);
 		}catch(IndexOutOfBoundsException e){
-			throw new InterpretException("Error in index of Arguments: " + index + " is out of bounds");
+			return null;	//out of bound
 		}
 		
 		return value;	
@@ -305,12 +305,12 @@ public class List {
 		//check listName
 		String listName = args.get(0).toString();	//listName
 		if(!lists.containsKey(listName))
-			throw new InterpretException("Error in index of Arguments: " + index + " is out of bounds");
+			return null; //empty list;
 		LinkedList<Value> list = lists.get(listName);
 		
 		//list index check
 		if(list.size() < index)
-			throw new InterpretException("Error in index of Arguments: " + index + " is out of bounds");
+			return null; //out of bound
 		
 		//check value
 		Value value = args.get(2);
@@ -357,12 +357,12 @@ public class List {
 		//check listName
 		String listName = args.get(0).toString();	//listName
 		if(!lists.containsKey(listName))
-			throw new InterpretException("Error in index of Arguments: " + index + " is out of bounds");
+			return null; //empty list
 		LinkedList<Value> list = lists.get(listName);
 		
 		//list index check
 		if(list.size() < index)
-			throw new InterpretException("Error in index of Arguments: " + index + " is out of bounds");
+			return null; //out of bound
 		
 		//remove
 		list.remove(index-1);
@@ -400,12 +400,12 @@ public class List {
 		//check listName
 		String listName = args.get(0).toString();	//listName
 		if(!lists.containsKey(listName))
-			throw new InterpretException("Error in index of Arguments: " + index + " is out of bounds");
+			return null; //empty list
 		LinkedList<Value> list = lists.get(listName);
 				
 		//list index check
 		if(list.size() < index)
-			throw new InterpretException("Error in index of Arguments: " + index + " is out of bounds");
+			return null; // out of bound
 		
 		//value
 		Value value = args.get(2);
@@ -427,7 +427,7 @@ public class List {
 			toIndex = Integer.parseInt(args.get(2).toString());		
 			
 			if(fromIndex > toIndex)
-				throw new InterpretException("Error in index of Arguments: fromIndex(" + fromIndex + ") is bigger than toIndex(" + toIndex + ")");
+				return null;	//fomrIndex is bigger than toImdex
 		}catch(NumberFormatException e){
 			throw new InterpretException("Error in index of Arguments: " + args.get(1) + " is not number");
 		}
@@ -435,7 +435,7 @@ public class List {
 		//check listName
 		String listName = args.get(0).toString();	//listName
 		if(!lists.containsKey(listName))
-			throw new InterpretException("Error in index of Arguments: " + fromIndex + " is out of bounds");
+			return null;  //empty list
 		LinkedList<Value> list = lists.get(listName);
 		
 		//new ListName

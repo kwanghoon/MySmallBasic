@@ -45,23 +45,23 @@ Tree.Print(t4)
 Tree.RemoveChildAt(t4, 2)
 Tree.Print(t4)
 
-'get root value Test
+'get value Test
 TextWindow.WriteLine("===get root value Test===")
 t1 = Tree.Create("a")
 t2 = Tree.Create("b")
 t3 = Tree.Create("c")
 t4 = Tree.Create("d", t1, t2, t3)
 Tree.Print(t4)
-TextWindow.WriteLine(Tree.GetRootValue(t4))
+TextWindow.WriteLine(Tree.GetValue(t4))
 
-'set root value Test
+'set value Test
 TextWindow.WriteLine("===set root value Test===")
 t1 = Tree.Create("a")
 t2 = Tree.Create("b")
 t3 = Tree.Create("c")
 t4 = Tree.Create("d", t1, t2, t3)
 Tree.Print(t4)
-Tree.SetRootValue(t4, "e")
+Tree.SetValue(t4, "e")
 Tree.Print(t4)
 
 'get child test

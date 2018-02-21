@@ -1,0 +1,18 @@
+Graph.InsertVertex("myGraph", "v1", "v2", "v3", "v4")
+Graph.InsertEdge("myGraph", "v1", "v2", "e1")
+Graph.InsertEdge("myGraph", "v1", "v2", "e2")
+Graph.InsertEdge("myGraph", "v2", "v3", "e3")
+Graph.InsertEdge("myGraph", "v2", "v3", "e4")
+
+
+Graph.SetVertexLabel("myGraph", "v1", "i'm v1")
+'i'm v1
+TextWindow.WriteLine(Graph.GetVertexLabel("myGraph", "v1"))
+Graph.SetEdgeLabel("myGraph", "e1", "i'm e1")
+'i'm e1
+TextWindow.WriteLine(Graph.GetEdgeLabel("myGraph", "e1"))
+
+'remove edge v2-v3
+Graph.RemoveEdge("myGraph", "e3")
+Graph.RemoveEdge("myGraph", "v2", "v3")
+Graph.Show("myGraph")
