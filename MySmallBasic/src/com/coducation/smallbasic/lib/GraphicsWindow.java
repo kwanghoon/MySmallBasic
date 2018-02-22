@@ -41,6 +41,8 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.Document;
 
+import org.graphstream.graph.implementations.MultiGraph;
+
 import com.coducation.smallbasic.DoubleV;
 import com.coducation.smallbasic.Eval;
 import com.coducation.smallbasic.InterpretException;
@@ -2669,5 +2671,52 @@ public class GraphicsWindow {
 	}
 	// End of Supporting Video Library
 
-
+	// Supporting Graph Library
+	private static HashMap<String, MultiGraph> graphMap = new HashMap<>();
+	private static MultiGraph multiGraph;
+	
+	private static Container graphContainer;
+	
+	static void AddGraph(String graphName) {
+		multiGraph = new MultiGraph(graphName);
+		graphMap.put(graphName, multiGraph);
+	}
+	
+	static void SetGraph(String graphName) {
+		multiGraph = graphMap.get(graphName);
+	}
+	
+	static boolean FindGraph(String graphName) {
+		return graphMap.containsKey(graphName);
+	}
+	
+	static void AddVertex(String vertexName) {
+		
+	}
+	
+	static void AddEdge(String fromEdgeName, String toEdgeName, String edgeName) {
+		
+	}
+	
+	static void SetVertexLabel(String vertexName, String label) {
+		
+	}
+	
+	static void SetEdgeLabel(String edgeName, String label) {
+		
+	}
+	
+	static void RemoveVertex(String vertexName) {
+		
+	}
+	
+	static void RemoveEdge(String edgeName) {
+		
+	}
+	
+	static void SetGraphLocation(int x, int y) {
+		
+	}
+	
+	// End of Supporting Graph Library
 }
