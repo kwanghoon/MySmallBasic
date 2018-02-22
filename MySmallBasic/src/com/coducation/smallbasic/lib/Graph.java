@@ -269,8 +269,68 @@ public class Graph {
 		return ret;
 	}
 	//Graph.GetNeighbors(graphName, fromVertexName)
-	//return : toVertex name array -- 중복허용????
+	//return : toVertex name array
 	public static Value GetNeighbors(ArrayList<Value> args){
+		
+		if(args.size() != 2)
+			throw new InterpretException("Error in # of Arguments: " + args.size());
+		
+		//get graph
+		String graphName = args.get(0).toString();
+		if(!graphs.containsKey(graphName))
+			return new ArrayV();
+		DirectedGraph graph = graphs.get(graphName);
+		
+		//get neighbors
+		String fromVertexName = args.get(1).toString();
+		return graph.getNeighbors(fromVertexName);
+	}
+	//Graph.GetFromVertex(graphName, edgeName)
+	//return : edge's fromVertexName
+	public static Value GetFromVertex(ArrayList<Value> args){
+		if(args.size() != 2)
+			throw new InterpretException("Error in # of Arguments: " + args.size());
+		
+		//get graph
+		String graphName = args.get(0).toString();
+		if(!graphs.containsKey(graphName))
+			return new StrV("");
+		DirectedGraph graph = graphs.get(graphName);
+		
+		//get fromVertex
+		String edgeName = args.get(1).toString();
+		return graph.getFromVertex(edgeName);
+	}
+	//Graph.GetToVertex(graphName, edgeName)
+	//return : edge's toVertexName
+	public static Value GetToVertex(ArrayList<Value> args){
+		if(args.size() != 2)
+			throw new InterpretException("Error in # of Arguments: " + args.size());
+		
+		//get graph
+		String graphName = args.get(0).toString();
+		if(!graphs.containsKey(graphName))
+			return new StrV("");
+		DirectedGraph graph = graphs.get(graphName);
+		
+		//get fromVertex
+		String edgeName = args.get(1).toString();
+		return graph.getToVertex(edgeName);
+	}	
+	//Graph.Copy(graphName, newGraphName)
+	public static Value Copy(ArrayList<Value> args){
+		
+		if(args.size() != 2)
+			throw new InterpretException("Error in # of Arguments: " + args.size());
+		
+		//get graph
+		String graphName = args.get(0).toString();
+		if(!graphs.containsKey(graphName))
+			return null;
+		DirectedGraph graph = graphs.get(graphName);
+		
+		String newGraphName = args.get(1).toString();
+		graphs.put(newGraphName, graph.copy(newGraphName));
 		return null;
 	}
 	
@@ -316,7 +376,7 @@ class DirectedGraph{
 		ArrayList<Edge> neighbors = v.getEdges();
 		Iterator<Edge> iter = neighbors.iterator();
 		while(iter.hasNext()){
-			String id = iter.next().getID();
+			String id = iter.next().getName();
 			edges.remove(id);
 		}
 		//remove vertex
@@ -365,8 +425,8 @@ class DirectedGraph{
 				//check toVertex
 				if(edge.getToVertex() == toVertex){
 					iter.remove();					
-					edges.remove(edge.getID());
-					graphlib.removeEdge(edge.getID());
+					edges.remove(edge.getName());
+					graphlib.removeEdge(edge.getName());
 					break;
 				}
 			}
@@ -409,9 +469,9 @@ class DirectedGraph{
 		Iterator<Edge> iter = fromVertex.getEdges().iterator();
 		while(iter.hasNext()){
 			Edge edge = iter.next();
-			if(toVertexName.equals(edge.getToVertex().getID())){
+			if(toVertexName.equals(edge.getToVertex().getName())){
 				if(count == index)
-					return new StrV(edge.getID());
+					return new StrV(edge.getName());
 				else 
 					count++;
 			}
@@ -431,26 +491,66 @@ class DirectedGraph{
 		if(edgeList.size() < index)
 			return new StrV("");
 		else
-			return new StrV(edgeList.get(index-1).getID());
+			return new StrV(edgeList.get(index-1).getName());
 	}
 	Set<String> getVertices(){
 		return vertices.keySet();
 	}
+	Value getNeighbors(String fromVertexName){
+		if(!hasVertex(fromVertexName))
+			return new ArrayV();
+		//get neighbor
+		Vertex fromVertex = vertices.get(fromVertexName);
+		int count = 1;
+		ArrayV ret = new ArrayV();
+		Iterator<Edge> iter = fromVertex.getEdges().iterator();
+		while(iter.hasNext()){
+			ret.put(Integer.toString(count++), new StrV(iter.next().getToVertex().getName()));
+		}
+		return ret;
+	}
+	Value getFromVertex(String edgeName){
+		if(!edges.containsKey(edgeName))
+			return new StrV("");
+		return new StrV(edges.get(edgeName).getFromVertex().getName());
+	}
+	Value getToVertex(String edgeName){
+		if(!edges.containsKey(edgeName))
+			return new StrV("");
+		return new StrV(edges.get(edgeName).getToVertex().getName());
+	}
 	void show(){
 		graphlib.display();
 	}
+	DirectedGraph copy(String newGraphName){
+		DirectedGraph obj = new DirectedGraph(newGraphName);
+		obj.vertices = (HashMap<String, Vertex>)vertices.clone();
+		obj.edges = (HashMap<String, Edge>)edges.clone();
+		
+		//add element to graphlib
+		Iterator<String> vertexIter = vertices.keySet().iterator();
+		while(vertexIter.hasNext())
+			obj.graphlib.addNode(vertexIter.next());
+		Iterator<String> edgeIter = edges.keySet().iterator();
+		while(edgeIter.hasNext()){
+			Edge edge = edges.get(edgeIter.next());
+			obj.graphlib.addEdge(edge.getName(), edge.getFromVertex().getName(), edge.getToVertex().getName());
+		}
+		
+		return obj;
+	}
 }
 
-class Vertex{
+class Vertex implements Cloneable{
 	private ArrayList<Edge> edges = new ArrayList<>();
 	private Value label;
-	private String id;
+	private String name;
 	
-	Vertex(String id){
-		this.id = id;
+	Vertex(String name){
+		this.name = name;
 	}
-	String getID(){
-		return id;
+	String getName(){
+		return name;
 	}
 	void setLabel(Value label){
 		this.label = label;
@@ -470,16 +570,22 @@ class Vertex{
 	ArrayList<Edge> getEdges(){
 		return edges;
 	}
+	public Object clone() throws CloneNotSupportedException{
+		Vertex obj = (Vertex) super.clone();
+		obj.edges = (ArrayList<Edge>)edges.clone();
+		return obj;
+		
+	}
 }
 
-class Edge{
+class Edge implements Cloneable{
 	private Vertex fromVertex;
 	private Vertex toVertex;
-	private String id;
+	private String name;
 	private Value label;	
 	
-	Edge(String id, Vertex from, Vertex to){
-		this.id = id;
+	Edge(String name, Vertex from, Vertex to){
+		this.name = name;
 		this.fromVertex = from;
 		this.toVertex = to;
 	}
@@ -493,13 +599,20 @@ class Edge{
 	Value getLabel(){
 		return label;
 	}
-	String getID(){
-		return id;
+	String getName(){
+		return name;
 	}
 	Vertex getFromVertex(){
 		return fromVertex;
 	}
 	Vertex getToVertex(){
 		return toVertex;
+	}
+	public Object clone() throws CloneNotSupportedException{
+		Edge obj = (Edge) super.clone();
+		obj.fromVertex = (Vertex)fromVertex.clone();
+		obj.toVertex = (Vertex)toVertex.clone();
+		return obj;
+		
 	}
 }
