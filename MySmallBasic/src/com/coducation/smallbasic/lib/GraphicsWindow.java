@@ -42,6 +42,8 @@ import javax.swing.event.DocumentListener;
 import javax.swing.text.Document;
 
 import org.graphstream.graph.implementations.MultiGraph;
+import org.jfree.chart.*;
+import org.jfree.data.xy.*;
 
 import com.coducation.smallbasic.DoubleV;
 import com.coducation.smallbasic.Eval;
@@ -2719,4 +2721,143 @@ public class GraphicsWindow {
 	}
 	
 	// End of Supporting Graph Library
+	
+	// Supporting Chart Library
+		private static final String chartIdLable = "Chart";
+		private static int chartId = 1;
+
+		private static JFreeChart xyLineChart[] = new JFreeChart[100];
+		private static ChartPanel chartPanel[] = new ChartPanel[100];
+		private static HashMap<String,Integer> chartMap = new HashMap<>();
+		static String cID = "";
+		
+		static void SetChartID(String id){
+			cID = id;
+		}
+
+		static String GetChartID(){
+			return cID;
+		}
+		
+		static void AddChart(String key, double[] xValue, double[] yValue, String opt){
+			String id = chartIdLable + chartId;
+			chartMap.put(id, chartId);
+			SetChartID(id);
+			
+			if(opt.equalsIgnoreCase("s")) {
+				xyLineChart[chartId] = ChartFactory.createScatterPlot(
+						"",
+						"", "",
+						createDataset(key, xValue, yValue));
+			}
+			else {
+				xyLineChart[chartId] = ChartFactory.createXYLineChart(
+						"",
+						"", "",
+						createDataset(key, xValue, yValue));
+				
+				if(opt.equalsIgnoreCase("--")) {
+					xyLineChart[chartId].getXYPlot().getRenderer().setSeriesStroke(0, new BasicStroke(
+			    	        1.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND,
+			    	        1.0f, new float[] {6.0f, 6.0f}, 0.0f));
+				} else if(opt.equalsIgnoreCase(":")) {
+					xyLineChart[chartId].getXYPlot().getRenderer().setSeriesStroke(0, new BasicStroke(
+			    	        1.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND,
+			    	        1.0f, new float[] {2.5f, 2.5f}, 0.0f));
+				}
+				
+			}
+			
+			RemoveLegend(id);
+			
+			chartPanel[chartId] = new ChartPanel(xyLineChart[chartId]);
+			chartPanel[chartId].setSize(500, 300);
+			//chartPanel[chartId].setPreferredSize(new java.awt.Dimension( 500 , 300 ));
+			chartPanel[chartId].setLocation(10,10);
+			
+			panel.add(chartPanel[chartId]);
+			chartId++;
+			
+			if (frame == null)
+				Show(new ArrayList<Value>());
+				
+				
+			frame.pack();
+			panel.revalidate();
+			panel.repaint();
+		}
+		
+		static void SetData(String chartName, String key, double[] xValue, double[] yValue){
+			int id = chartMap.get(chartName);
+			xyLineChart[id].getXYPlot().setDataset(createDataset(key, xValue, yValue));
+		}
+		
+		static void AddData(String chartName, String key, double[] xValue, double[] yValue){
+			int id = chartMap.get(chartName);
+			XYSeriesCollection dataset = (XYSeriesCollection)xyLineChart[id].getXYPlot().getDataset();
+			XYSeries series;
+			int idx = dataset.getSeriesIndex(key);
+			
+		    if(idx == -1)
+		    	series = new XYSeries(key);
+		    else 
+		    	series = dataset.getSeries(idx);
+		    
+		    for(int i = 0; i < xValue.length; i++)
+		    	series.addOrUpdate(xValue[i], yValue[i]);
+		    
+		    dataset.addSeries(series);
+		}
+		
+		static void AddTitle(String chartName, String title){
+			int id = chartMap.get(chartName);
+			xyLineChart[id].setTitle(title);;
+		}
+		
+		static void AddXLabel(String chartName, String xlabel){
+			int id = chartMap.get(chartName);
+			xyLineChart[id].getXYPlot().getDomainAxis().setLabel(xlabel);
+		}
+		
+		static void AddYLabel(String chartName, String ylabel){
+			int id = chartMap.get(chartName);
+			xyLineChart[id].getXYPlot().getDomainAxis().setLabel(ylabel);
+		}
+		
+		static void AddLegend(String chartName){
+			int id = chartMap.get(chartName);
+			xyLineChart[id].getLegend().setVisible(true);
+		}
+		
+		static void RemoveLegend(String chartName){
+			int id = chartMap.get(chartName);
+			xyLineChart[id].getLegend().setVisible(false);
+		}
+		
+		static void SetChartSize(String chartName, int width, int height){
+			
+			int id = chartMap.get(chartName);
+			chartPanel[id].setSize(width, height);
+		}
+
+		static void SetChartLocation(String chartName, int x, int y){
+
+			int id = chartMap.get(chartName);
+			chartPanel[id].setLocation(x, y);
+		}
+		
+		static XYDataset createDataset(String key, double[] xValue, double[] yValue) {
+			XYSeriesCollection dataset = new XYSeriesCollection();
+
+			XYSeries series = new XYSeries(key);
+			    
+			for(int i = 0; i < xValue.length; i++)
+				series.add(xValue[i], yValue[i]);
+			    
+			dataset.addSeries(series);
+
+			return dataset;
+		}
+		
+		// End of Supporting Chart Library
 }
