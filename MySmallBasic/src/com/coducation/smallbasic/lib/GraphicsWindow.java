@@ -37,13 +37,18 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.Document;
 
 import org.graphstream.graph.implementations.MultiGraph;
-import org.jfree.chart.*;
-import org.jfree.data.xy.*;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.data.xy.XYDataset;
+import org.jfree.data.xy.XYSeries;
+import org.jfree.data.xy.XYSeriesCollection;
 
 import com.coducation.smallbasic.DoubleV;
 import com.coducation.smallbasic.Eval;
@@ -1167,8 +1172,11 @@ public class GraphicsWindow {
 			if (MouseDown != null) {
 				MouseX = new DoubleV(e.getX());
 				MouseY = new DoubleV(e.getY());
+				
+				boolean left = SwingUtilities.isLeftMouseButton(e);
+				boolean right = SwingUtilities.isRightMouseButton(e);
 
-				MouseButtonDown(e.getButton());
+				MouseButtonDown(left, right);
 
 				Eval.eval(MouseDown);
 			}
@@ -1179,8 +1187,11 @@ public class GraphicsWindow {
 			if (MouseUp != null) {
 				MouseX = new DoubleV(e.getX());
 				MouseY = new DoubleV(e.getY());
+				
+				boolean left = SwingUtilities.isLeftMouseButton(e);
+				boolean right = SwingUtilities.isRightMouseButton(e);
 
-				MouseButtonDown(e.getButton());
+				MouseButtonDown(left, right);
 
 				Eval.eval(MouseUp);
 			}
@@ -1200,7 +1211,10 @@ public class GraphicsWindow {
 				MouseX = new DoubleV(e.getX());
 				MouseY = new DoubleV(e.getY());
 
-				MouseButtonDown(e.getButton());
+				boolean left = SwingUtilities.isLeftMouseButton(e);
+				boolean right = SwingUtilities.isRightMouseButton(e);
+
+				MouseButtonDown(left, right);
 
 				Eval.eval(MouseMove);
 			}
@@ -2559,14 +2573,14 @@ public class GraphicsWindow {
 		panel.setCursor(cursor);
 	}
 
-	private static void MouseButtonDown(int button) {
+	private static void MouseButtonDown(boolean bLeft, boolean bRight) {
 		String right = "False";
 		String left = "False";
 
-		if (button == MouseEvent.BUTTON1) {
+		if (bLeft == true) {
 			left = "True";
 		}
-		if (button == MouseEvent.BUTTON3) {
+		if (bRight == true) {
 			right = "True";
 		}
 
