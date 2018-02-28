@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import com.coducation.smallbasic.ArrayV;
+import com.coducation.smallbasic.DoubleV;
 import com.coducation.smallbasic.InterpretException;
 import com.coducation.smallbasic.StrV;
 import com.coducation.smallbasic.Value;
@@ -12,38 +12,49 @@ import com.coducation.smallbasic.Value;
 public class Tree {
 
 	private static HashMap<String, TreeNode> trees = new HashMap<>();
-	private static int treeKey = 1;
 
-	// Tree.Create([rootValue, [childTreeRef]])
-	// return tree ref
-	public static Value Create(ArrayList<Value> args) {
-		String treeRef = getTreeKey();	//new treeID
-		
-		if (args.size() == 0) {	//Create()
-			trees.put(treeRef, new TreeNode(treeRef));
-			
-		}else if(args.size() == 1){	//Create(rootValue)
-			Value rootValue = args.get(0);
-			trees.put(treeRef, new TreeNode(treeRef, rootValue));
-		}else{	//Create(rootValue, childTree, ....)
-			Value rootValue = args.get(0);
-			TreeNode treeNode = new TreeNode(treeRef, rootValue);
-			
-			//childTree
-			for(int i = 1; i < args.size(); i++){
-				String childTreeRef = args.get(i).toString();
-				if(!trees.containsKey(childTreeRef)){
-					throw new InterpretException("Error in childTree of Arguments: " + childTreeRef + " is invalid tree");
-				}
-				TreeNode childTree = trees.get(childTreeRef);
-				treeNode.addChild(childTree);
-			}
-			
-			trees.put(treeRef, treeNode);
+	// Tree.Create(treeName, [rootValue, [childTreeValue...]])
+	public static Value Create(ArrayList<Value> args) {		
+		if (args.size() == 0) {
+			throw new InterpretException("Error in # of Arguments: " + args.size());	
 		}
-		return new StrV(treeRef);
+		//treeName
+		String treeName = args.get(0).toString();
+		TreeNode newTree = new TreeNode();
+		if(trees.containsKey(treeName))
+			trees.remove(treeName);
+		trees.put(treeName, newTree);
+		
+		//rootValue
+		if(args.size() >= 2){
+			Value rootValue = args.get(1);
+			newTree.setValue(rootValue);
+		}
+		//childTree Value
+		if(args.size() > 2){
+			for(int i = 2; i < args.size(); i++){
+				Value childTreeValue = args.get(i);
+				newTree.addChild(new TreeNode(childTreeValue));
+			}
+		}
+		
+		return null;
 	}
-	//Tree.AddChild(treeRef, [childTreeRef...])
+	//Tree.Clear(treeName, [treeName...])
+	public static Value Clear(ArrayList<Value> args) {		
+		if (args.size() == 0) {
+			throw new InterpretException("Error in # of Arguments: " + args.size());	
+		}
+		
+		//clear
+		for(int i = 0; i < args.size(); i++){
+			String treeName = args.get(i).toString();
+			if(trees.containsKey(treeName))
+				trees.remove(treeName);
+		}		
+		return null;
+	}	
+	//Tree.AddChild(treeName, [childTreeName...])
 	public static Value AddChild(ArrayList<Value> args){
 		//args size check
 		if(args.size() == 0){
@@ -51,36 +62,36 @@ public class Tree {
 		}
 		
 		//get tree
-		String treeRef = args.get(0).toString();
-		if(!trees.containsKey(treeRef)){
-			throw new InterpretException("Error in tree of Arguments: " + treeRef + " is invalid tree");
+		String treeName = args.get(0).toString();
+		if(!trees.containsKey(treeName)){
+			throw new InterpretException("Error in tree of Arguments: " + treeName + " is invalid tree");
 		}
-		TreeNode treeNode = trees.get(treeRef);
+		TreeNode treeNode = trees.get(treeName);
 		
 		//add childTree
 		for(int i = 1; i < args.size(); i++){
-			String childTreeRef = args.get(i).toString();
-			if(!trees.containsKey(childTreeRef)){
-				throw new InterpretException("Error in childTree of Arguments: " + childTreeRef + " is invalid tree");
+			String childTreeName = args.get(i).toString();
+			if(trees.containsKey(childTreeName)){
+				TreeNode childTree = trees.get(childTreeName);
+				treeNode.addChild(childTree);
 			}
-			TreeNode childTree = trees.get(childTreeRef);
-			treeNode.addChild(childTree);
+			
 		}
 		
-		return args.get(0);
+		return null;
 	}
-	//Tree.AddChildAt(treeRef, index, childTreeRef)
+	//Tree.AddChildAt(treeName, index, childTreeName)
 	public static Value AddChildAt(ArrayList<Value> args){
 		//args size check
 		if(args.size() != 3)
 			throw new InterpretException("Error in # of Arguments: " + args.size());
 		
 		//get tree
-		String treeRef = args.get(0).toString();
-		if(!trees.containsKey(treeRef)){
-			throw new InterpretException("Error in tree of Arguments: " + treeRef + " is invalid tree");
+		String treeName = args.get(0).toString();
+		if(!trees.containsKey(treeName)){
+			throw new InterpretException("Error in tree of Arguments: " + treeName + " is invalid tree");
 		}
-		TreeNode treeNode = trees.get(treeRef);
+		TreeNode treeNode = trees.get(treeName);
 		
 		//get index
 		int index;
@@ -90,41 +101,42 @@ public class Tree {
 			throw new InterpretException("Error in index of Arguments: " + args.get(1) + " is not number");
 		}
 		
-		//get childTreeRef
-		String childTreeRef = args.get(2).toString();
-		if(!trees.containsKey(childTreeRef)){
-			throw new InterpretException("Error in childTree of Arguments: " + childTreeRef + " is invalid tree");
+		//get childTreeName
+		String childTreeName = args.get(2).toString();
+		if(!trees.containsKey(childTreeName)){
+			throw new InterpretException("Error in childTree of Arguments: " + childTreeName + " is invalid tree");
 		}
-		TreeNode childTree = trees.get(childTreeRef);
+		TreeNode childTree = trees.get(childTreeName);
 		
-		treeNode.addChildAt(index, childTree);
-		
-		return args.get(0);
+		treeNode.addChildAt(index, childTree);		
+		return null;
 	}
-	//Tree.RemoveChild(treeRef, childTreeRef)
+	//Tree.RemoveChild(treeName, childTreeName, [childTreeName...])
 	public static Value RemoveChild(ArrayList<Value> args){
 		//args size check
-		if(args.size() != 2)
+		if(args.size() == 0)
 			throw new InterpretException("Error in # of Arguments: " + args.size());
 		
 		//get tree
-		String treeRef = args.get(0).toString();
-		if(!trees.containsKey(treeRef)){
-			throw new InterpretException("Error in tree of Arguments: " + treeRef + " is invalid tree");
+		String treeName = args.get(0).toString();
+		if(!trees.containsKey(treeName)){
+			return null;
 		}
-		TreeNode treeNode = trees.get(treeRef);
+		TreeNode treeNode = trees.get(treeName);
 				
 		//remove childTree
-		String childTreeRef = args.get(1).toString();
-		if(!trees.containsKey(childTreeRef)){
-			throw new InterpretException("Error in childTree of Arguments: " + childTreeRef + " is invalid tree");
+		for(int i = 1; i < args.size(); i++){
+			String childTreeName = args.get(i).toString();
+			if(!trees.containsKey(childTreeName)){
+				return null;
+			}
+			TreeNode childTree = trees.get(childTreeName);
+			treeNode.removeChild(childTree);
 		}
-		TreeNode childTree = trees.get(childTreeRef);
-		treeNode.removeChild(childTree);
 		
-		return args.get(0);		
+		return null;		
 	}
-	//Tree.RemoveChildAt(treeRef, index)
+	//Tree.RemoveChildAt(treeName, index)
 	public static Value RemoveChildAt(ArrayList<Value> args){
 		//args size check
 		if(args.size() != 2)
@@ -146,9 +158,26 @@ public class Tree {
 		}
 		treeNode.removeChildAt(index);
 		
-		return args.get(0);		
+		return null;		
 	}
-	//Tree.GetValue(treeRef)
+	//Tree.RemoveAllChildren(treeName)
+	public static Value RemoveAllChildren(ArrayList<Value> args){
+		//args size check
+		if(args.size() != 1)
+			throw new InterpretException("Error in # of Arguments: " + args.size());
+		
+		//get tree
+		String treeRef = args.get(0).toString();
+		if(!trees.containsKey(treeRef)){
+			return null;
+		}
+		TreeNode treeNode = trees.get(treeRef);
+		
+		treeNode.removeAllChildren();
+		
+		return null;		
+	}	
+	//Tree.GetValue(treeName)
 	//return : rootValue
 	public static Value GetValue(ArrayList<Value> args) {
 		//args size check
@@ -156,65 +185,82 @@ public class Tree {
 			throw new InterpretException("Error in # of Arguments: " + args.size());
 				
 		//get tree
-		String treeRef = args.get(0).toString();
-		if(!trees.containsKey(treeRef)){
-			throw new InterpretException("Error in tree of Arguments: " + treeRef + " is invalid tree");
+		String treeName = args.get(0).toString();
+		if(!trees.containsKey(treeName)){
+			return new StrV("");
 		}
-		TreeNode treeNode = trees.get(treeRef);
+		TreeNode treeNode = trees.get(treeName);
 		
 		return treeNode.getValue();
 	}
-	//Tree.SetValue(treeRef, value)
-	//return treeRef
+	//Tree.SetValue(treeName, value)
+	//return treeName
 	public static Value SetValue(ArrayList<Value> args){
 		//args size check
 		if(args.size() != 2)
 			throw new InterpretException("Error in # of Arguments: " + args.size());
 						
 		//get tree
-		String treeRef = args.get(0).toString();
-		if(!trees.containsKey(treeRef)){
-			throw new InterpretException("Error in tree of Arguments: " + treeRef + " is invalid tree");
+		String treeName = args.get(0).toString();
+		if(!trees.containsKey(treeName)){
+			throw new InterpretException("Error in tree of Arguments: " + treeName + " is invalid tree");
 		}
-		TreeNode treeNode = trees.get(treeRef);
+		TreeNode treeNode = trees.get(treeName);
 		
-		Value value = args.get(1);
-		
+		Value value = args.get(1);		
 		treeNode.setValue(value);
 		
 		return args.get(0);
 	}
-	//Tree.GetChild(treeRef)
-	//return childTree Array
-	public static Value GetChild(ArrayList<Value> args){
-		//args size check
-		if(args.size() != 1)
-				throw new InterpretException("Error in # of Arguments: " + args.size());
-								
-		//get tree
-		String treeRef = args.get(0).toString();
-		if(!trees.containsKey(treeRef)){
-			throw new InterpretException("Error in tree of Arguments: " + treeRef + " is invalid tree");
-		}
-		TreeNode treeNode = trees.get(treeRef);
-		
-		ArrayList<TreeNode> childList = treeNode.getChild();
-		Iterator<TreeNode> iter = childList.iterator();
-		ArrayV childArray = new ArrayV();
-		int index = 1;
-		while(iter.hasNext()){
-			childArray.put(Integer.toString(index++), iter.next().getValue());
-		}
-		
-		return childArray;
-	}
-	//Tree.GetChildAt(treeRef, index)
+	//Tree.GetChildAt(treeName, index, newTreeName)
 	public static Value GetChildAt(ArrayList<Value> args) {
+		//args size check
+		if(args.size() != 3)
+			throw new InterpretException("Error in # of Arguments: " + args.size());
+										
+		//get tree
+		String treeName = args.get(0).toString();
+		if(!trees.containsKey(treeName)){
+			throw new InterpretException("Error in tree of Arguments: " + treeName + " is invalid tree");
+		}
+		TreeNode treeNode = trees.get(treeName);
 		
+		//get index
+		int index;
+		try{
+			index = Integer.parseInt(args.get(1).toString());
+		}catch(NumberFormatException e){
+			throw new InterpretException("Error in index of Arguments: " + args.get(1) + " is not number");
+		}
 		
+		//get
+		TreeNode child = treeNode.getChildAt(index);
+		if(child != null){
+			String newTreeName = args.get(2).toString();
+			if(trees.containsKey(newTreeName))
+				trees.remove(treeName);
+			trees.put(newTreeName, child);
+		}
+				
 		return null;
 	}
-	//Tree.Print(treeRef)
+	//Tree.GetNumberOfChildren(treeName)
+	public static Value GetNumberOfChildren(ArrayList<Value> args) {
+		//args size check
+		if(args.size() != 1){
+			throw new InterpretException("Error in # of Arguments: " + args.size());
+		}
+				
+		//get tree
+		String treeName = args.get(0).toString();
+		if(!trees.containsKey(treeName)){
+			return new DoubleV(0);
+		}
+		TreeNode tree = trees.get(treeName);
+		
+		return new DoubleV(tree.getNumberOfChildren());
+	}
+	//Tree.Print(treeName)
 	public static Value Print(ArrayList<Value> args) {
 		//args size check
 		if(args.size() != 1){
@@ -222,15 +268,47 @@ public class Tree {
 		}
 		
 		//get tree
-		String treeRef = args.get(0).toString();
-		if(!trees.containsKey(treeRef)){
-			throw new InterpretException("Error in tree of Arguments: " + treeRef + " is invalid tree");
+		String treeName = args.get(0).toString();
+		if(!trees.containsKey(treeName)){
+			System.out.println("()");
+			return null;
 		}
-		TreeNode tree = trees.get(treeRef);
 		
+		//print
+		TreeNode tree = trees.get(treeName);
 		tree.print();
 		System.out.println();
 		
+		return null;
+	}
+	//Tree.Copy(treeName, newTreeName)
+	public static Value Copy(ArrayList<Value> args) {
+		//args size check
+		if(args.size() != 2){
+			throw new InterpretException("Error in # of Arguments: " + args.size());
+		}
+		
+		//get tree
+		String treeName = args.get(0).toString();
+		if(!trees.containsKey(treeName)){
+			return null;
+		}
+		TreeNode tree = trees.get(treeName);
+		
+		//copy
+		TreeNode newTree = null;
+		try {
+			newTree = tree.clone();
+		} catch (CloneNotSupportedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		//set new Name
+		String newTreeName = args.get(1).toString();
+		if(trees.containsKey(newTreeName))
+			trees.remove(newTreeName);
+		trees.put(newTreeName, newTree);
 		return null;
 	}
 
@@ -241,33 +319,18 @@ public class Tree {
 	public static void notifyFieldRead(String fieldName) {
 
 	}
-
-	private static String getTreeKey() {
-		return "$Tree" + (treeKey++);
-	}
 }
 
 // tree structure
-class TreeNode {
-	private String treeRef;
+class TreeNode implements Cloneable{
 	private Value value;
 	private ArrayList<TreeNode> child = new ArrayList<TreeNode>();
 
-	TreeNode(String treeRef) {
-		this.treeRef = treeRef;
+	TreeNode() {
 	}
-
-	TreeNode(String treeRef, Value value) {
-		this.treeRef = treeRef;
+	TreeNode(Value value){
 		this.value = value;
 	}
-
-	TreeNode(String treeRef, Value value, ArrayList<TreeNode> child) {
-		this.treeRef = treeRef;
-		this.value = value;
-		this.child = child;
-	}
-
 	void addChild(TreeNode treeNode) {
 		child.add(treeNode);
 	}
@@ -282,25 +345,27 @@ class TreeNode {
 			child.add(index-1, treeNode);
 		}
 	}
-
 	void removeChild(TreeNode treeNode) {
 		child.remove(treeNode);
 	}
 	void removeChildAt(int index){
 		if(index < 1 || child.size() < index){
-			throw new InterpretException("Error in child index of Arguments: " + index + " is out of bounds");
+			return;
 		}
 		child.remove(index-1);
 	}
-
-	void removeChildByIndex(int index) {
-		child.remove(index);
-	}
-
-	void clearChild() {
+	void removeAllChildren() {
 		child.clear();
 	}
-
+	int getNumberOfChildren(){
+		return child.size();
+	}
+	TreeNode getChildAt(int index){
+		if(index < 1 || child.size() < index){
+			return null;
+		}
+		return child.get(index-1);
+	}
 	void print() {
 		System.out.print("(" + value);
 		Iterator<TreeNode> iter = child.iterator();
@@ -316,7 +381,13 @@ class TreeNode {
 	void setValue(Value value){
 		this.value = value;
 	}
-	ArrayList<TreeNode> getChild(){
-		return child;
+	public TreeNode clone() throws CloneNotSupportedException{
+		TreeNode obj = (TreeNode) super.clone();
+		obj.child = new ArrayList<TreeNode>();
+		for(int i = 0; i < child.size(); i++){
+			obj.child.add(child.get(i).clone());
+		}
+		
+		return obj;	
 	}
 }

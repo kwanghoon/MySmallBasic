@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.MultiGraph;
 
 import com.coducation.smallbasic.ArrayV;
@@ -32,7 +33,7 @@ public class Graph {
 		for(int i = 1; i < args.size(); i++){
 			String vertexName = args.get(i).toString();
 			if(!graph.hasVertex(vertexName))
-				graph.addVertex(vertexName);
+				graph.insertVertex(vertexName);
 		}
 						
 		return null;
@@ -362,7 +363,7 @@ class DirectedGraph{
 	DirectedGraph(String id){
 		graphlib = new MultiGraph(id);
 	}
-	void addVertex(String vertexName){
+	void insertVertex(String vertexName){
 		vertices.put(vertexName, new Vertex(vertexName));
 		graphlib.addNode(vertexName);
 	}
@@ -385,32 +386,35 @@ class DirectedGraph{
 		graphlib.removeNode(vertexName);
 	}
 	void insertEdge(String fromVertexName, String toVertexName, String edgeName){
+		insertEdge(fromVertexName, toVertexName, edgeName, new StrV(""));
+	}
+	void insertEdge(String fromVertexName, String toVertexName, String edgeName, Value label){
 		//invalid vertex
 		if(!vertices.containsKey(fromVertexName) || !vertices.containsKey(toVertexName))
 			return;
+		
 		//invalid edgeName
 		if(edges.containsKey(edgeName))
 			throw new InterpretException("Error in edgeName: already exists name");
+		
 		//insert
 		Vertex fromVertex = vertices.get(fromVertexName);
 		Vertex toVertex = vertices.get(toVertexName);
 		Edge insertEdge = new Edge(edgeName, fromVertex, toVertex);
+		insertEdge.setLabel(label);
 		fromVertex.addEdge(insertEdge);
-		//toVertex.addNeighbor(insertEdge); because of directed graph
 		edges.put(edgeName, insertEdge);
 		
-		graphlib.addEdge(edgeName, fromVertexName, toVertexName);
-	}
-	void insertEdge(String fromVertexName, String toVertexName, String edgeName, Value label){
-		insertEdge(fromVertexName, toVertexName, edgeName);
-		Edge insertEdge = edges.get(edgeName);
-		insertEdge.setLabel(label);
+		//graphlib
+		org.graphstream.graph.Edge e = graphlib.addEdge(edgeName, fromVertexName, toVertexName, true);
+		e.addAttribute("ui.label", label.toString());
 	}
 	void removeEdge(String edgeName){
 		if(edges.containsKey(edgeName)){
 			Edge edge = edges.get(edgeName);
 			edge.getFromVertex().removeEdge(edge);	//vertex's edge remove
 			edges.remove(edgeName);
+			//graphlib
 			graphlib.removeEdge(edgeName);
 		}
 	}
@@ -426,6 +430,8 @@ class DirectedGraph{
 				if(edge.getToVertex() == toVertex){
 					iter.remove();					
 					edges.remove(edge.getName());
+					//graphlib
+					
 					graphlib.removeEdge(edge.getName());
 					break;
 				}
@@ -433,8 +439,13 @@ class DirectedGraph{
 		}
 	}
 	void setVertexLabel(String vertexName, Value label){
-		if(vertices.containsKey(vertexName))
+		if(vertices.containsKey(vertexName)){
 			vertices.get(vertexName).setLabel(label);
+			
+			//graphlib
+			Node n = graphlib.getNode(vertexName);
+			n.addAttribute("ui.label", label.toString());
+		}
 	}
 	Value getVertexLabel(String vertexName){
 		if(vertices.containsKey(vertexName))
@@ -443,8 +454,13 @@ class DirectedGraph{
 			return new StrV("");
 	}
 	void setEdgeLabel(String edgeName, Value label){
-		if(edges.containsKey(edgeName))
+		if(edges.containsKey(edgeName)){
 			edges.get(edgeName).setLabel(label);
+			
+			//graph lib
+			org.graphstream.graph.Edge e = graphlib.getEdge(edgeName);			
+			e.addAttribute("ui.label", label.toString());
+		}
 	}
 	Value getEdgeLabel(String edgeName){
 		if(edges.containsKey(edgeName))
@@ -524,8 +540,30 @@ class DirectedGraph{
 	}
 	DirectedGraph copy(String newGraphName){
 		DirectedGraph obj = new DirectedGraph(newGraphName);
-		obj.vertices = (HashMap<String, Vertex>)vertices.clone();
-		obj.edges = (HashMap<String, Edge>)edges.clone();
+		//vertices 깊은복사
+		obj.vertices = new HashMap<String, Vertex>();
+		Iterator<String> iter = vertices.keySet().iterator();
+		while(iter.hasNext()){
+			String key = iter.next();
+			try {
+				obj.vertices.put(key, vertices.get(key).clone());
+			} catch (CloneNotSupportedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		//edges 깊은복사
+		obj.edges = new HashMap<String, Edge>();
+		iter = edges.keySet().iterator();
+		while(iter.hasNext()){
+			String key = iter.next();
+			try {
+				obj.edges.put(key, edges.get(key).clone());
+			} catch (CloneNotSupportedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		
 		//add element to graphlib
 		Iterator<String> vertexIter = vertices.keySet().iterator();
@@ -570,11 +608,10 @@ class Vertex implements Cloneable{
 	ArrayList<Edge> getEdges(){
 		return edges;
 	}
-	public Object clone() throws CloneNotSupportedException{
+	public Vertex clone() throws CloneNotSupportedException{
 		Vertex obj = (Vertex) super.clone();
-		obj.edges = (ArrayList<Edge>)edges.clone();
-		return obj;
-		
+		obj.edges = (ArrayList<Edge>) edges.clone();
+		return obj;		
 	}
 }
 
@@ -608,10 +645,10 @@ class Edge implements Cloneable{
 	Vertex getToVertex(){
 		return toVertex;
 	}
-	public Object clone() throws CloneNotSupportedException{
+	public Edge clone() throws CloneNotSupportedException{
 		Edge obj = (Edge) super.clone();
-		obj.fromVertex = (Vertex)fromVertex.clone();
-		obj.toVertex = (Vertex)toVertex.clone();
+		obj.fromVertex = fromVertex.clone();
+		obj.toVertex = toVertex.clone();
 		return obj;
 		
 	}

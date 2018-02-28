@@ -1,75 +1,132 @@
 'tree create test
 TextWindow.WriteLine("===tree create test===")
-t1 = Tree.Create("a")
-t2 = Tree.Create("b")
-t3 = Tree.Create("c")
-t4 = Tree.Create("d", t1, t2, t3)
-Tree.Print(t1)
-Tree.Print(t4)
+Tree.Create("myTree", "a", "b", "c")
+'(a:(b):(c))
+Tree.Print("myTree")
+
 
 'addChild test
 TextWindow.WriteLine("===addChild Test===")
-t1 = Tree.Create("a")
-t2 = Tree.Create("b")
-t3 = Tree.Create("c")
-Tree.AddChild(t1, t2, t3)
-Tree.Print(t1)
+Tree.Create("t1", "a")
+Tree.Create("t2", "b")
+Tree.Create("t3", "c")
+Tree.AddChild("t1", "t2", "t3")
+'(a:(b):(c))
+Tree.Print("t1")
+
+
+'tree clear test
+TextWindow.WriteLine("===clear Test===")
+Tree.Clear("myTree")
+'()
+Tree.Print("myTree")
+Tree.Clear("t1", "t2", "t3")
+'()
+Tree.Print("t1")
+'()
+Tree.Print("t2")
+'()
+Tree.Print("t3")
+
 
 'addChildAt test
 TextWindow.WriteLine("===addChildAt Test===")
-t1 = Tree.Create("a")
-t2 = Tree.Create("b")
-t3 = Tree.Create("c")
-Tree.AddChildAt(t1, 1, t2)
-Tree.Print(t1)
-Tree.AddChildAt(t1, 1, t3)
-Tree.Print(t1)
+Tree.Create("t1", "a")
+Tree.Create("t2", "b")
+Tree.Create("t3", "c")
+Tree.AddChildAt("t1", 1, "t2")
+'(a:(b))
+Tree.Print("t1")
+Tree.AddChildAt("t1", 1, "t3")
+'(a:(c):(b))
+Tree.Print("t1")
+
+Tree.Clear("t1")
+Tree.Clear("t2")
+Tree.Clear("t3")
+
 
 'removeChild Test
 TextWindow.WriteLine("===removeChild Test===")
-t1 = Tree.Create("a")
-t2 = Tree.Create("b")
-t3 = Tree.Create("c")
-t4 = Tree.Create("d", t1, t2, t3)
-Tree.Print(t4)
-Tree.RemoveChild(t4, t3)
-Tree.Print(t4)
+Tree.Create("t1", "c1")
+Tree.Create("t2", "c2")
+Tree.Create("t3", "c3")
+Tree.Create("myTree", "r")
+Tree.AddChild("myTree", "t1", "t2", "t3")
+'(r:(c1):(c2):(c3))
+Tree.Print("myTree")
+Tree.RemoveChild("myTree", "t2")
+'(r:(c1):(c3))
+Tree.Print("myTree")
+Tree.RemoveChild("myTree", "t1", "t3")
+'(r)
+Tree.Print("myTree")
+
+Tree.Clear("myTree")
+Tree.Clear("t1")
+Tree.Clear("t2")
+Tree.Clear("t3")
+
 
 'removeChildAt Test
 TextWindow.WriteLine("===removeChildAt Test===")
-t1 = Tree.Create("a")
-t2 = Tree.Create("b")
-t3 = Tree.Create("c")
-t4 = Tree.Create("d", t1, t2, t3)
-Tree.Print(t4)
-Tree.RemoveChildAt(t4, 2)
-Tree.Print(t4)
+Tree.Create("myTree", "r", "c1", "c2", "c3")
+'(r:(c1):(c2):(c3))
+Tree.Print("myTree")
+Tree.RemoveChildAt("myTree", 2)
+'(r:(c1):(c3))
+Tree.Print("myTree")
+Tree.Clear("myTree")
+
+
+'removeAllChildren Test
+TextWindow.WriteLine("===removeAllChildren Test===")
+Tree.Create("myTree", "r", "c1", "c2", "c3")
+Tree.RemoveAllChildren("myTree")
+'(r))
+Tree.Print("myTree")
+Tree.Clear("myTree")
 
 'get value Test
 TextWindow.WriteLine("===get root value Test===")
-t1 = Tree.Create("a")
-t2 = Tree.Create("b")
-t3 = Tree.Create("c")
-t4 = Tree.Create("d", t1, t2, t3)
-Tree.Print(t4)
-TextWindow.WriteLine(Tree.GetValue(t4))
+Tree.Create("myTree", "r", "c1", "c2", "c3")
+'r
+TextWindow.WriteLine(Tree.GetValue("myTree"))
+Tree.Clear("myTree")
+
 
 'set value Test
 TextWindow.WriteLine("===set root value Test===")
-t1 = Tree.Create("a")
-t2 = Tree.Create("b")
-t3 = Tree.Create("c")
-t4 = Tree.Create("d", t1, t2, t3)
-Tree.Print(t4)
-Tree.SetValue(t4, "e")
-Tree.Print(t4)
+Tree.Create("myTree", "r", "c1", "c2", "c3")
+Tree.SetValue("myTree", "newR")
+'(newR:(c1):(c2):(c3))
+Tree.Print("myTree")
+Tree.Clear("myTree")
 
-'get child test
+
+'get number of children test
 TextWindow.WriteLine("===get child Test===")
-t1 = Tree.Create("a")
-t2 = Tree.Create("b")
-t3 = Tree.Create("c")
-t4 = Tree.Create("d", t1, t2, t3)
-Tree.Print(t4)
-arr = Tree.GetChild(t4)
-TextWindow.WriteLine(arr)
+Tree.Create("myTree", "r", "c1", "c2", "c3")
+'3
+TextWindow.WriteLine(Tree.GetNumberOfChildren("myTree"))
+Tree.GetChildAt("myTree", 2, "child2")
+'(c2)
+Tree.Print("child2")
+
+Tree.Clear("myTree")
+Tree.Clear("child2")
+
+
+'copy Test
+TextWindow.WriteLine("===copy Test===")
+Tree.Create("myTree", "r", "c1", "c2", "c3")
+Tree.Copy("myTree", "copyTree")
+Tree.GetChildAt("copyTree", 1, "copyTreeSub1")
+Tree.SetValue("copyTreeSub1", "changed c1")
+Tree.SetValue("copyTree", "changed r")
+'(r:(c1):(c2):(c3))
+Tree.Print("myTree")
+'(changed r:(changed c1):(c2):(c3))
+Tree.Print("copyTree")
+Tree.Clear("myTree")
+Tree.Clear("copyTree")
