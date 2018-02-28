@@ -1,42 +1,36 @@
-i = 0
-c = 0
 
-While i <= 1
-  
-  TextWindow.Clear()
+'       a
+'      ／＼
+'     b   c
+'    ／＼     ／＼
+'   d  e f  g
+'
+'
+Tree.Create("tree", "a")
+Tree.Create("t1", "b")
+Tree.Create("t2", "c")
+Tree.AddChild("tree", "t1", "t2")
+Tree.Create("t3", "d")
+Tree.Create("t4", "e")
+Tree.AddChild("t1", "t3", "t4")
+Tree.Create("t5", "f")
+Tree.Create("t6", "g")
+Tree.AddChild("t2", "t5", "t6")
+'dfs
 
-  TextWindow.CursorTop = 5
-  TextWindow.CursorLeft = 10
-  
-  If c = 0 Then
-    TextWindow.ForegroundColor = "Red"
-  EndIf
-  
-  If c = 1 Then
-    TextWindow.ForegroundColor = "Yellow"
-  EndIf
-  
-  If c = 2 Then
-    TextWindow.ForegroundColor = "blue"
-  EndIf
-  
-  If c = 3 Then
-    TextWindow.ForegroundColor = "gREen"
-    c = -1
-  EndIf
-  
-  TextWindow.WriteLine("***********************************")
-  TextWindow.CursorLeft = 10
-  TextWindow.WriteLine("*                                 *")
-  TextWindow.CursorLeft = 10
-  TextWindow.WriteLine("*   CHONNAM NATIONAL UNIVERSITY   *")
-  TextWindow.CursorLeft = 10
-  TextWindow.WriteLine("*                                 *")
-  TextWindow.CursorLeft = 10
-  TextWindow.WriteLine("***********************************")
-  TextWindow.WriteLine("")
-  
-  Program.Delay(300)
-  c = c + 1
+'bfs
+List.Add("bfs", "tree")
+id = 1
+While(List.Count("bfs") > 0)
+	visit = List.GetAt("bfs", 1)
+	TextWindow.Write(Tree.GetValue(visit) + " ")
+	childNum = Tree.GetNumberOfChildren(visit)
 
+	For i=1 To childNum
+		Tree.GetChildAt(visit, i, id)
+		List.Add("bfs", id)
+		id = id+1
+	EndFor
+	List.RemoveAt("bfs", 1)
 EndWhile
+TextWindow.WriteLine()
