@@ -365,7 +365,6 @@ public class GraphicsWindow {
 							DrawBoundTextCmd dbtc = (DrawBoundTextCmd) cmd;
 							FontMetrics dbtcMetrics = g2.getFontMetrics(dbtc.font);
 							color = ((StrV) hexColor((StrV) dbtc.brushcolor, new StrV("#000000"))).toString();
-							;
 							g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) dbtc.opacity));
 							g2.rotate(java.lang.Math.toRadians(dbtc.degree));
 							g2.scale(dbtc.scaleX, dbtc.scaleY);
@@ -377,7 +376,6 @@ public class GraphicsWindow {
 						case DRAWELLIPSE:
 							DrawEllipseCmd dec = (DrawEllipseCmd) cmd;
 							color = ((StrV) hexColor((StrV) dec.pencolor, new StrV("#000000"))).toString();
-							;
 							g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) dec.opacity));
 							g2.rotate(java.lang.Math.toRadians(dec.degree), (dec.x + dec.w / 2) * zoomX,
 									(dec.y + dec.h / 2) * zoomY);
@@ -405,7 +403,6 @@ public class GraphicsWindow {
 						case DRAWLINE:
 							DrawLineCmd dlc = (DrawLineCmd) cmd;
 							color = ((StrV) hexColor((StrV) dlc.pencolor, new StrV("#000000"))).toString();
-							;
 							g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) dlc.opacity));
 							g2.rotate(java.lang.Math.toRadians(dlc.degree), ((dlc.x1 + dlc.x2) / 2) * zoomX,
 									((dlc.y1 + dlc.y2) / 2) * zoomY);
@@ -419,7 +416,6 @@ public class GraphicsWindow {
 						case DRAWRECTANGLE:
 							DrawRectangleCmd drc = (DrawRectangleCmd) cmd;
 							color = ((StrV) hexColor((StrV) drc.pencolor, new StrV("#000000"))).toString();
-							;
 							g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) drc.opacity));
 							g2.rotate(java.lang.Math.toRadians(drc.degree), (drc.x + drc.w / 2) * zoomX,
 									(drc.y + drc.h / 2) * zoomY);
@@ -460,7 +456,6 @@ public class GraphicsWindow {
 						case DRAWTRIANGLE:
 							DrawTriangleCmd dtrc = (DrawTriangleCmd) cmd;
 							color = ((StrV) hexColor((StrV) dtrc.pencolor, new StrV("#000000"))).toString();
-							;
 							g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) dtrc.opacity));
 							Point dt = getCircumcenter(dtrc.xs[0], dtrc.ys[0], dtrc.xs[1], dtrc.ys[1], dtrc.xs[2],
 									dtrc.ys[2]);
@@ -475,7 +470,6 @@ public class GraphicsWindow {
 						case FILLELLIPSE:
 							FillEllipseCmd fec = (FillEllipseCmd) cmd;
 							color = ((StrV) hexColor((StrV) fec.brushcolor, new StrV("#000000"))).toString();
-							;
 							g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) fec.opacity));
 							g2.rotate(java.lang.Math.toRadians(fec.degree), (fec.x + fec.w / 2) * zoomX,
 									(fec.y + fec.h / 2) * zoomY);
@@ -487,7 +481,6 @@ public class GraphicsWindow {
 						case FILLRECTANGLE:
 							FillRectangleCmd frc = (FillRectangleCmd) cmd;
 							color = ((StrV) hexColor((StrV) frc.brushcolor, new StrV("#000000"))).toString();
-							;
 							g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) frc.opacity));
 							g2.rotate(java.lang.Math.toRadians(frc.degree), (frc.x + frc.w / 2) * zoomX,
 									(frc.y + frc.h / 2) * zoomY);
@@ -499,7 +492,6 @@ public class GraphicsWindow {
 						case FILLTRIANGLE:
 							FillTriangleCmd ftc = (FillTriangleCmd) cmd;
 							color = ((StrV) hexColor((StrV) ftc.brushcolor, new StrV("#000000"))).toString();
-							;
 							g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) ftc.opacity));
 							Point ft = getCircumcenter(ftc.xs[0], ftc.ys[0], ftc.xs[1], ftc.ys[1], ftc.xs[2],
 									ftc.ys[2]);
@@ -1765,6 +1757,7 @@ public class GraphicsWindow {
 			else
 				height = 0;
 
+			panel.setLayout(null);
 			panel.setPreferredSize(new Dimension(width, height));
 			frame.pack();
 		} else if ("Title".equalsIgnoreCase(fieldName)) {
