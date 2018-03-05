@@ -33,3 +33,7 @@ TextWindow.WriteLine(Graph.GetEdgeLabel("copyGraph", "e1"))
 
 Graph.Show("copyGraph")
 Graph.Show("myGraph")
+Graph.SetSize("copyGraph", 300, 300)
+Graph.SetSize("myGraph", 300, 300)
+Graph.SetLocation("copyGraph", 300, 0)
+Graph.SetLocation("myGraph", 0, 0)

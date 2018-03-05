@@ -349,6 +349,63 @@ public class Graph {
 		graph.show();
 		return null;
 	}
+	//Graph.Hide(graphName)
+	public static Value Hide(ArrayList<Value> args){
+		//args size check
+		if(args.size() != 1)
+			throw new InterpretException("Error in # of Arguments: " + args.size());
+		
+		//get graph
+		String graphName = args.get(0).toString();
+		if(graphs.containsKey(graphName))
+			graphs.get(graphName).hide();
+		
+		return null;
+	}
+	//Graph.SetLocation(graphName, x, y)
+	public static Value SetLocation(ArrayList<Value> args){
+		//args size check
+		if(args.size() != 3)
+			throw new InterpretException("Error in # of Arguments: " + args.size());
+		
+		//get graph, x, y
+		String graphName = args.get(0).toString();
+		int x, y;
+		try{
+			x = Integer.parseInt(args.get(1).toString());
+			y = Integer.parseInt(args.get(2).toString());
+		}catch(NumberFormatException e){
+			throw new InterpretException("Error in index of Arguments: " + args.get(2) + " is not number");
+		}
+		
+		//setLocation
+		if(graphs.containsKey(graphName))
+			graphs.get(graphName).setLotation(x, y);
+		
+		return null;
+	}
+	//Graph.SetSize(graphName, width, height)
+	public static Value SetSize(ArrayList<Value> args){
+		//args size check
+		if(args.size() != 3)
+			throw new InterpretException("Error in # of Arguments: " + args.size());
+		
+		//get graph, width, height
+		String graphName = args.get(0).toString();
+		int width, height;
+		try{
+			width = Integer.parseInt(args.get(1).toString());
+			height = Integer.parseInt(args.get(2).toString());
+		}catch(NumberFormatException e){
+			throw new InterpretException("Error in index of Arguments: " + args.get(2) + " is not number");
+		}
+		
+		//setLocation
+		if(graphs.containsKey(graphName))
+			graphs.get(graphName).setSize(width, height);
+		
+		return null;
+	}
 	public static void notifyFieldAssign(String fieldName) {
 	}
 
@@ -535,9 +592,6 @@ class DirectedGraph{
 			return new StrV("");
 		return new StrV(edges.get(edgeName).getToVertex().getName());
 	}
-	void show(){
-		graphlib.display();
-	}
 	DirectedGraph copy(String newGraphName){
 		DirectedGraph obj = new DirectedGraph(newGraphName);
 		//vertices 깊은복사
@@ -576,6 +630,25 @@ class DirectedGraph{
 		}
 		
 		return obj;
+	}
+	//call GraphicsWindow method
+	void show(){
+		GraphicsWindow.AddGraph(graphlib.getId(), graphlib);
+	}
+	void hide(){
+		GraphicsWindow.HideGraph(graphlib.getId());
+	}
+	void setLotation(int x, int y){
+		if(!GraphicsWindow.hasGraphContain(graphlib.getId()))
+			GraphicsWindow.AddGraph(graphlib.getId(), graphlib);
+		
+		GraphicsWindow.SetGraphLocation(graphlib.getId(), x, y);
+	}
+	void setSize(int width, int height){
+		if(!GraphicsWindow.hasGraphContain(graphlib.getId()))
+			GraphicsWindow.AddGraph(graphlib.getId(), graphlib);
+		
+		GraphicsWindow.SetGraphSize(graphlib.getId(), width, height);
 	}
 }
 

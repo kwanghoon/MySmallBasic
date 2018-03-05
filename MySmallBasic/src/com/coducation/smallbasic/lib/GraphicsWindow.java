@@ -26,6 +26,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Random;
 
 import javax.swing.ImageIcon;
@@ -43,6 +44,7 @@ import javax.swing.event.DocumentListener;
 import javax.swing.text.Document;
 
 import org.graphstream.graph.implementations.MultiGraph;
+import org.graphstream.ui.view.Viewer;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -2688,50 +2690,41 @@ public class GraphicsWindow {
 	// End of Supporting Video Library
 
 	// Supporting Graph Library
-	private static HashMap<String, MultiGraph> graphMap = new HashMap<>();
-	private static MultiGraph multiGraph;
+	private static HashMap<String, org.graphstream.ui.swingViewer.ViewPanel> graphViewers = new HashMap<>();
 	
-	private static Container graphContainer;
-	
-	static void AddGraph(String graphName) {
-		multiGraph = new MultiGraph(graphName);
-		graphMap.put(graphName, multiGraph);
-	}
-	
-	static void SetGraph(String graphName) {
-		multiGraph = graphMap.get(graphName);
-	}
-	
-	static boolean FindGraph(String graphName) {
-		return graphMap.containsKey(graphName);
-	}
-	
-	static void AddVertex(String vertexName) {
+	static void AddGraph(String graphID, org.graphstream.graph.Graph graph){
+		if (frame == null)
+			Show(new ArrayList<Value>());
 		
+		org.graphstream.ui.view.Viewer viewer = 
+				new org.graphstream.ui.view.Viewer(graph,  Viewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);		
+		viewer.enableAutoLayout();
+		
+		org.graphstream.ui.swingViewer.ViewPanel viewPanel = viewer.addDefaultView(false);
+		graphViewers.put(graphID,  viewPanel);
+		viewPanel.setSize(500, 500);
+		viewPanel.setLocation(0, 0);
+		panel.add(viewPanel);
+	}
+	static void HideGraph(String graphID){
+		if(graphViewers.containsKey(graphID)){
+			org.graphstream.ui.swingViewer.ViewPanel viewPanel = 
+					graphViewers.get(graphID);
+			panel.remove(viewPanel);
+		}
 	}
 	
-	static void AddEdge(String fromEdgeName, String toEdgeName, String edgeName) {
-		
+	static void SetGraphLocation(String graphID, int x, int y) {
+		if(graphViewers.containsKey(graphID))
+			graphViewers.get(graphID).setLocation(x, y);
 	}
 	
-	static void SetVertexLabel(String vertexName, String label) {
-		
+	static void SetGraphSize(String graphID, int width, int height){
+		if(graphViewers.containsKey(graphID))
+			graphViewers.get(graphID).setSize(width, height);
 	}
-	
-	static void SetEdgeLabel(String edgeName, String label) {
-		
-	}
-	
-	static void RemoveVertex(String vertexName) {
-		
-	}
-	
-	static void RemoveEdge(String edgeName) {
-		
-	}
-	
-	static void SetGraphLocation(int x, int y) {
-		
+	static boolean hasGraphContain(String graphID){
+		return graphViewers.containsKey(graphID);
 	}
 	
 	// End of Supporting Graph Library
