@@ -16,21 +16,19 @@ Tree.AddChild("t1", "t3", "t4")
 Tree.Create("t5", "f")
 Tree.Create("t6", "g")
 Tree.AddChild("t2", "t5", "t6")
-'dfs
-'준비중..
+
 'bfs
 List.Add("bfs", "tree")
-id = 1
+bfsId = 1
 While(List.Count("bfs") > 0)
 	visit = List.GetAt("bfs", 1)
 	TextWindow.Write(Tree.GetValue(visit) + " ")
 	
 	childNum = Tree.GetNumberOfChildren(visit)
-	TextWindow.WriteLine("childNum" + childNum)
 	For i=1 To childNum
-		Tree.GetChildAt(visit, i, id)
-		id = id+1
-		List.Add("bfs", id)
+		Tree.GetChildAt(visit, i, bfsId)
+		List.Add("bfs", bfsId)
+		bfsId = bfsId+1
 	EndFor
 	List.RemoveAt("bfs", 1)
 EndWhile

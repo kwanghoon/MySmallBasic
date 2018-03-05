@@ -1,0 +1,34 @@
+
+'       a
+'      ／＼
+'     b   c
+'    ／＼     ／＼
+'   d  e f  g
+'
+'
+Tree.Create("tree", "a")
+Tree.Create("t1", "b")
+Tree.Create("t2", "c")
+Tree.AddChild("tree", "t1", "t2")
+Tree.Create("t3", "d")
+Tree.Create("t4", "e")
+Tree.AddChild("t1", "t3", "t4")
+Tree.Create("t5", "f")
+Tree.Create("t6", "g")
+Tree.AddChild("t2", "t5", "t6")
+'dfs
+Stack.PushValue("dfs", "tree")
+dfsID = 1
+While(Stack.GetCount("dfs") > 0)
+	visit = Stack.PopValue("dfs")
+	TextWindow.Write(Tree.GetValue(visit) + " ")
+	
+	childNum = Tree.GetNumberOfChildren(visit)
+	'childNum, childNum-1, ... ,2, 1
+	For i=1 To childNum
+		Tree.GetChildAt(visit, childNum-i+1, dfsID)
+		Stack.PushValue("dfs", dfsID)
+		dfsID = dfsID+1
+	EndFor
+EndWhile
+TextWindow.WriteLine()
