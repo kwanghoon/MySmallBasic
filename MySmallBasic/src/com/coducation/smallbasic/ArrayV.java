@@ -26,7 +26,8 @@ public class ArrayV extends Value {
 		StringBuilder sb = new StringBuilder();
 		Set<String> indices = arrmap.keySet();
 		for (String index : indices) {
-			Value v = arrmap.get(index.toUpperCase()).b;
+			Pair<String,Value> psv = arrmap.get(index.toUpperCase());
+			Value v = psv.b;
 			String str = v.toString();
 			StringBuilder sbs = new StringBuilder();
 			for (int i = 0; i<str.length(); i++) {
@@ -35,7 +36,7 @@ public class ArrayV extends Value {
 					sbs.append('\\');
 				sbs.append(ch);
 			}
-			sb.append(index);
+			sb.append(psv.a);
 			sb.append('=');
 			sb.append(sbs.toString());
 			sb.append(';');

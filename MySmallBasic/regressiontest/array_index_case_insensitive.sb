@@ -4,7 +4,13 @@ friends["VJ"]["Name"] = "Vijaye"
 friends["VJ"]["Phone"] = "555-4567"
 friends["Ash"]["Name"] = "Ashley"
 friends["Ash"]["Phone"] = "555-2345"
-TextWindow.Write("Enter the nickname:")
-nickname = TextWindow.Read()
+
+nickname = "Ash"
+TextWindow.WriteLine("Nickname: " + nickname)
+TextWindow.WriteLine("Name: " +friends[nickname]["Name"])
+TextWindow.WriteLine("Phone: " + friends[nickname]["Phone"])
+
+nickname = "aSH"
+TextWindow.WriteLine("Nickname: " + nickname)
 TextWindow.WriteLine("Name: " +friends[nickname]["Name"])
 TextWindow.WriteLine("Phone: " + friends[nickname]["Phone"])
