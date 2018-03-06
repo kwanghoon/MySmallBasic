@@ -26,7 +26,6 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Random;
 
 import javax.swing.ImageIcon;
@@ -43,7 +42,6 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.Document;
 
-import org.graphstream.graph.implementations.MultiGraph;
 import org.graphstream.ui.view.Viewer;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -348,7 +346,7 @@ public class GraphicsWindow {
 
 			for (int layer = 2; layer <= 3; layer++) {
 				for (Cmd cmd : _cmdList) { // clone 시 오버헤드 발생할 수 있음
-					if(cmd.getLayer() != layer)
+					if (cmd.getLayer() != layer)
 						continue;
 					if (cmd.show) {
 						if (cmd.scaleX != 1)
@@ -365,7 +363,6 @@ public class GraphicsWindow {
 							DrawBoundTextCmd dbtc = (DrawBoundTextCmd) cmd;
 							FontMetrics dbtcMetrics = g2.getFontMetrics(dbtc.font);
 							color = ((StrV) hexColor((StrV) dbtc.brushcolor, new StrV("#000000"))).toString();
-							;
 							g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) dbtc.opacity));
 							g2.rotate(java.lang.Math.toRadians(dbtc.degree));
 							g2.scale(dbtc.scaleX, dbtc.scaleY);
@@ -377,15 +374,17 @@ public class GraphicsWindow {
 						case DRAWELLIPSE:
 							DrawEllipseCmd dec = (DrawEllipseCmd) cmd;
 							color = ((StrV) hexColor((StrV) dec.pencolor, new StrV("#000000"))).toString();
-							;
-							g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) dec.opacity));
-							g2.rotate(java.lang.Math.toRadians(dec.degree), (dec.x + dec.w / 2) * zoomX,
-									(dec.y + dec.h / 2) * zoomY);
-							g2.scale(dec.scaleX, dec.scaleY);
-							g2.setStroke(new BasicStroke((float) ((DoubleV) dec.penwidth).getValue()));
-							g2.setColor(new Color(Integer.parseInt(color.substring(1), 16)));
-							g2.drawOval((int) dec.x, (int) dec.y, dec.w, dec.h);
-							g2.rotate(java.lang.Math.toRadians(-dec.degree), dec.x + dec.w / 2, dec.y + dec.h / 2);
+							if (dec.penwidth.getNumber() != 0) {
+								g2.setComposite(
+										AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) dec.opacity));
+								g2.rotate(java.lang.Math.toRadians(dec.degree), (dec.x + dec.w / 2) * zoomX,
+										(dec.y + dec.h / 2) * zoomY);
+								g2.scale(dec.scaleX, dec.scaleY);
+								g2.setStroke(new BasicStroke((float) ((DoubleV) dec.penwidth).getValue()));
+								g2.setColor(new Color(Integer.parseInt(color.substring(1), 16)));
+								g2.drawOval((int) dec.x, (int) dec.y, dec.w, dec.h);
+								g2.rotate(java.lang.Math.toRadians(-dec.degree), dec.x + dec.w / 2, dec.y + dec.h / 2);
+							}
 							break;
 						case DRAWIMAGE:
 							DrawImageCmd dic = (DrawImageCmd) cmd;
@@ -405,29 +404,33 @@ public class GraphicsWindow {
 						case DRAWLINE:
 							DrawLineCmd dlc = (DrawLineCmd) cmd;
 							color = ((StrV) hexColor((StrV) dlc.pencolor, new StrV("#000000"))).toString();
-							;
-							g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) dlc.opacity));
-							g2.rotate(java.lang.Math.toRadians(dlc.degree), ((dlc.x1 + dlc.x2) / 2) * zoomX,
-									((dlc.y1 + dlc.y2) / 2) * zoomY);
-							g2.scale(dlc.scaleX, dlc.scaleY);
-							g2.setStroke(new BasicStroke((float) ((DoubleV) dlc.penwidth).getValue()));
-							g2.setColor(new Color(Integer.parseInt(color.substring(1), 16)));
-							g2.drawLine(dlc.x1, dlc.y1, dlc.x2, dlc.y2);
-							g2.rotate(java.lang.Math.toRadians(-dlc.degree), (dlc.x1 + dlc.x2) / 2,
-									(dlc.y1 + dlc.y2) / 2);
+							if (dlc.penwidth.getNumber() != 0) {
+								g2.setComposite(
+										AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) dlc.opacity));
+								g2.rotate(java.lang.Math.toRadians(dlc.degree), ((dlc.x1 + dlc.x2) / 2) * zoomX,
+										((dlc.y1 + dlc.y2) / 2) * zoomY);
+								g2.scale(dlc.scaleX, dlc.scaleY);
+								g2.setStroke(new BasicStroke((float) ((DoubleV) dlc.penwidth).getValue()));
+								g2.setColor(new Color(Integer.parseInt(color.substring(1), 16)));
+								g2.drawLine(dlc.x1, dlc.y1, dlc.x2, dlc.y2);
+								g2.rotate(java.lang.Math.toRadians(-dlc.degree), (dlc.x1 + dlc.x2) / 2,
+										(dlc.y1 + dlc.y2) / 2);
+							}
 							break;
 						case DRAWRECTANGLE:
 							DrawRectangleCmd drc = (DrawRectangleCmd) cmd;
 							color = ((StrV) hexColor((StrV) drc.pencolor, new StrV("#000000"))).toString();
-							;
-							g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) drc.opacity));
-							g2.rotate(java.lang.Math.toRadians(drc.degree), (drc.x + drc.w / 2) * zoomX,
-									(drc.y + drc.h / 2) * zoomY);
-							g2.scale(drc.scaleX, drc.scaleY);
-							g2.setStroke(new BasicStroke((float) ((DoubleV) drc.penwidth).getValue()));
-							g2.setColor(new Color(Integer.parseInt(color.substring(1), 16)));
-							g2.drawRect((int) drc.x, (int) drc.y, drc.w, drc.h);
-							g2.rotate(java.lang.Math.toRadians(-drc.degree), drc.x + drc.w / 2, drc.y + drc.h / 2);
+							if (drc.penwidth.getNumber() != 0) {
+								g2.setComposite(
+										AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) drc.opacity));
+								g2.rotate(java.lang.Math.toRadians(drc.degree), (drc.x + drc.w / 2) * zoomX,
+										(drc.y + drc.h / 2) * zoomY);
+								g2.scale(drc.scaleX, drc.scaleY);
+								g2.setStroke(new BasicStroke((float) ((DoubleV) drc.penwidth).getValue()));
+								g2.setColor(new Color(Integer.parseInt(color.substring(1), 16)));
+								g2.drawRect((int) drc.x, (int) drc.y, drc.w, drc.h);
+								g2.rotate(java.lang.Math.toRadians(-drc.degree), drc.x + drc.w / 2, drc.y + drc.h / 2);
+							}
 							break;
 						case DRAWRESIZEDIMAGE:
 							DrawResizedImageCmd dric = (DrawResizedImageCmd) cmd;
@@ -460,22 +463,23 @@ public class GraphicsWindow {
 						case DRAWTRIANGLE:
 							DrawTriangleCmd dtrc = (DrawTriangleCmd) cmd;
 							color = ((StrV) hexColor((StrV) dtrc.pencolor, new StrV("#000000"))).toString();
-							;
-							g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) dtrc.opacity));
-							Point dt = getCircumcenter(dtrc.xs[0], dtrc.ys[0], dtrc.xs[1], dtrc.ys[1], dtrc.xs[2],
-									dtrc.ys[2]);
-							g2.rotate(java.lang.Math.toRadians(dtrc.degree), dt.getX() * zoomX, dt.getY() * zoomY);
-							g2.scale(dtrc.scaleX, dtrc.scaleY);
-							g2.setStroke(new BasicStroke((float) ((DoubleV) dtrc.penwidth).getValue()));
-							g2.setColor(new Color(Integer.parseInt(color.substring(1), 16)));
-							g2.drawPolygon(dtrc.xs, dtrc.ys, 3);
-							g2.rotate(java.lang.Math.toRadians(-dtrc.degree), dt.getX(), dt.getY());
+							if (dtrc.penwidth.getNumber() != 0) {
+								g2.setComposite(
+										AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) dtrc.opacity));
+								Point dt = getCircumcenter(dtrc.xs[0], dtrc.ys[0], dtrc.xs[1], dtrc.ys[1], dtrc.xs[2],
+										dtrc.ys[2]);
+								g2.rotate(java.lang.Math.toRadians(dtrc.degree), dt.getX() * zoomX, dt.getY() * zoomY);
+								g2.scale(dtrc.scaleX, dtrc.scaleY);
+								g2.setStroke(new BasicStroke((float) ((DoubleV) dtrc.penwidth).getValue()));
+								g2.setColor(new Color(Integer.parseInt(color.substring(1), 16)));
+								g2.drawPolygon(dtrc.xs, dtrc.ys, 3);
+								g2.rotate(java.lang.Math.toRadians(-dtrc.degree), dt.getX(), dt.getY());
+							}
 							break;
 
 						case FILLELLIPSE:
 							FillEllipseCmd fec = (FillEllipseCmd) cmd;
 							color = ((StrV) hexColor((StrV) fec.brushcolor, new StrV("#000000"))).toString();
-							;
 							g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) fec.opacity));
 							g2.rotate(java.lang.Math.toRadians(fec.degree), (fec.x + fec.w / 2) * zoomX,
 									(fec.y + fec.h / 2) * zoomY);
@@ -487,7 +491,6 @@ public class GraphicsWindow {
 						case FILLRECTANGLE:
 							FillRectangleCmd frc = (FillRectangleCmd) cmd;
 							color = ((StrV) hexColor((StrV) frc.brushcolor, new StrV("#000000"))).toString();
-							;
 							g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) frc.opacity));
 							g2.rotate(java.lang.Math.toRadians(frc.degree), (frc.x + frc.w / 2) * zoomX,
 									(frc.y + frc.h / 2) * zoomY);
@@ -499,7 +502,6 @@ public class GraphicsWindow {
 						case FILLTRIANGLE:
 							FillTriangleCmd ftc = (FillTriangleCmd) cmd;
 							color = ((StrV) hexColor((StrV) ftc.brushcolor, new StrV("#000000"))).toString();
-							;
 							g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) ftc.opacity));
 							Point ft = getCircumcenter(ftc.xs[0], ftc.ys[0], ftc.xs[1], ftc.ys[1], ftc.xs[2],
 									ftc.ys[2]);
@@ -559,7 +561,7 @@ public class GraphicsWindow {
 
 					int[] arr = img.getRaster().getPixel(values[0], values[1], new int[4]);
 					String color = Integer.toHexString(arr[0]) + Integer.toHexString(arr[1])
-					+ Integer.toHexString(arr[2]);
+							+ Integer.toHexString(arr[2]);
 					StrV rgbColor = new StrV("#" + color);
 
 					return rgbColor;
@@ -1174,7 +1176,7 @@ public class GraphicsWindow {
 			if (MouseDown != null) {
 				MouseX = new DoubleV(e.getX());
 				MouseY = new DoubleV(e.getY());
-				
+
 				boolean left = SwingUtilities.isLeftMouseButton(e);
 				boolean right = SwingUtilities.isRightMouseButton(e);
 
@@ -1189,7 +1191,7 @@ public class GraphicsWindow {
 			if (MouseUp != null) {
 				MouseX = new DoubleV(e.getX());
 				MouseY = new DoubleV(e.getY());
-				
+
 				boolean left = SwingUtilities.isLeftMouseButton(e);
 				boolean right = SwingUtilities.isRightMouseButton(e);
 
@@ -1621,7 +1623,7 @@ public class GraphicsWindow {
 	private static final boolean isMouseIn = (Mouse.MouseY.getNumber() >= Top.getNumber()
 			&& Mouse.MouseY.getNumber() <= Top.getNumber() + Height.getNumber())
 			&& (Mouse.MouseX.getNumber() >= Left.getNumber() + 7
-			&& Mouse.MouseX.getNumber() <= Left.getNumber() + Width.getNumber());
+					&& Mouse.MouseX.getNumber() <= Left.getNumber() + Width.getNumber());
 
 	private static final Value defaultMouseX = new DoubleV(
 			isMouseIn ? (int) Mouse.MouseX.getNumber() - Left.getNumber() - 7 : 0);
@@ -1743,10 +1745,14 @@ public class GraphicsWindow {
 			} else
 				throw new InterpretException("BackgroundColor: Unexpected value" + BrushColor.toString());
 		} else if ("CanResize".equalsIgnoreCase(fieldName)) {
-			if (CanResize instanceof StrV && CanResize.toString().equalsIgnoreCase("True"))
+			if (CanResize instanceof StrV && CanResize.toString().equalsIgnoreCase("True")) {
 				frame.setResizable(true);
-			else
+				CanResize = new StrV("True");
+			} else {
 				frame.setResizable(false);
+				CanResize = new StrV("False");
+			}
+
 		} else if ("Height".equalsIgnoreCase(fieldName) || "Width".equalsIgnoreCase(fieldName)) {
 			int width;
 			int height;
@@ -1765,6 +1771,10 @@ public class GraphicsWindow {
 			else
 				height = 0;
 
+			Width = new DoubleV(width);
+			Height = new DoubleV(height);
+
+			panel.setLayout(null);
 			panel.setPreferredSize(new Dimension(width, height));
 			frame.pack();
 		} else if ("Title".equalsIgnoreCase(fieldName)) {
@@ -1787,7 +1797,42 @@ public class GraphicsWindow {
 			else
 				top = (int) ((DoubleV) Top).getValue();
 
+			Left = new DoubleV(left);
+			Top = new DoubleV(top);
+
 			frame.setLocation(left, top);
+		} else if ("PenWidth".equalsIgnoreCase(fieldName)) {
+			int penWidth;
+
+			if (PenWidth instanceof DoubleV)
+				penWidth = (int) ((DoubleV) PenWidth).getNumber();
+			else if (PenWidth instanceof StrV && ((StrV) PenWidth).isNumber())
+				penWidth = (int) ((StrV) PenWidth).parseDouble();
+			else
+				penWidth = 0;
+
+			PenWidth = new DoubleV(penWidth);
+		} else if ("FontBold".equalsIgnoreCase(fieldName)) {
+			if (FontBold instanceof StrV && ((StrV) FontBold).getValue().equalsIgnoreCase("True"))
+				FontBold = new StrV("True");
+			else
+				FontBold = new StrV("False");
+		} else if ("FontItalic".equalsIgnoreCase(fieldName)) {
+			if (FontItalic instanceof StrV && ((StrV) FontItalic).getValue().equalsIgnoreCase("True"))
+				FontItalic = new StrV("True");
+			else
+				FontItalic = new StrV("False");
+		} else if ("FontSize".equalsIgnoreCase(fieldName)) {
+			int fontSize;
+			
+			if (FontSize instanceof DoubleV)
+				fontSize = (int) FontSize.getNumber();
+			else if (FontSize instanceof StrV && ((StrV) FontSize).isNumber())
+				fontSize = (int) ((StrV) FontSize).parseDouble();
+			else
+				fontSize = 0;
+			
+			FontSize = new DoubleV(fontSize);
 		} else {
 		}
 	}
@@ -2591,7 +2636,6 @@ public class GraphicsWindow {
 	}
 	// End of Supporting Mouse Library
 
-	
 	// Supporting Video Library
 	private static final String videoIdLable = "Video";
 	private static int videoId = 1;
@@ -2599,90 +2643,88 @@ public class GraphicsWindow {
 	private static EmbeddedMediaPlayer mediaPlayerComponent[] = new EmbeddedMediaPlayer[100];
 	private static MediaPlayerFactory mf[] = new MediaPlayerFactory[100];
 	private static Canvas videoCanvas[] = new Canvas[100];
-	private static HashMap<String,Integer> videoMap = new HashMap<>();
+	private static HashMap<String, Integer> videoMap = new HashMap<>();
 	private static Container videoContainer;
-	static String vid[] = {""};
+	static String vid[] = { "" };
 
-	static void AddCanvas(){
+	static void AddCanvas() {
 		String id = videoIdLable + videoId;
-		videoMap.put(id,videoId);
+		videoMap.put(id, videoId);
 		SetID(id);
-		
+
 		videoCanvas[videoId] = new Canvas();
 		videoCanvas[videoId].setSize(500, 300);
-		videoCanvas[videoId].setLocation(10,10);
-		
-		
+		videoCanvas[videoId].setLocation(10, 10);
+
 		panel.add(videoCanvas[videoId]);
 		mf[videoId] = new MediaPlayerFactory();
 		mediaPlayerComponent[videoId] = mf[videoId].newEmbeddedMediaPlayer();
 		mediaPlayerComponent[videoId].setVideoSurface(mf[videoId].newVideoSurface(videoCanvas[videoId]));
 		videoId++;
 
-		
 	}
 
-	static void AddVideo(String path){
+	static void AddVideo(String path) {
 		if (frame == null)
 			Show(new ArrayList<Value>());
-		
+
 		int vID = videoMap.get(GetID());
-		
+
 		mediaPlayerComponent[vID].setPlaySubItems(true);
 		mediaPlayerComponent[vID].playMedia(path);
-		
+
 		videoContainer = videoCanvas[vID].getParent();
 		videoContainer.revalidate();
 		videoContainer.repaint();
 	}
-	
-	static void SetID(String id){
+
+	static void SetID(String id) {
 		vid[0] = id;
 	}
 
-	static String GetID(){
+	static String GetID() {
 		return vid[0];
 	}
 
-	static void VideoPause(String videoName){
+	static void VideoPause(String videoName) {
 		int vID = videoMap.get(videoName);
 		mediaPlayerComponent[vID].pause();
 	}
 
-	static void VideoRewind(String videoName){
+	static void VideoRewind(String videoName) {
 		int vID = videoMap.get(videoName);
 		mediaPlayerComponent[vID].skip(-10000);
 	}
 
-	static void VideoSkip(String videoName){
+	static void VideoSkip(String videoName) {
 		int vID = videoMap.get(videoName);
 		mediaPlayerComponent[vID].skip(10000);
 
 	}
-	
-	static void VideoStop(String videoName){
+
+	static void VideoStop(String videoName) {
 		int vID = videoMap.get(videoName);
 		mediaPlayerComponent[vID].stop();
 	}
 
-	static void SetVideoPath(String videoName, String path){
+	static void SetVideoPath(String videoName, String path) {
 		int vID = videoMap.get(videoName);
-		
+
 		mediaPlayerComponent[vID].setPlaySubItems(true);
 		mediaPlayerComponent[vID].playMedia(path);
 		videoContainer = videoCanvas[vID].getParent();
 		videoContainer.revalidate();
 		videoContainer.repaint();
-		
+
 	}
 
-	static void SetVideoSize(String videoName, int width, int height){
-		
+	static void SetVideoSize(String videoName, int width, int height) {
+
 		int vID = videoMap.get(videoName);
 		videoCanvas[vID].setSize(width, height);
 	}
 
-	static void SetVideoLocation(String videoName, int x, int y){
+	static void SetVideoLocation(String videoName, int x, int y) {
 
 		int vID = videoMap.get(videoName);
 		videoCanvas[vID].setLocation(x, y);
@@ -2691,180 +2733,173 @@ public class GraphicsWindow {
 
 	// Supporting Graph Library
 	private static HashMap<String, org.graphstream.ui.swingViewer.ViewPanel> graphViewers = new HashMap<>();
-	
-	static void AddGraph(String graphID, org.graphstream.graph.Graph graph){
+
+	static void AddGraph(String graphID, org.graphstream.graph.Graph graph) {
 		if (frame == null)
 			Show(new ArrayList<Value>());
-		
-		org.graphstream.ui.view.Viewer viewer = 
-				new org.graphstream.ui.view.Viewer(graph,  Viewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);		
+
+		org.graphstream.ui.view.Viewer viewer = new org.graphstream.ui.view.Viewer(graph,
+				Viewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
 		viewer.enableAutoLayout();
-		
+
 		org.graphstream.ui.swingViewer.ViewPanel viewPanel = viewer.addDefaultView(false);
-		graphViewers.put(graphID,  viewPanel);
+		graphViewers.put(graphID, viewPanel);
 		viewPanel.setSize(500, 500);
 		viewPanel.setLocation(0, 0);
 		panel.add(viewPanel);
 	}
-	static void HideGraph(String graphID){
-		if(graphViewers.containsKey(graphID)){
-			org.graphstream.ui.swingViewer.ViewPanel viewPanel = 
-					graphViewers.get(graphID);
+
+	static void HideGraph(String graphID) {
+		if (graphViewers.containsKey(graphID)) {
+			org.graphstream.ui.swingViewer.ViewPanel viewPanel = graphViewers.get(graphID);
 			panel.remove(viewPanel);
 		}
 	}
-	
+
 	static void SetGraphLocation(String graphID, int x, int y) {
-		if(graphViewers.containsKey(graphID))
+		if (graphViewers.containsKey(graphID))
 			graphViewers.get(graphID).setLocation(x, y);
 	}
-	
-	static void SetGraphSize(String graphID, int width, int height){
-		if(graphViewers.containsKey(graphID))
+
+	static void SetGraphSize(String graphID, int width, int height) {
+		if (graphViewers.containsKey(graphID))
 			graphViewers.get(graphID).setSize(width, height);
 	}
-	static boolean hasGraphContain(String graphID){
+
+	static boolean hasGraphContain(String graphID) {
 		return graphViewers.containsKey(graphID);
 	}
-	
+
 	// End of Supporting Graph Library
-	
+
 	// Supporting Chart Library
-		private static final String chartIdLable = "Chart";
-		private static int chartId = 1;
+	private static final String chartIdLable = "Chart";
+	private static int chartId = 1;
 
-		private static JFreeChart xyLineChart[] = new JFreeChart[100];
-		private static ChartPanel chartPanel[] = new ChartPanel[100];
-		private static HashMap<String,Integer> chartMap = new HashMap<>();
-		static String cID = "";
-		
-		static void SetChartID(String id){
-			cID = id;
-		}
+	private static JFreeChart xyLineChart[] = new JFreeChart[100];
+	private static ChartPanel chartPanel[] = new ChartPanel[100];
+	private static HashMap<String, Integer> chartMap = new HashMap<>();
+	static String cID = "";
 
-		static String GetChartID(){
-			return cID;
-		}
-		
-		static void AddChart(String key, double[] xValue, double[] yValue, String opt){
-			String id = chartIdLable + chartId;
-			chartMap.put(id, chartId);
-			SetChartID(id);
-			
-			if(opt.equalsIgnoreCase("s")) {
-				xyLineChart[chartId] = ChartFactory.createScatterPlot(
-						"",
-						"", "",
-						createDataset(key, xValue, yValue));
+	static void SetChartID(String id) {
+		cID = id;
+	}
+
+	static String GetChartID() {
+		return cID;
+	}
+
+	static void AddChart(String key, double[] xValue, double[] yValue, String opt) {
+		String id = chartIdLable + chartId;
+		chartMap.put(id, chartId);
+		SetChartID(id);
+
+		if (opt.equalsIgnoreCase("s")) {
+			xyLineChart[chartId] = ChartFactory.createScatterPlot("", "", "", createDataset(key, xValue, yValue));
+		} else {
+			xyLineChart[chartId] = ChartFactory.createXYLineChart("", "", "", createDataset(key, xValue, yValue));
+
+			if (opt.equalsIgnoreCase("--")) {
+				xyLineChart[chartId].getXYPlot().getRenderer().setSeriesStroke(0, new BasicStroke(1.0f,
+						BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 1.0f, new float[] { 6.0f, 6.0f }, 0.0f));
+			} else if (opt.equalsIgnoreCase(":")) {
+				xyLineChart[chartId].getXYPlot().getRenderer().setSeriesStroke(0, new BasicStroke(1.0f,
+						BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 1.0f, new float[] { 2.5f, 2.5f }, 0.0f));
 			}
-			else {
-				xyLineChart[chartId] = ChartFactory.createXYLineChart(
-						"",
-						"", "",
-						createDataset(key, xValue, yValue));
-				
-				if(opt.equalsIgnoreCase("--")) {
-					xyLineChart[chartId].getXYPlot().getRenderer().setSeriesStroke(0, new BasicStroke(
-			    	        1.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND,
-			    	        1.0f, new float[] {6.0f, 6.0f}, 0.0f));
-				} else if(opt.equalsIgnoreCase(":")) {
-					xyLineChart[chartId].getXYPlot().getRenderer().setSeriesStroke(0, new BasicStroke(
-			    	        1.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND,
-			    	        1.0f, new float[] {2.5f, 2.5f}, 0.0f));
-				}
-				
-			}
-			
-			RemoveLegend(id);
-			
-			chartPanel[chartId] = new ChartPanel(xyLineChart[chartId]);
-			chartPanel[chartId].setSize(500, 300);
-			//chartPanel[chartId].setPreferredSize(new java.awt.Dimension( 500 , 300 ));
-			chartPanel[chartId].setLocation(10,10);
-			
-			panel.add(chartPanel[chartId]);
-			chartId++;
-			
-			if (frame == null)
-				Show(new ArrayList<Value>());
-				
-				
-			frame.pack();
-			panel.revalidate();
-			panel.repaint();
-		}
-		
-		static void SetData(String chartName, String key, double[] xValue, double[] yValue){
-			int id = chartMap.get(chartName);
-			xyLineChart[id].getXYPlot().setDataset(createDataset(key, xValue, yValue));
-		}
-		
-		static void AddData(String chartName, String key, double[] xValue, double[] yValue){
-			int id = chartMap.get(chartName);
-			XYSeriesCollection dataset = (XYSeriesCollection)xyLineChart[id].getXYPlot().getDataset();
-			XYSeries series;
-			int idx = dataset.getSeriesIndex(key);
-			
-		    if(idx == -1)
-		    	series = new XYSeries(key);
-		    else 
-		    	series = dataset.getSeries(idx);
-		    
-		    for(int i = 0; i < xValue.length; i++)
-		    	series.addOrUpdate(xValue[i], yValue[i]);
-		    
-		    dataset.addSeries(series);
-		}
-		
-		static void AddTitle(String chartName, String title){
-			int id = chartMap.get(chartName);
-			xyLineChart[id].setTitle(title);;
-		}
-		
-		static void AddXLabel(String chartName, String xlabel){
-			int id = chartMap.get(chartName);
-			xyLineChart[id].getXYPlot().getDomainAxis().setLabel(xlabel);
-		}
-		
-		static void AddYLabel(String chartName, String ylabel){
-			int id = chartMap.get(chartName);
-			xyLineChart[id].getXYPlot().getDomainAxis().setLabel(ylabel);
-		}
-		
-		static void AddLegend(String chartName){
-			int id = chartMap.get(chartName);
-			xyLineChart[id].getLegend().setVisible(true);
-		}
-		
-		static void RemoveLegend(String chartName){
-			int id = chartMap.get(chartName);
-			xyLineChart[id].getLegend().setVisible(false);
-		}
-		
-		static void SetChartSize(String chartName, int width, int height){
-			
-			int id = chartMap.get(chartName);
-			chartPanel[id].setSize(width, height);
+
 		}
 
-		static void SetChartLocation(String chartName, int x, int y){
+		RemoveLegend(id);
 
-			int id = chartMap.get(chartName);
-			chartPanel[id].setLocation(x, y);
-		}
-		
-		static XYDataset createDataset(String key, double[] xValue, double[] yValue) {
-			XYSeriesCollection dataset = new XYSeriesCollection();
+		chartPanel[chartId] = new ChartPanel(xyLineChart[chartId]);
+		chartPanel[chartId].setSize(500, 300);
+		// chartPanel[chartId].setPreferredSize(new java.awt.Dimension( 500 ,
+		// 300 ));
+		chartPanel[chartId].setLocation(10, 10);
 
-			XYSeries series = new XYSeries(key);
-			    
-			for(int i = 0; i < xValue.length; i++)
-				series.add(xValue[i], yValue[i]);
-			    
-			dataset.addSeries(series);
+		panel.add(chartPanel[chartId]);
+		chartId++;
 
-			return dataset;
-		}
-		
-		// End of Supporting Chart Library
+		if (frame == null)
+			Show(new ArrayList<Value>());
+
+		frame.pack();
+		panel.revalidate();
+		panel.repaint();
+	}
+
+	static void SetData(String chartName, String key, double[] xValue, double[] yValue) {
+		int id = chartMap.get(chartName);
+		xyLineChart[id].getXYPlot().setDataset(createDataset(key, xValue, yValue));
+	}
+
+	static void AddData(String chartName, String key, double[] xValue, double[] yValue) {
+		int id = chartMap.get(chartName);
+		XYSeriesCollection dataset = (XYSeriesCollection) xyLineChart[id].getXYPlot().getDataset();
+		XYSeries series;
+		int idx = dataset.getSeriesIndex(key);
+
+		if (idx == -1)
+			series = new XYSeries(key);
+		else
+			series = dataset.getSeries(idx);
+
+		for (int i = 0; i < xValue.length; i++)
+			series.addOrUpdate(xValue[i], yValue[i]);
+
+		dataset.addSeries(series);
+	}
+
+	static void AddTitle(String chartName, String title) {
+		int id = chartMap.get(chartName);
+		xyLineChart[id].setTitle(title);
+		;
+	}
+
+	static void AddXLabel(String chartName, String xlabel) {
+		int id = chartMap.get(chartName);
+		xyLineChart[id].getXYPlot().getDomainAxis().setLabel(xlabel);
+	}
+
+	static void AddYLabel(String chartName, String ylabel) {
+		int id = chartMap.get(chartName);
+		xyLineChart[id].getXYPlot().getDomainAxis().setLabel(ylabel);
+	}
+
+	static void AddLegend(String chartName) {
+		int id = chartMap.get(chartName);
+		xyLineChart[id].getLegend().setVisible(true);
+	}
+
+	static void RemoveLegend(String chartName) {
+		int id = chartMap.get(chartName);
+		xyLineChart[id].getLegend().setVisible(false);
+	}
+
+	static void SetChartSize(String chartName, int width, int height) {
+
+		int id = chartMap.get(chartName);
+		chartPanel[id].setSize(width, height);
+	}
+
+	static void SetChartLocation(String chartName, int x, int y) {
+
+		int id = chartMap.get(chartName);
+		chartPanel[id].setLocation(x, y);
+	}
+
+	static XYDataset createDataset(String key, double[] xValue, double[] yValue) {
+		XYSeriesCollection dataset = new XYSeriesCollection();
+
+		XYSeries series = new XYSeries(key);
+
+		for (int i = 0; i < xValue.length; i++)
+			series.add(xValue[i], yValue[i]);
+
+		dataset.addSeries(series);
+
+		return dataset;
+	}
+
+	// End of Supporting Chart Library
 }
