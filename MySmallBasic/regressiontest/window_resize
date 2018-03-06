@@ -1,0 +1,14 @@
+GraphicsWindow.Width = 400
+GraphicsWindow.Height = 300 
+ 
+GraphicsWindow.PenColor = "Red"
+GraphicsWindow.DrawEllipse(20, 20, 300, 60) 
+ 
+GraphicsWindow.BrushColor = "Green" 
+GraphicsWindow.FillEllipse(60, 100, 300, 60) 
+
+For I=1 to 10
+  GraphicsWindow.Width = 400 + i *20
+  GraphicsWindow.Height = 300 + i * 10
+  Program.Delay(1000)
+EndFor
