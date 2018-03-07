@@ -7,33 +7,13 @@ import javax.swing.SwingUtilities;
 import com.coducation.smallbasic.InterpretException;
 import com.coducation.smallbasic.StrV;
 import com.coducation.smallbasic.Value;
-import com.sun.jna.Native;
-import com.sun.jna.NativeLibrary;
 
-import uk.co.caprica.vlcj.binding.LibVlc;
 import uk.co.caprica.vlcj.discovery.NativeDiscovery;
-import uk.co.caprica.vlcj.runtime.RuntimeUtil;
-import uk.co.caprica.vlcj.runtime.x.LibXUtil;
 
 public class Video {
-	private static String OS = System.getProperty("os.name").toLowerCase();
 	
-	public static void DllPath(String path) {
-		NativeLibrary.addSearchPath(RuntimeUtil.getLibVlcLibraryName(), path);
-        Native.loadLibrary(RuntimeUtil.getLibVlcLibraryName(), LibVlc.class);
-        LibXUtil.initialise();
-	}
-
 	public static Value Play(ArrayList<Value> args){
-		if(OS.contains("win")) {
-			String bit = System.getProperty("os.arch");
-			if(bit.contains("86"))
-				DllPath("resource\\VLC\\window86");
-			else
-				DllPath("resource\\VLC\\window64");
-		}else {
-			throw new InterpretException("Not Found your os");
-		}
+		new NativeDiscovery().discover();
 		String id;
 		GraphicsWindow.AddCanvas();
 		if(args.size() == 0){
