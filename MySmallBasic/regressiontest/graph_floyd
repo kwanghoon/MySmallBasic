@@ -1,0 +1,64 @@
+'resource/graph_example.png 그래프 참고
+
+Graph.InsertVertex("myGraph", "v0", "v1", "v2", "v3","v4","v5")
+Graph.SetVertexLabel("myGraph", "v0", "0")
+Graph.SetVertexLabel("myGraph", "v1", "1")
+Graph.SetVertexLabel("myGraph", "v2", "2")
+Graph.SetVertexLabel("myGraph", "v3", "3")
+Graph.SetVertexLabel("myGraph", "v4", "4")
+Graph.SetVertexLabel("myGraph", "v5", "5")
+
+Graph.InsertEdge("myGraph", "v0", "v1", "e0", 2)
+Graph.InsertEdge("myGraph", "v0", "v2", "e1", 4)
+Graph.InsertEdge("myGraph", "v1", "v2", "e3", 1)
+Graph.InsertEdge("myGraph", "v2", "v0", "e4", 4)
+Graph.InsertEdge("myGraph", "v2", "v3", "e5", 7)
+Graph.InsertEdge("myGraph", "v3", "v2", "e6", 5)
+Graph.InsertEdge("myGraph", "v3", "v4", "e7", 2)
+Graph.InsertEdge("myGraph", "v3", "v5", "e8", 6)
+Graph.InsertEdge("myGraph", "v4", "v5", "e9", 3)
+Graph.InsertEdge("myGraph", "v5", "v3", "e10", 6)
+
+vertices = Graph.GetAllVertex("myGraph")
+vertexNum = Array.GetItemCount(vertices)
+infinit = 99999999999
+
+'make matrix
+For i=1 To vertexNum
+	For j = 1 To vertexNum
+		If(i = j )Then
+			pathTable[vertices[i]][vertices[j]] = 0
+		Else
+			pathTable[vertices[i]][vertices[j]] = infinit
+		EndIF
+	EndFor
+EndFor
+
+'put graph info
+For i=1 To vertexNum
+	fromVertex = vertices[i]
+	edgeNum = Graph.NumberOfEdge("myGraph", fromVertex)
+	For j=1 To edgeNum
+		edge = Graph.GetEdgeAt("myGraph", fromVertex, j)
+		toVertex = Graph.GetToVertex("myGraph", edge)
+		pathTable[fromVertex][toVertex] = Graph.GetEdgeLabel("myGraph", edge)
+	EndFor	
+EndFor
+
+'calculate
+For k=1 To vertexNum
+	For i=1 To vertexNum
+		For j=1 To vertexNum
+			If(pathTable[vertices[i]][vertices[j]] > pathTable[vertices[i]][vertices[k]] + pathTable[vertices[k]][vertices[j]]) Then
+				pathTable[vertices[i]][vertices[j]] = pathTable[vertices[i]][vertices[k]] + pathTable[vertices[k]][vertices[j]]			
+			EndIf
+		EndFor
+	EndFor
+EndFor
+
+'print result
+For i=1 To vertexNum
+	For j=1 To vertexNum
+		TextWindow.WriteLine(vertices[i] + " 부터 " + vertices[j] + " 까지의 최단경로 : " + pathTable[vertices[i]][vertices[j]])
+	EndFor
+EndFor
