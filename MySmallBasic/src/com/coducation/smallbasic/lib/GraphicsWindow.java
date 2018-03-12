@@ -2696,6 +2696,9 @@ public class GraphicsWindow {
 		if (frame == null)
 			Show(new ArrayList<Value>());
 		
+		if(graphViewers.containsKey(graphID))
+			return;
+		
 		org.graphstream.ui.view.Viewer viewer = 
 				new org.graphstream.ui.view.Viewer(graph,  Viewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);		
 		viewer.enableAutoLayout();
@@ -2711,6 +2714,7 @@ public class GraphicsWindow {
 			org.graphstream.ui.swingViewer.ViewPanel viewPanel = 
 					graphViewers.get(graphID);
 			panel.remove(viewPanel);
+			graphViewers.remove(graphID);
 		}
 	}
 	
