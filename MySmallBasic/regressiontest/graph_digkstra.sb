@@ -1,0 +1,85 @@
+'resource/graph_example.png 그래프 참고
+
+Graph.InsertVertex("myGraph", "v0", "v1", "v2", "v3","v4","v5")
+Graph.SetVertexLabel("myGraph", "v0", "0")
+Graph.SetVertexLabel("myGraph", "v1", "1")
+Graph.SetVertexLabel("myGraph", "v2", "2")
+Graph.SetVertexLabel("myGraph", "v3", "3")
+Graph.SetVertexLabel("myGraph", "v4", "4")
+Graph.SetVertexLabel("myGraph", "v5", "5")
+
+Graph.InsertEdge("myGraph", "v0", "v1", "e0", 2)
+Graph.InsertEdge("myGraph", "v0", "v2", "e1", 4)
+Graph.InsertEdge("myGraph", "v1", "v2", "e3", 1)
+Graph.InsertEdge("myGraph", "v2", "v0", "e4", 4)
+Graph.InsertEdge("myGraph", "v2", "v3", "e5", 7)
+Graph.InsertEdge("myGraph", "v3", "v2", "e6", 5)
+Graph.InsertEdge("myGraph", "v3", "v4", "e7", 2)
+Graph.InsertEdge("myGraph", "v3", "v5", "e8", 6)
+Graph.InsertEdge("myGraph", "v4", "v5", "e9", 3)
+Graph.InsertEdge("myGraph", "v5", "v3", "e10", 6)
+
+vertices = Graph.GetAllVertex("myGraph")
+vertexNum = Array.GetItemCount(vertices)
+startVertex = vertices[1]
+infinit = 99999999999
+
+'shortestPath 배열
+For i=2 To vertexNum
+	shortestPath[vertices[i]] = infinit
+EndFor
+
+'not visitedVertex set에 등록 
+For i=2 To vertexNum
+	List.Add("notVisitedVertex", vertices[i])
+EndFor
+
+'1번 vertex 방문
+visitVertex = startVertex
+edgeNum = Graph.NumberOfEdge("myGraph",visitVertex)
+For i=1 To edgeNum
+	edge = Graph.GetEdgeAt("myGraph", visitVertex, i)
+	toVertex = Graph.GetToVertex("myGraph", edge)
+	shortestPath[toVertex] = Graph.GetEdgeLabel("myGraph", edge)
+EndFor
+
+'calculate
+While(List.Count("notVisitedVertex") > 0 )
+	'choise next visit
+	min = infinit
+	For i=1 To List.Count("notVisitedVertex")
+		v = List.GetAt("notVisitedVertex", i)
+		If(shortestPath[v] < min) Then
+			min = shortestPath[v]
+			visitVertex = v
+		EndIf
+	EndFor
+	
+	'start Vertex can't arrive some vertices
+	If(min = infinit) Then
+		List.Clear("notVisitedVertex")
+	EndIf
+	
+	'update path
+	edgeNum = Graph.NumberOfEdge("myGraph",visitVertex)
+	For i=1 To edgeNum
+		edge = Graph.GetEdgeAt("myGraph", visitVertex, i)
+		toVertex = Graph.GetToVertex("myGraph", edge)
+		If(shortestPath[toVertex] > shortestPath[visitVertex] + Graph.GetEdgeLabel("myGraph", edge))Then
+			shortestPath[toVertex] = shortestPath[visitVertex] + Graph.GetEdgeLabel("myGraph", edge)
+		EndIf
+	EndFor
+	
+	'remove visitedVertex
+	List.Remove("notVisitedVertex", visitVertex)
+EndWhile
+
+'print result
+For i=2 To vertexNum
+	TextWindow.Write(startVertex + " 에서 " + vertices[i] + "로 가는 최단 경로의 길이 : ")
+	If(shortestPath[vertices[i]] = infinit) Then
+		TextWindow.WriteLine("경로 없음")
+	Else
+		TextWindow.WriteLine(shortestPath[vertices[i]])
+	EndIf
+EndFor
