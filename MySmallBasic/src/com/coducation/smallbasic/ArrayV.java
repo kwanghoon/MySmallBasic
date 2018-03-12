@@ -7,19 +7,18 @@ import java.util.Set;
 
 public class ArrayV extends Value {
 	public ArrayV(){
-		arrmap = new LinkedHashMap<String,Value>();
+		arrmap = new LinkedHashMap<String, Pair<String,Value>>();
 	}
 	
 	
 	public Value get(String index) {
-
-		return arrmap.get(index);
-
+		Pair<String,Value> psv = arrmap.get(index.toUpperCase());
+		return psv==null ? null : psv.b;
 	}
 
 	public void put(String index, Value v) {
 
-		arrmap.put(index, v);
+		arrmap.put(index.toUpperCase(), new Pair<String,Value>(index,v));
 
 	}
 	
@@ -27,7 +26,8 @@ public class ArrayV extends Value {
 		StringBuilder sb = new StringBuilder();
 		Set<String> indices = arrmap.keySet();
 		for (String index : indices) {
-			Value v = arrmap.get(index);
+			Pair<String,Value> psv = arrmap.get(index.toUpperCase());
+			Value v = psv.b;
 			String str = v.toString();
 			StringBuilder sbs = new StringBuilder();
 			for (int i = 0; i<str.length(); i++) {
@@ -36,7 +36,7 @@ public class ArrayV extends Value {
 					sbs.append('\\');
 				sbs.append(ch);
 			}
-			sb.append(index);
+			sb.append(psv.a);
 			sb.append('=');
 			sb.append(sbs.toString());
 			sb.append(';');
@@ -103,11 +103,11 @@ public class ArrayV extends Value {
 	
 	public ArrayV copy() {
 		ArrayV arr = new ArrayV();
-		Iterator<Entry<String, Value>> iterator = arrmap.entrySet().iterator();
+		Iterator<Entry<String, Pair<String,Value>>> iterator = arrmap.entrySet().iterator();
 		while (iterator.hasNext()) {
-			Entry<String, Value> entry = (Entry<String, Value>)iterator.next();
+			Entry<String, Pair<String,Value>> entry = (Entry<String, Pair<String,Value>>)iterator.next();
 			String key = entry.getKey();
-			Value value = entry.getValue();
+			Value value = entry.getValue().b;
 			if (value instanceof ArrayV) {
 				arr.put(key, ((ArrayV)value).copy());
 			}
@@ -124,10 +124,10 @@ public class ArrayV extends Value {
 	
 	//추가
 	public boolean containsV(String v){
-		Iterator<Entry<String, Value>> iterator = arrmap.entrySet().iterator();
+		Iterator<Entry<String, Pair<String,Value>>> iterator = arrmap.entrySet().iterator();
 		  while (iterator.hasNext()) {
-		   Entry<String, Value> entry = (Entry<String, Value>)iterator.next();
-		   String sk = entry.getValue().toString();
+		   Entry<String, Pair<String,Value>> entry = (Entry<String, Pair<String,Value>>)iterator.next();
+		   String sk = entry.getValue().b.toString();
 		   if(sk.equals(v))
 			   return true;
 		  }
@@ -141,13 +141,14 @@ public class ArrayV extends Value {
 
 	//추가
 	public ArrayV getKey(){
-		Iterator<Entry<String, Value>> iterator = arrmap.entrySet().iterator();
+		Iterator<Entry<String, Pair<String,Value>>> iterator = arrmap.entrySet().iterator();
 		int i = 1;
 		ArrayV arr = new ArrayV();
 		  while (iterator.hasNext()) {
-		   Entry<String, Value> entry = (Entry<String, Value>)iterator.next();
+		   Entry<String, Pair<String,Value>> entry = (Entry<String, Pair<String,Value>>)iterator.next();
 			String i_s = Integer.toString(i);
-			String key = entry.getKey().toString();
+			//String key = entry.getKey().toString();
+			String key = entry.getValue().a.toString(); // The original key before the case change.
 			StrV key_s = new StrV(key);
 			arr.put(i_s, key_s);
 			i++;
@@ -165,12 +166,21 @@ public class ArrayV extends Value {
 	// The order of inserting pairs of key and value does matter 
 	// when ArrayV is represented in the string format. 
 	// So, we replace HashMap with LinkedHashMap.
-	private LinkedHashMap<String,Value> arrmap;
+	private LinkedHashMap<String, Pair<String,Value>> arrmap;
 
 
 
 	@Override
 	public double getNumber() {
 		throw new InterpretException("getNumber(Array value)");
+	}
+	
+	private static class Pair<A,B> {
+		public A a;
+		public B b;
+		public Pair(A a, B b) {
+			this.a = a;
+			this.b = b;
+		}
 	}
 }

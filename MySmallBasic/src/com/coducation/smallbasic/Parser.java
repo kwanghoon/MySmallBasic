@@ -154,7 +154,7 @@ public class Parser
 					else if(Grammer_rule.get(state_num).equals("Stmt -> ID :")) // case Label
 					{
 						Terminal sub_tree1 = (Terminal)stack.get(last_stack_tree_index-3);
-						Label label = new Label(sub_tree1.getSyntax());
+						Label label = new Label(sub_tree1.getSyntax().toUpperCase());
 						label.at(sub_tree1.getLine_index(), sub_tree1.getCh_index());
 						tree = label;
 						
@@ -162,7 +162,7 @@ public class Parser
 					else if(Grammer_rule.get(state_num).equals("Stmt -> Goto ID")) // case Goto
 					{
 						Terminal sub_tree1 = (Terminal)stack.get(last_stack_tree_index-1);
-						GotoStmt gotostmt = new GotoStmt(sub_tree1.getSyntax());
+						GotoStmt gotostmt = new GotoStmt(sub_tree1.getSyntax().toUpperCase());
 						gotostmt.at(sub_tree1.getLine_index(), sub_tree1.getCh_index());
 						tree = gotostmt;
 					}
@@ -177,7 +177,7 @@ public class Parser
 						Terminal sub_tree6 = (Terminal)stack.get(last_stack_tree_index-17);
 						
 						ForStmt forstmt = new ForStmt(
-												new Var(sub_tree5.getSyntax()), 
+												new Var(sub_tree5.getSyntax().toUpperCase()), 
 												(Expr)sub_tree4.getTree(), 
 												(Expr)sub_tree3.getTree(), 
 												(Expr)sub_tree2.getTree(), 
@@ -193,7 +193,7 @@ public class Parser
 						Terminal sub_tree2 = (Terminal)stack.get(last_stack_tree_index-5);
 						Terminal sub_tree3 = (Terminal)stack.get(last_stack_tree_index-7);
 						
-						SubDef subdef = new SubDef(sub_tree2.getSyntax(), (Stmt)sub_tree1.getTree());
+						SubDef subdef = new SubDef(sub_tree2.getSyntax().toUpperCase(), (Stmt)sub_tree1.getTree());
 						subdef.at(sub_tree3.getLine_index(), sub_tree3.getCh_index());
 						tree = subdef;
 					}
@@ -241,7 +241,7 @@ public class Parser
 						Nonterminal sub_tree1 = (Nonterminal)stack.get(last_stack_tree_index-1);
 						Terminal sub_tree2 = (Terminal)stack.get(last_stack_tree_index-5);
 						
-						Assign assign = new Assign(new Var(sub_tree2.getSyntax()), (Expr)sub_tree1.getTree());	
+						Assign assign = new Assign(new Var(sub_tree2.getSyntax().toUpperCase()), (Expr)sub_tree1.getTree());	
 						assign.at(sub_tree2.getLine_index(), sub_tree2.getCh_index());
 						tree = assign;
 					}
@@ -268,7 +268,7 @@ public class Parser
 					else if(Grammer_rule.get(state_num).equals("ExprStatement -> ID ( )")) // SubRoutineCallExprStmt
 					{
 						Terminal sub_tree1 = (Terminal)stack.get(last_stack_tree_index-5);
-						SubCallExpr subcallexpr = new SubCallExpr(sub_tree1.getSyntax());
+						SubCallExpr subcallexpr = new SubCallExpr(sub_tree1.getSyntax().toUpperCase());
 						subcallexpr.at(sub_tree1.getLine_index(), sub_tree1.getCh_index());
 						tree = subcallexpr;
 					}
@@ -281,7 +281,7 @@ public class Parser
 						
 						//Array array = new Array( sub_tree2.getSyntax(), index_list);
 						Array array = (Array)sub_tree_idxs.getTree();
-						array.setVar( sub_tree2.getSyntax() );
+						array.setVar( sub_tree2.getSyntax().toUpperCase() );
 						
 						Assign assign =  new Assign((Expr)array, (Expr)sub_tree1.getTree());
 						assign.at(sub_tree2.getLine_index(), sub_tree2.getCh_index());
@@ -621,7 +621,7 @@ public class Parser
 					else if(Grammer_rule.get(state_num).equals("Primary -> ID"))
 					{
 						Terminal temp = (Terminal) stack.get(last_stack_tree_index-1);
-						Var var = new Var(temp.getSyntax());
+						Var var = new Var(temp.getSyntax().toUpperCase());
 						var.at(temp.getLine_index(), temp.getCh_index());
 						tree = var;
 					}
@@ -652,7 +652,7 @@ public class Parser
 
 						//Array array = new Array( sub_tree1.getSyntax(), index_list);
 						Array array = (Array)sub_tree2.getTree();
-						array.setVar(sub_tree1.getSyntax());
+						array.setVar(sub_tree1.getSyntax().toUpperCase());
 						array.at(sub_tree1.getLine_index(), sub_tree1.getCh_index());
 						tree = array;
 					}
