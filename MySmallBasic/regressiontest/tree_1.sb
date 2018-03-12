@@ -1,0 +1,21 @@
+'tree graphicWindow test
+
+Tree.Create("tree", "a")
+Tree.Create("t1", "b")
+Tree.Create("t2", "c")
+Tree.AddChild("tree", "t1", "t2")
+
+Tree.Create("t3", "d")
+Tree.Create("t4", "e")
+Tree.AddChild("t1", "t3", "t4")
+
+Tree.Create("t5", "f")
+Tree.Create("t6", "g")
+Tree.AddChild("t2", "t5", "t6")
+
+Tree.Create("t7", "h")
+Tree.Create("t8", "i")
+Tree.AddChild("t3", "t7", "t8")
+
+Tree.Show("tree")
+Tree.SetSize("tree", 250, 250)

@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import org.graphstream.graph.Node;
+import org.graphstream.graph.implementations.SingleGraph;
+
 import com.coducation.smallbasic.DoubleV;
 import com.coducation.smallbasic.InterpretException;
 import com.coducation.smallbasic.StrV;
@@ -311,7 +314,76 @@ public class Tree {
 		trees.put(newTreeName, newTree);
 		return null;
 	}
+	//Tree.Show(treeName)
+	public static Value Show(ArrayList<Value> args){
+		//args size check
+		if(args.size() != 1)
+			throw new InterpretException("Error in # of Arguments: " + args.size());
+		
+		//get tree
+		String treeName = args.get(0).toString();
+		if(trees.containsKey(treeName))
+			trees.get(treeName).show(treeName);
 
+		return null;
+	}
+	//Tree.Hide(treeName)
+	public static Value Hide(ArrayList<Value> args){
+		//args size check
+		if(args.size() != 1)
+			throw new InterpretException("Error in # of Arguments: " + args.size());
+		
+		//get tree
+		String treeName = args.get(0).toString();
+		if(trees.containsKey(treeName))
+			trees.get(treeName).hide(treeName);
+		
+		return null;
+	}
+	//Tree.SetLocation(treeName, x, y)
+	public static Value SetLocation(ArrayList<Value> args){
+		//args size check
+		if(args.size() != 3)
+			throw new InterpretException("Error in # of Arguments: " + args.size());
+		
+		//get tree, x, y
+		String treeName = args.get(0).toString();
+		int x, y;
+		try{
+			x = Integer.parseInt(args.get(1).toString());
+			y = Integer.parseInt(args.get(2).toString());
+		}catch(NumberFormatException e){
+			throw new InterpretException("Error in index of Arguments: " + args.get(2) + " is not number");
+		}
+		
+		//setLocation
+		if(trees.containsKey(treeName))
+			trees.get(treeName).setLotation(treeName, x, y);
+		
+		return null;
+	}
+	//Tree.SetSize(treeName, width, height)
+	public static Value SetSize(ArrayList<Value> args){
+		//args size check
+		if(args.size() != 3)
+			throw new InterpretException("Error in # of Arguments: " + args.size());
+		
+		//get tree, width, height
+		String treeName = args.get(0).toString();
+		int width, height;
+		try{
+			width = Integer.parseInt(args.get(1).toString());
+			height = Integer.parseInt(args.get(2).toString());
+		}catch(NumberFormatException e){
+			throw new InterpretException("Error in index of Arguments: " + args.get(2) + " is not number");
+		}
+		
+		//setLocation
+		if(trees.containsKey(treeName))
+			trees.get(treeName).setSize(treeName, width, height);
+		
+		return null;
+	}
 	public static void notifyFieldAssign(String fieldName) {
 
 	}
@@ -389,5 +461,47 @@ class TreeNode implements Cloneable{
 		}
 		
 		return obj;	
+	}
+	//call GraphicsWindow method
+	void show(String treeID){
+		org.graphstream.graph.Graph graph = new SingleGraph(treeID);
+		Node n = graph.addNode("t1");
+		n.addAttribute("ui.label", value.toString());
+		int count = 2;
+		
+		Iterator<TreeNode> iter = child.iterator();
+		while(iter.hasNext()){
+			iter.next().drawTree(graph, "t1", "t"+count);
+			count++;
+		}
+		
+		GraphicsWindow.AddGraph(graph.getId(), graph);
+	}
+	void hide(String treeID){
+		GraphicsWindow.HideGraph(treeID);
+	}
+	void setLotation(String treeID, int x, int y){
+		if(!GraphicsWindow.hasGraphContain(treeID))
+			show(treeID);
+		
+		GraphicsWindow.SetGraphLocation(treeID, x, y);
+	}
+	void setSize(String treeID, int width, int height){
+		if(!GraphicsWindow.hasGraphContain(treeID))
+			show(treeID);
+		
+		GraphicsWindow.SetGraphSize(treeID, width, height);
+	}
+	private void drawTree(org.graphstream.graph.Graph graph, String parentNodeName, String thisNodeName){
+		Node n = graph.addNode(thisNodeName);
+		n.addAttribute("ui.label", value.toString());		
+		graph.addEdge(parentNodeName + "-" + thisNodeName, parentNodeName, thisNodeName);
+		
+		int count = 1;
+		Iterator<TreeNode> iter = child.iterator();
+		while(iter.hasNext()){
+			iter.next().drawTree(graph, thisNodeName, thisNodeName + '_' +count);
+			count++;
+		}		
 	}
 }
