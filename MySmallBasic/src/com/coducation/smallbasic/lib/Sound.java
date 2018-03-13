@@ -15,7 +15,9 @@ import javax.sound.sampled.DataLine;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
 import javax.sound.sampled.UnsupportedAudioFileException;
- 
+
+import org.jfugue.player.Player;
+
 import com.coducation.smallbasic.InterpretException;
 import com.coducation.smallbasic.StrV;
 import com.coducation.smallbasic.Value;
@@ -116,10 +118,51 @@ public class Sound {
 			throw new InterpretException("Error in # of Arguments: " + args.size());
 	}
  
-	//악보...
 	public static Value PlayMusic(ArrayList<Value> args){
-		return null;
-	}
+	      if(args.size() == 1) {
+	         String notes = args.get(0).toString().trim();
+	         String[] arr = notes.split(" ");
+	         String o = arr[0].toLowerCase();
+	         Player player = new Player();
+	         if(o.contains("o") && arr.length > 1) {
+	            String octave = String.valueOf(o.charAt(1));
+	            String result = "";
+	            for(int i = 1; i < arr.length; i++) {
+	               String note = String.valueOf(arr[i].charAt(0));
+	               String dur = String.valueOf(arr[i].charAt(1));
+	               String duration = notesDuration(dur);
+	               result += note+octave+duration+" ";
+	            }
+	            player.play(result);
+	            System.out.println(result);
+	         }else {
+	            if(arr.length == 1) {
+	               if(o.contains("o")) {
+	                  return null;
+	               }else {
+	                  String note = String.valueOf(o.charAt(0));
+	                  String dur = String.valueOf(o.charAt(1));
+	                  String duration = notesDuration(dur);
+	                  player.play(note+"1"+duration);
+	               }
+	            }else {
+	               String result = "";
+	               for(int i = 0; i < arr.length; i++) {
+	                  String note = String.valueOf(arr[i].charAt(0));
+	                  String dur = String.valueOf(arr[i].charAt(1));
+	                  String duration = notesDuration(dur);
+	                  result += note+"1"+duration+" ";
+	               }
+	               player.play(result);
+	            }
+	            
+	         }
+	      }
+	      else {
+	         throw new InterpretException("Error in # of Arguments: " + args.size());
+	      }
+	      return null;
+	   }
  
 	public static Value Play(ArrayList<Value> args) throws URISyntaxException{
 		if(args.size()==1){
@@ -200,6 +243,19 @@ public class Sound {
 		else
 			throw new InterpretException("Error in # of Arguments: " + args.size());
 	}
+	
+	public static String notesDuration(String notes) {
+	      switch(notes) {
+	      case "1":
+	         return "hi";
+	      case "2":
+	         return "qi";
+	      case "3":
+	         return "q";
+	      default:
+	         return "is";
+	      }
+	   }
  
 	public static void sound(String audioFilePath) 
 	{

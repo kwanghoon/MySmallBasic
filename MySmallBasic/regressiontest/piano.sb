@@ -1,0 +1,24 @@
+GraphicsWindow.DrawText("4","10","Do Re Mi Fa So Ra Ti Do")
+GraphicsWindow.DrawText("4","25","A   S   D   F   G   H   J   K ")
+GraphicsWindow.KeyDown = OnKeyDown
+Sound.PlayChimeAndWait()
+Sub OnKeyDown
+  key = GraphicsWindow.LastKey
+  If key = "A" Then
+    Sound.PlayMusic("o5 c8")
+  ElseIf key = "S" Then
+    Sound.PlayMusic("o5 d8")
+  ElseIf key = "D" Then
+    Sound.PlayMusic("o5 e8") 
+  ElseIf key = "F" Then
+    Sound.PlayMusic("o5 f8")
+  ElseIf key = "G" Then
+    Sound.PlayMusic("o5 g8")
+  ElseIf key = "H" Then
+    Sound.PlayMusic("o5 a8")
+  ElseIf key = "J" Then
+    Sound.PlayMusic("o5 b8")
+  ElseIf key = "K" Then
+    Sound.PlayMusic("o6 c8")
+  EndIf
+EndSub
