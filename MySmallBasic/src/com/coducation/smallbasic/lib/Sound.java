@@ -134,7 +134,7 @@ public class Sound {
 	               result += note+octave+duration+" ";
 	            }
 	            player.play(result);
-	            System.out.println(result);
+	            //System.out.println(result);
 	         }else {
 	            if(arr.length == 1) {
 	               if(o.contains("o")) {
