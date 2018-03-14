@@ -1,5 +1,5 @@
-GraphicsWindow.DrawText("4","10","Do Re Mi Fa So Ra Ti Do")
-GraphicsWindow.DrawText("4","25","A   S   D   F   G   H   J   K ")
+GraphicsWindow.DrawText("4","10","                                            Do  Re  Mi  Fa  So  Ra  Ti  Do")
+GraphicsWindow.DrawText("4","25","Press One of These Keys :    A    S    D    F    G    H    J    K ")
 GraphicsWindow.KeyDown = OnKeyDown
 Sound.PlayChimeAndWait()
 Sub OnKeyDown
