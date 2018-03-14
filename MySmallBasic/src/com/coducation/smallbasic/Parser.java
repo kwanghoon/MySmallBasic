@@ -176,8 +176,10 @@ public class Parser
 						
 						Terminal sub_tree6 = (Terminal)stack.get(last_stack_tree_index-17);
 						
+						Var var = new Var(sub_tree5.getSyntax().toUpperCase()); 
+						var.at(sub_tree5.getLine_index(), sub_tree5.getCh_index());
 						ForStmt forstmt = new ForStmt(
-												new Var(sub_tree5.getSyntax().toUpperCase()), 
+												var, 
 												(Expr)sub_tree4.getTree(), 
 												(Expr)sub_tree3.getTree(), 
 												(Expr)sub_tree2.getTree(), 
@@ -241,7 +243,9 @@ public class Parser
 						Nonterminal sub_tree1 = (Nonterminal)stack.get(last_stack_tree_index-1);
 						Terminal sub_tree2 = (Terminal)stack.get(last_stack_tree_index-5);
 						
-						Assign assign = new Assign(new Var(sub_tree2.getSyntax().toUpperCase()), (Expr)sub_tree1.getTree());	
+						Var var = new Var(sub_tree2.getSyntax().toUpperCase());
+						var.at(sub_tree2.getLine_index(), sub_tree2.getCh_index());
+						Assign assign = new Assign(var, (Expr)sub_tree1.getTree());	
 						assign.at(sub_tree2.getLine_index(), sub_tree2.getCh_index());
 						tree = assign;
 					}
@@ -251,7 +255,9 @@ public class Parser
 						Terminal sub_tree2 = (Terminal)stack.get(last_stack_tree_index-5);
 						Terminal sub_tree3 = (Terminal)stack.get(last_stack_tree_index-9);
 						
-						Assign assign = new Assign(new PropertyExpr(sub_tree3.getSyntax(), sub_tree2.getSyntax()), (Expr)sub_tree1.getTree());
+						PropertyExpr propertyExpr = new PropertyExpr(sub_tree3.getSyntax(), sub_tree2.getSyntax()); 
+						propertyExpr.at(sub_tree3.getLine_index(), sub_tree3.getCh_index());
+						Assign assign = new Assign(propertyExpr, (Expr)sub_tree1.getTree());
 						assign.at(sub_tree3.getLine_index(), sub_tree3.getCh_index());
 						tree = assign;
 					}
@@ -261,7 +267,9 @@ public class Parser
 						Terminal sub_tree2 = (Terminal)stack.get(last_stack_tree_index-7);
 						Terminal sub_tree3 = (Terminal)stack.get(last_stack_tree_index-11);
 		
-						ExprStmt exprstmt = new ExprStmt(new MethodCallExpr(sub_tree3.getSyntax(), sub_tree2.getSyntax(),(ArrayList<Expr>)sub_tree1.getTree()));
+						MethodCallExpr methodCallExpr = new MethodCallExpr(sub_tree3.getSyntax(), sub_tree2.getSyntax(),(ArrayList<Expr>)sub_tree1.getTree());
+						methodCallExpr.at(sub_tree3.getLine_index(), sub_tree3.getCh_index());
+						ExprStmt exprstmt = new ExprStmt(methodCallExpr);
 						exprstmt.at(sub_tree3.getLine_index(), sub_tree3.getCh_index());
 						tree = exprstmt;
 					}
@@ -745,7 +753,7 @@ public class Parser
 		sb.append("but didn't found at Trans Table... Plz Check it");
 		sb.append("\n");
 		
-		throw new ParserException("Line : Char : " + "Parsing error (state not found)", sb.toString());
+		throw new ParserException("Line : Char : " + "Parsing error (state not found)", sb.toString(), -1, -1);
 	}
 
 	private String Check_state(ParseState current_state, Terminal a)
@@ -930,7 +938,8 @@ public class Parser
 		sb.append("[" + a.getLine_index() + "," + a.getCh_index() + "]");
 		sb.append("\n");
 		
-		throw new ParserException("Line " + a.getLine_index() + " : Char " + a.getCh_index() + " : " + "Parsing error", sb.toString());
+		throw new ParserException("Line " + a.getLine_index() + " : Char " + a.getCh_index() + " : " + "Parsing error", sb.toString(),
+				a.getLine_index(), a.getCh_index());
 	}
 	
 	private int atoi(String a) // this method only use Parser, So set "private".

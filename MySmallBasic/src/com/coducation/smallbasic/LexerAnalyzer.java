@@ -150,7 +150,8 @@ public class LexerAnalyzer
 						{
 //							System.err.println("Unexpected Token : " + I);
 //							System.exit(0);
-							throw new LexerException("Line " + lineno + " : " + "Char " + front_index + " : " + "Unexpected Token : " + I);
+							throw new LexerException("Line " + lineno + " : " + "Char " + front_index + " : " + "Unexpected Token : " + I,
+									lineno, front_index);
 						}
 					}
 					i_index++;
@@ -255,7 +256,8 @@ public class LexerAnalyzer
 								{
 //									System.err.println("Overlapped dot error.");
 //									System.exit(0);	
-									throw new LexerException("Line " + lineno + " : " + "Char " + front_index + " : " + "Overlapped dot error.");
+									throw new LexerException("Line " + lineno + " : " + "Char " + front_index + " : " + "Overlapped dot error.",
+											lineno, front_index);
 								}
 							}while(ch >= '0' && ch <= '9');
 							
@@ -287,7 +289,8 @@ public class LexerAnalyzer
 									{
 //										System.err.println("Overlapped dot error.");
 //										System.exit(0);
-										throw new LexerException("Line " + lineno + " : " + "Char " + front_index + " : " + "Overlapped dot error.");
+										throw new LexerException("Line " + lineno + " : " + "Char " + front_index + " : " + "Overlapped dot error.",
+												lineno, front_index);
 									}
 								}
 							}
@@ -396,7 +399,8 @@ public class LexerAnalyzer
 				{
 //					System.err.println("Lexing Error.");
 //					System.exit(0);
-					throw new LexerException("Line " + lineno + " : " + "Char " + front_index + " : " + "Lexing Error.");
+					throw new LexerException("Line " + lineno + " : " + "Char " + front_index + " : " + "Lexing Error.",
+							lineno, front_index);
 				}
 				Skip_CR = false; // Added.
 

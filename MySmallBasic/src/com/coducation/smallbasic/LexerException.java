@@ -6,10 +6,21 @@ package com.coducation.smallbasic;
 
 public class LexerException extends RuntimeException {
 	private String message;
-	public LexerException(String message) {
+	private int linenum;
+	private int colnum;
+	
+	public LexerException(String message, int linenum, int colnum) {
 		this.message = message;
+		this.linenum = linenum;
+		this.colnum = colnum;
 	}
 	public String getMessage() {
 		return message;
+	}
+	public int getLinenum() {
+		return linenum;
+	}
+	public int getColnum() {
+		return colnum;
 	}
 }

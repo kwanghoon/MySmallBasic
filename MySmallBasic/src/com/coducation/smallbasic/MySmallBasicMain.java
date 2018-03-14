@@ -13,6 +13,8 @@ import java.util.StringTokenizer;
 
 import org.mozilla.universalchardet.UniversalDetector;
 
+import com.sun.corba.se.impl.util.Version;
+
 public class MySmallBasicMain {
 
 	public static void main(String[] args) throws IOException {
@@ -130,6 +132,28 @@ public class MySmallBasicMain {
 				}
 			} else {
 				System.err.println("Tree is not BlockStmt.");
+			}
+		}
+		catch(LexerException e) {
+			System.err.println("Check syntax at Line " + e.getLinenum() + ", Char " + e.getColnum() 
+								+ " : Unrecognized character(s)");
+			System.err.println(">>> " + e.getMessage());
+		}
+		catch(ParserException e) {
+			System.err.println("Check syntax at Line " + e.getLinenum() + ", Char " + e.getColnum()
+								+ " : Unrecognized program structure");
+			System.err.println(">>> " + e.getMessage());
+		}
+		catch(InterpretException e) {
+			String culprit = e.getCulprit();
+			if (culprit == null) {
+				System.err.println(e.getMessage());
+				e.printStackTrace();
+			}
+			else {
+				System.err.println("Check syntax at Line " + e.getLinenum() + ", Char " + e.getColnum()
+								+ " : " + culprit);
+				//System.err.println(">>> " + e.getMessage());
 			}
 		}
 		catch(Throwable t) {

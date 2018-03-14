@@ -75,14 +75,16 @@ public class Eval {
 				// the change of the field value.
 				Method mth = clz.getMethod(notifyFieldAssign, String.class);
 				mth.invoke(null, ((PropertyExpr) lhs).getName());
-			} catch (NoSuchFieldException | SecurityException e) {
+			} catch (NoSuchFieldException e) {
+				throw new InterpretException("Assign : " + e.toString(), ((PropertyExpr) lhs).getName(), lhs.lineno(), lhs.charat());
+			} catch (SecurityException e) { 
 				throw new InterpretException("Assign : " + e.toString());
 			} catch (IllegalArgumentException e) {
 				throw new InterpretException("Assign : " + e.toString());
 			} catch (IllegalAccessException e) {
 				throw new InterpretException("Assign : " + e.toString());
-			} catch (ClassNotFoundException e) {
-				throw new InterpretException("Class Not Found " + e.toString());
+			} catch (ClassNotFoundException | NoClassDefFoundError e) {
+				throw new InterpretException("Class Not Found " + e.toString(), ((PropertyExpr) lhs).getObj(), lhs.lineno(), lhs.charat());
 			} catch (NoSuchMethodException e) {
 				throw new InterpretException("Method Not Found " + e.toString());
 			} catch (InvocationTargetException e) {
@@ -528,7 +530,7 @@ public class Eval {
 				return null;
 			}
 		} catch (NoSuchMethodException e) {
-			throw new InterpretException(e.toString() + mthName);
+			throw new InterpretException(e.toString() + mthName, mthName, methodCallExpr.lineno(), methodCallExpr.charat());
 		} catch (IllegalAccessException e) {
 			throw new InterpretException(e.toString());
 		} catch (IllegalArgumentException e) {
@@ -547,8 +549,8 @@ public class Eval {
 			}
 			exn.printStackTrace();
 			throw new InterpretException(e.toString() + clzName + ", " + mthName);
-		} catch (ClassNotFoundException e) {
-			throw new InterpretException("Class Not Found " + e.toString());
+		} catch (ClassNotFoundException | NoClassDefFoundError e) {
+			throw new InterpretException("Class Not Found " + e.toString(), clzName, methodCallExpr.lineno(), methodCallExpr.charat());
 		}
 
 	}
@@ -570,14 +572,16 @@ public class Eval {
 			mth.invoke(null, propertyExpr.getName());
 
 			return (Value) fld.get(null);
-		} catch (NoSuchFieldException | SecurityException e) {
+		} catch (NoSuchFieldException e) {
+			throw new InterpretException("PropertyExpr : " + e.toString(), propertyExpr.getName(), propertyExpr.lineno(), propertyExpr.charat());
+		} catch (SecurityException e) {
 			throw new InterpretException("PropertyExpr : " + e.toString());
 		} catch (IllegalArgumentException e) {
 			throw new InterpretException("PropertyExpr : " + e.toString());
 		} catch (IllegalAccessException e) {
 			throw new InterpretException("PropertyExpr : " + e.toString());
-		} catch (ClassNotFoundException e) {
-			throw new InterpretException("Class Not Found " + e.toString());
+		} catch (ClassNotFoundException | NoClassDefFoundError e) {
+			throw new InterpretException("Class Not Found " + e.toString(), propertyExpr.getObj(), propertyExpr.lineno(), propertyExpr.charat());
 		} catch (NoSuchMethodException e) {
 			throw new InterpretException("Method Not Found " + e.toString());
 		} catch (InvocationTargetException e) {
@@ -868,7 +872,7 @@ public class Eval {
 		return false;
 	}
 
-	public static Class getClass(String name) throws ClassNotFoundException {
+	public static Class getClass(String name) throws ClassNotFoundException, NoClassDefFoundError {
 		return Class.forName(lib + name);
 	}
 
