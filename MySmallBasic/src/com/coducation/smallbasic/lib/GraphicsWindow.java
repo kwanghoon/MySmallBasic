@@ -22,6 +22,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.geom.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -46,9 +47,14 @@ import org.graphstream.ui.view.Viewer;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.*;
+import org.jfree.chart.plot.*;
+import org.jfree.chart.renderer.xy.*;
+import org.jfree.data.category.*;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
+import org.jfree.util.*;
 
 import com.coducation.smallbasic.DoubleV;
 import com.coducation.smallbasic.Eval;
@@ -2778,10 +2784,12 @@ public class GraphicsWindow {
 
 	// Supporting Chart Library
 	private static final String chartIdLable = "Chart";
-	private static int chartId = 1;
+	private static int chartId = 0;
 
-	private static JFreeChart xyLineChart[] = new JFreeChart[100];
-	private static ChartPanel chartPanel[] = new ChartPanel[100];
+	//private static JFreeChart chart[] = new JFreeChart[100];
+	private static ArrayList<JFreeChart> chart = new ArrayList<JFreeChart>();
+	//private static ChartPanel chartPanel[] = new ChartPanel[100];
+	private static ArrayList<ChartPanel> chartPanel = new ArrayList<ChartPanel>();
 	private static HashMap<String, Integer> chartMap = new HashMap<>();
 	static String cID = "";
 
@@ -2793,35 +2801,66 @@ public class GraphicsWindow {
 		return cID;
 	}
 
-	static void AddChart(String key, double[] xValue, double[] yValue, String opt) {
-		String id = chartIdLable + chartId;
+	static void AddLine(String key, double[] xValue, double[] yValue, String opt) {
+		String id = chartIdLable + (chartId + 1);
 		chartMap.put(id, chartId);
 		SetChartID(id);
-
-		if (opt.equalsIgnoreCase("s")) {
-			xyLineChart[chartId] = ChartFactory.createScatterPlot("", "", "", createDataset(key, xValue, yValue));
-		} else {
-			xyLineChart[chartId] = ChartFactory.createXYLineChart("", "", "", createDataset(key, xValue, yValue));
-
-			if (opt.equalsIgnoreCase("--")) {
-				xyLineChart[chartId].getXYPlot().getRenderer().setSeriesStroke(0, new BasicStroke(1.0f,
-						BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 1.0f, new float[] { 6.0f, 6.0f }, 0.0f));
-			} else if (opt.equalsIgnoreCase(":")) {
-				xyLineChart[chartId].getXYPlot().getRenderer().setSeriesStroke(0, new BasicStroke(1.0f,
-						BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 1.0f, new float[] { 2.5f, 2.5f }, 0.0f));
+		
+		XYPlot plot = new XYPlot();
+		XYItemRenderer renderer = new XYLineAndShapeRenderer(true, false); 
+		if(opt.contains("o") | opt.contains("s") | opt.contains("^")) {
+			if(opt.contains("-") | opt.contains("--") | opt.contains(":")) {
+				renderer = new XYLineAndShapeRenderer(true, true);
 			}
-
+			else {
+				renderer = new XYLineAndShapeRenderer(false, true);
+			}
+				
 		}
+		else if(opt.contains("-") | opt.contains("--") | opt.contains(":")) {
+			renderer = new XYLineAndShapeRenderer(true, false);
+		}
+		
+		if (opt.contains("o"))
+			renderer.setSeriesShape(0, new Ellipse2D.Double(-3.0, -3.0, 6.0, 6.0));
+		else if (opt.contains("s"))
+			renderer.setSeriesShape(0, new Rectangle2D.Double(-3.0, -3.0, 6.0, 6.0));
+		else if (opt.contains("^"))
+			renderer.setSeriesShape(0, ShapeUtilities.createUpTriangle(3.0f));
+		
+		if (opt.contains("--")) {
+			renderer.setSeriesStroke(0, new BasicStroke(1.0f,
+					BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 1.0f, new float[] { 6.0f, 6.0f }, 0.0f));
+		} else if (opt.contains(":")) {
+			renderer.setSeriesStroke(0, new BasicStroke(1.0f,
+					BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 1.0f, new float[] { 2.5f, 2.5f }, 0.0f));
+		}
+		
+		ValueAxis domain = new NumberAxis("");
+		ValueAxis range = new NumberAxis("");
+		
+		((NumberAxis)domain).setAutoRangeIncludesZero(false);
+		((NumberAxis)range).setAutoRangeIncludesZero(false);
 
+		plot.setDataset(0, createXYDataset(key, xValue, yValue));
+		plot.setRenderer(0, renderer);
+		plot.setDomainAxis(0, domain);
+		plot.setRangeAxis(0, range);
+
+		plot.mapDatasetToDomainAxis(0, 0);
+		plot.mapDatasetToRangeAxis(0, 0);
+
+		chart.add(new JFreeChart("", JFreeChart.DEFAULT_TITLE_FONT, plot, true));
+	
 		RemoveLegend(id);
 
-		chartPanel[chartId] = new ChartPanel(xyLineChart[chartId]);
-		chartPanel[chartId].setSize(500, 300);
-		// chartPanel[chartId].setPreferredSize(new java.awt.Dimension( 500 ,
+		chartPanel.add(new ChartPanel(chart.get(chartId)));
+		chartPanel.get(chartId).setSize(500, 300);
+		// chartPanel.get(chartId).setPreferredSize(new java.awt.Dimension( 500 ,
 		// 300 ));
-		chartPanel[chartId].setLocation(10, 10);
+		chartPanel.get(chartId).setLocation(10, 10);
 
-		panel.add(chartPanel[chartId]);
+		panel.add(chartPanel.get(chartId));
 		chartId++;
 
 		if (frame == null)
@@ -2831,68 +2870,203 @@ public class GraphicsWindow {
 		panel.revalidate();
 		panel.repaint();
 	}
+	
+	static void AddBar(String key, String[] xValue, double[] yValue, String opt) {
+		String id = chartIdLable + chartId;
+		chartMap.put(id, chartId);
+		SetChartID(id);
+		
+		if(opt.equalsIgnoreCase("s")) {
+			chart.add(ChartFactory.createStackedBarChart(
+		 	         "",
+		 	         "","",
+		 	         createCategoryDataset(key, xValue, yValue)));
+		}
+		else {
+			chart.add(ChartFactory.createBarChart(
+		 	         "",
+		 	         "","",
+		 	        createCategoryDataset(key, xValue, yValue)));
+		}
 
-	static void SetData(String chartName, String key, double[] xValue, double[] yValue) {
+		RemoveLegend(id);
+
+		chartPanel.add(new ChartPanel(chart.get(chartId)));
+		chartPanel.get(chartId).setSize(500, 300);
+		// chartPanel.get(chartId).setPreferredSize(new java.awt.Dimension( 500 ,
+		// 300 ));
+		chartPanel.get(chartId).setLocation(10, 10);
+
+		panel.add(chartPanel.get(chartId));
+		chartId++;
+
+		if (frame == null)
+			Show(new ArrayList<Value>());
+
+		frame.pack();
+		panel.revalidate();
+		panel.repaint();
+	}
+	
+	static void SetData(String chartName, String key, String[] xValue, double[] yValue) {
 		int id = chartMap.get(chartName);
-		xyLineChart[id].getXYPlot().setDataset(createDataset(key, xValue, yValue));
+		Plot plot = chart.get(id).getPlot();
+		
+		if(plot instanceof CategoryPlot)
+			((CategoryPlot)plot).setDataset(createCategoryDataset(key, xValue, yValue));
+		else if(plot instanceof XYPlot) {
+			double[] dValue = new double[xValue.length];
+
+			for (int i = 0; i < dValue.length; i++)
+				dValue[i] = Double.parseDouble(xValue[i]);
+			
+			((XYPlot)plot).setDataset(createXYDataset(key, dValue, yValue));
+		}
 	}
 
-	static void AddData(String chartName, String key, double[] xValue, double[] yValue) {
+	static void AddData(String chartName, String key, String[] xValue, double[] yValue, String opt) {
 		int id = chartMap.get(chartName);
-		XYSeriesCollection dataset = (XYSeriesCollection) xyLineChart[id].getXYPlot().getDataset();
-		XYSeries series;
-		int idx = dataset.getSeriesIndex(key);
+		Plot plot = chart.get(id).getPlot();
+		
+		if(plot instanceof CategoryPlot) { // bar
+			DefaultCategoryDataset categotyDataset = (DefaultCategoryDataset) ((CategoryPlot)plot).getDataset();
+			for (int i = 0; i < xValue.length; i++)
+				categotyDataset.setValue(yValue[i], key, xValue[i]);
+		}
+		else if(plot instanceof XYPlot) {
+			XYSeriesCollection xyDataset = (XYSeriesCollection) ((XYPlot)plot).getDataset();
+			XYSeries series;
+			int idx = xyDataset.getSeriesIndex(key);
+			double[] dValue = new double[xValue.length];
 
-		if (idx == -1)
-			series = new XYSeries(key);
-		else
-			series = dataset.getSeries(idx);
+			for (int i = 0; i < dValue.length; i++)
+				dValue[i] = Double.parseDouble(xValue[i]);
 
-		for (int i = 0; i < xValue.length; i++)
-			series.addOrUpdate(xValue[i], yValue[i]);
+			if (idx == -1) {
+				series = new XYSeries(key);
+				xyDataset = new XYSeriesCollection();
+			} 
+			else
+				series = xyDataset.getSeries(idx);
 
-		dataset.addSeries(series);
+			for (int i = 0; i < xValue.length; i++)
+				series.addOrUpdate(dValue[i], yValue[i]);
+
+			xyDataset.addSeries(series);
+
+			if (idx == -1) {
+				XYPlot xyplot = ((XYPlot)plot);
+				int datasetIdx = xyplot.getDatasetCount();
+
+				XYItemRenderer renderer = new XYLineAndShapeRenderer(true, false); 
+				if(opt.contains("o") | opt.contains("s") | opt.contains("^")) {
+					if(opt.contains("-") | opt.contains("--") | opt.contains(":")) {
+						renderer = new XYLineAndShapeRenderer(true, true);
+					}
+					else 
+						renderer = new XYLineAndShapeRenderer(false, true);
+
+				}
+				else if(opt.contains("-") | opt.contains("--") | opt.contains(":")) {
+					renderer = new XYLineAndShapeRenderer(true, false);
+				}
+
+				if (opt.contains("o"))
+					renderer.setSeriesShape(0, new Ellipse2D.Double(-3.0, -3.0, 6.0, 6.0));
+				else if (opt.contains("s"))
+					renderer.setSeriesShape(0, new Rectangle2D.Double(-3.0, -3.0, 6.0, 6.0));
+				else if (opt.contains("^"))
+					renderer.setSeriesShape(0, ShapeUtilities.createUpTriangle(3.0f));
+				
+				if (opt.contains("--")) {
+					renderer.setSeriesStroke(0, new BasicStroke(1.0f,
+							BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 1.0f, new float[] { 6.0f, 6.0f }, 0.0f));
+				} else if (opt.contains(":")) {
+					renderer.setSeriesStroke(0, new BasicStroke(1.0f,
+							BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 1.0f, new float[] { 2.5f, 2.5f }, 0.0f));
+				}
+
+				xyplot.setDataset(datasetIdx, xyDataset);
+				xyplot.setRenderer(datasetIdx, renderer);
+
+				xyplot.mapDatasetToDomainAxis(datasetIdx, 0);
+				xyplot.mapDatasetToRangeAxis(datasetIdx, 0);
+			}
+		}
 	}
 
 	static void AddTitle(String chartName, String title) {
 		int id = chartMap.get(chartName);
-		xyLineChart[id].setTitle(title);
+		chart.get(id).setTitle(title);
 		;
 	}
 
 	static void AddXLabel(String chartName, String xlabel) {
 		int id = chartMap.get(chartName);
-		xyLineChart[id].getXYPlot().getDomainAxis().setLabel(xlabel);
+		chart.get(id).getXYPlot().getDomainAxis().setLabel(xlabel);
 	}
 
 	static void AddYLabel(String chartName, String ylabel) {
 		int id = chartMap.get(chartName);
-		xyLineChart[id].getXYPlot().getDomainAxis().setLabel(ylabel);
+		chart.get(id).getXYPlot().getRangeAxis().setLabel(ylabel);
 	}
 
 	static void AddLegend(String chartName) {
 		int id = chartMap.get(chartName);
-		xyLineChart[id].getLegend().setVisible(true);
+		chart.get(id).getLegend().setVisible(true);
 	}
 
 	static void RemoveLegend(String chartName) {
 		int id = chartMap.get(chartName);
-		xyLineChart[id].getLegend().setVisible(false);
+		chart.get(id).getLegend().setVisible(false);
 	}
 
 	static void SetChartSize(String chartName, int width, int height) {
 
 		int id = chartMap.get(chartName);
-		chartPanel[id].setSize(width, height);
+		chartPanel.get(id).setSize(width, height);
+	}
+	
+	static int GetChartWidth(String chartName) {
+
+		int id = chartMap.get(chartName);
+		return chartPanel.get(id).getWidth();
+	}
+	
+	static int GetChartHeight(String chartName) {
+
+		int id = chartMap.get(chartName);
+		return chartPanel.get(id).getHeight();
 	}
 
 	static void SetChartLocation(String chartName, int x, int y) {
 
 		int id = chartMap.get(chartName);
-		chartPanel[id].setLocation(x, y);
+		chartPanel.get(id).setLocation(x, y);
+	}
+	
+	static int GetChartX(String chartName) {
+
+		int id = chartMap.get(chartName);
+		return chartPanel.get(id).getX();
+	}
+	
+	static int GetChartY(String chartName) {
+
+		int id = chartMap.get(chartName);
+		return chartPanel.get(id).getY();
+	}
+	
+	static DefaultCategoryDataset createCategoryDataset(String key, String[] xValue, double[] yValue) {
+		DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+
+		for (int i = 0; i < xValue.length; i++)
+			dataset.addValue(yValue[i], key, xValue[i]);
+
+		return dataset;
 	}
 
-	static XYDataset createDataset(String key, double[] xValue, double[] yValue) {
+	static XYDataset createXYDataset(String key, double[] xValue, double[] yValue) {
 		XYSeriesCollection dataset = new XYSeriesCollection();
 
 		XYSeries series = new XYSeries(key);
