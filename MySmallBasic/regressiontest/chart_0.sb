@@ -1,0 +1,36 @@
+GraphicsWindow.Show()
+key = "school"
+x[0] = "1970"
+x[1] = "1980"
+x[2] = "1990"
+x[3] = "2000"
+x[4] = "2010"
+y[0] = 15
+y[1] = 30
+y[2] = 60
+y[3] = 120
+y[4] = 240
+id = Chart.Plot(key, x, y)
+id2 = Chart.Plot(key, x, y, "s")
+Chart.SetLocation(id2, 550, 250)
+Chart.ShowLegend(id2)
+z[0] = 130
+z[1] = 150
+z[2] = 100
+z[3] = 90
+z[4] = 150
+Chart.AddData(id2, "lib", x, z)
+id3 = Chart.Plot(key, x, y, "^--")
+Chart.SetLocation(id3, 50, 600)
+Chart.SetSize(id3, 400, 250)
+Chart.Title(id3, "TITLE")
+Chart.XLabel(id3, "year")
+Chart.YLabel(id3, "number")
+id4 = Chart.Plot(key, x, y, "o:")
+Chart.SetLocation(id4, 550, 600)
+Chart.SetSize(id4, 250, 250)
+Chart.SetData(id4, "lib", x, z)
+Chart.ShowLegend(id4)
+Chart.HideLegend(id4)
+GraphicsWindow.Width = Chart.GetWidth(id2) + Chart.GetX(id2) + 20
+GraphicsWindow.Height = Chart.GetHeight(id4) + Chart.GetY(id4) + 20

@@ -1,0 +1,23 @@
+GraphicsWindow.Show()
+key = "school"
+x[0] = "1970"
+x[1] = "1980"
+x[2] = "1990"
+x[3] = "2000"
+x[4] = "2010"
+y[0] = 15
+y[1] = 30
+y[2] = 60
+y[3] = 120
+y[4] = 240
+id = Chart.Bar(key, x, y)
+Chart.Title(id, "BarChart")
+id2 = Chart.Bar(key, x, y, "s")
+Chart.SetLocation(id2, 550, 300)
+Chart.Legend(id2)
+z[0] = 130
+z[1] = 150
+z[2] = 100
+z[3] = 90
+z[4] = 150
+Chart.AddData(id2, "lib", x, z)
