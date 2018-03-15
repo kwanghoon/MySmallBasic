@@ -187,7 +187,11 @@ public class TextWindow {
 				throw new InterpretException("ForegroundColor: Unexpected value " + ForegroundColor.toString());
 			
 			ForegroundColor = new StrV(v);
-			AnsiConsole.out.print(ansi().fg(valueOf(v)));
+			try {
+				AnsiConsole.out.print(ansi().fg(valueOf(v)));
+			} catch(Throwable e) {
+				System.err.println("Error: TextWindow." + fieldName + " = " + v);
+			}
 			
 		} else if (fieldName.equalsIgnoreCase("BackgroundColor")) {
 			
@@ -202,7 +206,11 @@ public class TextWindow {
 				throw new InterpretException("BackgroundColor: Unexpected value " + BackgroundColor.toString());
 			
 			BackgroundColor = new StrV(v);
-			AnsiConsole.out.print(ansi().bg(valueOf(v)));
+			try {
+				AnsiConsole.out.print(ansi().bg(valueOf(v)));
+			} catch(Throwable e) {
+				System.err.println("Error: TextWindow." + fieldName + " = " + v);
+			}
 			
 		} else if (fieldName.equalsIgnoreCase("CursorLeft")) {
 			
@@ -223,7 +231,11 @@ public class TextWindow {
 				throw new InterpretException("CursorLeft: Unexpected value" + CursorLeft.toString());
 
 			cursorX = cursorLeft; 
-			AnsiConsole.out.print(ansi().cursor(cursorY, cursorX)); // 다시 확인 필요
+			try {
+				AnsiConsole.out.print(ansi().cursor(cursorY, cursorX)); // 다시 확인 필요
+			} catch(Throwable e) {
+				System.err.println("Error: TextWindow." + fieldName + " = " + cursorX);
+			}
 			
 		} else if (fieldName.equalsIgnoreCase("CursorTop")){
 			
@@ -245,7 +257,11 @@ public class TextWindow {
 				throw new InterpretException("CursorTop: Unexpected value" + CursorTop.toString());
 			
 			cursorY = cursorTop;
-			AnsiConsole.out.print(ansi().cursor(cursorY, cursorX)); // 다시 확인 필요
+			try {
+				AnsiConsole.out.print(ansi().cursor(cursorY, cursorX)); // 다시 확인 필요
+			} catch(Throwable e) {
+				System.err.println("Error: TextWindow." + fieldName + " = " + cursorY);
+			}
 			
 		} else if (fieldName.equalsIgnoreCase("Left") || fieldName.equalsIgnoreCase("Top")) {
 			

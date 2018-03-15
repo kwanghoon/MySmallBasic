@@ -154,6 +154,7 @@ public class MySmallBasicMain {
 				System.err.println("Check syntax at Line " + e.getLinenum() + ", Char " + e.getColnum()
 								+ " : " + culprit);
 				//System.err.println(">>> " + e.getMessage());
+				e.printStackTrace();
 			}
 		}
 		catch(Throwable t) {

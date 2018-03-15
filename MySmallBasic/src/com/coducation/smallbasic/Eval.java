@@ -5,6 +5,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 
+import com.coducation.smallbasic.util.Util;
+
 public class Eval {
 	static boolean debug;
 	static boolean debugexpr = false;
@@ -76,19 +78,19 @@ public class Eval {
 				Method mth = clz.getMethod(notifyFieldAssign, String.class);
 				mth.invoke(null, ((PropertyExpr) lhs).getName());
 			} catch (NoSuchFieldException e) {
-				throw new InterpretException("Assign : " + e.toString(), ((PropertyExpr) lhs).getName(), lhs.lineno(), lhs.charat());
+				throw new InterpretException("Assign : " + Util.throwableToStacktrace(e), ((PropertyExpr) lhs).getName(), lhs.lineno(), lhs.charat());
 			} catch (SecurityException e) { 
-				throw new InterpretException("Assign : " + e.toString());
+				throw new InterpretException("Assign : " + Util.throwableToStacktrace(e));
 			} catch (IllegalArgumentException e) {
-				throw new InterpretException("Assign : " + e.toString());
+				throw new InterpretException("Assign : " + Util.throwableToStacktrace(e));
 			} catch (IllegalAccessException e) {
-				throw new InterpretException("Assign : " + e.toString());
+				throw new InterpretException("Assign : " + Util.throwableToStacktrace(e));
 			} catch (ClassNotFoundException | NoClassDefFoundError e) {
-				throw new InterpretException("Class Not Found " + e.toString(), ((PropertyExpr) lhs).getObj(), lhs.lineno(), lhs.charat());
+				throw new InterpretException("Class Not Found " + Util.throwableToStacktrace(e), ((PropertyExpr) lhs).getObj(), lhs.lineno(), lhs.charat());
 			} catch (NoSuchMethodException e) {
-				throw new InterpretException("Method Not Found " + e.toString());
+				throw new InterpretException("Method Not Found " + Util.throwableToStacktrace(e));
 			} catch (InvocationTargetException e) {
-				throw new InterpretException("Target Not Found " + e.toString() + ": ");
+				throw new InterpretException("Target Not Found " + Util.throwableToStacktrace(e) + ": ");
 			}
 		} else if (lhs instanceof Array) {
 			Array arr = (Array) lhs;
@@ -530,11 +532,11 @@ public class Eval {
 				return null;
 			}
 		} catch (NoSuchMethodException e) {
-			throw new InterpretException(e.toString() + mthName, mthName, methodCallExpr.lineno(), methodCallExpr.charat());
+			throw new InterpretException(Util.throwableToStacktrace(e) + mthName, mthName, methodCallExpr.lineno(), methodCallExpr.charat());
 		} catch (IllegalAccessException e) {
-			throw new InterpretException(e.toString());
+			throw new InterpretException(Util.throwableToStacktrace(e));
 		} catch (IllegalArgumentException e) {
-			throw new InterpretException(e.toString());
+			throw new InterpretException(Util.throwableToStacktrace(e));
 		} catch (InvocationTargetException e) {
 			Throwable exn = e.getCause();
 			if (exn instanceof InterpretException) {
@@ -544,13 +546,13 @@ public class Eval {
 				else {
 					ie.printStackTrace();
 					throw new InterpretException(
-							e.toString() + clzName + ", " + mthName + "\n" + "Caused By\n" + ie.getStackTrace());
+							Util.throwableToStacktrace(e) + clzName + ", " + mthName + "\n" + "Caused By\n" + ie.getStackTrace());
 				}
 			}
 			exn.printStackTrace();
-			throw new InterpretException(e.toString() + clzName + ", " + mthName);
+			throw new InterpretException(Util.throwableToStacktrace(e) + clzName + ", " + mthName);
 		} catch (ClassNotFoundException | NoClassDefFoundError e) {
-			throw new InterpretException("Class Not Found " + e.toString(), clzName, methodCallExpr.lineno(), methodCallExpr.charat());
+			throw new InterpretException("Class Not Found " + Util.throwableToStacktrace(e), clzName, methodCallExpr.lineno(), methodCallExpr.charat());
 		}
 
 	}
@@ -573,19 +575,19 @@ public class Eval {
 
 			return (Value) fld.get(null);
 		} catch (NoSuchFieldException e) {
-			throw new InterpretException("PropertyExpr : " + e.toString(), propertyExpr.getName(), propertyExpr.lineno(), propertyExpr.charat());
+			throw new InterpretException("PropertyExpr : " + Util.throwableToStacktrace(e), propertyExpr.getName(), propertyExpr.lineno(), propertyExpr.charat());
 		} catch (SecurityException e) {
-			throw new InterpretException("PropertyExpr : " + e.toString());
+			throw new InterpretException("PropertyExpr : " + Util.throwableToStacktrace(e));
 		} catch (IllegalArgumentException e) {
-			throw new InterpretException("PropertyExpr : " + e.toString());
+			throw new InterpretException("PropertyExpr : " + Util.throwableToStacktrace(e));
 		} catch (IllegalAccessException e) {
-			throw new InterpretException("PropertyExpr : " + e.toString());
+			throw new InterpretException("PropertyExpr : " + Util.throwableToStacktrace(e));
 		} catch (ClassNotFoundException | NoClassDefFoundError e) {
-			throw new InterpretException("Class Not Found " + e.toString(), propertyExpr.getObj(), propertyExpr.lineno(), propertyExpr.charat());
+			throw new InterpretException("Class Not Found " + Util.throwableToStacktrace(e), propertyExpr.getObj(), propertyExpr.lineno(), propertyExpr.charat());
 		} catch (NoSuchMethodException e) {
-			throw new InterpretException("Method Not Found " + e.toString());
+			throw new InterpretException("Method Not Found " + Util.throwableToStacktrace(e));
 		} catch (InvocationTargetException e) {
-			throw new InterpretException("Target Not Found " + e.toString() + ": ");
+			throw new InterpretException("Target Not Found " + Util.throwableToStacktrace(e) + ": ");
 		}
 	}
 
@@ -593,7 +595,7 @@ public class Eval {
 		try {
 			return new StrV(strDouble).parseDouble();
 		} catch (NumberFormatException e) {
-			throw new InterpretException(e.toString());
+			throw new InterpretException(Util.throwableToStacktrace(e));
 		}
 	}
 
