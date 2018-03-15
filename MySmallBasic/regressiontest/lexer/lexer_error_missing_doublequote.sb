@@ -1,0 +1,13 @@
+TextWindow.ForegroundColor = "Green" 
+TextWindow.WriteLine("Hello World") 
+
+TextWindow.ForegroundColor = "Magenta" 
+TextWindow.WriteLine("I can not use colors that Gray,DarkBlue,DarkCyan...") 
+
+TextWindow.BackgroundColor = "White" 
+TextWindow.Write("Hi") 
+
+TextWindow.WriteLine("OH,") 
+
+TextWindow.ForegroundColor = Black" 
+TextWindow.WriteLine("do do") 

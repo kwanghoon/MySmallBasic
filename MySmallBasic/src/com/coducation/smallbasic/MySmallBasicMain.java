@@ -146,7 +146,7 @@ public class MySmallBasicMain {
 		}
 		catch(InterpretException e) {
 			String culprit = e.getCulprit();
-			if (culprit == null) {
+			if (culprit == null || e.getLinenum()==-1 && e.getColnum()==-1) {
 				System.err.println(e.getMessage());
 				e.printStackTrace();
 			}
@@ -154,7 +154,7 @@ public class MySmallBasicMain {
 				System.err.println("Check syntax at Line " + e.getLinenum() + ", Char " + e.getColnum()
 								+ " : " + culprit);
 				//System.err.println(">>> " + e.getMessage());
-				e.printStackTrace();
+				//e.printStackTrace();
 			}
 		}
 		catch(Throwable t) {

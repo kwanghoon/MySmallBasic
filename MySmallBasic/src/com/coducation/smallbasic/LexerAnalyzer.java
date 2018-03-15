@@ -205,7 +205,11 @@ public class LexerAnalyzer
 					do
 					{
 						i_index++;
-						ch = line.charAt(i_index);
+						if (i_index >= line.length())
+							throw new LexerException("Line " + lineno + " : " + "Char " + front_index + " : " + "Missing \"",
+									lineno, front_index);
+						else
+							ch = line.charAt(i_index);
 						
 						// for Escape sequence of characters
 //						if (ch == '\\') {

@@ -1,0 +1,2 @@
+TextWindow.ForegroundColor = "Yelow"
+TextWindow.WriteLine("hello world!!")
