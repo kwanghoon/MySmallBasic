@@ -142,7 +142,8 @@ public class MySmallBasicMain {
 		catch(ParserException e) {
 			System.err.println("Check syntax at Line " + e.getLinenum() + ", Char " + e.getColnum()
 								+ " : Unrecognized program structure");
-			System.err.println(">>> " + e.getMessage());
+			System.err.println(">>> " + e.getMessage() /*  + e.getParseInfo() */ );
+			// e.printStackTrace();
 		}
 		catch(InterpretException e) {
 			String culprit = e.getCulprit();

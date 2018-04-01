@@ -1,0 +1,7 @@
+i = 1
+label:
+If i<25 Then
+  TextWindow.WriteLine(i)
+  i = i + 1
+EndIf
+Goto label

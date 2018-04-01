@@ -364,10 +364,10 @@ public class LexerAnalyzer
 							I = "EndFor";
 							CurrToken = Token.ENDFOR;
 							break;
-						case "LABEL": // i think this 3 line do not need.
-							I = "Label";
-							CurrToken = Token.LABEL;
-							break;
+//						case "LABEL": // i think this 3 line do not need.
+//							I = "Label";
+//							CurrToken = Token.LABEL;
+//							break;
 						case "GOTO":
 							I = "Goto";
 							CurrToken = Token.GOTO;
