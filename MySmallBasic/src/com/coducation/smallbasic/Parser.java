@@ -89,7 +89,7 @@ public class Parser
 				return (Nonterminal)stack.get(1);
 			}
 			
-			String data = Check_state(current_state, a);
+			String data = Check_state(current_state, a, Tokens);
 			String[] data_arr = data.split(" ");		
 			String order = data_arr[0];
 			String state = "";
@@ -691,6 +691,7 @@ public class Parser
 					else
 					{
 						// empty, Error Case.
+						throw new ParserException("Line : Char : " + "Parsing error (no matched rule is found) at " + state, "no hint", -1, -1);
 					}
 					
 					while(count != 0)
@@ -704,7 +705,7 @@ public class Parser
 					current_state = (ParseState) stack.lastElement();
 					
 					stack.push(new Nonterminal(tree));
-					stack.push(get_st(current_state, lhs));
+					stack.push(get_st(current_state, lhs, Tokens));
 					break;
 				}
 				case "LALRAccept":
@@ -716,7 +717,7 @@ public class Parser
 	}
 	
 	
-	private ParseState get_st(ParseState current_state, String index) throws FileNotFoundException
+	private ParseState get_st(ParseState current_state, String index, ArrayList<Terminal> Tokens) throws FileNotFoundException
 	{	
 		int count = 0;
 
@@ -753,10 +754,23 @@ public class Parser
 		sb.append("but didn't found at Trans Table... Plz Check it");
 		sb.append("\n");
 		
-		throw new ParserException("Line : Char : " + "Parsing error (state not found)", sb.toString(), -1, -1);
+		// For locating the parsing error.
+		int err_ch_index = -1;
+		int err_line_index = -1;
+		String culprit = "no hint";
+		
+		if (Tokens.isEmpty() == false) {
+			Terminal t = Tokens.get(0);
+			err_ch_index = t.getCh_index();
+			err_line_index = t.getLine_index();
+			culprit = t.getSyntax();
+		}
+			
+		
+		throw new ParserException("Line : Char : " + "Parsing error (state not found)" + sb.toString(), culprit, err_line_index, err_ch_index);
 	}
 
-	private String Check_state(ParseState current_state, Terminal a)
+	private String Check_state(ParseState current_state, Terminal a, ArrayList<Terminal> Tokens)
 	{
 		int index = 0;
 		while(index < Parsing_Table.size())
@@ -938,8 +952,20 @@ public class Parser
 		sb.append("[" + a.getLine_index() + "," + a.getCh_index() + "]");
 		sb.append("\n");
 		
-		throw new ParserException("Line " + a.getLine_index() + " : Char " + a.getCh_index() + " : " + "Parsing error", sb.toString(),
-				a.getLine_index(), a.getCh_index());
+		// For locating the parsing error.
+		int err_ch_index = -1;
+		int err_line_index = -1;
+		String culprit = "no hint";
+		
+		if (Tokens.isEmpty() == false) {
+			Terminal t = Tokens.get(0);
+			err_ch_index = t.getCh_index();
+			err_line_index = t.getLine_index();
+			culprit = t.getSyntax();
+		}
+		
+		throw new ParserException("Line " + a.getLine_index() + " : Char " + a.getCh_index() + " : " + "Parsing error " + sb.toString(), 
+				culprit, err_line_index, err_ch_index);
 	}
 	
 	private int atoi(String a) // this method only use Parser, So set "private".

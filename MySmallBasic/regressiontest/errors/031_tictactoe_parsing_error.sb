@@ -1,0 +1,92 @@
+' [1] 보드를 초기화하기
+b1 = "."
+b2 = "."
+b3 = "."
+b4 = "."
+b5 = "."
+b6 = "."
+b7 = "."
+b8 = "."
+b9 = "."
+turn = "O"
+
+'[2-1] 현재 보드를 출력하기
+LOOP_GAME:
+TextWindow.Write(b1)
+TextWindow.Write(b2)
+TextWindow.WriteLine(b3)
+TextWindow.Write(b4)
+TextWindow.Write(b5)
+TextWindow.WriteLine(b6)
+TextWindow.Write(b7)
+TextWindow.Write(b8)
+TextWindow.WriteLine(b9)
+
+'[2-2] 이번 차례의 말을 입력받아 놓기
+INPUT_LOOP:
+TextWindow.Wirte("The current turn: ")
+TextWindow.WriteLine(turn)
+position = TextWindow.Read()
+If position=1 AND b1="." Then
+   b1 = turn
+ElseIf position=2 AND b2="." Then
+   b2 = turn
+ElseIf position=3 AND b3="." Then
+   b3 = turn
+ElseIf position=4 AND b4="." Then
+   b4 = turn
+ElseIf position=5 AND b5="." Then
+   b5 = turn
+ElseIf position=6 AND b6="." Then
+   b6 = turn
+ElseIf position=7 AND b7="." Then
+   b7 = turn
+ElseIf position=8 AND b8="." Then
+   b8 = turn
+ElseIf position=9 AND b9="." Then
+   b9 = turn
+Else
+   Goto INPUT_LOOP
+EndIf 
+
+'[2-3] 승부 판단하기
+h_cond1 = (b1=turn AND b2=turn AND b3=turn)
+h_cond2 = (b4=turn AND b5=turn AND b6=turn)
+h_cond3 = (b7=turn AND b8=turn AND b9=turn)
+h_cond = (h_cond1 OR h_cond2 OR h_cond3)
+v_cond1 = (b1=turn AND b4=turn AND b7=turn)
+v_cond2 = (b2=turn AND b5=turn AND b8=turn)
+v_cond3 = (b3=turn AND b6=turn AND b9=turn)
+v_cond = (v_cond1 OR v_cond2 OR v_cond3)
+d_cond1 = (b1=turn AND b5=turn AND b9=turn)
+d_cond2 = (b3=turn AND b5=turn AND b7=turn)
+d_cond = (d_cond1 OR d_cond2)
+If h_cond OR v_cond OR d_cond Then
+    Goto WIN_EXIT
+Else
+    empty1 = (b1="." OR b2="." OR b3=".")
+    empty2 = (b4="." OR b5="." OR b6=".")
+    empty3 = (b7="." OR b8="." OR b9=".")
+    If empty1 OR empty2 OR empty3 Then
+      If turn="O" Then
+        turn="X"
+      Else
+        turn="O"
+      EndIf
+    Else
+      Goto DRAW_EXIT
+' Parsing error!!!      
+'    EndIf
+'
+EndIf
+'[3-1] 승부가 결정되었다면 이번 차례가 이김
+WIN_EXIT:
+    TextWindow.Write(turn)
+    TextWindow.WriteLine("wins!!")
+    Goto EXIT
+'[3-2] 승부가 결정되지 않았다면 무승부
+DRAW_EXIT:
+    TextWindow.WriteLine("O/X draws with X/O!!")
+    Goto EXIT
+EXIT:
+    

@@ -141,13 +141,15 @@ public class MySmallBasicMain {
 		}
 		catch(ParserException e) {
 			System.err.println("Check syntax at Line " + e.getLinenum() + ", Char " + e.getColnum()
-								+ " : Unrecognized program structure");
+								+ " : Unrecognized program structure : " + e.getParseInfo());
 			System.err.println(">>> " + e.getMessage() /*  + e.getParseInfo() */ );
 			// e.printStackTrace();
 		}
 		catch(InterpretException e) {
 			String culprit = e.getCulprit();
-			if (culprit == null || e.getLinenum()==-1 && e.getColnum()==-1) {
+			if (culprit == null) culprit = "No hint is available.";
+			
+			if (e.getLinenum()==-1 && e.getColnum()==-1) {
 				System.err.println(e.getMessage());
 				e.printStackTrace();
 			}
