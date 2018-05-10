@@ -7,10 +7,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.StringTokenizer;
 
 import org.jdiscript.JDIScript;
-import org.jdiscript.handlers.OnVMDisconnect;
 import org.jdiscript.util.VMSocketAttacher;
 
 import com.sun.jdi.ClassNotLoadedException;
@@ -45,7 +43,7 @@ public class MySmallBasicDebugger extends MySmallBasicDebuggerModel implements R
 		if (isDebugMode) {
 			pb = new ProcessBuilder(shellCmd, "/c", "start java.exe",
 					"-agentlib:jdwp=transport=dt_socket,address=localhost:7070,server=y,suspend=y", javaCmd, "-gui",
-					filePath);
+					filePath, "-guiDebug");
 		} else {
 			pb = new ProcessBuilder(shellCmd, "/c", "start java.exe", javaCmd, "-gui", filePath);
 		}

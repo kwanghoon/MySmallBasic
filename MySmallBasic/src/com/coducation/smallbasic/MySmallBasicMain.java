@@ -1,7 +1,6 @@
 package com.coducation.smallbasic;
 
 import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
@@ -13,24 +12,28 @@ import java.util.StringTokenizer;
 
 import org.mozilla.universalchardet.UniversalDetector;
 
-import com.sun.corba.se.impl.util.Version;
-
 public class MySmallBasicMain {
+
+	public static boolean guiDebugMode = false;
 
 	public static void main(String[] args) throws IOException {
 		LinkedList<String> runOption = new LinkedList<>(Arrays.asList(args));
 		boolean guiOption = false;
 		String Filename = null;
-		
+
 		// -gui filname
-		if(runOption.contains("-gui")){
+		if (runOption.contains("-gui")) {
 			guiOption = true;
-			Filename = runOption.get(Collections.binarySearch(runOption, "-gui")+1);
+			Filename = runOption.get(Collections.binarySearch(runOption, "-gui") + 1);
 		}
-		
-		//run
-		if(!guiOption)
-		{
+
+		// -guiDebug
+		if (runOption.contains("-guiDebug")) {
+			guiDebugMode = true;
+		}
+
+		// run
+		if (!guiOption) {
 			Scanner scan = new Scanner(System.in);
 
 			String option;
@@ -82,48 +85,49 @@ public class MySmallBasicMain {
 		}
 
 		try {
-			//get encoding
+			// get encoding
 			byte[] buf = new byte[4096];
-	    	FileInputStream fis = new FileInputStream(Filename);
-	    	UniversalDetector detector = new UniversalDetector(null); 
-	    	int nread; 
-	    	while ((nread = fis.read(buf)) > 0 && !detector.isDone()) {   		
-	    		detector.handleData(buf, 0, nread); 
-	    	} 
-	    	detector.dataEnd();
-	    	String encoding = detector.getDetectedCharset();
-	    	detector.reset();
-	    	
-	    	InputStreamReader isr = null;
-	    	if(encoding != null)
-	    		isr = new InputStreamReader(new FileInputStream(Filename), encoding);
-	    	else
-	    		isr = new InputStreamReader(new FileInputStream(Filename));
+			FileInputStream fis = new FileInputStream(Filename);
+			UniversalDetector detector = new UniversalDetector(null);
+			int nread;
+			while ((nread = fis.read(buf)) > 0 && !detector.isDone()) {
+				detector.handleData(buf, 0, nread);
+			}
+			detector.dataEnd();
+			String encoding = detector.getDetectedCharset();
+			detector.reset();
+
+			InputStreamReader isr = null;
+			if (encoding != null)
+				isr = new InputStreamReader(new FileInputStream(Filename), encoding);
+			else
+				isr = new InputStreamReader(new FileInputStream(Filename));
 			LexerAnalyzer Lexing = new LexerAnalyzer(isr);
 			Parser Parsing = new Parser(Lexing);
-	
+
 			// Parser Test Routine.
 			Nonterminal stack = Parsing.Parsing();
 			if (stack.getTree() instanceof BlockStmt) {
-//				PrettyPrinter printer = new PrettyPrinter((BlockStmt) stack.getTree());
-//				printer.prettyPrint();
-//	
+				// PrettyPrinter printer = new PrettyPrinter((BlockStmt)
+				// stack.getTree());
+				// printer.prettyPrint();
+				//
 				HashMap<String, Stmt> map = new BBTransform().transform((BlockStmt) stack.getTree());
-				
-//				Set<Map.Entry<String, Stmt>> set = map.entrySet();
-//				for (Map.Entry<String, Stmt> entry : set) {
-//					String key = entry.getKey();
-//					Stmt stmt = entry.getValue();
-//					System.out.println(key + ":");
-//					new PrettyPrinter(stmt).prettyPrint();
-//				}
-//				System.out.println();
-				
-//				String[] s = {Filename};
-//				GenJava g = new GenJava(new BasicBlockEnv(map), args);
-//				g.codeGen(s);
-	
-//				System.out.println("Execution");
+
+				// Set<Map.Entry<String, Stmt>> set = map.entrySet();
+				// for (Map.Entry<String, Stmt> entry : set) {
+				// String key = entry.getKey();
+				// Stmt stmt = entry.getValue();
+				// System.out.println(key + ":");
+				// new PrettyPrinter(stmt).prettyPrint();
+				// }
+				// System.out.println();
+
+				// String[] s = {Filename};
+				// GenJava g = new GenJava(new BasicBlockEnv(map), args);
+				// g.codeGen(s);
+
+				// System.out.println("Execution");
 				try {
 					new Eval(new BasicBlockEnv(map)).eval(args);
 				} catch (InterpretException exn) {
@@ -133,34 +137,30 @@ public class MySmallBasicMain {
 			} else {
 				System.err.println("Tree is not BlockStmt.");
 			}
-		}
-		catch(LexerException e) {
-			System.err.println("Check syntax at Line " + e.getLinenum() + ", Char " + e.getColnum() 
-								+ " : Unrecognized character(s)");
-			System.err.println(">>> " + e.getMessage());
-		}
-		catch(ParserException e) {
+		} catch (LexerException e) {
 			System.err.println("Check syntax at Line " + e.getLinenum() + ", Char " + e.getColnum()
-								+ " : Unrecognized program structure : " + e.getParseInfo());
-			System.err.println(">>> " + e.getMessage() /*  + e.getParseInfo() */ );
+					+ " : Unrecognized character(s)");
+			System.err.println(">>> " + e.getMessage());
+		} catch (ParserException e) {
+			System.err.println("Check syntax at Line " + e.getLinenum() + ", Char " + e.getColnum()
+					+ " : Unrecognized program structure : " + e.getParseInfo());
+			System.err.println(">>> " + e.getMessage() /* + e.getParseInfo() */ );
 			// e.printStackTrace();
-		}
-		catch(InterpretException e) {
+		} catch (InterpretException e) {
 			String culprit = e.getCulprit();
-			if (culprit == null) culprit = "No hint is available.";
-			
-			if (e.getLinenum()==-1 && e.getColnum()==-1) {
+			if (culprit == null)
+				culprit = "No hint is available.";
+
+			if (e.getLinenum() == -1 && e.getColnum() == -1) {
 				System.err.println(e.getMessage());
 				e.printStackTrace();
+			} else {
+				System.err.println(
+						"Check syntax at Line " + e.getLinenum() + ", Char " + e.getColnum() + " : " + culprit);
+				// System.err.println(">>> " + e.getMessage());
+				// e.printStackTrace();
 			}
-			else {
-				System.err.println("Check syntax at Line " + e.getLinenum() + ", Char " + e.getColnum()
-								+ " : " + culprit);
-				//System.err.println(">>> " + e.getMessage());
-				//e.printStackTrace();
-			}
-		}
-		catch(Throwable t) {
+		} catch (Throwable t) {
 			t.printStackTrace();
 		}
 		System.out.println("Press Enter to continue...");
