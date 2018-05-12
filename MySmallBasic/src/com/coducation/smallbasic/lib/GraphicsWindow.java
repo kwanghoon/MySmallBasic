@@ -22,7 +22,8 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.awt.geom.*;
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -47,14 +48,18 @@ import org.graphstream.ui.view.Viewer;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.axis.*;
-import org.jfree.chart.plot.*;
-import org.jfree.chart.renderer.xy.*;
-import org.jfree.data.category.*;
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.axis.ValueAxis;
+import org.jfree.chart.plot.CategoryPlot;
+import org.jfree.chart.plot.Plot;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.XYItemRenderer;
+import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
+import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
-import org.jfree.util.*;
+import org.jfree.util.ShapeUtilities;
 
 import com.coducation.smallbasic.DoubleV;
 import com.coducation.smallbasic.Eval;
@@ -338,7 +343,23 @@ public class GraphicsWindow {
 			setPreferredSize(new Dimension(width, height));
 		}
 
-		public void paintComponent(Graphics g) {
+		// debug mode
+		@Override
+		public void repaint() {
+			boolean guiDebugMode = com.coducation.smallbasic.MySmallBasicMain.guiDebugMode;
+
+			if (!guiDebugMode) {
+				super.repaint();
+			} else {
+				super.repaint(0);
+				paintImmediately(0, 0, WIDTH, HEIGHT);
+			}
+		}
+
+		// end of debug mode
+
+		public void paintComponent(Graphics g) {			
+			
 			super.paintComponent(g);
 			Graphics2D g2 = (Graphics2D) g;
 			String backColor = ((StrV) BackgroundColor).getValue();
@@ -347,6 +368,7 @@ public class GraphicsWindow {
 			double zoomX = 1;
 			double zoomY = 1;
 			double rotate = 0;
+			
 
 			ArrayList<Cmd> _cmdList = (ArrayList<Cmd>) cmdList.clone();
 
@@ -1390,6 +1412,10 @@ public class GraphicsWindow {
 				&& block != Character.UnicodeBlock.SPECIALS;
 	}
 
+	private static void repaintInvokeLater() {
+
+	}
+
 	// font: used by GraphicsWindow & Controls
 	private static boolean fontBold() {
 		StrV bold = (StrV) FontBold;
@@ -1750,6 +1776,10 @@ public class GraphicsWindow {
 				BackgroundColor = hexColor((StrV) BackgroundColor, new StrV("#000000"));
 			} else
 				throw new InterpretException("BackgroundColor: Unexpected value" + BrushColor.toString());
+			
+			String backColor = BackgroundColor.toString();
+			panel.setBackground(new Color(Integer.parseInt(backColor.substring(1), 16)));
+			panel.repaint();
 		} else if ("CanResize".equalsIgnoreCase(fieldName)) {
 			if (CanResize instanceof StrV && CanResize.toString().equalsIgnoreCase("True")) {
 				frame.setResizable(true);
@@ -1830,14 +1860,14 @@ public class GraphicsWindow {
 				FontItalic = new StrV("False");
 		} else if ("FontSize".equalsIgnoreCase(fieldName)) {
 			int fontSize;
-			
+
 			if (FontSize instanceof DoubleV)
 				fontSize = (int) FontSize.getNumber();
 			else if (FontSize instanceof StrV && ((StrV) FontSize).isNumber())
 				fontSize = (int) ((StrV) FontSize).parseDouble();
 			else
 				fontSize = 0;
-			
+
 			FontSize = new DoubleV(fontSize);
 		} else {
 		}
@@ -2743,12 +2773,12 @@ public class GraphicsWindow {
 	static void AddGraph(String graphID, org.graphstream.graph.Graph graph) {
 		if (frame == null)
 			Show(new ArrayList<Value>());
-		
-		if(graphViewers.containsKey(graphID))
+
+		if (graphViewers.containsKey(graphID))
 			return;
-		
-		org.graphstream.ui.view.Viewer viewer = 
-				new org.graphstream.ui.view.Viewer(graph,  Viewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);		
+
+		org.graphstream.ui.view.Viewer viewer = new org.graphstream.ui.view.Viewer(graph,
+				Viewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
 		viewer.enableAutoLayout();
 
 		org.graphstream.ui.swingViewer.ViewPanel viewPanel = viewer.addDefaultView(false);
@@ -2786,9 +2816,9 @@ public class GraphicsWindow {
 	private static final String chartIdLable = "Chart";
 	private static int chartId = 0;
 
-	//private static JFreeChart chart[] = new JFreeChart[100];
+	// private static JFreeChart chart[] = new JFreeChart[100];
 	private static ArrayList<JFreeChart> chart = new ArrayList<JFreeChart>();
-	//private static ChartPanel chartPanel[] = new ChartPanel[100];
+	// private static ChartPanel chartPanel[] = new ChartPanel[100];
 	private static ArrayList<ChartPanel> chartPanel = new ArrayList<ChartPanel>();
 	private static HashMap<String, Integer> chartMap = new HashMap<>();
 	static String cID = "";
@@ -2805,42 +2835,40 @@ public class GraphicsWindow {
 		String id = chartIdLable + (chartId + 1);
 		chartMap.put(id, chartId);
 		SetChartID(id);
-		
+
 		XYPlot plot = new XYPlot();
-		XYItemRenderer renderer = new XYLineAndShapeRenderer(true, false); 
-		if(opt.contains("o") | opt.contains("s") | opt.contains("^")) {
-			if(opt.contains("-") | opt.contains("--") | opt.contains(":")) {
+		XYItemRenderer renderer = new XYLineAndShapeRenderer(true, false);
+		if (opt.contains("o") | opt.contains("s") | opt.contains("^")) {
+			if (opt.contains("-") | opt.contains("--") | opt.contains(":")) {
 				renderer = new XYLineAndShapeRenderer(true, true);
-			}
-			else {
+			} else {
 				renderer = new XYLineAndShapeRenderer(false, true);
 			}
-				
-		}
-		else if(opt.contains("-") | opt.contains("--") | opt.contains(":")) {
+
+		} else if (opt.contains("-") | opt.contains("--") | opt.contains(":")) {
 			renderer = new XYLineAndShapeRenderer(true, false);
 		}
-		
+
 		if (opt.contains("o"))
 			renderer.setSeriesShape(0, new Ellipse2D.Double(-3.0, -3.0, 6.0, 6.0));
 		else if (opt.contains("s"))
 			renderer.setSeriesShape(0, new Rectangle2D.Double(-3.0, -3.0, 6.0, 6.0));
 		else if (opt.contains("^"))
 			renderer.setSeriesShape(0, ShapeUtilities.createUpTriangle(3.0f));
-		
+
 		if (opt.contains("--")) {
-			renderer.setSeriesStroke(0, new BasicStroke(1.0f,
-					BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 1.0f, new float[] { 6.0f, 6.0f }, 0.0f));
+			renderer.setSeriesStroke(0, new BasicStroke(1.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 1.0f,
+					new float[] { 6.0f, 6.0f }, 0.0f));
 		} else if (opt.contains(":")) {
-			renderer.setSeriesStroke(0, new BasicStroke(1.0f,
-					BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 1.0f, new float[] { 2.5f, 2.5f }, 0.0f));
+			renderer.setSeriesStroke(0, new BasicStroke(1.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 1.0f,
+					new float[] { 2.5f, 2.5f }, 0.0f));
 		}
-		
+
 		ValueAxis domain = new NumberAxis("");
 		ValueAxis range = new NumberAxis("");
-		
-		((NumberAxis)domain).setAutoRangeIncludesZero(false);
-		((NumberAxis)range).setAutoRangeIncludesZero(false);
+
+		((NumberAxis) domain).setAutoRangeIncludesZero(false);
+		((NumberAxis) range).setAutoRangeIncludesZero(false);
 
 		plot.setDataset(0, createXYDataset(key, xValue, yValue));
 		plot.setRenderer(0, renderer);
@@ -2851,12 +2879,13 @@ public class GraphicsWindow {
 		plot.mapDatasetToRangeAxis(0, 0);
 
 		chart.add(new JFreeChart("", JFreeChart.DEFAULT_TITLE_FONT, plot, true));
-	
+
 		RemoveLegend(id);
 
 		chartPanel.add(new ChartPanel(chart.get(chartId)));
 		chartPanel.get(chartId).setSize(500, 300);
-		// chartPanel.get(chartId).setPreferredSize(new java.awt.Dimension( 500 ,
+		// chartPanel.get(chartId).setPreferredSize(new java.awt.Dimension( 500
+		// ,
 		// 300 ));
 		chartPanel.get(chartId).setLocation(10, 10);
 
@@ -2870,30 +2899,24 @@ public class GraphicsWindow {
 		panel.revalidate();
 		panel.repaint();
 	}
-	
+
 	static void AddBar(String key, String[] xValue, double[] yValue, String opt) {
 		String id = chartIdLable + chartId;
 		chartMap.put(id, chartId);
 		SetChartID(id);
-		
-		if(opt.equalsIgnoreCase("s")) {
-			chart.add(ChartFactory.createStackedBarChart(
-		 	         "",
-		 	         "","",
-		 	         createCategoryDataset(key, xValue, yValue)));
-		}
-		else {
-			chart.add(ChartFactory.createBarChart(
-		 	         "",
-		 	         "","",
-		 	        createCategoryDataset(key, xValue, yValue)));
+
+		if (opt.equalsIgnoreCase("s")) {
+			chart.add(ChartFactory.createStackedBarChart("", "", "", createCategoryDataset(key, xValue, yValue)));
+		} else {
+			chart.add(ChartFactory.createBarChart("", "", "", createCategoryDataset(key, xValue, yValue)));
 		}
 
 		RemoveLegend(id);
 
 		chartPanel.add(new ChartPanel(chart.get(chartId)));
 		chartPanel.get(chartId).setSize(500, 300);
-		// chartPanel.get(chartId).setPreferredSize(new java.awt.Dimension( 500 ,
+		// chartPanel.get(chartId).setPreferredSize(new java.awt.Dimension( 500
+		// ,
 		// 300 ));
 		chartPanel.get(chartId).setLocation(10, 10);
 
@@ -2907,34 +2930,33 @@ public class GraphicsWindow {
 		panel.revalidate();
 		panel.repaint();
 	}
-	
+
 	static void SetData(String chartName, String key, String[] xValue, double[] yValue) {
 		int id = chartMap.get(chartName);
 		Plot plot = chart.get(id).getPlot();
-		
-		if(plot instanceof CategoryPlot)
-			((CategoryPlot)plot).setDataset(createCategoryDataset(key, xValue, yValue));
-		else if(plot instanceof XYPlot) {
+
+		if (plot instanceof CategoryPlot)
+			((CategoryPlot) plot).setDataset(createCategoryDataset(key, xValue, yValue));
+		else if (plot instanceof XYPlot) {
 			double[] dValue = new double[xValue.length];
 
 			for (int i = 0; i < dValue.length; i++)
 				dValue[i] = Double.parseDouble(xValue[i]);
-			
-			((XYPlot)plot).setDataset(createXYDataset(key, dValue, yValue));
+
+			((XYPlot) plot).setDataset(createXYDataset(key, dValue, yValue));
 		}
 	}
 
 	static void AddData(String chartName, String key, String[] xValue, double[] yValue, String opt) {
 		int id = chartMap.get(chartName);
 		Plot plot = chart.get(id).getPlot();
-		
-		if(plot instanceof CategoryPlot) { // bar
-			DefaultCategoryDataset categotyDataset = (DefaultCategoryDataset) ((CategoryPlot)plot).getDataset();
+
+		if (plot instanceof CategoryPlot) { // bar
+			DefaultCategoryDataset categotyDataset = (DefaultCategoryDataset) ((CategoryPlot) plot).getDataset();
 			for (int i = 0; i < xValue.length; i++)
 				categotyDataset.setValue(yValue[i], key, xValue[i]);
-		}
-		else if(plot instanceof XYPlot) {
-			XYSeriesCollection xyDataset = (XYSeriesCollection) ((XYPlot)plot).getDataset();
+		} else if (plot instanceof XYPlot) {
+			XYSeriesCollection xyDataset = (XYSeriesCollection) ((XYPlot) plot).getDataset();
 			XYSeries series;
 			int idx = xyDataset.getSeriesIndex(key);
 			double[] dValue = new double[xValue.length];
@@ -2945,8 +2967,7 @@ public class GraphicsWindow {
 			if (idx == -1) {
 				series = new XYSeries(key);
 				xyDataset = new XYSeriesCollection();
-			} 
-			else
+			} else
 				series = xyDataset.getSeries(idx);
 
 			for (int i = 0; i < xValue.length; i++)
@@ -2955,19 +2976,17 @@ public class GraphicsWindow {
 			xyDataset.addSeries(series);
 
 			if (idx == -1) {
-				XYPlot xyplot = ((XYPlot)plot);
+				XYPlot xyplot = ((XYPlot) plot);
 				int datasetIdx = xyplot.getDatasetCount();
 
-				XYItemRenderer renderer = new XYLineAndShapeRenderer(true, false); 
-				if(opt.contains("o") | opt.contains("s") | opt.contains("^")) {
-					if(opt.contains("-") | opt.contains("--") | opt.contains(":")) {
+				XYItemRenderer renderer = new XYLineAndShapeRenderer(true, false);
+				if (opt.contains("o") | opt.contains("s") | opt.contains("^")) {
+					if (opt.contains("-") | opt.contains("--") | opt.contains(":")) {
 						renderer = new XYLineAndShapeRenderer(true, true);
-					}
-					else 
+					} else
 						renderer = new XYLineAndShapeRenderer(false, true);
 
-				}
-				else if(opt.contains("-") | opt.contains("--") | opt.contains(":")) {
+				} else if (opt.contains("-") | opt.contains("--") | opt.contains(":")) {
 					renderer = new XYLineAndShapeRenderer(true, false);
 				}
 
@@ -2977,13 +2996,13 @@ public class GraphicsWindow {
 					renderer.setSeriesShape(0, new Rectangle2D.Double(-3.0, -3.0, 6.0, 6.0));
 				else if (opt.contains("^"))
 					renderer.setSeriesShape(0, ShapeUtilities.createUpTriangle(3.0f));
-				
+
 				if (opt.contains("--")) {
-					renderer.setSeriesStroke(0, new BasicStroke(1.0f,
-							BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 1.0f, new float[] { 6.0f, 6.0f }, 0.0f));
+					renderer.setSeriesStroke(0, new BasicStroke(1.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND,
+							1.0f, new float[] { 6.0f, 6.0f }, 0.0f));
 				} else if (opt.contains(":")) {
-					renderer.setSeriesStroke(0, new BasicStroke(1.0f,
-							BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 1.0f, new float[] { 2.5f, 2.5f }, 0.0f));
+					renderer.setSeriesStroke(0, new BasicStroke(1.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND,
+							1.0f, new float[] { 2.5f, 2.5f }, 0.0f));
 				}
 
 				xyplot.setDataset(datasetIdx, xyDataset);
@@ -3026,13 +3045,13 @@ public class GraphicsWindow {
 		int id = chartMap.get(chartName);
 		chartPanel.get(id).setSize(width, height);
 	}
-	
+
 	static int GetChartWidth(String chartName) {
 
 		int id = chartMap.get(chartName);
 		return chartPanel.get(id).getWidth();
 	}
-	
+
 	static int GetChartHeight(String chartName) {
 
 		int id = chartMap.get(chartName);
@@ -3044,19 +3063,19 @@ public class GraphicsWindow {
 		int id = chartMap.get(chartName);
 		chartPanel.get(id).setLocation(x, y);
 	}
-	
+
 	static int GetChartX(String chartName) {
 
 		int id = chartMap.get(chartName);
 		return chartPanel.get(id).getX();
 	}
-	
+
 	static int GetChartY(String chartName) {
 
 		int id = chartMap.get(chartName);
 		return chartPanel.get(id).getY();
 	}
-	
+
 	static DefaultCategoryDataset createCategoryDataset(String key, String[] xValue, double[] yValue) {
 		DefaultCategoryDataset dataset = new DefaultCategoryDataset();
 
