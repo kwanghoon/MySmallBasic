@@ -1,0 +1,54 @@
+Database.ConnectToDatabase("testNew.db")
+colInfo[1]["name"] = "NAME" 
+colInfo[1]["type"] = "CHAR(50)" 
+colInfo[1]["OPTION1"] = "NOT NULL" 
+
+colInfo[2]["name"] = "ADDRESS" 
+colInfo[2]["type"] = "TEXT" 
+
+
+colInfo[3]["name"] = "SALARY"
+colInfo[3]["type"] = "REAL"
+colInfo[3]["OPTION1"] = "NOT NULL"
+
+Database.CreateTable("NEWTABLE",colInfo)
+
+record[1]["NAME"] = "Ho Anh Tien"
+record[1]["ADDRESS"] = "Hanoi"
+record[1]["SALARY"] = 123.456
+
+record[2]["NAME"] = "Paul"
+record[2]["ADDRESS"] = "Ohio"
+record[2]["SALARY"] = 1000.0
+
+rec["NAME"] = "Dave"
+rec["SALARY"] = 1000.123
+
+Database.InsertQuery("NEWTABLE",record)
+Database.InsertQuery("NEWTABLE",rec)
+Database.InsertQuery("NEWTABLE",record)
+
+update[1]["NAME"] = "Tien Ho Anh"
+update[1]["ADDRESS"] = "Quangbinh"
+
+update[2]["SALARY"] = 1000.456
+
+condition[1] = "ID > 3 AND NAME LIKE '%Anh Tien%'"
+condition[2] = "SALARY > 1000"
+
+Database.UpdateQuery("NEWTABLE",update,condition)
+
+Database.DeleteQuery("NEWTABLE","ID = 2")
+
+Database.SelectQuery("NEWTABLE")
+
+
+
+
+
+
+
+
+
+
+
