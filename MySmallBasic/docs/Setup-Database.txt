@@ -1,0 +1,25 @@
+﻿1. Install SQLite on Windows
+
+•	Step 1 − Go to SQLite download page, and download precompiled binaries from Windows section. ( Link: 
+https://www.sqlite.org/download.html ) 
+•	Step 2 − Download sqlite-tools-win32-*.zip and sqlite-dll-win32-*.zip zipped files.
+•	Step 3 − Create a folder C:\>sqlite and unzip above two zipped files in this folder, which will give you sqlite3.def, sqlite3.dll (in 
+sqlite-dll-win32-*.zip) and sqlite3.exe files (in sqlite-tools-win32-*.zip).
+image: setup_database_1
+•	Step 4 − Add C:\>sqlite in your PATH environment variable and finally go to the command prompt and issue sqlite3 command, which should 
+display the following result.
+Specification for step 4:
+Go to Edit environment variables in Control Panel -> System -> Advanced system settings -> Environment Variables
+In System variables, choose Path and click Edit. Click New and type 'C:\Sqlite' in new line, then click OK three times and we're done!
+
+2. Java with SQLite embedded database
+
+To start using SQLite in Java programs, you need to make sure that you have SQLite JDBC Driver and Java set up on the machine.  
+Now, let us check how to set up SQLite JDBC driver. In MySmallBasic, we did it for you. But we still leave the following guide just in case 
+you want to do it again manually. 
+
+•	Step 1: Download latest version of sqlite-jdbc-(VERSION).jar from sqlite-jdbc repository.
+(Link: https://bitbucket.org/xerial/sqlite-jdbc/downloads/)
+•	Step 2: Add downloaded jar file sqlite-jdbc-(VERSION).jar in your class path:
+For example, after step 1 we have the file downloaded:  sqlite-jdbc-3.21.0.jar.
+Now copy file sqlite-jdbc-3.21.0.jar into folder MySmallBasic\lib. Done!
