@@ -1632,7 +1632,8 @@ public class GraphicsWindow {
 	private static final Value defaultTop = new DoubleV(51.2);
 	private static final Value defaultFontBold = new StrV("True");
 	private static final Value defaultFontItalic = new StrV("False");
-	private static final Value defaultFontName = new StrV("Tahoma");
+//	private static final Value defaultFontName = new StrV("Tahoma");
+	private static final Value defaultFontName = new StrV("Dialog.plain");
 	private static final Value defaultFontSize = new DoubleV(12);
 	private static final Value defaultPenWidth = new DoubleV(2);
 
