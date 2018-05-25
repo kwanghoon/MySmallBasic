@@ -1,0 +1,50 @@
+TextWindow.Write(" Your Access Token : ")
+yourAccesstoken=TextWindow.Read()
+Facebook.SaveToken(yourAccesstoken)
+TextWindow.WriteLine("    Select Function")
+TextWindow.WriteLine("1. Get your information ")
+TextWindow.WriteLine("2. Get your friendlist")
+TextWindow.WriteLine("3. Post a status")
+TextWindow.WriteLine("4. Post a photo")
+TextWindow.WriteLine("** Press one number > 4 to out this program ** ")
+select=1
+While select<5
+	TextWindow.Write("Your Select : ")
+	select=TextWindow.Read()
+	If (select =1) Then  
+		myinfor=Facebook.GetPersonalInformation()
+		TextWindow.WriteLine(myinfor)
+	EndIf
+
+	If (select =2) Then   
+		record=Facebook.GetFriendlist()
+		TextWindow.WriteLine("Friendlist : ")
+		i=1
+		While i < record["0"]+1
+		j=Text.ConvertToUpperCase(i)
+		TextWindow.WriteLine(record[j])
+		i = i+1
+		EndWhile
+	EndIf
+
+	If (select =3) Then   
+		TextWindow.Write("Your Status :")
+		yourStatus=TextWindow.Read()
+		id=Facebook.PostStatus(yourStatus)
+		TextWindow.WriteLine(id)
+	EndIf
+
+	If (select =4) Then   
+		TextWindow.Write("Your File Photo :")
+		Filephoto=TextWindow.Read()
+		TextWindow.Write("Your Photo's name :")
+		Photoname=TextWindow.Read()
+		TextWindow.Write("Your Status :")
+		yourStatus=TextWindow.Read()
+		id=Facebook.PostPhoto(Filephoto,Photoname,yourStatus)
+		TextWindow.WriteLine(id)
+	EndIf
+EndWhile
+
+
+
