@@ -7,8 +7,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.StringTokenizer;
 
 import org.jdiscript.JDIScript;
+import org.jdiscript.handlers.OnVMDisconnect;
 import org.jdiscript.util.VMSocketAttacher;
 
 import com.sun.jdi.ClassNotLoadedException;
@@ -43,7 +45,7 @@ public class MySmallBasicDebugger extends MySmallBasicDebuggerModel implements R
 		if (isDebugMode) {
 			pb = new ProcessBuilder(shellCmd, "/c", "start java.exe",
 					"-agentlib:jdwp=transport=dt_socket,address=localhost:7070,server=y,suspend=y", javaCmd, "-gui",
-					filePath, "-guiDebug");
+					filePath);
 		} else {
 			pb = new ProcessBuilder(shellCmd, "/c", "start java.exe", javaCmd, "-gui", filePath);
 		}
@@ -101,7 +103,7 @@ public class MySmallBasicDebugger extends MySmallBasicDebuggerModel implements R
 					int lineNum = Integer.MAX_VALUE;
 
 					try {
-						Field linenoField = jdiScript.vm().classesByName("com.coducation.smallbasic.ExprStmt").get(0)
+						Field linenoField = jdiScript.vm().classesByName("com.coducation.smallbasic.Stmt").get(0)
 								.fieldByName("lineno");
 						Value lineno = ((ObjectReference) methodEvent.thread().frame(0).getArgumentValues().get(2))
 								.getValue(linenoField); // eval 메소드의 3번째 파라미터
@@ -109,7 +111,7 @@ public class MySmallBasicDebugger extends MySmallBasicDebuggerModel implements R
 						lineNum = Integer.parseInt(lineno.toString());
 
 					} catch (IncompatibleThreadStateException e1) {
-						e1.printStackTrace();
+						//e1.printStackTrace();
 					}
 
 					// stop 할 위치 검사
@@ -174,6 +176,7 @@ public class MySmallBasicDebugger extends MySmallBasicDebuggerModel implements R
 
 									// Value별 다른 처리
 									if (valueClass.equals("com.coducation.smallbasic.ArrayV")) {
+										
 										getArrayV_Value(valueInstance, methodEvent, key, variableMap);
 									} else if (valueClass.equals("com.coducation.smallbasic.DoubleV")) {
 										getDoubleV_Value(valueInstance, methodEvent, key, variableMap);
@@ -280,6 +283,13 @@ public class MySmallBasicDebugger extends MySmallBasicDebuggerModel implements R
 		Method arrNextMethod = jdiScript.vm().classesByName("java.util.Iterator").get(0).methodsByName("next").get(0);
 		Method arrGetMethod = jdiScript.vm().classesByName("java.util.LinkedHashMap").get(0).methodsByName("get")
 				.get(0);
+		
+		//Pair<A,B>에서 값 가져기 위한 Field정의
+		Field keyNameField = jdiScript.vm().classesByName("com.coducation.smallbasic.ArrayV$Pair").get(0)
+				.fieldByName("a");
+		Field valueField = jdiScript.vm().classesByName("com.coducation.smallbasic.ArrayV$Pair").get(0)
+				.fieldByName("b");
+		
 
 		Value arrmap = ((ObjectReference) valueInstance).getValue(arrmapField);
 
@@ -298,17 +308,21 @@ public class MySmallBasicDebugger extends MySmallBasicDebuggerModel implements R
 			parameter.clear();
 			Value arrKeyInstance = ((ObjectReference) arrIterator).invokeMethod(methodEvent.thread(), arrNextMethod,
 					parameter, ObjectReference.INVOKE_SINGLE_THREADED);
-			String arrKey = arrKeyInstance.toString().substring(1, arrKeyInstance.toString().length() - 1);
 
-			// Value 객체 구하기
+			//Pair - Value 구하기
 			parameter.add(arrKeyInstance);
-			Value arrValueInstance = ((ObjectReference) arrmap).invokeMethod(methodEvent.thread(), arrGetMethod,
-					parameter, ObjectReference.INVOKE_SINGLE_THREADED);
-
+			Value arrPairValueInstance = ((ObjectReference) arrmap).invokeMethod(methodEvent.thread(), arrGetMethod,
+					parameter, ObjectReference.INVOKE_SINGLE_THREADED);		
+			Value arrValueInstance = ((ObjectReference) arrPairValueInstance).getValue(valueField);
+			
+			//Pair - key이름 구하기
+			String arrKey = ((ObjectReference) arrPairValueInstance).getValue(keyNameField).toString().
+												substring(1, arrKeyInstance.toString().length() - 1);
+			
+			//Value의 실제객체 이름 구하기
 			int arrEndIdx = arrValueInstance.toString().indexOf("(id");
-
-			String arrValueClass = arrValueInstance.toString().substring(12, arrEndIdx); // Value의
-																							// 실제객체이름
+			String arrValueClass = arrValueInstance.toString().substring(12, arrEndIdx);
+																							
 			if (arrValueClass.equals("com.coducation.smallbasic.ArrayV")) {
 				getArrayV_Value(arrValueInstance, methodEvent, new String(key + '[' + arrKey + ']'), variableMap);
 			} else if (arrValueClass.equals("com.coducation.smallbasic.StrV")) {
