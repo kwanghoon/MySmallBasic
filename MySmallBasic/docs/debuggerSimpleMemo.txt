@@ -1,0 +1,20 @@
+<- 디버기 vm에서 특정 객체를 얻어오는 방법 ->
+106 : Field객체 - 얻고 싶은 클래스의 객체변수를 나타냄
+108 : Value객체 - 현재 멈춰진 메소드의 매개변수의 3번째 객체를 가져와서 Field가 나타내는 객체변수의 값을 Value객체(mirror for a value in the target VM)로 가져옴
+111 : Value객체를 string으로 바꿔서 알맞게 처리 - 실제 값 얻음
+
+126 - 130까지도 위와 동일
+
+<- 디버기 vm에서 특정 메소드 실행시키는 방법 ->
+134 - 143 : Method객체 - 실행시키고 싶은 메소드 지정
+145 : 메소드 실행시킬 때 넘겨줄 파라미터 생성
+149 - 154 : map, keySet, iterator객체(Value로 가져 왔던)에 대해 메소드를 실행시킴
+
+<-위의 방법들을 종합해서 iterator로 돌면서 Env.map 탐색->
+157~
+174 : 가져온 Value(mysmallbasic의 Value를 나타내는 com.jdi.VirtualMachine.Value)의 타입 확인 -> 알맞은 메소드 호출
+
+<- Value(mysmallbasic의 Value를 나타내는 com.jdi.VirtualMachine.Value 객체)에서 값 가져오기->
+238 - 252 : getStrV_Value - StrV값 가져오기
+255 - 267 : getDoubleV_Value - DoubleV값 가져오기
+270 - 339 : getArrayV_Value - ArrayV값 가져오기
