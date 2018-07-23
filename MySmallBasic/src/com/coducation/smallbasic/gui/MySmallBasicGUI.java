@@ -1,7 +1,6 @@
 package com.coducation.smallbasic.gui;
 
 import java.awt.BorderLayout;
-import java.awt.Desktop;
 import java.awt.FileDialog;
 import java.awt.GridLayout;
 import java.awt.Image;
@@ -13,15 +12,16 @@ import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.HashMap;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
@@ -149,15 +149,16 @@ public class MySmallBasicGUI extends JFrame implements MySmallBasicDebuggerClien
 					return;
 				filePath = dialog.getDirectory() + dialog.getFile();
 
-				try {
-					BufferedReader reader = new BufferedReader(new FileReader(filePath));
-					textAreaMaker.getTextArea().setText("");
+				try(FileReader fr = new FileReader(filePath);
+					BufferedReader reader = new BufferedReader(fr)) {
+					JTextArea textArea = textAreaMaker.getTextArea();
+					textArea.setText("");
 					String line;
 					while ((line = reader.readLine()) != null) {
-						textAreaMaker.getTextArea().append(line + "\n");
+						textArea.append(line + "\n");
 					}
-					reader.close();
 				} catch (Exception e2) {
+					e2.printStackTrace();
 				}
 
 				isTempFile = false;
@@ -398,7 +399,7 @@ public class MySmallBasicGUI extends JFrame implements MySmallBasicDebuggerClien
 		return button;
 	}
 
-	// 저장
+	// save function
 	private void save() {
 		// 임시 파일-다른이름으로 저장 필요
 		if (isTempFile) {
@@ -406,18 +407,13 @@ public class MySmallBasicGUI extends JFrame implements MySmallBasicDebuggerClien
 		}
 		// 기존 경로가 있는 파일
 		else {
-			try {
-				BufferedWriter writer = new BufferedWriter(new FileWriter(filePath));
-				writer.write(textAreaMaker.getTextArea().getText());
-				writer.close();
-			} catch (Exception e2) {
-			}
+			saveFile(filePath);
 		}
 
 		isTextAreaChanged = false;
 	}
 
-	// 다른이름으로 저장
+	// saveAs function
 	private void saveAs() {
 		// 경로 선택창
 		FileDialog dialog = new FileDialog(frame, "다른 이름으로 저장", FileDialog.SAVE);
@@ -427,17 +423,21 @@ public class MySmallBasicGUI extends JFrame implements MySmallBasicDebuggerClien
 			return;
 		filePath = dialog.getDirectory() + dialog.getFile();
 
-		// 쓰기
-		try {
-			BufferedWriter writer = new BufferedWriter(new FileWriter(filePath));
-			writer.write(textAreaMaker.getTextArea().getText());
-			writer.close();
-		} catch (Exception e2) {
-		}
+		saveFile(filePath);
 
 		isTextAreaChanged = false;
 		isTempFile = false;
 		isNew = false;
+	}
+	//save file
+	private void saveFile(String fileName){		
+		try(FileOutputStream fos = new FileOutputStream(fileName);
+			OutputStreamWriter osr = new OutputStreamWriter(fos, "utf-8");
+			BufferedWriter writer = new BufferedWriter(osr)) {
+			writer.write(textAreaMaker.getTextArea().getText());
+		} catch (Exception e2) {
+			e2.printStackTrace();
+		}		
 	}
 
 	private void fileCheckForRun() {
@@ -446,11 +446,7 @@ public class MySmallBasicGUI extends JFrame implements MySmallBasicDebuggerClien
 		if (isTextAreaChanged || isNew) {
 			// 임시 파일로 작성한 경우
 			if (isTempFile) {
-				try {
-					BufferedWriter writer = new BufferedWriter(new FileWriter(filePath));
-					writer.write(textAreaMaker.getTextArea().getText());
-					writer.close();
-				} catch (Exception e2) {}
+				saveFile(filePath);
 
 				isTextAreaChanged = false;
 				isNew = false;
