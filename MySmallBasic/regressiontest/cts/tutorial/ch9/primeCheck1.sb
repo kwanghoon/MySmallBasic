@@ -1,0 +1,18 @@
+TextWindow.Write("Enter a number: ")
+i = TextWindow.ReadNumber()
+isPrime = "True"
+PrimeCheck()
+If (isPrime = "True") Then
+  TextWindow.WriteLine(i + " is a prime number")
+Else
+  TextWindow.WriteLine(i + " is not a prime number")
+EndIf
+Sub PrimeCheck
+  For j = 2 To Math.SquareRoot(i)
+    If (Math.Remainder(i, j) = 0) Then
+      isPrime = "False"
+      Goto EndLoop
+    EndIf
+  Endfor
+EndLoop:
+EndSub

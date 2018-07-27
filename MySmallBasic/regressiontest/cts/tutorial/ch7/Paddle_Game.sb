@@ -1,0 +1,37 @@
+GraphicsWindow.BackgroundColor = "DarkBlue"
+paddle = Shapes.AddRectangle(120, 12)
+ball = Shapes.AddEllipse(16, 16)
+GraphicsWindow.MouseMove = OnMouseMove
+x = 0
+y = 0
+deltaX = 1
+deltaY = 1
+RunLoop:
+ x = x + deltaX
+ y = y + deltaY
+
+ gw = GraphicsWindow.Width
+ gh = GraphicsWindow.Height
+ If (x >= gw - 16 or x <= 0) Then
+ deltaX = -deltaX
+ EndIf
+ If (y <= 0) Then
+ deltaY = -deltaY
+ EndIf
+
+ padX = Shapes.GetLeft (paddle)
+If (y = gh - 28 and x >= padX and x <= padX + 120) Then
+ deltaY = -deltaY
+ EndIf
+
+ Shapes.Move(ball, x, y)
+ Program.Delay(5)
+
+ If (y < gh) Then
+ Goto RunLoop
+ EndIf
+GraphicsWindow.ShowMessage("You Lose", "Paddle")
+Sub OnMouseMove
+ paddleX = GraphicsWindow.MouseX
+ Shapes.Move(paddle, paddleX - 60, GraphicsWindow.Height - 12)
+EndSub

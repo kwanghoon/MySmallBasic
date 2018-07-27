@@ -1,0 +1,12 @@
+sides = 6
+length = 400 / sides
+angle = 360 / sides
+For i = 1 To sides
+  For j = 1 To 6
+    Turtle.Move(length / 12)
+    Turtle.PenUp()
+    Turtle.Move(length / 12)
+    Turtle.PenDown()
+  EndFor
+  Turtle.Turn(angle)
+EndFor

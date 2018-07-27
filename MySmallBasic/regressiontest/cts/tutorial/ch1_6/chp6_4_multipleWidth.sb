@@ -1,0 +1,8 @@
+GraphicsWindow.Width = 400
+GraphicsWindow.Height = 100 
+ 
+GraphicsWindow.PenColor = "Red"
+GraphicsWindow.DrawRectangle(20, 20, 300, 60) 
+ 
+GraphicsWindow.BrushColor = "Green"
+GraphicsWindow.FillRectangle(60, 100, 300, 60)

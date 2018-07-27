@@ -1,0 +1,16 @@
+For i = 3 To 100
+  isPrime = "True"
+  PrimeCheck()
+  If (isPrime = "True") Then
+    TextWindow.WriteLine(i)
+  EndIf
+EndFor
+Sub PrimeCheck
+  For j = 2 To Math.SquareRoot(i)
+    If (Math.Remainder(i, j) = 0) Then
+      isPrime = "False"
+      Goto EndLoop
+    EndIf
+  Endfor
+EndLoop:
+EndSub

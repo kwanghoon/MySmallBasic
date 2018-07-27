@@ -1,0 +1,7 @@
+GraphicsWindow.BackgroundColor = "Black"
+GraphicsWindow.PenColor = "LightGreen"
+GraphicsWindow.Width = 200
+GraphicsWindow.Height = 200
+For i = 1 To 100 Step 5
+ GraphicsWindow.DrawEllipse(100 - i, 100 - i, i * 2, i * 2)
+EndFor

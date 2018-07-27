@@ -1,0 +1,16 @@
+GraphicsWindow.BackgroundColor = "Black"
+GraphicsWindow.PenColor = "LightBlue"
+GraphicsWindow.Width = 480
+For i = 0 To 6.4 Step 0.17
+  x = Math.Sin(i) * 100 + 200
+  y = Math.Cos(i) * 100 + 200
+
+  DrawCircleUsingCenter()
+
+EndFor
+Sub DrawCircleUsingCenter
+  startX = x - 40
+  startY = y - 40
+
+  GraphicsWindow.DrawEllipse(startX, startY, 120, 120)
+EndSub

@@ -1,0 +1,11 @@
+sides = 50
+length = 400 / sides
+angle = 360 / sides
+Turtle.Speed = 9
+For j = 1 To 20
+  For i = 1 To sides
+    Turtle.Move(length)
+    Turtle.Turn(angle)
+  EndFor
+  Turtle.Turn(18)
+EndFor

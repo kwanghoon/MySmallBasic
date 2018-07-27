@@ -1,0 +1,7 @@
+If (Clock.Hour < 12) Then
+   TextWindow.WriteLine("Good Morning World")
+   TextWindow.WriteLine("How was breakfast?") 
+EndIf
+If (Clock.Hour >= 12) Then
+   TextWindow.WriteLine("Good Evening World")
+EndIf

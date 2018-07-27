@@ -1,0 +1,15 @@
+GraphicsWindow.MouseMove = OnMouseMove
+GraphicsWindow.MouseDown = OnMouseDown
+Sub OnMouseDown
+  prevX = GraphicsWindow.MouseX
+  prevY = GraphicsWindow.MouseY
+EndSub
+Sub OnMouseMove
+  x = GraphicsWindow.MouseX
+  y = GraphicsWindow.MouseY
+  If (Mouse.IsLeftButtonDown) Then
+    GraphicsWindow.DrawLine(prevX, prevY, x, y)
+  EndIf
+  prevX = x
+  prevY = y
+EndSub

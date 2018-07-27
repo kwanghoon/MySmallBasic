@@ -1,0 +1,4 @@
+For i = 1 To 6
+  Turtle.Move(100)
+  Turtle.Turn(60)
+EndFor

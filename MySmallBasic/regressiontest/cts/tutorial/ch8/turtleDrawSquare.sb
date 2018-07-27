@@ -1,0 +1,8 @@
+Turtle.Move(100)
+Turtle.TurnRight()
+Turtle.Move(100)
+Turtle.TurnRight()
+Turtle.Move(100)
+Turtle.TurnRight()
+Turtle.Move(100)
+Turtle.TurnRight()
