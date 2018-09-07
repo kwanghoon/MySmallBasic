@@ -1,0 +1,101 @@
+
+
+You should study
+
+  - Value class
+  - StrV, DoubleV classes
+  - ArrayV class
+
+
+In SmallBasic,
+
+record[1]["NAME"] = "Paul"
+record[1]["ADDRESS"] = "California"
+record[1]["SALARY"] = 20000.123
+
+record[2]["NAME"] = "Choi"
+record[2]["ADDRESS"] = "Gwangju"
+record[2]["SALARY"] = 10000.123
+
+Sqlite.Insert("table1", record)
+
+
+
+In Java, to create an array value record in Java,
+
+  ArrayV person1_arrayv = new ArrayV();
+
+  person1_arrayv.put("NAME", new StrV("Paul"))
+  person1_arrayv.put("ADDRESS", new StrV("California"))
+  person1_arrayv.put("SALARY", new DoubleV(20000.123))
+
+  ArrayV record_arrayv = new ArrayV();
+
+  record_array.put("1", person1_arrayv)
+
+
+  ArrayV person2_arrayv = new ArrayV();
+
+  person2_arrayv.put("NAME", new StrV("Choi"))
+  person2_arrayv.put("ADDRESS", new StrV("Gwangju"))
+  person2_arrayv.put("SALARY", new DoubleV(10000.123))
+
+
+  record_array.put("2", person2_arrayv)
+
+In Java, 
+
+  /* Sqlite.Insert("table1", record) */
+
+  ArrayList<Value> args;
+
+  args = new ArrayList<Value>();
+  args.add( new StrV("table1") );
+  args.add( record_array );
+
+
+  Sqlite.Insert( args );
+
+
+Your library will have
+
+  package com.coducation.edu.smallbasic.lib;
+
+  class SQLite   {
+     public static void Insert(ArrayList<Value> args) {
+          if (args.size() == 2) {
+
+               StrV smallbasic_arg1 = args.get(0);
+               ArrayV smallbasic_arg2 = args.get(1);
+
+               String java_arg1 = smallbasic_arg1.getValue();  // java_arg1 => "table1" 
+               ... 
+
+          }
+          else {
+            throw InterpretException("Insert: Unexpected # of args: ¡± + args.size());
+          }
+
+     }
+
+
+     public static Value Query(ArrayList<Value> args) {    // Not ArrayV, but Value for return type!!
+          if (args.size() == ???) {
+
+               ... 
+
+               // you should build an ArrayV object to represent a list of records as a result
+               // of the query. Assume that it is listofrecrod_arrayv.
+
+               return listofrecord_arrayv;
+
+          }
+          else {
+            throw InterpretException("Insert: Unexpected # of args: ¡± + args.size());
+          }
+
+     }
+  }
+
+
+
