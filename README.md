@@ -4,6 +4,7 @@ MySmallBasic is the first open-source software for Small Basic coding environmen
 
 ## Video Demo
 - <a href="https://youtu.be/5GE5OvxxhKA">MySmallBasic in action with a series of demo programs</a>
+- MySmallBasic is a silver winner winner in 11th OSS Grand Developers Challenge (제11회 공개SW개발자대회), 2017!
 
 ## Features
 - All features of Small Basic (SB) and the standard library	
