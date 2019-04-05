@@ -1,7 +1,7 @@
 # MySmallBasic for Everyone
 MySmallBasic is the first open-source software for Small Basic coding environment. This project aims at pushing Small Basic as the first computer language for people who like to learn computer programming. It is started by SWLAB at Chonnam National University, Gwangju, Korea.
 - <img src="https://github.com/kwanghoon/MySmallBasic/blob/master/MySmallBasic/docs/SCREENSHOT/gui_tetris.JPG" width="640"/>
-- MySmallBasic is a silver winner winner in 11th OSS Grand Developers Challenge (제11회 공개SW개발자대회), 2017!
+- MySmallBasic is a silver winner in 11th OSS Grand Developers Challenge (제11회 공개SW개발자대회), 2017!
 
 ## Video Demo
 - <a href="https://youtu.be/5GE5OvxxhKA">MySmallBasic in action with a series of demo programs</a>
