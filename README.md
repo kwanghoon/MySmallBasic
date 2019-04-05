@@ -14,6 +14,7 @@ MySmallBasic is the first open-source software for Small Basic coding environmen
 
 ## For a Quick Start
  - [Quick Start Guide](https://github.com/kwanghoon/MySmallBasic/wiki/Quick-Start-Guide)
+ - [A Series of Screenshots](https://github.com/kwanghoon/MySmallBasic/wiki/Screenshots)
 
 ## For Developers
  - Please see [Developer's Guide](https://github.com/kwanghoon/MySmallBasic/wiki/Developer's-Guide).
