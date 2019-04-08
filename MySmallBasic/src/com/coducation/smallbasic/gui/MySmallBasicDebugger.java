@@ -2,10 +2,14 @@ package com.coducation.smallbasic.gui;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.Set;
 import java.util.StringTokenizer;
 
@@ -31,7 +35,8 @@ public class MySmallBasicDebugger extends MySmallBasicDebuggerModel implements R
 	private boolean isStepState = false;
 
 	// 실행관련 변수
-	private static String shellCmd, javaCmd, HOME, cwd;
+	private static String shellCmd, javaCmd, HOME, cwd, classPathDelimeter;
+	private static List<String> cmds;
 	private static StringBuilder classpath = new StringBuilder();
 
 	public MySmallBasicDebugger(String filePath, boolean isDebugMode, MySmallBasicDebuggerClientModel debuggerClient,
@@ -39,19 +44,21 @@ public class MySmallBasicDebugger extends MySmallBasicDebuggerModel implements R
 		super(debuggerClient, filePath, breakPoints);
 
 		// 프로세스 준비
-		init();
-
+		init(isDebugMode, filePath);
+		
 		ProcessBuilder pb;
-		if (isDebugMode) {
-			pb = new ProcessBuilder(shellCmd, "/c", "start java.exe",
-					"-agentlib:jdwp=transport=dt_socket,address=localhost:7070,server=y,suspend=y", javaCmd, "-gui",
-					filePath);
-		} else {
-			pb = new ProcessBuilder(shellCmd, "/c", "start java.exe", javaCmd, "-gui", filePath);
-		}
+		pb = new ProcessBuilder(cmds);
 
-//		for (String c : pb.command())
-//			System.out.println(c);
+//		if (isDebugMode) {
+//			pb = new ProcessBuilder(shellCmd, "/c", "start java.exe",
+//					"-agentlib:jdwp=transport=dt_socket,address=localhost:7070,server=y,suspend=y", javaCmd, "-gui",
+//					filePath);
+//		} else {
+//			pb = new ProcessBuilder(cmds);
+//		}
+
+		for (String c : pb.command())
+			System.out.println(c);
 
 		Map<String, String> env = pb.environment();
 		classpath.append(HOME + "/bin");
@@ -62,21 +69,27 @@ public class MySmallBasicDebugger extends MySmallBasicDebuggerModel implements R
 //			System.out.println(entry.getKey() + " : " + entry.getValue());
 
 		pb.directory(new File(HOME));
+		
+		Process p;
+		
 		try {
-			Process p = pb.start();
+			p = pb.start();
+			
+//			printStream(p);
+//			p.waitFor();
+//		  
+//			InputStream is = p.getErrorStream(); Scanner scan = new Scanner(is);
+//			while (scan.hasNext()) { System.out.print("ERROR: ");
+//			System.out.println(scan.nextLine()); }
+//			System.out.println("Exit value: " + p.exitValue());
 		} catch (IOException e2) {
 			e2.printStackTrace();
-		}
+		} 
+//			catch (InterruptedException e) {
+//			e.printStackTrace();
+//		}
 
-		// 원래 실행하는 부분에 있었던 코드...
-		/*
-		 * p.waitFor();
-		 * 
-		 * InputStream is = p.getErrorStream(); Scanner scan = new Scanner(is);
-		 * while (scan.hasNext()) { System.out.print("ERROR: ");
-		 * System.out.println(scan.nextLine()); }
-		 * System.out.println("Exit value: " + p.exitValue());
-		 */
+		// 원래 실행하는 부분에 있었던 코드...	 
 
 		if (!isDebugMode)
 			return;
@@ -339,7 +352,7 @@ public class MySmallBasicDebugger extends MySmallBasicDebuggerModel implements R
 	}
 
 	// =============================실행을 위해 필요한 메소드=====================================================
-	private static void init() {
+	private static void init(boolean isDebugMode, String filePath) {
 
 		String osName = System.getProperty("os.name");
 		String osNameMatch = osName.toLowerCase();
@@ -350,12 +363,46 @@ public class MySmallBasicDebugger extends MySmallBasicDebuggerModel implements R
 
 		shellCmd = "";
 
+		cmds = new ArrayList<String>();
+		
 		if (osNameMatch.contains("linux")) {
-			shellCmd = "";
-		} else if (osNameMatch.contains("windows")) {
-			shellCmd = "cmd.exe";
+			classPathDelimeter = ":";
+			
+			if(isDebugMode) {
+				
+			}
+			else {
+				cmds.add("gnome-terminal");
+				cmds.add("-x");
+				cmds.add("java");
+				cmds.add("-cp");
+				cmds.add("./lib/*:./bin");
+				cmds.add(javaCmd);
+				cmds.add("-gui");		
+				cmds.add(filePath);
+			}
+		} else if (osNameMatch.contains("windows")) {			
+			classPathDelimeter = ";";
+			if(isDebugMode) {
+				cmds.add("cmd.exe");
+				cmds.add("/c");
+				cmds.add("start java.exe");
+				cmds.add("-agentlib:jdwp=transport=dt_socket,address=localhost:7070,server=y,suspend=y");
+				cmds.add(javaCmd);
+				cmds.add("-gui");
+				cmds.add(filePath);
+			}
+			else {
+				cmds.add("cmd.exe");
+				cmds.add("/c");
+				cmds.add("start java.exe");
+				cmds.add(javaCmd);
+				cmds.add("-gui");
+				cmds.add(filePath);
+			}
 		} else if (osNameMatch.contains("mac os") || osNameMatch.contains("macos") || osNameMatch.contains("darwin")) {
 			shellCmd = "";
+			classPathDelimeter = ":";
 		} else {
 			shellCmd = ""; // Windows OS by default
 		}
@@ -374,12 +421,27 @@ public class MySmallBasicDebugger extends MySmallBasicDebuggerModel implements R
 					addJarFile(classpath, home, path + "\\" + jars[i].getName()); // 재귀호출
 				} else {
 					if (jars[i].getName().endsWith(".jar")) {
-						classpath.append(";");
-						classpath.append(home + "/lib/" + jars[i].getName());
+						classpath.append(classPathDelimeter);
+						classpath.append(home + "lib/" + jars[i].getName());
 					}
 				}
 			}
 		}
 	}
+	
+//    private void printStream(Process process) throws IOException, InterruptedException {
+//    	process.waitFor();
+//	    try (InputStream psout = process.getInputStream()) {
+//	        copy(psout, System.out);
+//	    }
+//    }
+//
+//	public void copy(InputStream input, OutputStream output) throws IOException {
+//	    byte[] buffer = new byte[1024];
+//	    int n = 0;
+//	    while ((n = input.read(buffer)) != -1) {
+//	        output.write(buffer, 0, n);
+//	    }
+//	}
 
 }
