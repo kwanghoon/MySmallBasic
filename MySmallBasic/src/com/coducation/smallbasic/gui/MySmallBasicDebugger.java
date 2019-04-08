@@ -57,8 +57,8 @@ public class MySmallBasicDebugger extends MySmallBasicDebuggerModel implements R
 //			pb = new ProcessBuilder(cmds);
 //		}
 
-		for (String c : pb.command())
-			System.out.println(c);
+//		for (String c : pb.command())
+//			System.out.println(c);
 
 		Map<String, String> env = pb.environment();
 		classpath.append(HOME + "/bin");
@@ -369,7 +369,13 @@ public class MySmallBasicDebugger extends MySmallBasicDebuggerModel implements R
 			classPathDelimeter = ":";
 			
 			if(isDebugMode) {
-				
+				cmds.add("gnome-terminal");
+				cmds.add("-x");
+				cmds.add("java");
+				cmds.add("-agentlib:jdwp=transport=dt_socket,address=localhost:7070,server=y,suspend=y");
+				cmds.add(javaCmd);
+				cmds.add("-gui");		
+				cmds.add(filePath);				
 			}
 			else {
 				cmds.add("gnome-terminal");
