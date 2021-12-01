@@ -21,6 +21,7 @@ MySmallBasic is the first open-source software for Small Basic coding environmen
 
 ## Document
  - Visit [Wiki](https://github.com/kwanghoon/MySmallBasic/wiki).
+ - [Master thesis by Gayoung Kim](http://swlab.jnu.ac.kr/paper/MSthesis_Kim2019.pdf)
  - [A Development of Open-Source Software for Educational Coding Environments Using Small Basic (Kwanghoon Choi, Gayoung Kim, Byeong Mo Chang, KIISE Transactions on Computing Practices 24 (12), 649-661)](https://www.dbpia.co.kr/pdf/pdfView.do?nodeId=NODE07575573)
 
 ## Licence
