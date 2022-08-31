@@ -25,7 +25,7 @@ MySmallBasic is the first open-source software for Small Basic coding environmen
  - [A Development of Open-Source Software for Educational Coding Environments Using Small Basic (Kwanghoon Choi, Gayoung Kim, Byeong Mo Chang, KIISE Transactions on Computing Practices 24 (12), 649-661)](https://www.dbpia.co.kr/pdf/pdfView.do?nodeId=NODE07575573)
 
 ## Licence
-Our project is released under [GPL 3.0 Licence]. Contact us for commercial uses.
+Our project is released under [GPL 3.0 Licence]. We encourage any forms of the use of this software as long as they keep the MySmallbasic language semantics and the library interfaces.
 
 ## Roadmap
 - Auto completion in MySmallBasic GUI
