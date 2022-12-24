@@ -28,7 +28,7 @@ public class JScrollPopupMenu extends JPopupMenu {
         super.add(getScrollBar());
         
         addMouseWheelListener(new MouseWheelListener() {
-            @Override public void mouseWheelMoved(MouseWheelEvent event) {
+            public void mouseWheelMoved(MouseWheelEvent event) {
                 
                 int amount = (event.getScrollType() == MouseWheelEvent.WHEEL_UNIT_SCROLL)
                              ? event.getUnitsToScroll() * scrollBar.getUnitIncrement()
@@ -45,12 +45,11 @@ public class JScrollPopupMenu extends JPopupMenu {
         if(popupScrollBar == null) {
             popupScrollBar = new JScrollBar(JScrollBar.VERTICAL);
             popupScrollBar.addAdjustmentListener(new AdjustmentListener() {
-                @Override public void adjustmentValueChanged(AdjustmentEvent e) {
+                public void adjustmentValueChanged(AdjustmentEvent e) {
                     doLayout();
                     repaint();
                 }
             });
-
             popupScrollBar.setVisible(false);
         }
 
@@ -86,6 +85,7 @@ public class JScrollPopupMenu extends JPopupMenu {
         super.remove(index);
 
         if(maximumVisibleRows >= getComponentCount()-1) {
+           
             getScrollBar().setVisible(false);
         }
     }
@@ -99,6 +99,7 @@ public class JScrollPopupMenu extends JPopupMenu {
             int unit = -1;
             int width = 0;
             for(Component comp : getComponents()) {
+                 System.out.println("???");
                 if(!(comp instanceof JScrollBar)) {
                     Dimension preferredSize = comp.getPreferredSize();
                     width = Math.max(width, preferredSize.width);
@@ -122,18 +123,17 @@ public class JScrollPopupMenu extends JPopupMenu {
 
             width += scrollBar.getPreferredSize().width + widthMargin;
             int height = heightMargin + extent;
-
+            
             setPopupSize(new Dimension(width, height));
         }
-
         super.show(invoker, x, y);
     }
-
+    
     protected static class ScrollPopupMenuLayout implements LayoutManager{
-        @Override public void addLayoutComponent(String name, Component comp) {}
-        @Override public void removeLayoutComponent(Component comp) {}
+        public void addLayoutComponent(String name, Component comp) {}
+        public void removeLayoutComponent(Component comp) {}
 
-        @Override public Dimension preferredLayoutSize(Container parent) {
+        public Dimension preferredLayoutSize(Container parent) {
             int visibleAmount = Integer.MAX_VALUE;
             Dimension dim = new Dimension();
             for(Component comp :parent.getComponents()){
@@ -156,7 +156,7 @@ public class JScrollPopupMenu extends JPopupMenu {
             return dim;
         }
 
-        @Override public Dimension minimumLayoutSize(Container parent) {
+        public Dimension minimumLayoutSize(Container parent) {
             int visibleAmount = Integer.MAX_VALUE;
             Dimension dim = new Dimension();
             for(Component comp : parent.getComponents()) {
@@ -179,7 +179,7 @@ public class JScrollPopupMenu extends JPopupMenu {
             return dim;
         }
 
-        @Override public void layoutContainer(Container parent) {
+        public void layoutContainer(Container parent) {
             Insets insets = parent.getInsets();
 
             int width = parent.getWidth() - insets.left - insets.right;

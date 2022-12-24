@@ -131,11 +131,10 @@ public class MySmallBasicGUI extends JFrame implements MySmallBasicDebuggerClien
 			}
 		});
 		
+		// textArea에 PopupMenu 추가 Tab 누를 시 popupmenu 출력
 		textAreaMaker.getTextArea().addKeyListener(new KeyListener() {
 
-			public void keyTyped(KeyEvent e) {
-				
-			}
+			public void keyTyped(KeyEvent e) {}
 
 			public void keyPressed(KeyEvent e) {
 				int keyCode = e.getKeyCode();
@@ -159,11 +158,10 @@ public class MySmallBasicGUI extends JFrame implements MySmallBasicDebuggerClien
 
 						int setcursor = list.get(i).indexOf("...");
 						
-						// ...이 있으면 처음 ... 위치로 커서 위치 변경
+						// "..."이 있으면 처음 "..." 위치로 커서 위치 변경
 						cursorList.add(setcursor);
 						
 						if(setcursor != -1) {
-							// list에 있는 ... 문자열 제거
 							list.set(i, list.get(i).replace("...", ""));
 						}
 						
@@ -186,6 +184,7 @@ public class MySmallBasicGUI extends JFrame implements MySmallBasicDebuggerClien
 						scrollPopupmenu.addImpl(menuitem, scrollPopupmenu, i);
 						
 					} // end for
+					
 					scrollPopupmenu.setComponentPopupMenu(popupmenu);
 					contentPane.add(popupmenu);
 				}
