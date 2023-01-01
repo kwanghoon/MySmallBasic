@@ -31,7 +31,6 @@ import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;
 import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.UndoManager;
-import com.coducation.smallbasic.syncomp.SocketCommunication;
 
 public class MySmallBasicGUI extends JFrame implements MySmallBasicDebuggerClientModel {
 	private static JPanel contentPane;
