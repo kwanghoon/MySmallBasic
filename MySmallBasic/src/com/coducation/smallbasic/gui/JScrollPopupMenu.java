@@ -99,7 +99,6 @@ public class JScrollPopupMenu extends JPopupMenu {
             int unit = -1;
             int width = 0;
             for(Component comp : getComponents()) {
-                 System.out.println("???");
                 if(!(comp instanceof JScrollBar)) {
                     Dimension preferredSize = comp.getPreferredSize();
                     width = Math.max(width, preferredSize.width);
