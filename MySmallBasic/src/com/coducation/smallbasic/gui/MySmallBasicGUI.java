@@ -17,6 +17,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.net.InetAddress;
 import java.net.Socket;
@@ -55,6 +56,7 @@ public class MySmallBasicGUI extends JFrame implements MySmallBasicDebuggerClien
 	private TextAreaMaker textAreaMaker;
 	private JPopupMenu popupmenu;
 	private JScrollPopupMenu scrollPopupmenu;
+	private MySmallBasicSyntaxItems syntaxItems;
 
 	// 디버그 관련 변수
 	private MySmallBasicDebugger debugger;
@@ -63,12 +65,6 @@ public class MySmallBasicGUI extends JFrame implements MySmallBasicDebuggerClien
 	private JToolBar debugToolBar;
 	private MonitoringTable monitoringTable;
 	
-	// 소켓 전달 변수
-	private static InetAddress host;
-	private static Socket link = null;
-	private static int position = 0;
-	private static boolean isReceive;
-
 	// 저장관련 변수
 	private boolean isTempFile = true; // 임시파일인지
 	private boolean isNew = true;		//새로 만든 파일인지
@@ -89,14 +85,6 @@ public class MySmallBasicGUI extends JFrame implements MySmallBasicDebuggerClien
 	}
 
 	public MySmallBasicGUI() {
-		
-		try {
-			host = InetAddress.getLocalHost();
-		} catch (UnknownHostException uhEx) {
-			// 호스트 ip를 찾지 못하면 메시지 창을 띄우면서 종료
-			JOptionPane.showMessageDialog(null, "Host ID not found!", "ERROR_MESSAGE", JOptionPane.ERROR_MESSAGE);
-			System.exit(1);
-		}
 		
 		//gui 창 종료시 이벤트
 		addWindowListener(new WindowAdapter(){
@@ -131,92 +119,8 @@ public class MySmallBasicGUI extends JFrame implements MySmallBasicDebuggerClien
 			}
 		});
 		
-		// textArea에 PopupMenu 추가 Tab 누를 시 popupmenu 출력
-		textAreaMaker.getTextArea().addKeyListener(new KeyListener() {
-
-			public void keyTyped(KeyEvent e) {}
-
-			public void keyPressed(KeyEvent e) {
-				int keyCode = e.getKeyCode();
-				
-				if(keyCode == KeyEvent.VK_TAB) {
-					popupmenu = new JPopupMenu();
-					scrollPopupmenu = new JScrollPopupMenu();
-					
-					SocketCommunication SC = new SocketCommunication(link, host, textAreaMaker.getTextArea());
-					
-					ArrayList<String> list = SC.getList();
-					ArrayList<Integer> cursorList = new ArrayList<>();
-					cursorList.add(0);
-					
-					position = SC.getPosition();
-					isReceive = SC.getIsReceive();
-					
-					// popupmenu에 문자열 추가
-					for(int i = 1; i < list.size(); i++) {
-						JMenuItem menuitem = new JMenuItem(list.get(i));
-
-						int setcursor = list.get(i).indexOf("...");
-						
-						// "..."이 있으면 처음 "..." 위치로 커서 위치 변경
-						cursorList.add(setcursor);
-						
-						if(setcursor != -1) {
-							list.set(i, list.get(i).replace("...", ""));
-						}
-						
-						int stridx = list.get(i).length();
-						
-						String itemHeader = list.get(i).substring(0, stridx);
-						
-						menuitem.addActionListener(new ActionListener() {
-							public void actionPerformed(ActionEvent e) {
-								textAreaMaker.getTextArea().append(itemHeader);
-								int listIndex = list.indexOf(itemHeader);
-								
-								if(cursorList.get(listIndex) != -1) {
-									textAreaMaker.getTextArea().setCaretPosition(position + cursorList.get(listIndex));
-								}
-							}
-							
-						}); // end ActionListener
-						popupmenu.add(menuitem);
-						scrollPopupmenu.addImpl(menuitem, scrollPopupmenu, i);
-						
-					} // end for
-					
-					scrollPopupmenu.setComponentPopupMenu(popupmenu);
-					contentPane.add(popupmenu);
-				}
-			} // end keyPressed
-
-			public void keyReleased(KeyEvent e) {
-				// 서버로부터 받은 문자열을 popupmenu로 출력
-				int lineNum = 1;
-		        int columnNum = 0;
-				int keyCode = e.getKeyCode();
-				if( isReceive && (keyCode == KeyEvent.VK_TAB) ) {
-					// 커서 위치를 원래 위치로 변경
-					try {
-						// tab키로 인한 공백 제거
-						textAreaMaker.getTextArea().replaceRange("", position, position+1);
-			            
-			            int caretpos = textAreaMaker.getTextArea().getCaretPosition();
-			            
-			            lineNum = textAreaMaker.getTextArea().getLineOfOffset(caretpos);
-			            columnNum = caretpos - textAreaMaker.getTextArea().getLineStartOffset(lineNum) + 1;
-			            lineNum += 1;
-			            
-			        }
-			        catch(Exception ex){
-			        	ex.printStackTrace();
-				}
-					scrollPopupmenu.show(textAreaMaker.getTextArea(), (int)(columnNum * 4.5) + 25, lineNum * 15);
-			 }
-			}
-		});
-		
-		textAreaMaker.getTextArea().setComponentPopupMenu(popupmenu);
+		// 서버 연결 확인 후 textArea에 PopupMenu 추가
+		syntaxItems = new MySmallBasicSyntaxItems(contentPane, textAreaMaker);
 		
 		// 툴바가 들어갈 panel 설정
 		JToolBar toolBar = new JToolBar();
