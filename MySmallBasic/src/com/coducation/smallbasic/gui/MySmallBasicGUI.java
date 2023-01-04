@@ -42,6 +42,7 @@ public class MySmallBasicGUI extends JFrame implements MySmallBasicDebuggerClien
 	private JButton runButton;
 	private JButton debugButton;
 	private TextAreaMaker textAreaMaker;
+	private MySmallBasicSyntaxItems syntaxItems;
 
 	// 디버그 관련 변수
 	private MySmallBasicDebugger debugger;
@@ -49,7 +50,7 @@ public class MySmallBasicGUI extends JFrame implements MySmallBasicDebuggerClien
 	private JPanel debugPanel;
 	private JToolBar debugToolBar;
 	private MonitoringTable monitoringTable;
-
+	
 	// 저장관련 변수
 	private boolean isTempFile = true; // 임시파일인지
 	private boolean isNew = true;		//새로 만든 파일인지
@@ -103,6 +104,9 @@ public class MySmallBasicGUI extends JFrame implements MySmallBasicDebuggerClien
 				isTextAreaChanged = true;
 			}
 		});
+		
+		// 서버 연결 확인 후 textArea에 PopupMenu 추가
+		syntaxItems = new MySmallBasicSyntaxItems(contentPane, textAreaMaker);
 		
 		// 툴바가 들어갈 panel 설정
 		JToolBar toolBar = new JToolBar();
