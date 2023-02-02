@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 
+import com.syntax.SyntaxCompletionDataManager;
+
 public class SocketCommunication {
 	private static final int PORT = 50000;
 	
@@ -20,6 +22,7 @@ public class SocketCommunication {
 	private static BufferedReader input= null;
 	private static PrintWriter output = null;
 	private static InetAddress host = null;
+	private static SyntaxCompletionDataManager syntaxManager;
 	
 	private static ArrayList<String> list = null;
 	private static int position = 0;
@@ -107,9 +110,13 @@ public class SocketCommunication {
 					
 					isReceive = true;
 					
-					 // white 문자열 제거
-					receiveMessage = receiveMessage.replace("white ", "");
-					list.add(receiveMessage);
+					syntaxManager = new SyntaxCompletionDataManager();
+					
+					list = syntaxManager.searchForSyntaxCompletion(receiveMessage);
+					
+					// white 문자열 제거
+					// receiveMessage = receiveMessage.replace("white ", "");
+					// list.add(receiveMessage);
 					
 				}
 			} catch (IOException e2) {

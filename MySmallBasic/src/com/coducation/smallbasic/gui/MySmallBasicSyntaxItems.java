@@ -48,20 +48,29 @@ public class MySmallBasicSyntaxItems {
 							
 						ArrayList<String> list = SC.getList();
 						ArrayList<Integer> cursorList = new ArrayList<>();
-						cursorList.add(0);
-							
+						// cursorList.add(0);
+						
 						// popupmenu에 문자열 추가
-						for(int i = 1; i < list.size(); i++) {
-							JMenuItem menuitem = new JMenuItem(list.get(i));
-
-							int setcursor = list.get(i).indexOf("...");
-								
+						for(int i = 0; i < list.size(); i++) {
+							// Terminal, Nonterminal 치환
+							list.set(i, list.get(i).replaceAll("CRStmtCRs", "* *"));
+							list.set(i, list.get(i).replaceAll("CR", "* *"));
+							list.set(i, list.get(i).replaceAll("NT\\s(.*?) ", "+"));
+							list.set(i, list.get(i).replaceAll("T ", ""));
+							list.set(i, list.get(i).replaceAll("[+]", "."));
+							
+							int setcursor = list.get(i).indexOf(".");
 							// "..."이 있으면 처음 "..." 위치로 커서 위치 변경
 							cursorList.add(setcursor);
-							
 							if(setcursor != -1) {
-								list.set(i, list.get(i).replace("...", ""));
+								list.set(i, list.get(i).replaceAll("\\s+", " "));
+								list.set(i, list.get(i).replaceAll("[.]", ""));
 							}
+							
+							list.set(i, list.get(i).replaceAll("[*]", "\n"));
+							list.set(i, list.get(i).trim());
+							
+							JMenuItem menuitem = new JMenuItem(list.get(i));
 								
 							int stridx = list.get(i).length();
 								
@@ -69,9 +78,8 @@ public class MySmallBasicSyntaxItems {
 								
 							menuitem.addActionListener(new ActionListener() {
 								public void actionPerformed(ActionEvent e) {
-									textAreaMaker.getTextArea().append(itemHeader);
+									textAreaMaker.getTextArea().append(itemHeader); // + 1
 									int listIndex = list.indexOf(itemHeader);
-										
 									if(cursorList.get(listIndex) != -1) {
 										textAreaMaker.getTextArea().setCaretPosition(position + cursorList.get(listIndex));
 									}
