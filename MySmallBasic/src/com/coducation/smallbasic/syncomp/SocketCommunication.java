@@ -28,6 +28,7 @@ public class SocketCommunication {
 	private static int position = 0;
 	private static boolean isReceive = false;
 	private static boolean connect = true;
+	private static boolean state_receive = false;
 	
 	public SocketCommunication(JTextArea textArea) {
 		try {
@@ -112,12 +113,19 @@ public class SocketCommunication {
 					
 					syntaxManager = new SyntaxCompletionDataManager();
 					
-					list = syntaxManager.searchForSyntaxCompletion(receiveMessage);
+					String subStr = receiveMessage.substring(receiveMessage.indexOf(" ") + 1);
+					state_receive = subStr.matches("[+-]?\\d*(\\.\\d+)?");
 					
-					// white 문자열 제거
-					// receiveMessage = receiveMessage.replace("white ", "");
-					// list.add(receiveMessage);
-					
+					// 상태가 전달되면 맵으로부터 후보를 뽑는다.
+					if(state_receive) {
+						list = syntaxManager.searchForSyntaxCompletion(subStr);
+					}
+					else {
+						// 문자열을 전달받으면 문자열로부터 후보를 뽑아낸다.
+						// white 문자열 제거
+						receiveMessage = receiveMessage.replace("white ", "");
+						list.add(receiveMessage);
+					}
 				}
 			} catch (IOException e2) {
 				e2.printStackTrace();
@@ -125,6 +133,10 @@ public class SocketCommunication {
 			
 			closingConnecting1();
 		} // end if
+	}
+	
+	public boolean getState() {
+		return state_receive;
 	}
 	
 	public ArrayList<String> getList() {
