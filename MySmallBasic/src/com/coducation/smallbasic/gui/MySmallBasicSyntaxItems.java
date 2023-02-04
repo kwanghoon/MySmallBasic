@@ -5,10 +5,12 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.PriorityQueue;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 
@@ -25,6 +27,11 @@ public class MySmallBasicSyntaxItems {
 	private boolean isConnect = false;
 	private boolean state_receive;
 	private int position = 0;
+	private int cursorPosition = 0;
+	
+	private Matcher matcher_ID;
+	private Matcher matcher_NUM;
+	private Matcher matcher_STR;
 	
 	// textArea에 PopupMenu 추가 Tab 누를 시 popupmenu 출력
 	public MySmallBasicSyntaxItems(JPanel panel, TextAreaMaker textArea) {
@@ -96,9 +103,10 @@ public class MySmallBasicSyntaxItems {
 							int stridx = list.get(i).length();
 								
 							String itemHeader = list.get(i).substring(0, stridx);
-								
+							
 							menuitem.addActionListener(new ActionListener() {
 								public void actionPerformed(ActionEvent e) {
+									cursorPosition = textAreaMaker.getTextArea().getCaretPosition();
 									textAreaMaker.getTextArea().append(itemHeader);
 									int listIndex = list.indexOf(itemHeader);
 									if(cursorList.get(listIndex) != -1) {
@@ -106,17 +114,50 @@ public class MySmallBasicSyntaxItems {
 									}
 									
 									// 선택한 구문 후보 중 ID, NUM, STR이 존재하면 사용자로부터 문자열을 입력받는다.
-									PriorityQueue<Integer> priorityQueueLowest = new PriorityQueue<>();
-									int wordIdx;
-									if((wordIdx = list.get(listIndex).indexOf("ID")) >= 0) priorityQueueLowest.add(wordIdx);
-									if((wordIdx = list.get(listIndex).indexOf("NUM")) >= 0) priorityQueueLowest.add(wordIdx);
-									if((wordIdx = list.get(listIndex).indexOf("STR")) >= 0) priorityQueueLowest.add(wordIdx);
+									String listStr = list.get(listIndex);
 									
-									//while(priorityQueueLowest.size() > 0) {
-										// 앞에 위치해 있는 단어부터 입력받는다.
-										
-										
-									//}
+									int matcherIdx = 10;	// 문자열 위치
+									boolean flag = true;	
+									String input = "input"; 	// 사용자 입력
+									String pattern = null; 	// 정규식
+									String matcherName = null; // 정규식에 대한 문자열(ID, NUM, STR)
+									
+									while (flag && input != null) {
+										while(flag && input != null) {
+											matcher_ID = Pattern.compile("ID").matcher(listStr);
+											matcher_NUM = Pattern.compile("NUM").matcher(listStr);
+											matcher_STR = Pattern.compile("STR").matcher(listStr);
+											
+											if(flag = matcher_ID.find()) {
+												matcherIdx = matcher_ID.start();
+												pattern = "[\\_a-zA-Z][\\_a-zA-Z0-9]*";
+												matcherName = "ID";
+											}
+											else if(flag = matcher_NUM.find()) {
+												matcherIdx = matcher_NUM.start();
+												pattern = "\"[^\"]*\"";
+												matcherName = "NUM";
+											}
+											else if(flag = matcher_STR.find()) {
+												matcherIdx = matcher_STR.start();
+												pattern = "([0-9]*[.])?[0-9]+";
+												matcherName = "STR";
+											}
+											if(flag) {
+												input = JOptionPane.showInputDialog(matcherName + ": " + pattern);
+												while(input != null) {
+													// 정규식에 맞게 입력되면 해당 위치에 삽입
+													if(Pattern.matches(pattern, input)) {
+														cursorPosition += matcherIdx;
+														textAreaMaker.getTextArea().replaceRange(input, cursorPosition, cursorPosition + matcherName.length());
+														listStr = listStr.replaceFirst(matcherName, input);
+														break;
+													}
+													input = JOptionPane.showInputDialog(matcherName + ": " + pattern);
+												}
+											}
+										}
+									}
 								}
 									
 							}); // end ActionListener
