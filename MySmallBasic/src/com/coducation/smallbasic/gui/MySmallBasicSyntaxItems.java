@@ -1,11 +1,12 @@
 package com.coducation.smallbasic.gui;
 
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
-import java.util.PriorityQueue;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -13,6 +14,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JTextArea;
+import javax.swing.text.BadLocationException;
 
 import com.coducation.smallbasic.syncomp.SocketCommunication;
 
@@ -28,6 +31,7 @@ public class MySmallBasicSyntaxItems {
 	private boolean state_receive;
 	private int position = 0;
 	private int cursorPosition = 0;
+	private Rectangle2D rectangle = null;
 	
 	private Matcher matcher_ID;
 	private Matcher matcher_NUM;
@@ -59,12 +63,14 @@ public class MySmallBasicSyntaxItems {
 						
 						ArrayList<String> list = SC.getList();
 						ArrayList<Integer> cursorList = new ArrayList<>();
-						//cursorList.add(0);
 						
 						int i;
 						// 서버로부터 파싱 상태만 받아온다면 i = 0, 아니라면 i = 1
 						if(state_receive) i = 0;
-						else i = 1;
+						else {
+							i = 1;
+							cursorList.add(0);
+						}
 						
 						// popupmenu에 문자열 추가
 						for(; i < list.size(); i++) {
@@ -78,13 +84,16 @@ public class MySmallBasicSyntaxItems {
 								list.set(i, list.get(i).replaceAll("T ", ""));
 								
 								// 커서 Nonterminal 위치로 변경
-								list.set(i, list.get(i).replaceAll("\\s", ""));
+								list.set(i, list.get(i).replaceAll("\\s+", " "));
+								list.set(i, list.get(i).replace("Enter ", System.getProperty("line.separator")));
+								
+								list.set(i, list.get(i).replaceAll("[.] ", "."));
+								list.set(i, list.get(i).replaceAll(" [.]", "."));
+								
 								int setcursor = list.get(i).indexOf("blank");
 								list.set(i, list.get(i).replaceAll("blank", ""));
 								
 								cursorList.add(setcursor);
-								
-								list.set(i, list.get(i).replace("Enter", System.getProperty("line.separator")));
 								
 								menuitem = new JMenuItem(list.get(i));
 							} 
@@ -150,6 +159,7 @@ public class MySmallBasicSyntaxItems {
 													if(Pattern.matches(pattern, input)) {
 														cursorPosition += matcherIdx;
 														textAreaMaker.getTextArea().replaceRange(input, cursorPosition, cursorPosition + matcherName.length());
+														
 														listStr = listStr.replaceFirst(matcherName, input);
 														break;
 													}
@@ -165,7 +175,6 @@ public class MySmallBasicSyntaxItems {
 							scrollPopupmenu.addImpl(menuitem, scrollPopupmenu, i);
 								
 						} // end for
-							
 						scrollPopupmenu.setComponentPopupMenu(popupmenu);
 						contentPane.add(popupmenu);
 					}
@@ -176,6 +185,7 @@ public class MySmallBasicSyntaxItems {
 				// 서버로부터 받은 문자열을 popupmenu로 출력
 				int lineNum = 1;
 				int columnNum = 0;
+				int caretpos = 0;
 				int keyCode = e.getKeyCode();
 				if( isReceive && isConnect && (keyCode == KeyEvent.VK_TAB)) {
 					// 커서 위치를 원래 위치로 변경
@@ -183,7 +193,7 @@ public class MySmallBasicSyntaxItems {
 					// tab키로 인한 공백 제거
 					textAreaMaker.getTextArea().replaceRange("", position, position+1);
 			            
-			        int caretpos = textAreaMaker.getTextArea().getCaretPosition();
+			        caretpos = textAreaMaker.getTextArea().getCaretPosition();
 			            
 			        lineNum = textAreaMaker.getTextArea().getLineOfOffset(caretpos);
 			        columnNum = caretpos - textAreaMaker.getTextArea().getLineStartOffset(lineNum) + 1;
@@ -193,7 +203,15 @@ public class MySmallBasicSyntaxItems {
 					catch(Exception ex){
 			    	ex.printStackTrace();
 					}
-				scrollPopupmenu.show(textAreaMaker.getTextArea(), (int)(columnNum * 5) + 25, lineNum * 15);
+					
+					rectangle = new Rectangle();
+					try {
+						rectangle = ((JTextArea)(e.getSource())).modelToView2D(caretpos);
+					} catch (BadLocationException e1) {
+						e1.printStackTrace();
+					}
+					// scrollPopupmenu.show(textAreaMaker.getTextArea(), (int)(columnNum * 5) + 25, lineNum * 15);
+					scrollPopupmenu.show(textAreaMaker.getTextArea(), (int)rectangle.getX() + 3 , (int)rectangle.getY() + 20);
 				}
 			}
 		});
