@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 
+import com.syntax.SyntaxCompletionDataManager;
+
 public class SocketCommunication {
 	private static final int PORT = 50000;
 	
@@ -20,11 +22,13 @@ public class SocketCommunication {
 	private static BufferedReader input= null;
 	private static PrintWriter output = null;
 	private static InetAddress host = null;
+	private static SyntaxCompletionDataManager syntaxManager;
 	
 	private static ArrayList<String> list = null;
 	private static int position = 0;
 	private static boolean isReceive = false;
 	private static boolean connect = true;
+	private static boolean state_receive = false;
 	
 	public SocketCommunication(JTextArea textArea) {
 		try {
@@ -91,8 +95,7 @@ public class SocketCommunication {
 				while((receiveMessage = input.readLine()) != null) {
 					// 이전 문자열이 공백이면 break
 					if("SuccessfullyParsed".equals(receiveMessage)) {
-						isReceive = false;
-						break;
+						receiveMessage = "State 0";
 					}
 					else if("LexError".equals(receiveMessage)) {
 						JOptionPane.showMessageDialog(textArea, "incorrect syntax: LexError!", "LexError", JOptionPane.ERROR_MESSAGE);
@@ -107,10 +110,20 @@ public class SocketCommunication {
 					
 					isReceive = true;
 					
-					 // white 문자열 제거
-					receiveMessage = receiveMessage.replace("white ", "");
-					list.add(receiveMessage);
+					syntaxManager = new SyntaxCompletionDataManager();
+					String subStr = receiveMessage.substring(receiveMessage.indexOf(" ") + 1);
+					state_receive = subStr.matches("[+-]?\\d*(\\.\\d+)?");
 					
+					// 상태가 전달되면 맵으로부터 후보를 뽑는다.
+					if(state_receive) {
+						list = syntaxManager.searchForSyntaxCompletion(subStr);
+					}
+					else {
+						// 문자열을 전달받으면 문자열로부터 후보를 뽑아낸다.
+						// white 문자열 제거
+						receiveMessage = receiveMessage.replace("white ", "");
+						list.add(receiveMessage);
+					}
 				}
 			} catch (IOException e2) {
 				e2.printStackTrace();
@@ -118,6 +131,10 @@ public class SocketCommunication {
 			
 			closingConnecting1();
 		} // end if
+	}
+	
+	public boolean getState() {
+		return state_receive;
 	}
 	
 	public ArrayList<String> getList() {
