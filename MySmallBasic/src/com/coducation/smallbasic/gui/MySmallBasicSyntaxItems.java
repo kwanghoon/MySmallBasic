@@ -116,7 +116,8 @@ public class MySmallBasicSyntaxItems {
 							menuitem.addActionListener(new ActionListener() {
 								public void actionPerformed(ActionEvent e) {
 									cursorPosition = textAreaMaker.getTextArea().getCaretPosition();
-									textAreaMaker.getTextArea().append(itemHeader);
+									textAreaMaker.getTextArea().insert(itemHeader, position);
+									// textAreaMaker.getTextArea().append(itemHeader);
 									int listIndex = list.indexOf(itemHeader);
 									if(cursorList.get(listIndex) != -1) {
 										textAreaMaker.getTextArea().setCaretPosition(position + cursorList.get(listIndex));
@@ -144,12 +145,12 @@ public class MySmallBasicSyntaxItems {
 											}
 											else if(flag = matcher_NUM.find()) {
 												matcherIdx = matcher_NUM.start();
-												pattern = "\"[^\"]*\"";
+												pattern = "([0-9]*[.])?[0-9]+";
 												matcherName = "NUM";
 											}
 											else if(flag = matcher_STR.find()) {
 												matcherIdx = matcher_STR.start();
-												pattern = "([0-9]*[.])?[0-9]+";
+												pattern = "\"[^\"]*\"";
 												matcherName = "STR";
 											}
 											if(flag) {

@@ -95,8 +95,7 @@ public class SocketCommunication {
 				while((receiveMessage = input.readLine()) != null) {
 					// 이전 문자열이 공백이면 break
 					if("SuccessfullyParsed".equals(receiveMessage)) {
-						isReceive = false;
-						break;
+						receiveMessage = "State 0";
 					}
 					else if("LexError".equals(receiveMessage)) {
 						JOptionPane.showMessageDialog(textArea, "incorrect syntax: LexError!", "LexError", JOptionPane.ERROR_MESSAGE);
@@ -112,7 +111,6 @@ public class SocketCommunication {
 					isReceive = true;
 					
 					syntaxManager = new SyntaxCompletionDataManager();
-					
 					String subStr = receiveMessage.substring(receiveMessage.indexOf(" ") + 1);
 					state_receive = subStr.matches("[+-]?\\d*(\\.\\d+)?");
 					
