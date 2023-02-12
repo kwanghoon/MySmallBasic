@@ -30,6 +30,15 @@ public class SocketCommunication {
 	private static boolean connect = true;
 	private static boolean state_receive = false;
 	
+	static {
+		try {
+			syntaxManager = new SyntaxCompletionDataManager();
+		} catch (IOException e) {
+			System.out.println("Error: Load in SyntaxCompletionDataManager");
+			e.printStackTrace();
+		}
+	}
+	
 	public SocketCommunication(JTextArea textArea) {
 		try {
 			host = InetAddress.getLocalHost();
@@ -79,23 +88,32 @@ public class SocketCommunication {
 			output.print(message);
 			output.flush();
 			
-			
 			// 연결 끊기
 			closingConnecting1();
-
+			
 			
 			// 서버로부터 문자열 수신 및 출력
 			accessServer1(host);
 			
 			list = new ArrayList<>();
-			String receiveMessage = "";
+			String receiveMessage = null;
 			isReceive = false;
-			
 			try {
 				while((receiveMessage = input.readLine()) != null) {
-					// 이전 문자열이 공백이면 break
+					String subStr = "";
+					// 서버로부터 파싱 상태만을 받아올 때 실행
+					if(!"".equals(receiveMessage)) {
+						subStr = receiveMessage.substring(receiveMessage.indexOf(" ") + 1); // 첫 공백을 기준으로 다음 문자를 뽑아낸다.
+						state_receive = subStr.matches("\\d*"); // 다음 문자가 숫자가 전달되었는지 확인(파싱 상태만 전달받았는지)
+					}
+						
+					// 이전 문자열이 공백이면 state 0을 반환
 					if("SuccessfullyParsed".equals(receiveMessage)) {
-						receiveMessage = "State 0";
+						if(state_receive) receiveMessage = "State 0";
+						else {
+							isReceive = false;
+							break;
+						}
 					}
 					else if("LexError".equals(receiveMessage)) {
 						JOptionPane.showMessageDialog(textArea, "incorrect syntax: LexError!", "LexError", JOptionPane.ERROR_MESSAGE);
@@ -109,14 +127,9 @@ public class SocketCommunication {
 					}
 					
 					isReceive = true;
-					
-					syntaxManager = new SyntaxCompletionDataManager();
-					String subStr = receiveMessage.substring(receiveMessage.indexOf(" ") + 1);
-					state_receive = subStr.matches("[+-]?\\d*(\\.\\d+)?");
-					
 					// 상태가 전달되면 맵으로부터 후보를 뽑는다.
 					if(state_receive) {
-						list = syntaxManager.searchForSyntaxCompletion(subStr);
+						list = syntaxManager.searchForSyntaxCompletion(subStr); // 전달받은 상태에 대한 후보 구문들을 리스트로 저장
 					}
 					else {
 						// 문자열을 전달받으면 문자열로부터 후보를 뽑아낸다.
@@ -179,6 +192,7 @@ public class SocketCommunication {
 		}
 		catch(IOException ioEx) {
 			System.out.println("Connection refused with server");
+			System.out.println(ioEx.getMessage());
 			connect = false;
 		}
 	}

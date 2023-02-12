@@ -9,11 +9,15 @@ import java.awt.LayoutManager;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+
+import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollBar;
+import javax.swing.MenuElement;
+import javax.swing.event.MenuKeyEvent;
+import javax.swing.event.MenuKeyListener;
 
 public class JScrollPopupMenu extends JPopupMenu {
     protected int maximumVisibleRows = 10;
@@ -36,6 +40,23 @@ public class JScrollPopupMenu extends JPopupMenu {
                 scrollBar.setValue(scrollBar.getValue() + amount);
                 event.consume();
             }
+        });
+        
+        addMenuKeyListener(new MenuKeyListener() {
+			public void menuKeyTyped(MenuKeyEvent e) {
+			}
+
+			public void menuKeyPressed(MenuKeyEvent e) {
+				int keyCode = e.getKeyCode();
+				if( keyCode == KeyEvent.VK_UP) {
+				}
+				else if( keyCode == KeyEvent.VK_DOWN) {
+				}
+			}
+
+			public void menuKeyReleased(MenuKeyEvent e) {
+			}
+        	
         });
     }
 
