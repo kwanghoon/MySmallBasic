@@ -21,6 +21,7 @@ import javax.swing.event.MenuKeyListener;
 
 public class JScrollPopupMenu extends JPopupMenu {
     protected int maximumVisibleRows = 10;
+    private int itemPosition = 11;
     public JScrollPopupMenu() {
         this(null);
     }
@@ -30,6 +31,8 @@ public class JScrollPopupMenu extends JPopupMenu {
         setLayout(new ScrollPopupMenuLayout());
         JScrollBar scrollBar = getScrollBar();
         super.add(getScrollBar());
+        
+        scrollBar.getComponent(0).setFocusTraversalKeysEnabled(false);
         
         addMouseWheelListener(new MouseWheelListener() {
             public void mouseWheelMoved(MouseWheelEvent event) {
@@ -43,14 +46,43 @@ public class JScrollPopupMenu extends JPopupMenu {
         });
         
         addMenuKeyListener(new MenuKeyListener() {
-			public void menuKeyTyped(MenuKeyEvent e) {
+			public void menuKeyTyped(MenuKeyEvent event) {
 			}
-
-			public void menuKeyPressed(MenuKeyEvent e) {
-				int keyCode = e.getKeyCode();
+			// menu item 인덱스 찾아서 처음과 마지막 위치일 때의 이벤트 처리 필요
+			public void menuKeyPressed(MenuKeyEvent event) {
+				int scrollBar_MaxValue = scrollBar.getComponentCount() * scrollBar.getHeight() / maximumVisibleRows;
+				int keyCode = event.getKeyCode();
 				if( keyCode == KeyEvent.VK_UP) {
+					itemPosition++;
+					System.out.println("up: " + itemPosition);
+					if(itemPosition >= 11) {
+						itemPosition = 9;
+						System.out.println("scroll up: " + itemPosition);
+						if(scrollBar.getValue() == 0) {
+							scrollBar.setValue(scrollBar_MaxValue);
+							itemPosition = 0;
+						} else {
+							scrollBar.setValue(scrollBar.getValue() - scrollBar.getUnitIncrement());
+						}
+						
+						event.consume();
+					}
 				}
 				else if( keyCode == KeyEvent.VK_DOWN) {
+					itemPosition--;
+					System.out.println("down: " + itemPosition);
+					if(itemPosition <= 0) {
+						itemPosition = 2;
+						System.out.println("scroll down: " + itemPosition);
+						if(scrollBar.getValue() == scrollBar_MaxValue) {
+							scrollBar.setValue(0);
+							itemPosition = 11;
+						} else {
+							scrollBar.setValue(scrollBar.getValue() + scrollBar.getUnitIncrement());
+						}
+							
+						event.consume();
+					}
 				}
 			}
 
