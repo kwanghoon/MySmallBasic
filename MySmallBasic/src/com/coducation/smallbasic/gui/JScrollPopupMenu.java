@@ -9,19 +9,21 @@ import java.awt.LayoutManager;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 
-import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollBar;
-import javax.swing.MenuElement;
 import javax.swing.event.MenuKeyEvent;
 import javax.swing.event.MenuKeyListener;
 
 public class JScrollPopupMenu extends JPopupMenu {
     protected int maximumVisibleRows = 10;
     private int itemPosition = 11;
+    private int focusMenuIndex = 0;
+    
     public JScrollPopupMenu() {
         this(null);
     }
@@ -46,22 +48,24 @@ public class JScrollPopupMenu extends JPopupMenu {
         });
         
         addMenuKeyListener(new MenuKeyListener() {
-			public void menuKeyTyped(MenuKeyEvent event) {
-			}
-			// menu item 인덱스 찾아서 처음과 마지막 위치일 때의 이벤트 처리 필요
 			public void menuKeyPressed(MenuKeyEvent event) {
 				int scrollBar_MaxValue = scrollBar.getComponentCount() * scrollBar.getHeight() / maximumVisibleRows;
 				int keyCode = event.getKeyCode();
+				
+				if(focusMenuIndex != 0) {
+					itemPosition = focusMenuIndex;
+					focusMenuIndex = 0;
+				}
+				
 				if( keyCode == KeyEvent.VK_UP) {
 					itemPosition++;
-					System.out.println("up: " + itemPosition);
 					if(itemPosition >= 11) {
-						itemPosition = 9;
-						System.out.println("scroll up: " + itemPosition);
 						if(scrollBar.getValue() == 0) {
 							scrollBar.setValue(scrollBar_MaxValue);
-							itemPosition = 0;
+							if(itemPosition > 11) itemPosition = 1;
+							else itemPosition = 0;
 						} else {
+							itemPosition = 9;
 							scrollBar.setValue(scrollBar.getValue() - scrollBar.getUnitIncrement());
 						}
 						
@@ -70,25 +74,23 @@ public class JScrollPopupMenu extends JPopupMenu {
 				}
 				else if( keyCode == KeyEvent.VK_DOWN) {
 					itemPosition--;
-					System.out.println("down: " + itemPosition);
 					if(itemPosition <= 0) {
-						itemPosition = 2;
-						System.out.println("scroll down: " + itemPosition);
 						if(scrollBar.getValue() == scrollBar_MaxValue) {
 							scrollBar.setValue(0);
-							itemPosition = 11;
+							if(itemPosition < 0) itemPosition = 10;
+							else itemPosition = 11;
+							
 						} else {
+							itemPosition = 2;
 							scrollBar.setValue(scrollBar.getValue() + scrollBar.getUnitIncrement());
 						}
-							
 						event.consume();
 					}
 				}
 			}
 
-			public void menuKeyReleased(MenuKeyEvent e) {
-			}
-        	
+			public void menuKeyReleased(MenuKeyEvent e) {}
+			public void menuKeyTyped(MenuKeyEvent event) {}
         });
     }
 
@@ -163,8 +165,15 @@ public class JScrollPopupMenu extends JPopupMenu {
                     max += preferredSize.height;
                     
                 }
+                comp.addMouseMotionListener(new MouseMotionAdapter() {
+                    public void mouseMoved(MouseEvent me) {
+                    	int compIndex = me.getComponent().getY() / comp.getHeight();
+                    	focusMenuIndex = 10 - compIndex;
+                    	me.consume();
+                    }
+                });
             }
-
+            
             Insets insets = getInsets();
             int widthMargin = insets.left + insets.right;
             int heightMargin = insets.top + insets.bottom;

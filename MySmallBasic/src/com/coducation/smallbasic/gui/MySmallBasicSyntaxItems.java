@@ -116,8 +116,8 @@ public class MySmallBasicSyntaxItems {
 								// "..."이 있으면 처음 "..." 위치로 커서 위치 변경
 								list.set(i, list.get(i).replace("...", "blank"));
 								
-								list.set(i, list.get(i).replaceAll("[.] ", "."));
-								list.set(i, list.get(i).replaceAll(" [.]", "."));
+								list.set(i, list.get(i).replaceAll("\\s?+[.]\\s?+ ", "."));
+								//list.set(i, list.get(i).replaceAll(" [.]", "."));
 								
 								int setcursor = list.get(i).indexOf("blank");
 								cursorList.add(setcursor); // 각 구문에 대한 커서 위치 저장
@@ -229,11 +229,6 @@ public class MySmallBasicSyntaxItems {
 					textAreaMaker.getTextArea().replaceRange("", position, position+1);
 			            
 			        caretpos = textAreaMaker.getTextArea().getCaretPosition();
-			            
-			        // lineNum = textAreaMaker.getTextArea().getLineOfOffset(caretpos);
-			        // columnNum = caretpos - textAreaMaker.getTextArea().getLineStartOffset(lineNum) + 1;
-			        // lineNum += 1;
-			            
 					}
 					catch(Exception ex){
 			    	ex.printStackTrace();
