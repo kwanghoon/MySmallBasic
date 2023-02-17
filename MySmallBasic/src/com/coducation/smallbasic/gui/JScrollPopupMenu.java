@@ -9,14 +9,21 @@ import java.awt.LayoutManager;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollBar;
+import javax.swing.event.MenuKeyEvent;
+import javax.swing.event.MenuKeyListener;
 
 public class JScrollPopupMenu extends JPopupMenu {
     protected int maximumVisibleRows = 10;
+    private int itemPosition = 11;
+    private int focusMenuIndex = 0;
+    
     public JScrollPopupMenu() {
         this(null);
     }
@@ -27,6 +34,8 @@ public class JScrollPopupMenu extends JPopupMenu {
         JScrollBar scrollBar = getScrollBar();
         super.add(getScrollBar());
         
+        scrollBar.getComponent(0).setFocusTraversalKeysEnabled(false);
+        
         addMouseWheelListener(new MouseWheelListener() {
             public void mouseWheelMoved(MouseWheelEvent event) {
                 int amount = (event.getScrollType() == MouseWheelEvent.WHEEL_UNIT_SCROLL)
@@ -36,6 +45,52 @@ public class JScrollPopupMenu extends JPopupMenu {
                 scrollBar.setValue(scrollBar.getValue() + amount);
                 event.consume();
             }
+        });
+        
+        addMenuKeyListener(new MenuKeyListener() {
+			public void menuKeyPressed(MenuKeyEvent event) {
+				int scrollBar_MaxValue = scrollBar.getComponentCount() * scrollBar.getHeight() / maximumVisibleRows;
+				int keyCode = event.getKeyCode();
+				
+				if(focusMenuIndex != 0) {
+					itemPosition = focusMenuIndex;
+					focusMenuIndex = 0;
+				}
+				
+				if( keyCode == KeyEvent.VK_UP) {
+					itemPosition++;
+					if(itemPosition >= 11) {
+						if(scrollBar.getValue() == 0) {
+							scrollBar.setValue(scrollBar_MaxValue);
+							if(itemPosition > 11) itemPosition = 1;
+							else itemPosition = 0;
+						} else {
+							itemPosition = 9;
+							scrollBar.setValue(scrollBar.getValue() - scrollBar.getUnitIncrement());
+						}
+						
+						event.consume();
+					}
+				}
+				else if( keyCode == KeyEvent.VK_DOWN) {
+					itemPosition--;
+					if(itemPosition <= 0) {
+						if(scrollBar.getValue() == scrollBar_MaxValue) {
+							scrollBar.setValue(0);
+							if(itemPosition < 0) itemPosition = 10;
+							else itemPosition = 11;
+							
+						} else {
+							itemPosition = 2;
+							scrollBar.setValue(scrollBar.getValue() + scrollBar.getUnitIncrement());
+						}
+						event.consume();
+					}
+				}
+			}
+
+			public void menuKeyReleased(MenuKeyEvent e) {}
+			public void menuKeyTyped(MenuKeyEvent event) {}
         });
     }
 
@@ -110,8 +165,15 @@ public class JScrollPopupMenu extends JPopupMenu {
                     max += preferredSize.height;
                     
                 }
+                comp.addMouseMotionListener(new MouseMotionAdapter() {
+                    public void mouseMoved(MouseEvent me) {
+                    	int compIndex = me.getComponent().getY() / comp.getHeight();
+                    	focusMenuIndex = 10 - compIndex;
+                    	me.consume();
+                    }
+                });
             }
-
+            
             Insets insets = getInsets();
             int widthMargin = insets.left + insets.right;
             int heightMargin = insets.top + insets.bottom;

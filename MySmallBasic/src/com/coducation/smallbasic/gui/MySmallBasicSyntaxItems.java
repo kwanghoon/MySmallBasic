@@ -55,71 +55,93 @@ public class MySmallBasicSyntaxItems {
 					popupmenu = new JPopupMenu();
 					scrollPopupmenu = new JScrollPopupMenu();
 					
-					if(isConnect) {
+					if(isConnect) { // 서버와 연결이 되어 있는지 확인, 연결시에만 실행
 						
 						isReceive = SC.getIsReceive();
 						position = SC.getPosition();
 						state_receive = SC.getState();
 						
-						ArrayList<String> list = SC.getList();
-						ArrayList<Integer> cursorList = new ArrayList<>();
+						ArrayList<String> list = SC.getList(); // 서버를 통해 받아온 후보 구문들
+						ArrayList<Integer> cursorList = new ArrayList<>(); // 후보 구문에 대한 각 커서 위치
 						
 						int i;
 						// 서버로부터 파싱 상태만 받아온다면 i = 0, 아니라면 i = 1
+						// 서버로부터 직접 구문 후보들을 받아올 때 첫 인덱스가 공백인 점을 고려
 						if(state_receive) i = 0;
 						else {
 							i = 1;
 							cursorList.add(0);
 						}
-						
+						String list_temp;
 						// popupmenu에 문자열 추가
 						for(; i < list.size(); i++) {
 							// 만약 서버로부터 파싱 상태만 받아온다면
 							JMenuItem menuitem;
 							if(state_receive) {
+								// Popupmenu 이벤트 발생 시 textArea에 출력될 문자열
 								// Terminal, Nonterminal 치환
-								list.set(i, list.get(i).replaceAll("CRStmtCRs", "Enter Enter"));
-								list.set(i, list.get(i).replaceAll("CR", "Enter Enter"));
-								list.set(i, list.get(i).replaceAll("NT\\s(.*?) ", "blank"));
-								list.set(i, list.get(i).replaceAll("T ", ""));
+								list_temp = list.get(i);
+								list_temp = list_temp.replaceAll("CRStmtCRs", "Enter Enter");
+								list_temp = list_temp.replaceAll("CR", "Enter Enter");
+								list_temp = list_temp.replaceAll("NT\\s(.*?) ", "blank");
+								list_temp = list_temp.replaceAll("T ", "");
+								// 공백이 중복해서 나오면 제거
+								list_temp = list_temp.replaceAll("\\s+", " ");
+								list_temp = list_temp.replace("Enter ", System.getProperty("line.separator"));
 								
-								// 커서 Nonterminal 위치로 변경
-								list.set(i, list.get(i).replaceAll("\\s+", " "));
-								list.set(i, list.get(i).replace("Enter ", System.getProperty("line.separator")));
+								list_temp = list_temp.replaceAll("[.] ", ".");
+								list_temp = list_temp.replaceAll(" [.]", ".");
+								// 커서를 Nonterminal 위치로 변경
+								int setcursor = list_temp.indexOf("blank");
+								list_temp = list_temp.replaceAll("blank", "");
+								
+								// Popupmenu에 띄울 문자열
+								list.set(i, list.get(i).replaceAll("NT ", "blank"));
+								list.set(i, list.get(i).replaceAll("T ", ""));
 								
 								list.set(i, list.get(i).replaceAll("[.] ", "."));
 								list.set(i, list.get(i).replaceAll(" [.]", "."));
 								
-								int setcursor = list.get(i).indexOf("blank");
 								list.set(i, list.get(i).replaceAll("blank", ""));
 								
-								cursorList.add(setcursor);
-								
+								// popupmenu에 띄우는 문자열과 textArea에 띄우는 문자열을 다르게 설정함
 								menuitem = new JMenuItem(list.get(i));
+								
+								list.set(i, list_temp);
+								
+								cursorList.add(setcursor);
 							} 
 							else {
 								// 서버로부터 문자열로 후보를 받아온다면
 								// "..."이 있으면 처음 "..." 위치로 커서 위치 변경
 								list.set(i, list.get(i).replace("...", "blank"));
-								list.set(i, list.get(i).replaceAll("\\s", ""));
+								
+								list.set(i, list.get(i).replaceAll("\\s?+[.]\\s?+ ", "."));
+								//list.set(i, list.get(i).replaceAll(" [.]", "."));
 								
 								int setcursor = list.get(i).indexOf("blank");
-								cursorList.add(setcursor);
+								cursorList.add(setcursor); // 각 구문에 대한 커서 위치 저장
+								list.set(i, list.get(i).replaceAll("blank", ""));
+								list.set(i, list.get(i).replaceAll("\\s+", " "));
 								
 								menuitem = new JMenuItem(list.get(i));
+								
+								list.set(i, list.get(i).replaceAll("CRStmtCRs", System.getProperty("line.separator")));
+								list.set(i, list.get(i).replaceAll("CR", System.getProperty("line.separator")));
+								
 							}
 								
 							int stridx = list.get(i).length();
 								
-							String itemHeader = list.get(i).substring(0, stridx);
+							String itemHeader = list.get(i).substring(0, stridx); // item action에 대한 추가할 문자열
 							
 							menuitem.addActionListener(new ActionListener() {
 								public void actionPerformed(ActionEvent e) {
-									cursorPosition = textAreaMaker.getTextArea().getCaretPosition();
-									textAreaMaker.getTextArea().insert(itemHeader, position);
-									// textAreaMaker.getTextArea().append(itemHeader);
+									cursorPosition = textAreaMaker.getTextArea().getCaretPosition(); // 문자열 추가 전의 커서 위치
+									textAreaMaker.getTextArea().insert(itemHeader, position); // 커서 위치에 item 추가
 									int listIndex = list.indexOf(itemHeader);
 									if(cursorList.get(listIndex) != -1) {
+										// 추가한 item에서 NT 위치에 커서를 재설정
 										textAreaMaker.getTextArea().setCaretPosition(position + cursorList.get(listIndex));
 									}
 									
@@ -127,48 +149,60 @@ public class MySmallBasicSyntaxItems {
 									String listStr = list.get(listIndex);
 									
 									int matcherIdx = 10;	// 문자열 위치
+									int start; // 취소 시 커서 취소할 시작 위치
+									int end; // 취소로 삭제되는 마지막 위치
 									boolean flag = true;	
 									String input = "input"; 	// 사용자 입력
 									String pattern = null; 	// 정규식
 									String matcherName = null; // 정규식에 대한 문자열(ID, NUM, STR)
 									
-									while (flag && input != null) {
-										while(flag && input != null) {
-											matcher_ID = Pattern.compile("ID").matcher(listStr);
-											matcher_NUM = Pattern.compile("NUM").matcher(listStr);
-											matcher_STR = Pattern.compile("STR").matcher(listStr);
+									// 추가한 item에 ID, NUM, STR이 존재하는 동안 실행
+									while(flag && input != null) {
+										matcher_ID = Pattern.compile("ID").matcher(listStr);
+										matcher_NUM = Pattern.compile("NUM").matcher(listStr);
+										matcher_STR = Pattern.compile("STR").matcher(listStr);
 											
-											if(flag = matcher_ID.find()) {
-												matcherIdx = matcher_ID.start();
-												pattern = "[\\_a-zA-Z][\\_a-zA-Z0-9]*";
-												matcherName = "ID";
-											}
-											else if(flag = matcher_NUM.find()) {
-												matcherIdx = matcher_NUM.start();
-												pattern = "([0-9]*[.])?[0-9]+";
-												matcherName = "NUM";
-											}
-											else if(flag = matcher_STR.find()) {
-												matcherIdx = matcher_STR.start();
-												pattern = "\"[^\"]*\"";
-												matcherName = "STR";
-											}
-											if(flag) {
-												input = JOptionPane.showInputDialog(matcherName + ": " + pattern);
-												while(input != null) {
-													// 정규식에 맞게 입력되면 해당 위치에 삽입
-													if(Pattern.matches(pattern, input)) {
-														cursorPosition += matcherIdx;
-														textAreaMaker.getTextArea().replaceRange(input, cursorPosition, cursorPosition + matcherName.length());
+										if(flag = matcher_ID.find()) {
+											matcherIdx = matcher_ID.start();
+											pattern = "[\\_a-zA-Z][\\_a-zA-Z0-9]*";
+											matcherName = "ID";
+										}
+										else if(flag = matcher_NUM.find()) {
+											matcherIdx = matcher_NUM.start();
+											pattern = "([0-9]*[.])?[0-9]+";
+											matcherName = "NUM";
+										}
+										else if(flag = matcher_STR.find()) {
+											matcherIdx = matcher_STR.start();
+											pattern = "\"[^\"]*\"";
+											matcherName = "STR";
+										}
+										if(flag) { // 만약 수정하고자 하는 문자열이 존재한다면 실행
+											input = JOptionPane.showInputDialog(matcherName + ": " + pattern);
+												
+											while(input != null) {
+												// 정규식에 맞게 입력되면 해당 위치에 삽입
+												if(Pattern.matches(pattern, input)) {
+													cursorPosition += matcherIdx;
+													textAreaMaker.getTextArea().replaceRange(input, cursorPosition, cursorPosition + matcherName.length());
 														
-														listStr = listStr.replaceFirst(matcherName, input);
-														break;
-													}
-													input = JOptionPane.showInputDialog(matcherName + ": " + pattern);
+													listStr = listStr.replaceFirst(matcherName, input); // 수정된 문자열로 저장
+													break;
 												}
+												// 정규식에 맞지 않으면 재입력 요구 다이얼로그 출력
+												input = JOptionPane.showInputDialog(matcherName + ": " + pattern);
+											}
+											if(input == null) {
+												// input이 null인 경우 취소
+												// 지금까지 입력된 문자열들은 보존, 취소된 위치부터 공백으로 표시
+												// 커서 위치는 취소된 위치에
+												end = listStr.length() + cursorPosition;
+												start = listStr.indexOf(matcherName) + cursorPosition;
+												textAreaMaker.getTextArea().replaceRange("", start, end);
+												textAreaMaker.getTextArea().setCaretPosition(start);
 											}
 										}
-									}
+									} // while end
 								}
 									
 							}); // end ActionListener
@@ -195,11 +229,6 @@ public class MySmallBasicSyntaxItems {
 					textAreaMaker.getTextArea().replaceRange("", position, position+1);
 			            
 			        caretpos = textAreaMaker.getTextArea().getCaretPosition();
-			            
-			        lineNum = textAreaMaker.getTextArea().getLineOfOffset(caretpos);
-			        columnNum = caretpos - textAreaMaker.getTextArea().getLineStartOffset(lineNum) + 1;
-			        lineNum += 1;
-			            
 					}
 					catch(Exception ex){
 			    	ex.printStackTrace();
@@ -207,11 +236,11 @@ public class MySmallBasicSyntaxItems {
 					
 					rectangle = new Rectangle();
 					try {
-						rectangle = ((JTextArea)(e.getSource())).modelToView2D(caretpos);
+						rectangle = ((JTextArea)(e.getSource())).modelToView2D(caretpos); // 커서 위치를 x, y로 변경
 					} catch (BadLocationException e1) {
 						e1.printStackTrace();
 					}
-					// scrollPopupmenu.show(textAreaMaker.getTextArea(), (int)(columnNum * 5) + 25, lineNum * 15);
+					// popupmenu가 나타날 위치 설정, tab키를 누른 위치
 					scrollPopupmenu.show(textAreaMaker.getTextArea(), (int)rectangle.getX() + 3 , (int)rectangle.getY() + 20);
 				}
 			}
