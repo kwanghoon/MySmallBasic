@@ -3,6 +3,7 @@ package com.coducation.smallbasic.gui;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.geom.Rectangle2D;
@@ -117,7 +118,6 @@ public class MySmallBasicSyntaxItems {
 								list.set(i, list.get(i).replace("...", "blank"));
 								
 								list.set(i, list.get(i).replaceAll("\\s?+[.]\\s?+ ", "."));
-								//list.set(i, list.get(i).replaceAll(" [.]", "."));
 								
 								int setcursor = list.get(i).indexOf("blank");
 								cursorList.add(setcursor); // 각 구문에 대한 커서 위치 저장
@@ -144,7 +144,6 @@ public class MySmallBasicSyntaxItems {
 										// 추가한 item에서 NT 위치에 커서를 재설정
 										textAreaMaker.getTextArea().setCaretPosition(position + cursorList.get(listIndex));
 									}
-									
 									// 선택한 구문 후보 중 ID, NUM, STR이 존재하면 사용자로부터 문자열을 입력받는다.
 									String listStr = list.get(listIndex);
 									
@@ -177,7 +176,7 @@ public class MySmallBasicSyntaxItems {
 											pattern = "\"[^\"]*\"";
 											matcherName = "STR";
 										}
-										if(flag) { // 만약 수정하고자 하는 문자열이 존재한다면 실행
+										if(flag) { // 만약 수정을 요구하는 문자열이 존재한다면 실행
 											input = JOptionPane.showInputDialog(matcherName + ": " + pattern);
 												
 											while(input != null) {
@@ -185,7 +184,6 @@ public class MySmallBasicSyntaxItems {
 												if(Pattern.matches(pattern, input)) {
 													cursorPosition += matcherIdx;
 													textAreaMaker.getTextArea().replaceRange(input, cursorPosition, cursorPosition + matcherName.length());
-														
 													listStr = listStr.replaceFirst(matcherName, input); // 수정된 문자열로 저장
 													break;
 												}
@@ -202,7 +200,7 @@ public class MySmallBasicSyntaxItems {
 												textAreaMaker.getTextArea().setCaretPosition(start);
 											}
 										}
-									} // while end
+									}// while end
 								}
 									
 							}); // end ActionListener
@@ -240,8 +238,15 @@ public class MySmallBasicSyntaxItems {
 					} catch (BadLocationException e1) {
 						e1.printStackTrace();
 					}
-					// popupmenu가 나타날 위치 설정, tab키를 누른 위치
-					scrollPopupmenu.show(textAreaMaker.getTextArea(), (int)rectangle.getX() + 3 , (int)rectangle.getY() + 20);
+					
+					// textArea가 수정된 적이 없을 때의 popupmenu 출력
+					if(textAreaMaker.getTextArea().getParent().getX() <= 15) {
+						scrollPopupmenu.show(textAreaMaker.getTextArea(), (int)rectangle.getX() + 43 , (int)rectangle.getY() + 20);
+					}
+					else {
+						// popupmenu가 나타날 위치 설정, tab키를 누른 위치
+						scrollPopupmenu.show(textAreaMaker.getTextArea(), (int)rectangle.getX() + 3 , (int)rectangle.getY() + 20);
+					}
 				}
 			}
 		});

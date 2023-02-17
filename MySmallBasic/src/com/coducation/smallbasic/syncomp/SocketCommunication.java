@@ -109,11 +109,12 @@ public class SocketCommunication {
 						
 					// 이전 문자열이 공백이면 state 0을 반환
 					if("SuccessfullyParsed".equals(receiveMessage)) {
-						if(state_receive) receiveMessage = "State 0";
-						else {
+						subStr = "0";
+						state_receive = true;
+						/*{
 							isReceive = false;
 							break;
-						}
+						}*/
 					}
 					else if("LexError".equals(receiveMessage)) {
 						JOptionPane.showMessageDialog(textArea, "incorrect syntax: LexError!", "LexError", JOptionPane.ERROR_MESSAGE);
