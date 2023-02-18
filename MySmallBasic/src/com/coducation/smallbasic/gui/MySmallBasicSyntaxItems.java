@@ -3,7 +3,6 @@ package com.coducation.smallbasic.gui;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ComponentAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.geom.Rectangle2D;
@@ -154,6 +153,8 @@ public class MySmallBasicSyntaxItems {
 									String input = "input"; 	// 사용자 입력
 									String pattern = null; 	// 정규식
 									String matcherName = null; // 정규식에 대한 문자열(ID, NUM, STR)
+									int inputAfterCursor = textAreaMaker.getTextArea().getCaretPosition();
+
 									
 									// 추가한 item에 ID, NUM, STR이 존재하는 동안 실행
 									while(flag && input != null) {
@@ -177,11 +178,15 @@ public class MySmallBasicSyntaxItems {
 											matcherName = "STR";
 										}
 										if(flag) { // 만약 수정을 요구하는 문자열이 존재한다면 실행
+											textAreaMaker.getTextArea().setSelectionStart(cursorPosition + matcherIdx);
+			                                textAreaMaker.getTextArea().setSelectionEnd(cursorPosition + matcherIdx + matcherName.length());
+
 											input = JOptionPane.showInputDialog(matcherName + ": " + pattern);
 												
 											while(input != null) {
 												// 정규식에 맞게 입력되면 해당 위치에 삽입
 												if(Pattern.matches(pattern, input)) {
+													inputAfterCursor += (input.length() - matcherName.length());
 													cursorPosition += matcherIdx;
 													textAreaMaker.getTextArea().replaceRange(input, cursorPosition, cursorPosition + matcherName.length());
 													listStr = listStr.replaceFirst(matcherName, input); // 수정된 문자열로 저장
@@ -200,6 +205,11 @@ public class MySmallBasicSyntaxItems {
 												textAreaMaker.getTextArea().setCaretPosition(start);
 											}
 										}
+										
+										if(input != null && !input.equals("input")) {
+			                                textAreaMaker.getTextArea().setCaretPosition(inputAfterCursor);
+			                            }
+
 									}// while end
 								}
 									
