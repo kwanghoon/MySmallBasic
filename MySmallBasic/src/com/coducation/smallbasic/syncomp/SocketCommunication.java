@@ -8,11 +8,17 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.TreeMap;
 
 import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 
+import com.coducation.smallbasic.gui.MySmallBasicGUI;
 import com.syntax.SyntaxCompletionDataManager;
+import com.syntax.SyntaxCompletionDataManager.Pair;
 
 public class SocketCommunication {
 	private static final int PORT = 50000;
@@ -23,6 +29,7 @@ public class SocketCommunication {
 	private static PrintWriter output = null;
 	private static InetAddress host = null;
 	private static SyntaxCompletionDataManager syntaxManager;
+	private static MySmallBasicGUI frame; // 확인 필요
 	
 	private static ArrayList<String> list = null;
 	private static int position = 0;
@@ -30,9 +37,12 @@ public class SocketCommunication {
 	private static boolean connect = true;
 	private static boolean state_receive = false;
 	
+	static String collection_path = "";
+	
 	static {
 		try {
-			syntaxManager = new SyntaxCompletionDataManager();
+			// smallbasic-program-list-yapb-data-colletion_results.txt 경로 파라미터로 전달
+			syntaxManager = new SyntaxCompletionDataManager("C:\\Users\\Hwangsooyeon\\git\\SmallBasicDataCollection\\data\\smallbasic-program-list-yapb-data-colletion_results.txt"); // 경로 넣어줘야 함
 		} catch (IOException e) {
 			System.out.println("Error: Load in SyntaxCompletionDataManager");
 			e.printStackTrace();
@@ -40,6 +50,7 @@ public class SocketCommunication {
 	}
 	
 	public SocketCommunication(JTextArea textArea) {
+		
 		try {
 			host = InetAddress.getLocalHost();
 		} catch (UnknownHostException uhEx) {
@@ -71,7 +82,7 @@ public class SocketCommunication {
 			
 			// 다시 서버 접속, 커서 앞의 텍스트 보내기
 			accessServer1(host);
-
+			
 			output.print(message);
 			output.flush();
 			
@@ -97,19 +108,27 @@ public class SocketCommunication {
 			
 			list = new ArrayList<>();
 			String receiveMessage = null;
+			String[] state_list = null;
+			int messageStateIdx;
 			isReceive = false;
 			try {
 				while((receiveMessage = input.readLine()) != null) {
-					String subStr = "";
-					// 서버로부터 파싱 상태만을 받아올 때 실행
+					char subStr = '\u0000'; // 파싱 상태 저장 변수
+					// 서버로부터 파싱 상태만을 받았는지, 구문 후보를 받았는지 확인
 					if(!"".equals(receiveMessage)) {
-						subStr = receiveMessage.substring(receiveMessage.indexOf(" ") + 1); // 첫 공백을 기준으로 다음 문자를 뽑아낸다.
-						state_receive = subStr.matches("\\d*"); // 다음 문자가 숫자가 전달되었는지 확인(파싱 상태만 전달받았는지)
-					}
+						// 문자열을 전달받으면 문자열로부터 후보를 뽑아낸다.
+						// white 문자열 제거
+						receiveMessage = receiveMessage.replace("white ", "");
+						messageStateIdx = receiveMessage.indexOf(" ") + 1;
+						subStr = receiveMessage.charAt(messageStateIdx); // 첫 공백을 기준으로 다음 문자를 뽑아낸다.
+						//state_receive = subStr.matches("\\d*");
+						state_receive = Character.isDigit(subStr); // 다음 문자가 숫자가 전달되었는지 확인(파싱 상태만 전달받았는지)
+						if(state_receive) state_list = receiveMessage.split(" "); // 파싱 상태를 전달받았다면 상태들을 뽑아온다.
+					} else continue;
 						
 					// 이전 문자열이 공백이면 state 0을 반환
 					if("SuccessfullyParsed".equals(receiveMessage)) {
-						subStr = "0";
+						subStr = '0';
 						state_receive = true;
 						/*{
 							isReceive = false;
@@ -130,15 +149,37 @@ public class SocketCommunication {
 					isReceive = true;
 					// 상태가 전달되면 맵으로부터 후보를 뽑는다.
 					if(state_receive) {
-						list = syntaxManager.searchForSyntaxCompletion(subStr); // 전달받은 상태에 대한 후보 구문들을 리스트로 저장
+						ArrayList<Integer> newStateList = new ArrayList<>();
+						
+						// 실시간 서버로부터 구문 후보를 받아올 때 "SuccessfullyParsed" 처리
+						if(subStr == '0' && state_list == null) {
+							newStateList.add(0);
+						} else {
+							for(String s : state_list) {
+								newStateList.add(Integer.parseInt(s));
+							}
+						}
+						
+						Comparator<Integer> comparator = Comparator.reverseOrder(); // 내림차순으로 정렬
+						// 키값 중복이 예상되므로 수정 필요
+						Map<Integer, ArrayList<String>> sortList = new TreeMap<>(comparator); // 정렬과 중복 확인 위해 map 사용
+						
+						ArrayList<Pair> dupCheckList = new ArrayList<Pair>(); // 파싱 상태에 대한 구문 후보 중복 체크용 리스트
+						dupCheckList = syntaxManager.searchForSyntaxCompletion(newStateList); // 전달받은 상태에 대한 후보 구문들을 리스트로 저장
+						
+						// list에 담겨있지 않은 구문 후보만 저장
+						for(Pair pair : dupCheckList) {
+							if(!sortList.containsValue(pair.getFirst())) {
+								sortList.put(pair.getSecond(), pair.getFirst());
+							}
+						}
+						
+						list = syntaxManager.mapToArray(sortList);
 					}
 					else {
-						// 문자열을 전달받으면 문자열로부터 후보를 뽑아낸다.
-						// white 문자열 제거
-						receiveMessage = receiveMessage.replace("white ", "");
 						list.add(receiveMessage);
 					}
-				}
+				} // while
 			} catch (IOException e2) {
 				e2.printStackTrace();
 			}

@@ -20,6 +20,7 @@ import javax.swing.text.BadLocationException;
 import com.coducation.smallbasic.syncomp.SocketCommunication;
 
 public class MySmallBasicSyntaxItems {
+	public static final String NEWLINE = System.getProperty("line.separator");
 	private static JPanel contentPane;
 	private TextAreaMaker textAreaMaker;
 	private JPopupMenu popupmenu;
@@ -80,17 +81,17 @@ public class MySmallBasicSyntaxItems {
 							if(state_receive) {
 								// Popupmenu 이벤트 발생 시 textArea에 출력될 문자열
 								// Terminal, Nonterminal 치환
+								System.out.println(list.get(i));
 								list_temp = list.get(i);
-								list_temp = list_temp.replaceAll("CRStmtCRs", "Enter Enter");
-								list_temp = list_temp.replaceAll("CR", "Enter Enter");
+								list_temp = list_temp.replace("NT CRStmtCRs ", "Enter ");
+								list_temp = list_temp.replace("CR", "Enter ");
 								list_temp = list_temp.replaceAll("NT\\s(.*?) ", "blank");
 								list_temp = list_temp.replaceAll("T ", "");
 								// 공백이 중복해서 나오면 제거
 								list_temp = list_temp.replaceAll("\\s+", " ");
-								list_temp = list_temp.replace("Enter ", System.getProperty("line.separator"));
+								list_temp = list_temp.replace("Enter ", NEWLINE);
 								
-								list_temp = list_temp.replaceAll("[.] ", ".");
-								list_temp = list_temp.replaceAll(" [.]", ".");
+								list_temp = list_temp.replaceAll("\\s+[.]\\s+", ".");
 								// 커서를 Nonterminal 위치로 변경
 								int setcursor = list_temp.indexOf("blank");
 								list_temp = list_temp.replaceAll("blank", "");
@@ -99,8 +100,7 @@ public class MySmallBasicSyntaxItems {
 								list.set(i, list.get(i).replaceAll("NT ", "blank"));
 								list.set(i, list.get(i).replaceAll("T ", ""));
 								
-								list.set(i, list.get(i).replaceAll("[.] ", "."));
-								list.set(i, list.get(i).replaceAll(" [.]", "."));
+								list.set(i, list.get(i).replaceAll("\\s+[.]\\s+", "."));
 								
 								list.set(i, list.get(i).replaceAll("blank", ""));
 								
@@ -114,9 +114,10 @@ public class MySmallBasicSyntaxItems {
 							else {
 								// 서버로부터 문자열로 후보를 받아온다면
 								// "..."이 있으면 처음 "..." 위치로 커서 위치 변경
+								System.out.println(list.get(i));
 								list.set(i, list.get(i).replace("...", "blank"));
 								
-								list.set(i, list.get(i).replaceAll("\\s?+[.]\\s?+ ", "."));
+								list.set(i, list.get(i).replaceAll("[\\s+]?[.][\\s+]?", "."));
 								
 								int setcursor = list.get(i).indexOf("blank");
 								cursorList.add(setcursor); // 각 구문에 대한 커서 위치 저장
@@ -125,19 +126,18 @@ public class MySmallBasicSyntaxItems {
 								
 								menuitem = new JMenuItem(list.get(i));
 								
-								list.set(i, list.get(i).replaceAll("CRStmtCRs", System.getProperty("line.separator")));
-								list.set(i, list.get(i).replaceAll("CR", System.getProperty("line.separator")));
+								list.set(i, list.get(i).replaceAll("CRStmtCRs", NEWLINE));
+								list.set(i, list.get(i).replaceAll("CR", NEWLINE));
 								
 							}
 								
-							int stridx = list.get(i).length();
-								
-							String itemHeader = list.get(i).substring(0, stridx); // item action에 대한 추가할 문자열
+							String itemHeader = list.get(i); // item action에 대한 추가할 문자열
 							
 							menuitem.addActionListener(new ActionListener() {
 								public void actionPerformed(ActionEvent e) {
 									cursorPosition = textAreaMaker.getTextArea().getCaretPosition(); // 문자열 추가 전의 커서 위치
 									textAreaMaker.getTextArea().insert(itemHeader, position); // 커서 위치에 item 추가
+									System.out.println("선택한 구문 후보:" + itemHeader);
 									int listIndex = list.indexOf(itemHeader);
 									if(cursorList.get(listIndex) != -1) {
 										// 추가한 item에서 NT 위치에 커서를 재설정
