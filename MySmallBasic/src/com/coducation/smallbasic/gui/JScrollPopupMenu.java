@@ -23,6 +23,8 @@ public class JScrollPopupMenu extends JPopupMenu {
     protected int maximumVisibleRows = 10;
     private int itemPosition = 11;
     private int focusMenuIndex = 0;
+    private int scrollbarMenuitemCount = 0;
+    private final int itemCount = itemPosition;
     
     public JScrollPopupMenu() {
         this(null);
@@ -49,7 +51,7 @@ public class JScrollPopupMenu extends JPopupMenu {
         
         addMenuKeyListener(new MenuKeyListener() {
 			public void menuKeyPressed(MenuKeyEvent event) {
-				int scrollBar_MaxValue = scrollBar.getComponentCount() * scrollBar.getHeight() / maximumVisibleRows;
+				int scrollBar_MaxValue = (scrollbarMenuitemCount - itemCount) * scrollBar.getHeight() / maximumVisibleRows;
 				int keyCode = event.getKeyCode();
 				
 				if(focusMenuIndex != 0) {
@@ -59,16 +61,15 @@ public class JScrollPopupMenu extends JPopupMenu {
 				
 				if( keyCode == KeyEvent.VK_UP) {
 					itemPosition++;
-					if(itemPosition >= 11) {
+					if(itemPosition >= itemCount) {
 						if(scrollBar.getValue() == 0) {
 							scrollBar.setValue(scrollBar_MaxValue);
-							if(itemPosition > 11) itemPosition = 1;
+							if(itemPosition > itemCount) itemPosition = 1;
 							else itemPosition = 0;
 						} else {
 							itemPosition = 9;
 							scrollBar.setValue(scrollBar.getValue() - scrollBar.getUnitIncrement());
 						}
-						
 						event.consume();
 					}
 				}
@@ -78,7 +79,7 @@ public class JScrollPopupMenu extends JPopupMenu {
 						if(scrollBar.getValue() == scrollBar_MaxValue) {
 							scrollBar.setValue(0);
 							if(itemPosition < 0) itemPosition = 10;
-							else itemPosition = 11;
+							else itemPosition = itemCount;
 							
 						} else {
 							itemPosition = 2;
@@ -130,6 +131,7 @@ public class JScrollPopupMenu extends JPopupMenu {
         if(maximumVisibleRows < getComponentCount()-1) {
             getScrollBar().setVisible(true);
         }
+        scrollbarMenuitemCount++;
     }
 
     public void remove(int index) {

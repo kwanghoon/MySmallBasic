@@ -65,17 +65,9 @@ public class MySmallBasicSyntaxItems {
 						ArrayList<String> list = SC.getList(); // 서버를 통해 받아온 후보 구문들
 						ArrayList<Integer> cursorList = new ArrayList<>(); // 후보 구문에 대한 각 커서 위치
 						
-						int i;
-						// 서버로부터 파싱 상태만 받아온다면 i = 0, 아니라면 i = 1
-						// 서버로부터 직접 구문 후보들을 받아올 때 첫 인덱스가 공백인 점을 고려
-						if(state_receive) i = 0;
-						else {
-							i = 1;
-							cursorList.add(0);
-						}
 						String list_temp;
 						// popupmenu에 문자열 추가
-						for(; i < list.size(); i++) {
+						for(int i = 0; i < list.size(); i++) {
 							// 만약 서버로부터 파싱 상태만 받아온다면
 							JMenuItem menuitem;
 							if(state_receive) {
@@ -85,13 +77,14 @@ public class MySmallBasicSyntaxItems {
 								list_temp = list.get(i);
 								list_temp = list_temp.replace("NT CRStmtCRs ", "Enter ");
 								list_temp = list_temp.replace("CR", "Enter ");
-								list_temp = list_temp.replaceAll("NT\\s(.*?) ", "blank");
+								list_temp = list_temp.replaceAll("NT\\s[^\\s]*", "blank");
+								
 								list_temp = list_temp.replaceAll("T ", "");
 								// 공백이 중복해서 나오면 제거
 								list_temp = list_temp.replaceAll("\\s+", " ");
 								list_temp = list_temp.replace("Enter ", NEWLINE);
 								
-								list_temp = list_temp.replaceAll("\\s+[.]\\s+", ".");
+								list_temp = list_temp.replaceAll("[\\s+]?[.][\\s+]?", ".");
 								// 커서를 Nonterminal 위치로 변경
 								int setcursor = list_temp.indexOf("blank");
 								list_temp = list_temp.replaceAll("blank", "");
@@ -100,7 +93,7 @@ public class MySmallBasicSyntaxItems {
 								list.set(i, list.get(i).replaceAll("NT ", "blank"));
 								list.set(i, list.get(i).replaceAll("T ", ""));
 								
-								list.set(i, list.get(i).replaceAll("\\s+[.]\\s+", "."));
+								list.set(i, list.get(i).replaceAll("[\\s+]?[.][\\s+]?", "."));
 								
 								list.set(i, list.get(i).replaceAll("blank", ""));
 								
@@ -137,7 +130,7 @@ public class MySmallBasicSyntaxItems {
 								public void actionPerformed(ActionEvent e) {
 									cursorPosition = textAreaMaker.getTextArea().getCaretPosition(); // 문자열 추가 전의 커서 위치
 									textAreaMaker.getTextArea().insert(itemHeader, position); // 커서 위치에 item 추가
-									System.out.println("선택한 구문 후보:" + itemHeader);
+									
 									int listIndex = list.indexOf(itemHeader);
 									if(cursorList.get(listIndex) != -1) {
 										// 추가한 item에서 NT 위치에 커서를 재설정
@@ -215,9 +208,10 @@ public class MySmallBasicSyntaxItems {
 									
 							}); // end ActionListener
 							popupmenu.add(menuitem);
-							scrollPopupmenu.addImpl(menuitem, scrollPopupmenu, i);
+							scrollPopupmenu.addImpl(menuitem, popupmenu, i);
 								
 						} // end for
+						
 						scrollPopupmenu.setComponentPopupMenu(popupmenu);
 						contentPane.add(popupmenu);
 					}

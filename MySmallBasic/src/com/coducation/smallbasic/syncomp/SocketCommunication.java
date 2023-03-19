@@ -160,17 +160,15 @@ public class SocketCommunication {
 							}
 						}
 						
-						Comparator<Integer> comparator = Comparator.reverseOrder(); // 내림차순으로 정렬
-						// 키값 중복이 예상되므로 수정 필요
-						Map<Integer, ArrayList<String>> sortList = new TreeMap<>(comparator); // 정렬과 중복 확인 위해 map 사용
+						Map<ArrayList<String>, Integer> sortList = new HashMap<>(); // 정렬과 중복 확인 위해 map 사용
 						
 						ArrayList<Pair> dupCheckList = new ArrayList<Pair>(); // 파싱 상태에 대한 구문 후보 중복 체크용 리스트
 						dupCheckList = syntaxManager.searchForSyntaxCompletion(newStateList); // 전달받은 상태에 대한 후보 구문들을 리스트로 저장
 						
 						// list에 담겨있지 않은 구문 후보만 저장
 						for(Pair pair : dupCheckList) {
-							if(!sortList.containsValue(pair.getFirst())) {
-								sortList.put(pair.getSecond(), pair.getFirst());
+							if(!sortList.containsKey(pair.getFirst())) {
+								sortList.put(pair.getFirst(), pair.getSecond());
 							}
 						}
 						
