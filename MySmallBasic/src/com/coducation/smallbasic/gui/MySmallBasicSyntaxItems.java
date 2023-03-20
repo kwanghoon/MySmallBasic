@@ -72,7 +72,6 @@ public class MySmallBasicSyntaxItems {
 							JMenuItem menuitem;
 							if(state_receive) {
 								// Popupmenu 이벤트 발생 시 textArea에 출력될 문자열
-								// Terminal, Nonterminal 치환
 								System.out.println(list.get(i));
 								list_temp = list.get(i);
 								list_temp = list_temp.replace("NT CRStmtCRs ", "Enter ");
@@ -81,21 +80,17 @@ public class MySmallBasicSyntaxItems {
 								
 								list_temp = list_temp.replaceAll("T ", "");
 								// 공백이 중복해서 나오면 제거
-								list_temp = list_temp.replaceAll("\\s+", " ");
-								list_temp = list_temp.replace("Enter ", NEWLINE);
-								
+								list_temp = list_temp.replaceAll("\\s+", "");
+								list_temp = list_temp.replace("Enter", " " + NEWLINE);
 								list_temp = list_temp.replaceAll("[\\s+]?[.][\\s+]?", ".");
 								// 커서를 Nonterminal 위치로 변경
 								int setcursor = list_temp.indexOf("blank");
 								list_temp = list_temp.replaceAll("blank", "");
 								
 								// Popupmenu에 띄울 문자열
-								list.set(i, list.get(i).replaceAll("NT ", "blank"));
+								list.set(i, list.get(i).replaceAll("NT ", ""));
 								list.set(i, list.get(i).replaceAll("T ", ""));
-								
 								list.set(i, list.get(i).replaceAll("[\\s+]?[.][\\s+]?", "."));
-								
-								list.set(i, list.get(i).replaceAll("blank", ""));
 								
 								// popupmenu에 띄우는 문자열과 textArea에 띄우는 문자열을 다르게 설정함
 								menuitem = new JMenuItem(list.get(i));
@@ -108,20 +103,32 @@ public class MySmallBasicSyntaxItems {
 								// 서버로부터 문자열로 후보를 받아온다면
 								// "..."이 있으면 처음 "..." 위치로 커서 위치 변경
 								System.out.println(list.get(i));
-								list.set(i, list.get(i).replace("...", "blank"));
+								list_temp = list.get(i);
+								list_temp = list_temp.replace("NT CRStmtCRs ", "Enter ");
+								list_temp = list_temp.replace("CR", "Enter ");
+								list_temp = list_temp.replaceAll("NT\\s[^\\s]*", "blank");
+								list_temp = list_temp.replaceAll("T ", "");
 								
+								// 공백이 중복해서 나오면 제거
+								list_temp = list_temp.replaceAll("\\s+", "");
+								list_temp = list_temp.replace("Enter", " " + NEWLINE);
+								list_temp = list_temp.replaceAll("[\\s+]?[.][\\s+]?", ".");
+								
+								// 커서를 Nonterminal 위치로 변경
+								int setcursor = list_temp.indexOf("blank");
+								list_temp = list_temp.replaceAll("blank", "");
+								
+								// Popupmenu에 띄울 문자열
+								list.set(i, list.get(i).replaceAll("NT ", ""));
+								list.set(i, list.get(i).replaceAll("T ", ""));
 								list.set(i, list.get(i).replaceAll("[\\s+]?[.][\\s+]?", "."));
 								
-								int setcursor = list.get(i).indexOf("blank");
-								cursorList.add(setcursor); // 각 구문에 대한 커서 위치 저장
-								list.set(i, list.get(i).replaceAll("blank", ""));
-								list.set(i, list.get(i).replaceAll("\\s+", " "));
-								
+								// popupmenu에 띄우는 문자열과 textArea에 띄우는 문자열을 다르게 설정함
 								menuitem = new JMenuItem(list.get(i));
 								
-								list.set(i, list.get(i).replaceAll("CRStmtCRs", NEWLINE));
-								list.set(i, list.get(i).replaceAll("CR", NEWLINE));
+								list.set(i, list_temp);
 								
+								cursorList.add(setcursor);
 							}
 								
 							String itemHeader = list.get(i); // item action에 대한 추가할 문자열

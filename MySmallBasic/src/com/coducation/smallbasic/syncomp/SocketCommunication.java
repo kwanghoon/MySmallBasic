@@ -73,6 +73,7 @@ public class SocketCommunication {
 			String sendMessage = "" + textLength + " True";
 			
 			// 서버에게 텍스트 길이 전달
+			System.out.println("텍스트 길이 전달" + sendMessage);
 			output.print(sendMessage);
 			output.flush();
 			
@@ -81,6 +82,7 @@ public class SocketCommunication {
 
 			
 			// 다시 서버 접속, 커서 앞의 텍스트 보내기
+			System.out.println("커서 앞의 텍스트:");
 			accessServer1(host);
 			
 			output.print(message);
@@ -91,6 +93,7 @@ public class SocketCommunication {
 			
 			
 			// 서버 접속, 커서 뒤의 텍스트를 보낸다.
+			System.out.println("커서 뒤의 텍스트:");
 			accessServer1(host);
 			
 			message = textArea.getText();
@@ -121,9 +124,12 @@ public class SocketCommunication {
 						receiveMessage = receiveMessage.replace("white ", "");
 						messageStateIdx = receiveMessage.indexOf(" ") + 1;
 						subStr = receiveMessage.charAt(messageStateIdx); // 첫 공백을 기준으로 다음 문자를 뽑아낸다.
-						//state_receive = subStr.matches("\\d*");
 						state_receive = Character.isDigit(subStr); // 다음 문자가 숫자가 전달되었는지 확인(파싱 상태만 전달받았는지)
-						if(state_receive) state_list = receiveMessage.split(" "); // 파싱 상태를 전달받았다면 상태들을 뽑아온다.
+						
+						if(state_receive) {
+							receiveMessage = receiveMessage.replaceAll("Terminal ", "");
+							state_list = receiveMessage.split(" "); // 파싱 상태를 전달받았다면 상태들을 뽑아온다.
+						}
 					} else continue;
 						
 					// 이전 문자열이 공백이면 state 0을 반환
@@ -172,9 +178,13 @@ public class SocketCommunication {
 							}
 						}
 						
-						list = syntaxManager.mapToArray(sortList);
+						list = syntaxManager.mapToArray(sortList); // map의 구문후보만을 뽑아서 arraylist로 반환
 					}
 					else {
+						// 파싱상태 map과 같은 문자열 형식으로 list에 저장
+						receiveMessage = receiveMessage.replaceAll("Terminal", "T");
+						receiveMessage = receiveMessage.replaceAll("Nonterminal", "NT");
+						
 						list.add(receiveMessage);
 					}
 				} // while
