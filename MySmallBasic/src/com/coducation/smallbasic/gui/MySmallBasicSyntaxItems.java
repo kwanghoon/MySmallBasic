@@ -76,12 +76,12 @@ public class MySmallBasicSyntaxItems {
 								list_temp = list.get(i);
 								list_temp = list_temp.replace("NT CRStmtCRs ", "Enter ");
 								list_temp = list_temp.replace("CR", "Enter ");
-								list_temp = list_temp.replaceAll("NT\\s[^\\s]*", "blank");
+								list_temp = list_temp.replaceAll(" NT\\s[^\\s]*", "blank");
 								
 								list_temp = list_temp.replaceAll("T ", "");
 								// 공백이 중복해서 나오면 제거
-								list_temp = list_temp.replaceAll("\\s+", "");
-								list_temp = list_temp.replace("Enter", " " + NEWLINE);
+								list_temp = list_temp.replaceAll("\\s+", " ");
+								list_temp = list_temp.replace("Enter ", "\n");
 								list_temp = list_temp.replaceAll("[\\s+]?[.][\\s+]?", ".");
 								// 커서를 Nonterminal 위치로 변경
 								int setcursor = list_temp.indexOf("blank");
@@ -107,11 +107,11 @@ public class MySmallBasicSyntaxItems {
 								list_temp = list_temp.replace("NT CRStmtCRs ", "Enter ");
 								list_temp = list_temp.replace("CR", "Enter ");
 								list_temp = list_temp.replaceAll("NT\\s[^\\s]*", "blank");
-								list_temp = list_temp.replaceAll("T ", "");
+								list_temp = list_temp.replaceAll(" T ", "");
 								
 								// 공백이 중복해서 나오면 제거
-								list_temp = list_temp.replaceAll("\\s+", "");
-								list_temp = list_temp.replace("Enter", " " + NEWLINE);
+								list_temp = list_temp.replaceAll("\\s+", " ");
+								list_temp = list_temp.replace("Enter ", "\n");
 								list_temp = list_temp.replaceAll("[\\s+]?[.][\\s+]?", ".");
 								
 								// 커서를 Nonterminal 위치로 변경

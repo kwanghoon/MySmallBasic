@@ -1,43 +1,48 @@
 package com.coducation.smallbasic.syncomp;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.TreeMap;
 
 import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 
-import com.coducation.smallbasic.gui.MySmallBasicGUI;
+import com.example.java.YapbConfigManager;
 import com.syntax.SyntaxCompletionDataManager;
 import com.syntax.SyntaxCompletionDataManager.Pair;
 
 public class SocketCommunication {
 	private static final int PORT = 50000;
 	
-	private static String message;  // socket 전송 메세지
+	private static String frontMessage;  // socket 전송 메세지
+	private static String backMessage;  // socket 전송 메세지
 	private static Socket link = null;
 	private static BufferedReader input= null;
 	private static PrintWriter output = null;
 	private static InetAddress host = null;
 	private static SyntaxCompletionDataManager syntaxManager;
-	private static MySmallBasicGUI frame; // 확인 필요
+	private static YapbConfigManager yapbManager;
 	
 	private static ArrayList<String> list = null;
+	private static ArrayList<String> parsingList = null;
 	private static int position = 0;
 	private static boolean isReceive = false;
 	private static boolean connect = true;
 	private static boolean state_receive = false;
 	
 	static String collection_path = "";
+	
+	private static String configData = "";
 	
 	static {
 		try {
@@ -49,6 +54,42 @@ public class SocketCommunication {
 		}
 	}
 	
+	private void serverConnect(String sendMessage, JTextArea textArea) {
+		// 서버에게 텍스트 길이 전달
+		output.print(sendMessage);
+		output.flush();
+		
+		// 커서 앞 텍스트 길이, true 전달 후 서버 접속 끊기
+		closingConnecting1();
+
+		
+		// 다시 서버 접속, 커서 앞의 텍스트 보내기
+		accessServer1(host);
+		
+		output.print(frontMessage);
+		output.flush();
+		
+		// 접속 끊기
+		closingConnecting1();
+		
+		
+		// 서버 접속, 커서 뒤의 텍스트를 보낸다.
+		accessServer1(host);
+		
+		backMessage = textArea.getText();
+		backMessage = backMessage.substring(position, textArea.getText().length());
+		
+		output.print(backMessage);
+		output.flush();
+		
+		// 연결 끊기
+		closingConnecting1();
+		
+		
+		// 서버로부터 문자열 수신 및 출력
+		accessServer1(host);
+	}
+	
 	public SocketCommunication(JTextArea textArea) {
 		
 		try {
@@ -57,6 +98,10 @@ public class SocketCommunication {
 			// 호스트 ip를 찾지 못하면 메시지 창을 띄우면서 종료
 			JOptionPane.showMessageDialog(null, "Host ID not found!", "ERROR_MESSAGE", JOptionPane.ERROR_MESSAGE);
 		}
+		
+		// config 파일의 데이터를 가져온다.
+		yapbManager = new YapbConfigManager();
+		configData = yapbManager.getConfigFile(input); // config파일 데이터를 문자열로 저장
 			
 			// tab 키가 눌리면 서버 접속
 			accessServer1(host);
@@ -64,52 +109,18 @@ public class SocketCommunication {
 			if(connect) {
 			// 사용자가 입력한 커서 앞 text를 가져온다.
 			position = textArea.getCaretPosition();
-			message = textArea.getText();
-			message = message.substring(0, position);
+			frontMessage = textArea.getText();
+			frontMessage = frontMessage.substring(0, position);
 			
 			// text의 길이 반환
-			int textLength = message.length();
+			int textLength = frontMessage.length();
 				
 			String sendMessage = "" + textLength + " True";
 			
-			// 서버에게 텍스트 길이 전달
-			System.out.println("텍스트 길이 전달" + sendMessage);
-			output.print(sendMessage);
-			output.flush();
-			
-			// 커서 앞 텍스트 길이, true 전달 후 서버 접속 끊기
-			closingConnecting1();
-
-			
-			// 다시 서버 접속, 커서 앞의 텍스트 보내기
-			System.out.println("커서 앞의 텍스트:");
-			accessServer1(host);
-			
-			output.print(message);
-			output.flush();
-			
-			// 접속 끊기
-			closingConnecting1();
-			
-			
-			// 서버 접속, 커서 뒤의 텍스트를 보낸다.
-			System.out.println("커서 뒤의 텍스트:");
-			accessServer1(host);
-			
-			message = textArea.getText();
-			message = message.substring(position, textArea.getText().length());
-			
-			output.print(message);
-			output.flush();
-			
-			// 연결 끊기
-			closingConnecting1();
-			
-			
-			// 서버로부터 문자열 수신 및 출력
-			accessServer1(host);
+			serverConnect(sendMessage, textArea);
 			
 			list = new ArrayList<>();
+			parsingList = new ArrayList<>();
 			String receiveMessage = null;
 			String[] state_list = null;
 			int messageStateIdx;
@@ -178,7 +189,21 @@ public class SocketCommunication {
 							}
 						}
 						
-						list = syntaxManager.mapToArray(sortList); // map의 구문후보만을 뽑아서 arraylist로 반환
+						parsingList = syntaxManager.mapToArray(sortList); // map의 구문후보만을 뽑아서 arraylist로 반환
+						
+						// configFile의 collection 값 변경
+						/*
+						configData = configData.replaceAll(",", "," + System.lineSeparator());
+						configData = configData.replace("{", "{" + System.lineSeparator());
+						configData = configData.replaceAll("config_TABSTATE = True", "config_TABSTATE = False");
+						yapbManager.printConfigFile(configData);
+						*/
+						
+						configData = yapbManager.configConversion(configData, "False");
+						
+						accessServer1(host);
+						serverConnect(sendMessage, textArea);
+						
 					}
 					else {
 						// 파싱상태 map과 같은 문자열 형식으로 list에 저장
@@ -188,6 +213,27 @@ public class SocketCommunication {
 						list.add(receiveMessage);
 					}
 				} // while
+				
+				// 파싱 상태에 대한 구문 후보를 얻었다면 실시간으로 얻은 구문 후보와 합친다.
+				if(parsingList != null) {
+					for(String parse : list) {
+						if(!parsingList.contains(parse)) {
+							parsingList.add(parse);
+						}
+					}
+					
+					// 중복 제거한 구문 후보로 list를 변경한다.
+					list = parsingList;
+					
+					// yapb.config 파일을 원래대로 돌려둔다.
+					/*
+					configData = configData.replaceAll("config_TABSTATE = False", "config_TABSTATE = True");
+					yapbManager.printConfigFile(configData);
+					*/
+					
+					configData = yapbManager.configConversion(configData, "True");
+				}
+				
 			} catch (IOException e2) {
 				e2.printStackTrace();
 			}
