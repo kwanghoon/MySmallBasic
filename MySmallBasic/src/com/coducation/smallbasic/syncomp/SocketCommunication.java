@@ -46,8 +46,8 @@ public class SocketCommunication {
 	
 	static {
 		try {
-			// smallbasic-program-list-yapb-data-colletion_results.txt 경로 파라미터로 전달
-			syntaxManager = new SyntaxCompletionDataManager("C:\\Users\\Hwangsooyeon\\git\\SmallBasicDataCollection\\data\\smallbasic-program-list-yapb-data-colletion_results.txt"); // 경로 넣어줘야 함
+			// smallbasic-program-list-yapb-data-colletion_results.txt 경로 파라미터로 전달/resource/GUI/open.png
+			syntaxManager = new SyntaxCompletionDataManager(System.getProperty("user.dir") + "/data/smallbasic-program-list-yapb-data-colletion_results.txt"); // 경로 넣어줘야 함
 		} catch (IOException e) {
 			System.out.println("Error: Load in SyntaxCompletionDataManager");
 			e.printStackTrace();
@@ -191,15 +191,8 @@ public class SocketCommunication {
 						
 						parsingList = syntaxManager.mapToArray(sortList); // map의 구문후보만을 뽑아서 arraylist로 반환
 						
-						// configFile의 collection 값 변경
-						/*
-						configData = configData.replaceAll(",", "," + System.lineSeparator());
-						configData = configData.replace("{", "{" + System.lineSeparator());
-						configData = configData.replaceAll("config_TABSTATE = True", "config_TABSTATE = False");
-						yapbManager.printConfigFile(configData);
-						*/
-						
-						configData = yapbManager.configConversion(configData, "False");
+						// configFile의 tabstate 값 변경
+						configData = yapbManager.configConversion(configData, "False", "True");
 						
 						accessServer1(host);
 						serverConnect(sendMessage, textArea);
@@ -226,12 +219,7 @@ public class SocketCommunication {
 					list = parsingList;
 					
 					// yapb.config 파일을 원래대로 돌려둔다.
-					/*
-					configData = configData.replaceAll("config_TABSTATE = False", "config_TABSTATE = True");
-					yapbManager.printConfigFile(configData);
-					*/
-					
-					configData = yapbManager.configConversion(configData, "True");
+					configData = yapbManager.configConversion(configData, "True", "False");
 				}
 				
 			} catch (IOException e2) {

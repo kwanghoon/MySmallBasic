@@ -38,7 +38,9 @@ public class MySmallBasicSyntaxItems {
 	private Matcher matcher_NUM;
 	private Matcher matcher_STR;
 	
-	// textArea에 PopupMenu 추가 Tab 누를 시 popupmenu 출력
+	private boolean flag = false; // ctrl 키를 누르고 있는지에 대한 flag
+	
+	// textArea에 PopupMenu 추가 ctrl + spacebar 누를 시 popupmenu 출력
 	public MySmallBasicSyntaxItems(JPanel panel, TextAreaMaker textArea) {
 		this.contentPane = panel;
 		this.textAreaMaker = textArea;
@@ -49,7 +51,11 @@ public class MySmallBasicSyntaxItems {
 			public void keyPressed(KeyEvent e) {
 				int keyCode = e.getKeyCode();
 				
-				if(keyCode == KeyEvent.VK_TAB) {
+				if(keyCode == KeyEvent.VK_CONTROL) {
+					flag = true;
+				}
+				
+				if((keyCode == KeyEvent.VK_SPACE )&& flag) {
 					SC = new SocketCommunication(textAreaMaker.getTextArea());
 					isConnect = SC.getIsConnect();
 					
@@ -102,12 +108,12 @@ public class MySmallBasicSyntaxItems {
 							else {
 								// 서버로부터 문자열로 후보를 받아온다면
 								// "..."이 있으면 처음 "..." 위치로 커서 위치 변경
-								System.out.println(list.get(i));
+								// System.out.println(list.get(i));
 								list_temp = list.get(i);
 								list_temp = list_temp.replace("NT CRStmtCRs ", "Enter ");
 								list_temp = list_temp.replace("CR", "Enter ");
 								list_temp = list_temp.replaceAll("NT\\s[^\\s]*", "blank");
-								list_temp = list_temp.replaceAll(" T ", "");
+								list_temp = list_temp.replaceAll("T ", "");
 								
 								// 공백이 중복해서 나오면 제거
 								list_temp = list_temp.replaceAll("\\s+", " ");
@@ -231,11 +237,14 @@ public class MySmallBasicSyntaxItems {
 				int columnNum = 0;
 				int caretpos = 0;
 				int keyCode = e.getKeyCode();
-				if( isReceive && isConnect && (keyCode == KeyEvent.VK_TAB)) {
+				
+				if(keyCode == KeyEvent.VK_CONTROL) flag = false;
+				
+				if( isReceive && isConnect && (keyCode == KeyEvent.VK_SPACE) && flag) {
 					// 커서 위치를 원래 위치로 변경
 					try {
 					// tab키로 인한 공백 제거
-					textAreaMaker.getTextArea().replaceRange("", position, position+1);
+					//textAreaMaker.getTextArea().replaceRange("", position, position+1);
 			            
 			        caretpos = textAreaMaker.getTextArea().getCaretPosition();
 					}
@@ -255,9 +264,10 @@ public class MySmallBasicSyntaxItems {
 						scrollPopupmenu.show(textAreaMaker.getTextArea(), (int)rectangle.getX() + 43 , (int)rectangle.getY() + 20);
 					}
 					else {
-						// popupmenu가 나타날 위치 설정, tab키를 누른 위치
+						// popupmenu가 나타날 위치 설정, ctrl + spacebar를 누른 위치
 						scrollPopupmenu.show(textAreaMaker.getTextArea(), (int)rectangle.getX() + 3 , (int)rectangle.getY() + 20);
 					}
+					flag = false;
 				}
 			}
 		});
