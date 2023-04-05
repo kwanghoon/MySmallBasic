@@ -160,13 +160,14 @@ public class MySmallBasicSyntaxItems {
 									String pattern = null; 	// 정규식
 									String matcherName = null; // 정규식에 대한 문자열(ID, NUM, STR)
 									int inputAfterCursor = textAreaMaker.getTextArea().getCaretPosition();
-
+									
+									String modifiedStr = listStr; // 사용자가 ID 입력에 대해 ID를 입력했을 시를 대비한 문자열 수정 변수
 									
 									// 추가한 item에 ID, NUM, STR이 존재하는 동안 실행
 									while(flag && input != null) {
-										matcher_ID = Pattern.compile("ID").matcher(listStr);
-										matcher_NUM = Pattern.compile("NUM").matcher(listStr);
-										matcher_STR = Pattern.compile("STR").matcher(listStr);
+										matcher_ID = Pattern.compile("ID").matcher(modifiedStr);
+										matcher_NUM = Pattern.compile("NUM").matcher(modifiedStr);
+										matcher_STR = Pattern.compile("STR").matcher(modifiedStr);
 											
 										if(flag = matcher_ID.find()) {
 											matcherIdx = matcher_ID.start();
@@ -196,6 +197,7 @@ public class MySmallBasicSyntaxItems {
 													cursorPosition += matcherIdx;
 													textAreaMaker.getTextArea().replaceRange(input, cursorPosition, cursorPosition + matcherName.length());
 													listStr = listStr.replaceFirst(matcherName, input); // 수정된 문자열로 저장
+													modifiedStr = modifiedStr.replaceFirst(matcherName, input.toLowerCase()); // 사용자 입력문이 ID, NUM, STR과 겹치지 않도록 소문자로 변환하여 저장
 													break;
 												}
 												// 정규식에 맞지 않으면 재입력 요구 다이얼로그 출력
