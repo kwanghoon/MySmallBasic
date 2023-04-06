@@ -78,7 +78,6 @@ public class MySmallBasicSyntaxItems {
 							JMenuItem menuitem;
 							if(state_receive) {
 								// Popupmenu 이벤트 발생 시 textArea에 출력될 문자열
-								System.out.println(list.get(i));
 								list_temp = list.get(i);
 								list_temp = list_temp.replace("NT CRStmtCRs ", "Enter ");
 								list_temp = list_temp.replace("CR", "Enter ");
@@ -108,7 +107,6 @@ public class MySmallBasicSyntaxItems {
 							else {
 								// 서버로부터 문자열로 후보를 받아온다면
 								// "..."이 있으면 처음 "..." 위치로 커서 위치 변경
-								// System.out.println(list.get(i));
 								list_temp = list.get(i);
 								list_temp = list_temp.replace("NT CRStmtCRs ", "Enter ");
 								list_temp = list_temp.replace("CR", "Enter ");
