@@ -1,6 +1,7 @@
 package com.coducation.smallbasic.syncomp;
 
 import java.io.BufferedReader;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -17,9 +18,9 @@ import java.util.Map;
 import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 
-import com.example.java.YapbConfigManager;
-import com.syntax.SyntaxCompletionDataManager;
-import com.syntax.SyntaxCompletionDataManager.Pair;
+import com.conduation.smallbasic.syntax.SyntaxCompletionDataManager;
+import com.conduation.smallbasic.syntax.SyntaxCompletionDataManager.Pair;
+import com.conducation.smallbasic.yapbconfig.*;
 
 public class SocketCommunication {
 	private static final int PORT = 50000;
