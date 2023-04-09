@@ -4,6 +4,7 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
 		<attributes>
 			<attribute name="module" value="true"/>
+			<attribute name="limit-modules" value="java.se,jdk.accessibility,jdk.dynalink,jdk.httpserver,jdk.internal.ed,jdk.internal.le,jdk.internal.opt,jdk.jartool,jdk.javadoc,jdk.jconsole,jdk.jdi,jdk.jsobject,jdk.management.jfr,jdk.net,jdk.nio.mapmode,jdk.sctp,jdk.security.auth,jdk.security.jgss,jdk.unsupported,jdk.unsupported.desktop,jdk.xml.dom"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
@@ -13,7 +14,6 @@
 	<classpathentry kind="lib" path="lib/org.roboid_1.1.2.jar"/>
 	<classpathentry kind="lib" path="lib/jansi-1.16.jar"/>
 	<classpathentry kind="lib" path="lib/jdiScript.jar"/>
-	<classpathentry kind="lib" path="lib/tools.jar"/>
 	<classpathentry kind="lib" path="lib/jna-4.5.1.jar"/>
 	<classpathentry kind="lib" path="lib/jna-platform-4.5.1.jar"/>
 	<classpathentry kind="lib" path="lib/slf4j-api-1.7.25.jar"/>
