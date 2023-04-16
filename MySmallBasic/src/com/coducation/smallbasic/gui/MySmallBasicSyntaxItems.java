@@ -50,11 +50,9 @@ public class MySmallBasicSyntaxItems {
 
 			public void keyPressed(KeyEvent e) {
 				int keyCode = e.getKeyCode();
-				
 				if(keyCode == KeyEvent.VK_CONTROL) {
 					flag = true;
 				}
-				
 				if((keyCode == KeyEvent.VK_SPACE )&& flag) {
 					SC = new SocketCommunication(textAreaMaker.getTextArea());
 					isConnect = SC.getIsConnect();
@@ -85,6 +83,7 @@ public class MySmallBasicSyntaxItems {
 								
 								list_temp = list_temp.replaceAll("T ", "");
 								// 공백이 중복해서 나오면 제거
+								list_temp = list_temp.replaceAll("\\s*\\(", "(");
 								list_temp = list_temp.replaceAll("\\s+", " ");
 								list_temp = list_temp.replace("Enter ", "\n");
 								list_temp = list_temp.replaceAll("[\\s+]?[.][\\s+]?", ".");
@@ -108,12 +107,15 @@ public class MySmallBasicSyntaxItems {
 								// 서버로부터 문자열로 후보를 받아온다면
 								// "..."이 있으면 처음 "..." 위치로 커서 위치 변경
 								list_temp = list.get(i);
+								//System.out.println(list_temp);
 								list_temp = list_temp.replace("NT CRStmtCRs ", "Enter ");
 								list_temp = list_temp.replace("CR", "Enter ");
 								list_temp = list_temp.replaceAll("NT\\s[^\\s]*", "blank");
 								list_temp = list_temp.replaceAll("T ", "");
 								
 								// 공백이 중복해서 나오면 제거
+								list_temp = list_temp.replaceAll("\\s*\\(", "(");
+								list_temp = list_temp.replaceAll("\\s*\\.", ".");
 								list_temp = list_temp.replaceAll("\\s+", " ");
 								list_temp = list_temp.replace("Enter ", "\n");
 								list_temp = list_temp.replaceAll("[\\s+]?[.][\\s+]?", ".");
@@ -238,9 +240,8 @@ public class MySmallBasicSyntaxItems {
 				int caretpos = 0;
 				int keyCode = e.getKeyCode();
 				
-				if(keyCode == KeyEvent.VK_CONTROL) flag = false;
-				
-				if( isReceive && isConnect && (keyCode == KeyEvent.VK_SPACE) && flag) {
+				if( isReceive && isConnect && (keyCode == KeyEvent.VK_SPACE) && flag ||
+						isReceive && isConnect && (keyCode == KeyEvent.VK_CONTROL) && flag) {
 					// 커서 위치를 원래 위치로 변경
 					try {
 					// tab키로 인한 공백 제거
@@ -267,8 +268,11 @@ public class MySmallBasicSyntaxItems {
 						// popupmenu가 나타날 위치 설정, ctrl + spacebar를 누른 위치
 						scrollPopupmenu.show(textAreaMaker.getTextArea(), (int)rectangle.getX() + 3 , (int)rectangle.getY() + 20);
 					}
-					flag = false;
 				}
+				
+				//if(keyCode == KeyEvent.VK_CONTROL) flag = false;
+				
+				flag = false;
 			}
 		});
 		textAreaMaker.getTextArea().setComponentPopupMenu(popupmenu);

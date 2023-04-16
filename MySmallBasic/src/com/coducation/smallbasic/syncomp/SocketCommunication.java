@@ -18,9 +18,10 @@ import java.util.Map;
 import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 
-import com.conduation.smallbasic.syntax.SyntaxCompletionDataManager;
-import com.conduation.smallbasic.syntax.SyntaxCompletionDataManager.Pair;
-import com.conducation.smallbasic.yapbconfig.*;
+import com.coducation.smallbasic.yapbconfig.YapbConfigManager;
+import com.coducation.smallbasic.syntax.SyntaxCompletionDataManager;
+import com.coducation.smallbasic.syntax.SyntaxCompletionDataManager.Pair;
+import com.coducation.smallbasic.yapbconfig.*;
 
 public class SocketCommunication {
 	private static final int PORT = 50000;

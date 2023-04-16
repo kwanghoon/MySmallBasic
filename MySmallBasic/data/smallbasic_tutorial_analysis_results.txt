@@ -1,0 +1,602 @@
+0 T ID T . T ID T = NT Expr Found 2 11
+3 T CR NT MoreThanOneStmt Found 1 1
+6 T . T ID T ( NT Exprs T ) Found 2 7
+6 T . T ID T = NT Expr Found 4 7
+11 T ID T . T ID T ( NT Exprs T ) Found 2 11
+11 T ID T . T ID T = NT Expr Found 3 11
+30 T ID T ( NT Exprs T ) Found 1 2
+30 T ID T = NT Expr Found 2 2
+58 T ( NT Exprs T ) Found 1 2
+58 T = NT Expr Found 2 2
+82 T NUM Found 2 8
+82 T STR Found 1 8
+83 T NUM Found 2 8
+91 T , NT MoreThanOneExpr Found 1 1
+92 T ) Found 1 1
+103 T NUM Found 1 8
+0 T For T ID T = NT Expr T To NT Expr NT OptStep NT CRStmtCRs T EndFor Found 7 11
+6 T . T ID T ( NT Exprs T ) Found 2 7
+8 T ID T = NT Expr T To NT Expr NT OptStep NT CRStmtCRs T EndFor Found 1 1
+24 T NUM Found 1 6
+30 T ID T ( NT Exprs T ) Found 1 2
+34 T = NT Expr T To NT Expr NT OptStep NT CRStmtCRs T EndFor Found 1 1
+39 T ID T . T ID T ( NT Exprs T ) Found 2 10
+58 T ( NT Exprs T ) Found 1 2
+61 T NUM Found 1 7
+65 T CR NT TheRest Found 1 1
+83 T ID Found 1 8
+85 T To NT Expr NT OptStep NT CRStmtCRs T EndFor Found 1 1
+92 T ) Found 1 1
+95 T NUM Found 1 7
+105 T Step NT Expr Found 1 1
+110 T CR NT TheRest Found 1 1
+111 T - NT Primary Found 2 6
+114 T EndFor Found 1 1
+0 T ID T . T ID T ( NT Exprs T ) Found 3 11
+6 T . T ID T ( NT Exprs T ) Found 2 7
+30 T ID T ( NT Exprs T ) Found 1 2
+58 T ( NT Exprs T ) Found 1 2
+83 T STR Found 3 8
+92 T ) Found 1 1
+0 T For T ID T = NT Expr T To NT Expr NT OptStep NT CRStmtCRs T EndFor Found 7 11
+6 T . T ID T ( NT Exprs T ) Found 2 7
+8 T ID T = NT Expr T To NT Expr NT OptStep NT CRStmtCRs T EndFor Found 1 1
+30 T ID T ( NT Exprs T ) Found 1 2
+34 T = NT Expr T To NT Expr NT OptStep NT CRStmtCRs T EndFor Found 1 1
+39 T ID T . T ID T ( NT Exprs T ) Found 2 10
+58 T ( NT Exprs T ) Found 1 2
+61 T NUM Found 1 7
+65 T CR NT TheRest Found 1 1
+83 T ID Found 1 8
+85 T To NT Expr NT OptStep NT CRStmtCRs T EndFor Found 1 1
+92 T ) Found 1 1
+95 T NUM Found 1 7
+110 T CR NT TheRest Found 1 1
+114 T EndFor Found 1 1
+0 T ID T . T ID T = NT Expr Found 2 11
+3 T CR NT MoreThanOneStmt Found 1 1
+6 T . T ID T ( NT Exprs T ) Found 2 7
+6 T . T ID T = NT Expr Found 4 7
+6 T = NT Expr Found 1 7
+9 T ID NT CRStmtCRs T EndSub Found 1 1
+11 T ID T . T ID T = NT Expr Found 3 11
+11 T Sub T ID NT CRStmtCRs T EndSub Found 4 11
+18 T - NT MultiplicativeExpr Found 2 2
+22 T . T ID Found 4 4
+29 T ID T . T ID Found 6 8
+30 T ID T ( NT Exprs T ) Found 1 2
+30 T ID T = NT Expr Found 2 2
+35 T CR NT TheRest Found 1 1
+39 T ID T = NT Expr Found 1 10
+49 T NUM Found 1 7
+53 T ID Found 2 2
+58 T ( NT Exprs T ) Found 1 2
+58 T = NT Expr Found 2 2
+62 T EndSub Found 1 1
+65 T CR NT TheRest Found 1 1
+82 T ID Found 3 8
+82 T STR Found 1 8
+83 T ID Found 1 8
+88 T ID T . T ID T ( NT Exprs T ) Found 3 10
+88 T ID T = NT Expr Found 1 10
+91 T , NT MoreThanOneExpr Found 1 1
+92 T ) Found 1 1
+103 T ID Found 2 8
+103 T NUM Found 1 8
+0 T ID T . T ID T ( NT Exprs T ) Found 3 11
+3 T CR NT MoreThanOneStmt Found 1 1
+6 T . T ID T ( NT Exprs T ) Found 2 7
+6 T = NT Expr Found 1 7
+6 T [ NT Expr T ] Found 3 7
+11 T ID T . T ID T ( NT Exprs T ) Found 2 11
+11 T ID T = NT Expr Found 1 11
+11 T ID NT Idxs T = NT Expr Found 6 11
+18 T + NT MultiplicativeExpr Found 1 2
+22 T . T ID T ( NT Exprs T ) Found 1 4
+22 T [ NT Expr T ] Found 2 4
+27 T = NT Expr Found 1 1
+29 T ID T . T ID T ( NT Exprs T ) Found 2 8
+30 T ID T ( NT Exprs T ) Found 1 2
+32 T ID Found 2 8
+32 T STR Found 3 8
+48 T ID NT Idxs Found 4 8
+48 T STR Found 3 8
+53 T ID T ( NT Exprs T ) Found 1 2
+56 T ID T . T ID T ( NT Exprs T ) Found 4 8
+58 T ( NT Exprs T ) Found 1 2
+60 T ] Found 1 2
+79 T ( NT Exprs T ) Found 1 1
+83 T ID Found 1 8
+83 T STR Found 3 8
+92 T ) Found 1 1
+102 T ) Found 1 1
+0 T ID T = NT Expr Found 1 11
+3 T CR NT MoreThanOneStmt Found 1 1
+5 T ( NT Expr T ) Found 2 7
+6 T . T ID T ( NT Exprs T ) Found 2 7
+6 T = NT Expr Found 1 7
+11 T While NT Expr NT CRStmtCRs T EndWhile Found 9 11
+12 T CR NT TheRest Found 1 1
+17 T > NT AdditiveExpr Found 2 4
+19 T / NT UnaryExpr Found 2 2
+23 T ID Found 1 8
+29 T ID Found 1 8
+29 T NUM Found 3 8
+30 T ID T ( NT Exprs T ) Found 1 2
+38 T EndWhile Found 1 1
+39 T ID T . T ID T ( NT Exprs T ) Found 2 10
+46 T NUM Found 1 8
+51 T NUM Found 1 7
+54 T ) Found 1 1
+58 T ( NT Exprs T ) Found 1 2
+65 T CR NT TheRest Found 1 1
+83 T ID Found 1 8
+88 T ID T = NT Expr Found 1 10
+92 T ) Found 1 1
+0 T ID T . T ID T ( NT Exprs T ) Found 3 11
+3 T CR NT MoreThanOneStmt Found 1 1
+6 T . T ID T ( NT Exprs T ) Found 2 7
+6 T = NT Expr Found 1 7
+11 T ID T . T ID T ( NT Exprs T ) Found 2 11
+11 T ID T = NT Expr Found 1 11
+18 T + NT MultiplicativeExpr Found 1 2
+22 T . T ID T ( NT Exprs T ) Found 1 4
+29 T ID T . T ID T ( NT Exprs T ) Found 2 8
+30 T ID T ( NT Exprs T ) Found 1 2
+48 T ID Found 1 8
+53 T ID T ( NT Exprs T ) Found 1 2
+58 T ( NT Exprs T ) Found 1 2
+79 T ( NT Exprs T ) Found 1 1
+83 T STR Found 3 8
+92 T ) Found 1 1
+102 T ) Found 1 1
+0 T For T ID T = NT Expr T To NT Expr NT OptStep NT CRStmtCRs T EndFor Found 7 11
+3 T CR NT MoreThanOneStmt Found 1 1
+6 T . T ID T ( NT Exprs T ) Found 2 7
+6 T [ NT Expr T ] Found 3 7
+8 T ID T = NT Expr T To NT Expr NT OptStep NT CRStmtCRs T EndFor Found 1 1
+11 T For T ID T = NT Expr T To NT Expr NT OptStep NT CRStmtCRs T EndFor Found 8 11
+11 T ID T . T ID T ( NT Exprs T ) Found 2 11
+18 T + NT MultiplicativeExpr Found 1 2
+22 T [ NT Expr T ] Found 2 4
+27 T = NT Expr Found 1 1
+30 T ID T ( NT Exprs T ) Found 1 2
+32 T ID Found 2 8
+34 T = NT Expr T To NT Expr NT OptStep NT CRStmtCRs T EndFor Found 1 1
+39 T ID T . T ID T ( NT Exprs T ) Found 2 10
+48 T ID Found 1 8
+48 T STR Found 3 8
+56 T ID Found 3 8
+58 T ( NT Exprs T ) Found 1 2
+60 T ] Found 1 2
+61 T NUM Found 1 7
+65 T CR NT TheRest Found 1 1
+83 T ID NT Idxs Found 4 8
+83 T STR Found 3 8
+85 T To NT Expr NT OptStep NT CRStmtCRs T EndFor Found 1 1
+88 T ID NT Idxs T = NT Expr Found 2 10
+92 T ) Found 1 1
+95 T NUM Found 1 7
+110 T CR NT TheRest Found 1 1
+114 T EndFor Found 1 1
+0 T ID T . T ID T = NT Expr Found 2 11
+3 T CR NT MoreThanOneStmt Found 1 1
+6 T . T ID T ( NT Exprs T ) Found 2 7
+6 T . T ID T = NT Expr Found 4 7
+11 T ID T . T ID T ( NT Exprs T ) Found 2 11
+11 T ID T . T ID T = NT Expr Found 3 11
+30 T ID T ( NT Exprs T ) Found 1 2
+30 T ID T = NT Expr Found 2 2
+58 T ( NT Exprs T ) Found 1 2
+58 T = NT Expr Found 2 2
+82 T NUM Found 2 8
+82 T STR Found 1 8
+83 T NUM Found 2 8
+91 T , NT MoreThanOneExpr Found 1 1
+92 T ) Found 1 1
+103 T NUM Found 1 8
+0 T For T ID T = NT Expr T To NT Expr NT OptStep NT CRStmtCRs T EndFor Found 7 11
+6 T . T ID T ( NT Exprs T ) Found 2 7
+6 T = NT Expr Found 1 7
+8 T ID T = NT Expr T To NT Expr NT OptStep NT CRStmtCRs T EndFor Found 1 1
+22 T . T ID T ( NT Exprs T ) Found 1 4
+29 T ID T . T ID T ( NT Exprs T ) Found 2 8
+30 T ID T ( NT Exprs T ) Found 1 2
+34 T = NT Expr T To NT Expr NT OptStep NT CRStmtCRs T EndFor Found 1 1
+39 T ID T = NT Expr Found 1 10
+53 T ID T ( NT Exprs T ) Found 1 2
+58 T ( NT Exprs T ) Found 1 2
+61 T NUM Found 1 7
+65 T CR NT TheRest Found 1 1
+79 T ( NT Exprs T ) Found 1 1
+83 T ID Found 1 8
+85 T To NT Expr NT OptStep NT CRStmtCRs T EndFor Found 1 1
+88 T ID T . T ID T ( NT Exprs T ) Found 3 10
+89 T STR Found 3 8
+91 T , NT MoreThanOneExpr Found 1 1
+92 T ) Found 1 1
+95 T NUM Found 1 7
+102 T ) Found 1 1
+103 T NUM Found 1 8
+110 T CR NT TheRest Found 1 1
+114 T EndFor Found 1 1
+0 T If NT Expr T Then NT CRStmtCRs NT MoreThanZeroElseIf Found 11 11
+3 T CR NT MoreThanOneStmt Found 1 1
+6 T . T ID T ( NT Exprs T ) Found 2 7
+10 T ( NT Expr T ) Found 2 8
+11 T If NT Expr T Then NT CRStmtCRs NT MoreThanZeroElseIf Found 7 11
+17 T < NT AdditiveExpr Found 1 4
+17 T >= NT AdditiveExpr Found 4 4
+22 T . T ID Found 4 4
+23 T ID T . T ID Found 5 8
+30 T ID T ( NT Exprs T ) Found 1 2
+36 T Then NT CRStmtCRs NT MoreThanZeroElseIf Found 1 1
+39 T ID T . T ID T ( NT Exprs T ) Found 2 10
+44 T NUM Found 1 7
+47 T NUM Found 1 7
+53 T ID Found 2 2
+54 T ) Found 1 1
+58 T ( NT Exprs T ) Found 1 2
+63 T CR NT TheRest Found 1 1
+65 T CR NT TheRest Found 1 1
+83 T STR Found 3 8
+87 T EndIf Found 1 3
+92 T ) Found 1 1
+0 T ID T . T ID T = NT Expr Found 2 11
+3 T CR NT MoreThanOneStmt Found 1 1
+6 T . T ID T ( NT Exprs T ) Found 2 7
+6 T . T ID T = NT Expr Found 4 7
+11 T ID T . T ID T ( NT Exprs T ) Found 2 11
+11 T ID T . T ID T = NT Expr Found 3 11
+30 T ID T ( NT Exprs T ) Found 1 2
+30 T ID T = NT Expr Found 2 2
+58 T ( NT Exprs T ) Found 1 2
+58 T = NT Expr Found 2 2
+82 T NUM Found 2 8
+82 T STR Found 1 8
+83 T NUM Found 2 8
+91 T , NT MoreThanOneExpr Found 1 1
+92 T ) Found 1 1
+103 T NUM Found 1 8
+0 T ID T . T ID T = NT Expr Found 2 11
+3 T CR NT MoreThanOneStmt Found 1 1
+6 T . T ID T ( NT Exprs T ) Found 2 7
+6 T . T ID T = NT Expr Found 4 7
+11 T ID T . T ID T ( NT Exprs T ) Found 2 11
+11 T ID T . T ID T = NT Expr Found 3 11
+30 T ID T ( NT Exprs T ) Found 1 2
+30 T ID T = NT Expr Found 2 2
+58 T ( NT Exprs T ) Found 1 2
+58 T = NT Expr Found 2 2
+82 T NUM Found 2 8
+82 T STR Found 1 8
+83 T NUM Found 2 8
+91 T , NT MoreThanOneExpr Found 1 1
+92 T ) Found 1 1
+103 T NUM Found 1 8
+0 T ID T . T ID T ( NT Exprs T ) Found 3 11
+6 T . T ID T ( NT Exprs T ) Found 2 7
+30 T ID T ( NT Exprs T ) Found 1 2
+58 T ( NT Exprs T ) Found 1 2
+92 T ) Found 1 1
+0 T ID T : Found 5 11
+3 T CR NT MoreThanOneStmt Found 1 1
+6 T . T ID T ( NT Exprs T ) Found 2 7
+6 T : Found 7 7
+6 T = NT Expr Found 1 7
+7 T ID Found 1 1
+10 T ( NT Expr T ) Found 2 8
+11 T Goto T ID Found 11 11
+11 T ID T . T ID T ( NT Exprs T ) Found 2 11
+11 T ID T = NT Expr Found 1 11
+11 T If NT Expr T Then NT CRStmtCRs NT MoreThanZeroElseIf Found 7 11
+16 T = NT CompExpr Found 1 2
+22 T . T ID T ( NT Exprs T ) Found 1 4
+23 T ID Found 1 8
+29 T ID T . T ID T ( NT Exprs T ) Found 2 8
+30 T ID T ( NT Exprs T ) Found 1 2
+36 T Then NT CRStmtCRs NT MoreThanZeroElseIf Found 1 1
+39 T ID T . T ID T ( NT Exprs T ) Found 2 10
+42 T NUM Found 1 8
+53 T ID T ( NT Exprs T ) Found 1 2
+54 T ) Found 1 1
+58 T ( NT Exprs T ) Found 1 2
+63 T CR NT TheRest Found 1 1
+65 T CR NT TheRest Found 1 1
+79 T ( NT Exprs T ) Found 1 1
+83 T STR Found 3 8
+87 T Else NT CRStmtCRs T EndIf Found 2 3
+89 T ID Found 1 8
+91 T , NT MoreThanOneExpr Found 1 1
+92 T ) Found 1 1
+100 T CR NT TheRest Found 1 1
+102 T ) Found 1 1
+103 T NUM Found 1 8
+107 T EndIf Found 1 1
+0 T ID T . T ID T = NT Expr Found 2 11
+3 T CR NT MoreThanOneStmt Found 1 1
+6 T . T ID T ( NT Exprs T ) Found 2 7
+6 T . T ID T = NT Expr Found 4 7
+6 T = NT Expr Found 1 7
+9 T ID NT CRStmtCRs T EndSub Found 1 1
+11 T ID T . T ID T = NT Expr Found 3 11
+11 T Sub T ID NT CRStmtCRs T EndSub Found 4 11
+22 T . T ID T ( NT Exprs T ) Found 1 4
+29 T ID T . T ID T ( NT Exprs T ) Found 2 8
+30 T ID T ( NT Exprs T ) Found 1 2
+30 T ID T = NT Expr Found 2 2
+35 T CR NT TheRest Found 1 1
+39 T ID T = NT Expr Found 1 10
+53 T ID T ( NT Exprs T ) Found 1 2
+58 T ( NT Exprs T ) Found 1 2
+58 T = NT Expr Found 2 2
+62 T EndSub Found 1 1
+65 T CR NT TheRest Found 1 1
+79 T ( NT Exprs T ) Found 1 1
+82 T ID Found 3 8
+82 T STR Found 1 8
+83 T ID Found 1 8
+88 T ID T . T ID T ( NT Exprs T ) Found 3 10
+89 T STR Found 3 8
+91 T , NT MoreThanOneExpr Found 1 1
+92 T ) Found 1 1
+102 T ) Found 1 1
+103 T NUM Found 1 8
+0 T ID T . T ID T = NT Expr Found 2 11
+3 T CR NT MoreThanOneStmt Found 1 1
+6 T . T ID T ( NT Exprs T ) Found 2 7
+6 T . T ID T = NT Expr Found 4 7
+11 T ID T . T ID T ( NT Exprs T ) Found 2 11
+11 T ID T . T ID T = NT Expr Found 3 11
+30 T ID T ( NT Exprs T ) Found 1 2
+30 T ID T = NT Expr Found 2 2
+58 T ( NT Exprs T ) Found 1 2
+58 T = NT Expr Found 2 2
+82 T NUM Found 2 8
+82 T STR Found 1 8
+92 T ) Found 1 1
+0 T ID T . T ID T ( NT Exprs T ) Found 3 11
+3 T CR NT MoreThanOneStmt Found 1 1
+6 T . T ID T ( NT Exprs T ) Found 2 7
+6 T = NT Expr Found 1 7
+11 T ID T . T ID T ( NT Exprs T ) Found 2 11
+11 T ID T = NT Expr Found 1 11
+18 T + NT MultiplicativeExpr Found 1 2
+18 T - NT MultiplicativeExpr Found 2 2
+19 T * NT UnaryExpr Found 1 2
+19 T / NT UnaryExpr Found 2 2
+22 T . T ID T ( NT Exprs T ) Found 1 4
+23 T ID Found 1 8
+29 T ID T . T ID T ( NT Exprs T ) Found 2 8
+29 T NUM Found 3 8
+30 T ID T ( NT Exprs T ) Found 1 2
+48 T ID Found 1 8
+49 T NUM Found 1 7
+50 T ( NT Expr T ) Found 4 8
+51 T NUM Found 1 7
+53 T ID T ( NT Exprs T ) Found 1 2
+54 T ) Found 1 1
+58 T ( NT Exprs T ) Found 1 2
+79 T ( NT Exprs T ) Found 1 1
+83 T STR Found 3 8
+92 T ) Found 1 1
+102 T ) Found 1 1
+0 T ID NT Idxs T = NT Expr Found 6 11
+3 T CR NT MoreThanOneStmt Found 1 1
+6 T . T ID T ( NT Exprs T ) Found 2 7
+6 T = NT Expr Found 1 7
+6 T [ NT Expr T ] NT Idxs Found 6 7
+11 T ID T . T ID T ( NT Exprs T ) Found 2 11
+11 T ID T = NT Expr Found 1 11
+11 T ID NT Idxs T = NT Expr Found 6 11
+18 T + NT MultiplicativeExpr Found 1 2
+22 T . T ID T ( NT Exprs T ) Found 1 4
+22 T [ NT Expr T ] NT Idxs Found 3 4
+27 T = NT Expr Found 1 1
+29 T ID T . T ID T ( NT Exprs T ) Found 2 8
+30 T ID T ( NT Exprs T ) Found 1 2
+32 T ID Found 2 8
+32 T STR Found 3 8
+48 T ID NT Idxs Found 4 8
+53 T ID T ( NT Exprs T ) Found 1 2
+56 T STR Found 1 8
+58 T ( NT Exprs T ) Found 1 2
+60 T ] Found 1 2
+60 T ] NT Idxs Found 2 2
+79 T ( NT Exprs T ) Found 1 1
+83 T STR Found 3 8
+84 T [ NT Expr T ] Found 1 2
+92 T ) Found 1 1
+102 T ) Found 1 1
+0 T ID T . T ID T = NT Expr Found 2 11
+3 T CR NT MoreThanOneStmt Found 1 1
+6 T . T ID T ( NT Exprs T ) Found 2 7
+6 T . T ID T = NT Expr Found 4 7
+11 T ID T . T ID T ( NT Exprs T ) Found 2 11
+30 T ID T ( NT Exprs T ) Found 1 2
+30 T ID T = NT Expr Found 2 2
+58 T ( NT Exprs T ) Found 1 2
+58 T = NT Expr Found 2 2
+82 T STR Found 1 8
+83 T STR Found 3 8
+92 T ) Found 1 1
+0 T ID T . T ID T = NT Expr Found 2 11
+3 T CR NT MoreThanOneStmt Found 1 1
+6 T . T ID T ( NT Exprs T ) Found 2 7
+6 T . T ID T = NT Expr Found 4 7
+11 T ID T . T ID T ( NT Exprs T ) Found 2 11
+11 T ID T . T ID T = NT Expr Found 3 11
+30 T ID T ( NT Exprs T ) Found 1 2
+30 T ID T = NT Expr Found 2 2
+58 T ( NT Exprs T ) Found 1 2
+58 T = NT Expr Found 2 2
+82 T NUM Found 2 8
+82 T STR Found 1 8
+83 T NUM Found 2 8
+91 T , NT MoreThanOneExpr Found 1 1
+92 T ) Found 1 1
+103 T NUM Found 1 8
+0 T ID T . T ID T = NT Expr Found 2 11
+3 T CR NT MoreThanOneStmt Found 1 1
+6 T . T ID T ( NT Exprs T ) Found 2 7
+6 T . T ID T = NT Expr Found 4 7
+6 T = NT Expr Found 1 7
+9 T ID NT CRStmtCRs T EndSub Found 1 1
+11 T ID T . T ID T = NT Expr Found 3 11
+11 T Sub T ID NT CRStmtCRs T EndSub Found 4 11
+18 T - NT MultiplicativeExpr Found 2 2
+22 T . T ID Found 4 4
+22 T . T ID T ( NT Exprs T ) Found 1 4
+29 T ID T . T ID Found 6 8
+30 T ID T ( NT Exprs T ) Found 1 2
+30 T ID T = NT Expr Found 2 2
+35 T CR NT TheRest Found 1 1
+39 T ID T . T ID T = NT Expr Found 5 10
+39 T ID T = NT Expr Found 1 10
+49 T NUM Found 1 7
+53 T ID Found 2 2
+53 T ID T ( NT Exprs T ) Found 1 2
+58 T ( NT Exprs T ) Found 1 2
+58 T = NT Expr Found 2 2
+62 T EndSub Found 1 1
+65 T CR NT TheRest Found 1 1
+79 T ( NT Exprs T ) Found 1 1
+82 T ID Found 3 8
+82 T ID T . T ID T ( NT Exprs T ) Found 5 8
+82 T STR Found 1 8
+83 T ID Found 1 8
+88 T ID T . T ID T ( NT Exprs T ) Found 3 10
+88 T ID T = NT Expr Found 1 10
+91 T , NT MoreThanOneExpr Found 1 1
+92 T ) Found 1 1
+102 T ) Found 1 1
+103 T ID Found 2 8
+103 T NUM Found 1 8
+0 T ID T ( T ) Found 4 11
+3 T CR NT MoreThanOneStmt Found 1 1
+6 T ( T ) Found 5 7
+6 T . T ID T ( NT Exprs T ) Found 2 7
+6 T = NT Expr Found 1 7
+9 T ID NT CRStmtCRs T EndSub Found 1 1
+11 T ID T ( T ) Found 5 11
+11 T ID T . T ID T ( NT Exprs T ) Found 2 11
+11 T ID T = NT Expr Found 1 11
+11 T Sub T ID NT CRStmtCRs T EndSub Found 4 11
+18 T + NT MultiplicativeExpr Found 1 2
+22 T . T ID Found 4 4
+22 T . T ID T ( NT Exprs T ) Found 1 4
+29 T ID T . T ID T ( NT Exprs T ) Found 2 8
+30 T ID T ( NT Exprs T ) Found 1 2
+31 T ) Found 1 1
+35 T CR NT TheRest Found 1 1
+39 T ID T . T ID T ( NT Exprs T ) Found 2 10
+48 T STR Found 3 8
+53 T ID Found 2 2
+53 T ID T ( NT Exprs T ) Found 1 2
+58 T ( NT Exprs T ) Found 1 2
+62 T EndSub Found 1 1
+65 T CR NT TheRest Found 1 1
+79 T ( NT Exprs T ) Found 1 1
+83 T ID Found 1 8
+83 T ID T . T ID Found 8 8
+83 T STR Found 3 8
+92 T ) Found 1 1
+102 T ) Found 1 1
+0 T ID T . T ID T = NT Expr Found 2 11
+3 T CR NT MoreThanOneStmt Found 1 1
+6 T . T ID T ( NT Exprs T ) Found 2 7
+6 T . T ID T = NT Expr Found 4 7
+6 T = NT Expr Found 1 7
+8 T ID T = NT Expr T To NT Expr NT OptStep NT CRStmtCRs T EndFor Found 1 1
+11 T For T ID T = NT Expr T To NT Expr NT OptStep NT CRStmtCRs T EndFor Found 8 11
+22 T . T ID T ( NT Exprs T ) Found 1 4
+29 T ID T . T ID T ( NT Exprs T ) Found 2 8
+30 T ID T ( NT Exprs T ) Found 1 2
+30 T ID T = NT Expr Found 2 2
+34 T = NT Expr T To NT Expr NT OptStep NT CRStmtCRs T EndFor Found 1 1
+39 T ID T . T ID T = NT Expr Found 5 10
+53 T ID T ( NT Exprs T ) Found 1 2
+58 T ( NT Exprs T ) Found 1 2
+58 T = NT Expr Found 2 2
+61 T NUM Found 1 7
+65 T CR NT TheRest Found 1 1
+79 T ( NT Exprs T ) Found 1 1
+82 T ID T . T ID T ( NT Exprs T ) Found 5 8
+82 T STR Found 1 8
+83 T ID Found 1 8
+85 T To NT Expr NT OptStep NT CRStmtCRs T EndFor Found 1 1
+88 T ID T . T ID T ( NT Exprs T ) Found 3 10
+88 T ID T = NT Expr Found 1 10
+89 T NUM Found 2 8
+91 T , NT MoreThanOneExpr Found 1 1
+92 T ) Found 1 1
+95 T NUM Found 1 7
+102 T ) Found 1 1
+103 T ID Found 2 8
+103 T NUM Found 1 8
+110 T CR NT TheRest Found 1 1
+114 T EndFor Found 1 1
+0 T ID T . T ID T = NT Expr Found 2 11
+3 T CR NT MoreThanOneStmt Found 1 1
+6 T . T ID T ( NT Exprs T ) Found 2 7
+6 T . T ID T = NT Expr Found 4 7
+6 T = NT Expr Found 1 7
+8 T ID T = NT Expr T To NT Expr NT OptStep NT CRStmtCRs T EndFor Found 1 1
+10 T ( NT Expr T ) Found 2 8
+11 T For T ID T = NT Expr T To NT Expr NT OptStep NT CRStmtCRs T EndFor Found 8 11
+11 T ID T = NT Expr Found 1 11
+16 T = NT CompExpr Found 1 2
+18 T + NT MultiplicativeExpr Found 1 2
+19 T / NT UnaryExpr Found 2 2
+22 T . T ID T ( NT Exprs T ) Found 1 4
+23 T ID Found 1 8
+29 T ( NT Expr T ) Found 7 8
+29 T ID T . T ID T ( NT Exprs T ) Found 2 8
+29 T NUM Found 3 8
+30 T ID T ( NT Exprs T ) Found 1 2
+30 T ID T = NT Expr Found 2 2
+34 T = NT Expr T To NT Expr NT OptStep NT CRStmtCRs T EndFor Found 1 1
+36 T Then NT CRStmtCRs NT MoreThanZeroElseIf Found 1 1
+39 T ID T = NT Expr Found 1 10
+42 T NUM Found 1 8
+48 T ID Found 1 8
+51 T NUM Found 1 7
+53 T ID T ( NT Exprs T ) Found 1 2
+54 T ) Found 1 1
+58 T ( NT Exprs T ) Found 1 2
+58 T = NT Expr Found 2 2
+61 T NUM Found 1 7
+63 T CR NT TheRest Found 1 1
+65 T CR NT TheRest Found 1 1
+79 T ( NT Exprs T ) Found 1 1
+82 T STR Found 1 8
+83 T ID Found 1 8
+85 T To NT Expr NT OptStep NT CRStmtCRs T EndFor Found 1 1
+87 T EndIf Found 1 3
+88 T ID T . T ID T ( NT Exprs T ) Found 3 10
+88 T ID T = NT Expr Found 1 10
+88 T If NT Expr T Then NT CRStmtCRs NT MoreThanZeroElseIf Found 4 10
+89 T NUM Found 2 8
+91 T , NT MoreThanOneExpr Found 1 1
+92 T ) Found 1 1
+95 T NUM Found 1 7
+102 T ) Found 1 1
+103 T ID Found 2 8
+103 T STR Found 3 8
+110 T CR NT TheRest Found 1 1
+114 T EndFor Found 1 1
+0 T ID T . T ID T = NT Expr Found 2 11
+3 T CR NT MoreThanOneStmt Found 1 1
+6 T . T ID T ( NT Exprs T ) Found 2 7
+6 T . T ID T = NT Expr Found 4 7
+11 T ID T . T ID T ( NT Exprs T ) Found 2 11
+11 T ID T . T ID T = NT Expr Found 3 11
+30 T ID T ( NT Exprs T ) Found 1 2
+30 T ID T = NT Expr Found 2 2
+58 T ( NT Exprs T ) Found 1 2
+58 T = NT Expr Found 2 2
+82 T NUM Found 2 8
+83 T NUM Found 2 8
+91 T , NT MoreThanOneExpr Found 1 1
+92 T ) Found 1 1
+103 T NUM Found 1 8
