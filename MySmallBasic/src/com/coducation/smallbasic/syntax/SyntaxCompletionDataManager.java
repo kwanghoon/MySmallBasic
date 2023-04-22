@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
 
 public class SyntaxCompletionDataManager {
    private static HashMap<Integer, ArrayList<Pair>> map;
@@ -32,7 +31,7 @@ public class SyntaxCompletionDataManager {
 	  } while(!s.equals("end"));
 	  */
 	   
-	// args[0]: smallbasic-program-list-yapb-data-colletion-results.txt 경로
+	  // args[0]: smallbasic-program-list-yapb-data-colletion-results.txt 경로
       buildSyntaxCompletionData(args[0]); // 스몰베이직 프로그램에서 얻은 데이터 구문 완성 후보를 해쉬맵으로 만듦
       
       listForSyntaxCompletion(); // 만든 목록을 출력
@@ -47,11 +46,8 @@ public class SyntaxCompletionDataManager {
       // 파일에서 상태 추출
       file = new File(path);
       
-      try {
       bufferedReader = new BufferedReader(new FileReader(file));
-      } catch(IOException e) {
-    	  System.out.println(e.getMessage() + ": " + file);
-      }
+      
       // 상태 번호, 상태에 대한 텍스트에 저장된 문장
       int state;
       int state_count;
