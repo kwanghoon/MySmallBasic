@@ -13,6 +13,7 @@ public class SyntaxCompletionDataManager {
    private static HashMap<Integer, ArrayList<Pair>> map;
    private static BufferedReader bufferedReader;
    private static File file;
+   private static int MAX_STATE = 0;
    
    /*
     * Terminal : T
@@ -20,8 +21,17 @@ public class SyntaxCompletionDataManager {
     */
 
    public static void main(String[] args) throws IOException {
-      
-      // args[0]: smallbasic-program-list-yapb-data-colletion_results.txt 경로
+	  // map = new HashMap<>();
+	  // String s;
+	  /*
+	  Scanner sc = new Scanner(System.in);
+	  do {
+		  s = sc.next();
+		  buildSyntaxCompletionData(s);
+	  } while(!s.equals("end"));
+	  */
+	   
+	  // args[0]: smallbasic-program-list-yapb-data-colletion-results.txt 경로
       buildSyntaxCompletionData(args[0]); // 스몰베이직 프로그램에서 얻은 데이터 구문 완성 후보를 해쉬맵으로 만듦
       
       listForSyntaxCompletion(); // 만든 목록을 출력
@@ -35,9 +45,9 @@ public class SyntaxCompletionDataManager {
    public static void buildSyntaxCompletionData(String path) throws IOException {
       // 파일에서 상태 추출
       file = new File(path);
-            
+      
       bufferedReader = new BufferedReader(new FileReader(file));
-            
+      
       // 상태 번호, 상태에 대한 텍스트에 저장된 문장
       int state;
       int state_count;
@@ -75,6 +85,8 @@ public class SyntaxCompletionDataManager {
             if(!map.containsKey(state)) {
                map.put(state, new ArrayList<>());
                map.get(state).add(new Pair(result, state_count));
+               
+               MAX_STATE = MAX_STATE < state ? state : MAX_STATE;
             }
             // 존재하는 경우 해당 state의 list에 result가 존재하는지 확인
             else {
@@ -162,7 +174,7 @@ public class SyntaxCompletionDataManager {
    // 만든 해쉬맵 확인을 위한 출력
    public static void listForSyntaxCompletion() {
         int user_state = 0;
-        final int MAX_STATE = 118;  // 0 ~ 118
+        // final int MAX_STATE = 118;  // 0 ~ 118
         
         while (user_state <= MAX_STATE) {
            System.out.println("State " + user_state);
