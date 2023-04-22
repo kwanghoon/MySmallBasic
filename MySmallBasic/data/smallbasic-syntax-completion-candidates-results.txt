@@ -1,5 +1,4 @@
 State 0
-[T, CR, NT, MoreThanOneStmt] : 2383
 [T, ID, T, =, NT, Expr] : 422
 [T, ID, T, ., T, ID, T, =, NT, Expr] : 399
 [T, ID, T, ., T, ID, T, (, NT, Exprs, T, )] : 246
@@ -16,8 +15,6 @@ State 2
 State 3
 [T, CR, NT, MoreThanOneStmt] : 207345
 State 4
-[T, CR, NT, TheRest] : 362194
-[T, CR, NT, MoreThanOneStmt] : 106912
 State 5
 [T, ID] : 1444
 [T, (, NT, Expr, T, )] : 982
@@ -50,7 +47,6 @@ State 10
 [T, STR] : 10
 [T, -, NT, Primary] : 7
 State 11
-[T, CR, NT, MoreThanOneStmt] : 69208
 [T, ID, T, =, NT, Expr] : 34613
 [T, ID, T, ., T, ID, T, (, NT, Exprs, T, )] : 32747
 [T, ID, T, ., T, ID, T, =, NT, Expr] : 19496
@@ -65,182 +61,31 @@ State 11
 State 12
 [T, CR, NT, TheRest] : 3686
 State 13
-[T, CR, NT, TheRest] : 258718
-[T, )] : 226326
-[T, ]] : 177961
-[T, ,, NT, MoreThanOneExpr] : 156591
-[T, CR, NT, MoreThanOneStmt] : 64322
-[T, ], NT, Idxs] : 62979
-[T, Then, NT, CRStmtCRs, NT, MoreThanZeroElseIf] : 57607
-[T, To, NT, Expr, NT, OptStep, NT, CRStmtCRs, T, EndFor] : 14018
-[T, Step, NT, Expr] : 1556
 State 14
-[T, CR, NT, TheRest] : 258718
-[T, )] : 226326
-[T, ]] : 177961
-[T, ,, NT, MoreThanOneExpr] : 156591
-[T, CR, NT, MoreThanOneStmt] : 64322
-[T, ], NT, Idxs] : 62979
-[T, Then, NT, CRStmtCRs, NT, MoreThanZeroElseIf] : 57607
-[T, To, NT, Expr, NT, OptStep, NT, CRStmtCRs, T, EndFor] : 14018
 [T, Or, NT, AndExpr] : 7839
-[T, Step, NT, Expr] : 1556
 State 15
-[T, CR, NT, TheRest] : 258617
-[T, )] : 225534
-[T, ]] : 177961
-[T, ,, NT, MoreThanOneExpr] : 156591
-[T, CR, NT, MoreThanOneStmt] : 64322
-[T, ], NT, Idxs] : 62979
-[T, Then, NT, CRStmtCRs, NT, MoreThanZeroElseIf] : 55568
 [T, And, NT, EqNeqExpr] : 17543
-[T, To, NT, Expr, NT, OptStep, NT, CRStmtCRs, T, EndFor] : 14018
-[T, Or, NT, AndExpr] : 2932
-[T, Step, NT, Expr] : 1556
 State 16
-[T, CR, NT, TheRest] : 258517
-[T, )] : 223011
-[T, ]] : 177961
-[T, ,, NT, MoreThanOneExpr] : 156591
-[T, CR, NT, MoreThanOneStmt] : 64322
-[T, ], NT, Idxs] : 62979
-[T, Then, NT, CRStmtCRs, NT, MoreThanZeroElseIf] : 49631
 [T, =, NT, CompExpr] : 43302
-[T, To, NT, Expr, NT, OptStep, NT, CRStmtCRs, T, EndFor] : 14018
-[T, And, NT, EqNeqExpr] : 11575
-[T, Or, NT, AndExpr] : 7756
 [T, <>, NT, CompExpr] : 2521
-[T, Step, NT, Expr] : 1556
 State 17
-[T, CR, NT, TheRest] : 257692
-[T, )] : 216770
-[T, ]] : 177961
-[T, ,, NT, MoreThanOneExpr] : 156591
-[T, CR, NT, MoreThanOneStmt] : 64321
-[T, ], NT, Idxs] : 62979
-[T, =, NT, CompExpr] : 48150
-[T, Then, NT, CRStmtCRs, NT, MoreThanZeroElseIf] : 28936
-[T, To, NT, Expr, NT, OptStep, NT, CRStmtCRs, T, EndFor] : 14018
 [T, <, NT, AdditiveExpr] : 12444
-[T, And, NT, EqNeqExpr] : 11846
 [T, >, NT, AdditiveExpr] : 9592
 [T, <=, NT, AdditiveExpr] : 4252
 [T, >=, NT, AdditiveExpr] : 3498
-[T, <>, NT, CompExpr] : 3048
-[T, Or, NT, AndExpr] : 1670
-[T, Step, NT, Expr] : 1556
 State 18
-[T, CR, NT, TheRest] : 258041
-[T, )] : 220204
-[T, ]] : 177961
-[T, ,, NT, MoreThanOneExpr] : 156591
 [T, +, NT, MultiplicativeExpr] : 95446
-[T, CR, NT, MoreThanOneStmt] : 64322
-[T, ], NT, Idxs] : 62979
-[T, =, NT, CompExpr] : 48150
-[T, Then, NT, CRStmtCRs, NT, MoreThanZeroElseIf] : 45151
 [T, -, NT, MultiplicativeExpr] : 41871
-[T, To, NT, Expr, NT, OptStep, NT, CRStmtCRs, T, EndFor] : 14018
-[T, <, NT, AdditiveExpr] : 12444
-[T, >, NT, AdditiveExpr] : 9592
-[T, And, NT, EqNeqExpr] : 7775
-[T, Or, NT, AndExpr] : 7154
-[T, <=, NT, AdditiveExpr] : 4252
-[T, >=, NT, AdditiveExpr] : 3498
-[T, <>, NT, CompExpr] : 3048
-[T, Step, NT, Expr] : 1556
 State 19
-[T, CR, NT, TheRest] : 216066
-[T, )] : 187004
-[T, ]] : 174366
-[T, ,, NT, MoreThanOneExpr] : 138328
-[T, +, NT, MultiplicativeExpr] : 75577
-[T, CR, NT, MoreThanOneStmt] : 61296
-[T, ], NT, Idxs] : 60747
-[T, Then, NT, CRStmtCRs, NT, MoreThanZeroElseIf] : 56311
-[T, =, NT, CompExpr] : 47827
-[T, -, NT, MultiplicativeExpr] : 39124
 [T, *, NT, UnaryExpr] : 34944
-[T, And, NT, EqNeqExpr] : 16546
-[T, To, NT, Expr, NT, OptStep, NT, CRStmtCRs, T, EndFor] : 13710
 [T, /, NT, UnaryExpr] : 13709
-[T, <, NT, AdditiveExpr] : 11940
-[T, >, NT, AdditiveExpr] : 8173
-[T, Or, NT, AndExpr] : 7769
-[T, <=, NT, AdditiveExpr] : 4047
-[T, >=, NT, AdditiveExpr] : 3258
-[T, <>, NT, CompExpr] : 3016
-[T, Step, NT, Expr] : 1417
 State 20
-[T, CR, NT, TheRest] : 233892
-[T, )] : 211010
-[T, ]] : 177868
-[T, ,, NT, MoreThanOneExpr] : 148880
-[T, +, NT, MultiplicativeExpr] : 92215
-[T, ], NT, Idxs] : 62927
-[T, CR, NT, MoreThanOneStmt] : 60925
-[T, Then, NT, CRStmtCRs, NT, MoreThanZeroElseIf] : 57377
-[T, =, NT, CompExpr] : 48101
-[T, *, NT, UnaryExpr] : 43557
-[T, -, NT, MultiplicativeExpr] : 39882
-[T, And, NT, EqNeqExpr] : 17486
-[T, /, NT, UnaryExpr] : 16640
-[T, To, NT, Expr, NT, OptStep, NT, CRStmtCRs, T, EndFor] : 13984
-[T, <, NT, AdditiveExpr] : 12284
-[T, >, NT, AdditiveExpr] : 9566
-[T, Or, NT, AndExpr] : 7832
-[T, <=, NT, AdditiveExpr] : 4235
-[T, >=, NT, AdditiveExpr] : 3495
-[T, <>, NT, CompExpr] : 3034
-[T, Step, NT, Expr] : 1499
 State 21
-[T, CR, NT, TheRest] : 252663
-[T, )] : 223322
-[T, ]] : 177932
-[T, ,, NT, MoreThanOneExpr] : 155746
-[T, +, NT, MultiplicativeExpr] : 97335
-[T, CR, NT, MoreThanOneStmt] : 63961
-[T, ], NT, Idxs] : 62975
-[T, Then, NT, CRStmtCRs, NT, MoreThanZeroElseIf] : 56994
-[T, =, NT, CompExpr] : 48150
-[T, *, NT, UnaryExpr] : 44132
-[T, -, NT, MultiplicativeExpr] : 42441
-[T, /, NT, UnaryExpr] : 18535
-[T, And, NT, EqNeqExpr] : 17548
-[T, To, NT, Expr, NT, OptStep, NT, CRStmtCRs, T, EndFor] : 13800
-[T, <, NT, AdditiveExpr] : 12436
-[T, >, NT, AdditiveExpr] : 9592
-[T, Or, NT, AndExpr] : 7812
-[T, <=, NT, AdditiveExpr] : 4252
-[T, >=, NT, AdditiveExpr] : 3498
-[T, <>, NT, CompExpr] : 3048
-[T, Step, NT, Expr] : 1541
 State 22
 [T, ., T, ID, T, (, NT, Exprs, T, )] : 74070
-[T, )] : 70618
 [T, [, NT, Expr, T, ]] : 59127
-[T, +, NT, MultiplicativeExpr] : 57013
-[T, ,, NT, MoreThanOneExpr] : 55164
-[T, ]] : 42879
-[T, CR, NT, TheRest] : 42006
-[T, =, NT, CompExpr] : 35493
-[T, -, NT, MultiplicativeExpr] : 28510
-[T, *, NT, UnaryExpr] : 23440
-[T, ], NT, Idxs] : 21742
 [T, [, NT, Expr, T, ], NT, Idxs] : 21477
 [T, ., T, ID] : 16490
-[T, /, NT, UnaryExpr] : 9626
-[T, <, NT, AdditiveExpr] : 9290
-[T, CR, NT, MoreThanOneStmt] : 7809
-[T, Then, NT, CRStmtCRs, NT, MoreThanZeroElseIf] : 7662
-[T, >, NT, AdditiveExpr] : 6584
-[T, Or, NT, AndExpr] : 4001
-[T, And, NT, EqNeqExpr] : 3401
-[T, <=, NT, AdditiveExpr] : 3176
-[T, >=, NT, AdditiveExpr] : 2695
-[T, <>, NT, CompExpr] : 1830
-[T, To, NT, Expr, NT, OptStep, NT, CRStmtCRs, T, EndFor] : 1033
-[T, Step, NT, Expr] : 337
 State 23
 [T, ID] : 26997
 [T, ID, NT, Idxs] : 3522
@@ -258,47 +103,10 @@ State 24
 [T, (, NT, Expr, T, )] : 84
 [T, ID, T, ., T, ID] : 24
 State 25
-[T, CR, NT, TheRest] : 92740
-[T, )] : 87930
-[T, ]] : 84498
-[T, ,, NT, MoreThanOneExpr] : 72284
-[T, ], NT, Idxs] : 35449
-[T, CR, NT, MoreThanOneStmt] : 22395
-[T, Then, NT, CRStmtCRs, NT, MoreThanZeroElseIf] : 21418
-[T, To, NT, Expr, NT, OptStep, NT, CRStmtCRs, T, EndFor] : 12805
-[T, *, NT, UnaryExpr] : 10344
-[T, And, NT, EqNeqExpr] : 9545
-[T, +, NT, MultiplicativeExpr] : 7466
-[T, -, NT, MultiplicativeExpr] : 4530
-[T, /, NT, UnaryExpr] : 1676
-[T, Or, NT, AndExpr] : 1459
-[T, Step, NT, Expr] : 1153
-[T, >, NT, AdditiveExpr] : 1101
-[T, <, NT, AdditiveExpr] : 912
-[T, <=, NT, AdditiveExpr] : 328
-[T, =, NT, CompExpr] : 258
-[T, >=, NT, AdditiveExpr] : 73
-[T, <>, NT, CompExpr] : 35
 State 26
-[T, CR, NT, TheRest] : 62556
-[T, ]] : 48738
-[T, )] : 44988
-[T, CR, NT, MoreThanOneStmt] : 18164
-[T, +, NT, MultiplicativeExpr] : 16290
-[T, Then, NT, CRStmtCRs, NT, MoreThanZeroElseIf] : 11223
-[T, ,, NT, MoreThanOneExpr] : 8862
-[T, ], NT, Idxs] : 4576
-[T, And, NT, EqNeqExpr] : 1663
-[T, Or, NT, AndExpr] : 1326
-[T, <>, NT, CompExpr] : 4
-[T, /, NT, UnaryExpr] : 2
-[T, =, NT, CompExpr] : 1
-[T, <, NT, AdditiveExpr] : 1
 State 27
 [T, =, NT, Expr] : 97357
 State 28
-[T, CR, NT, MoreThanOneStmt] : 1133
-[T, CR, NT, TheRest] : 1105
 State 29
 [T, ID] : 44694
 [T, ID, T, ., T, ID, T, (, NT, Exprs, T, )] : 42463
@@ -323,8 +131,6 @@ State 32
 [T, (, NT, Expr, T, )] : 57
 [T, -, NT, Primary] : 33
 State 33
-[T, CR, NT, TheRest] : 3888
-[T, CR, NT, MoreThanOneStmt] : 424
 State 34
 [T, =, NT, Expr, T, To, NT, Expr, NT, OptStep, NT, CRStmtCRs, T, EndFor] : 14018
 State 35
@@ -337,21 +143,14 @@ State 38
 State 39
 [T, ID, T, =, NT, Expr] : 39900
 [T, ID, T, ., T, ID, T, (, NT, Exprs, T, )] : 20767
-[T, CR, NT, TheRest] : 9301
 [T, If, NT, Expr, T, Then, NT, CRStmtCRs, NT, MoreThanZeroElseIf] : 8661
 [T, ID, NT, Idxs, T, =, NT, Expr] : 7431
 [T, ID, T, ., T, ID, T, =, NT, Expr] : 5625
 [T, ID, T, (, T, )] : 5524
 [T, For, T, ID, T, =, NT, Expr, T, To, NT, Expr, NT, OptStep, NT, CRStmtCRs, T, EndFor] : 3143
 [T, Goto, T, ID] : 1557
-[T, EndIf] : 247
 [T, While, NT, Expr, NT, CRStmtCRs, T, EndWhile] : 240
-[T, EndWhile] : 125
 [T, ID, T, :] : 78
-[T, EndSub] : 78
-[T, Else, NT, CRStmtCRs, T, EndIf] : 54
-[T, EndFor] : 21
-[T, ElseIf, NT, Expr, T, Then, NT, CRStmtCRs, NT, MoreThanZeroElseIf] : 19
 State 40
 [T, ID] : 5980
 [T, (, NT, Expr, T, )] : 838
@@ -455,49 +254,12 @@ State 51
 [T, ID, T, ., T, ID] : 137
 [T, -, NT, Primary] : 1
 State 52
-[T, CR, NT, TheRest] : 14231
-[T, )] : 13862
-[T, ,, NT, MoreThanOneExpr] : 12793
-[T, +, NT, MultiplicativeExpr] : 9037
-[T, =, NT, CompExpr] : 8321
-[T, *, NT, UnaryExpr] : 6380
-[T, -, NT, MultiplicativeExpr] : 4344
-[T, Then, NT, CRStmtCRs, NT, MoreThanZeroElseIf] : 2148
-[T, /, NT, UnaryExpr] : 1684
-[T, ]] : 1475
-[T, <, NT, AdditiveExpr] : 1352
-[T, ], NT, Idxs] : 1105
-[T, And, NT, EqNeqExpr] : 941
-[T, >, NT, AdditiveExpr] : 935
-[T, <>, NT, CompExpr] : 930
-[T, <=, NT, AdditiveExpr] : 405
-[T, CR, NT, MoreThanOneStmt] : 281
-[T, >=, NT, AdditiveExpr] : 235
-[T, Or, NT, AndExpr] : 66
-[T, To, NT, Expr, NT, OptStep, NT, CRStmtCRs, T, EndFor] : 47
-[T, Step, NT, Expr] : 32
 State 53
 [T, ID, T, (, NT, Exprs, T, )] : 74070
 [T, ID] : 16490
 State 54
 [T, )] : 39199
 State 55
-[T, CR, NT, TheRest] : 6055
-[T, )] : 3004
-[T, *, NT, UnaryExpr] : 1957
-[T, ,, NT, MoreThanOneExpr] : 845
-[T, Then, NT, CRStmtCRs, NT, MoreThanZeroElseIf] : 613
-[T, CR, NT, MoreThanOneStmt] : 361
-[T, +, NT, MultiplicativeExpr] : 279
-[T, To, NT, Expr, NT, OptStep, NT, CRStmtCRs, T, EndFor] : 218
-[T, /, NT, UnaryExpr] : 152
-[T, -, NT, MultiplicativeExpr] : 112
-[T, And, NT, EqNeqExpr] : 73
-[T, ]] : 29
-[T, Or, NT, AndExpr] : 27
-[T, Step, NT, Expr] : 15
-[T, <, NT, AdditiveExpr] : 8
-[T, ], NT, Idxs] : 4
 State 56
 [T, STR] : 37684
 [T, NUM] : 24115
@@ -508,14 +270,10 @@ State 56
 [T, (, NT, Expr, T, )] : 569
 [T, ID, T, ., T, ID] : 387
 State 57
-[T, CR, NT, TheRest] : 127068
-[T, CR, NT, MoreThanOneStmt] : 35035
 State 58
 [T, (, NT, Exprs, T, )] : 131828
 [T, =, NT, Expr] : 45876
 State 59
-[T, CR, NT, TheRest] : 22345
-[T, CR, NT, MoreThanOneStmt] : 9597
 State 60
 [T, ]] : 177961
 [T, ], NT, Idxs] : 62979
@@ -532,211 +290,40 @@ State 62
 State 63
 [T, CR, NT, TheRest] : 41412
 State 64
-[T, CR, NT, TheRest] : 1973
-[T, CR, NT, MoreThanOneStmt] : 1713
 State 65
 [T, CR, NT, TheRest] : 478907
 State 66
-[T, EndIf] : 41412
-[T, EndSub] : 18432
-[T, ElseIf, NT, Expr, T, Then, NT, CRStmtCRs, NT, MoreThanZeroElseIf] : 16195
-[T, EndFor] : 14018
-[T, Else, NT, CRStmtCRs, T, EndIf] : 9028
-[T, EndWhile] : 3686
 State 67
-[T, Or, NT, AndExpr] : 4907
-[T, Then, NT, CRStmtCRs, NT, MoreThanZeroElseIf] : 2039
-[T, )] : 792
-[T, CR, NT, TheRest] : 101
 [T, And, NT, EqNeqExpr] : 78
 State 68
-[T, Then, NT, CRStmtCRs, NT, MoreThanZeroElseIf] : 7976
-[T, And, NT, EqNeqExpr] : 6046
 [T, =, NT, CompExpr] : 4848
-[T, )] : 3315
 [T, <>, NT, CompExpr] : 527
-[T, CR, NT, TheRest] : 201
-[T, Or, NT, AndExpr] : 83
 State 69
-[T, Then, NT, CRStmtCRs, NT, MoreThanZeroElseIf] : 27164
-[T, )] : 8909
-[T, Or, NT, AndExpr] : 6012
-[T, And, NT, EqNeqExpr] : 5374
-[T, CR, NT, TheRest] : 690
-[T, CR, NT, MoreThanOneStmt] : 1
 State 70
-[T, Then, NT, CRStmtCRs, NT, MoreThanZeroElseIf] : 1507
-[T, )] : 647
-[T, And, NT, EqNeqExpr] : 401
-[T, CR, NT, TheRest] : 336
-[T, Or, NT, AndExpr] : 157
 State 71
-[T, Then, NT, CRStmtCRs, NT, MoreThanZeroElseIf] : 6394
-[T, And, NT, EqNeqExpr] : 2815
-[T, )] : 2536
 [T, +, NT, MultiplicativeExpr] : 1315
-[T, Or, NT, AndExpr] : 353
-[T, CR, NT, TheRest] : 346
 [T, -, NT, MultiplicativeExpr] : 145
 State 72
-[T, Then, NT, CRStmtCRs, NT, MoreThanZeroElseIf] : 1544
-[T, And, NT, EqNeqExpr] : 1401
-[T, )] : 1163
 [T, +, NT, MultiplicativeExpr] : 519
-[T, CR, NT, TheRest] : 85
-[T, Or, NT, AndExpr] : 59
 [T, -, NT, MultiplicativeExpr] : 50
 State 73
-[T, And, NT, EqNeqExpr] : 3634
-[T, Then, NT, CRStmtCRs, NT, MoreThanZeroElseIf] : 3484
-[T, )] : 2001
 [T, -, NT, MultiplicativeExpr] : 360
 [T, +, NT, MultiplicativeExpr] : 263
-[T, Or, NT, AndExpr] : 244
-[T, CR, NT, TheRest] : 229
 State 74
-[T, And, NT, EqNeqExpr] : 1996
-[T, Then, NT, CRStmtCRs, NT, MoreThanZeroElseIf] : 1034
-[T, )] : 422
 [T, -, NT, MultiplicativeExpr] : 127
 [T, +, NT, MultiplicativeExpr] : 71
-[T, Or, NT, AndExpr] : 29
-[T, CR, NT, TheRest] : 17
 State 75
-[T, CR, NT, TheRest] : 28967
-[T, )] : 24789
-[T, +, NT, MultiplicativeExpr] : 21001
-[T, ,, NT, MoreThanOneExpr] : 10119
 [T, *, NT, UnaryExpr] : 8281
 [T, /, NT, UnaryExpr] : 2653
-[T, ]] : 2294
-[T, CR, NT, MoreThanOneStmt] : 2263
-[T, -, NT, MultiplicativeExpr] : 2100
-[T, ], NT, Idxs] : 1624
-[T, >, NT, AdditiveExpr] : 1312
-[T, Then, NT, CRStmtCRs, NT, MoreThanZeroElseIf] : 967
-[T, And, NT, EqNeqExpr] : 882
-[T, <, NT, AdditiveExpr] : 380
-[T, =, NT, CompExpr] : 292
-[T, To, NT, Expr, NT, OptStep, NT, CRStmtCRs, T, EndFor] : 220
-[T, >=, NT, AdditiveExpr] : 197
-[T, <=, NT, AdditiveExpr] : 86
-[T, Step, NT, Expr] : 79
-[T, <>, NT, CompExpr] : 24
-[T, Or, NT, AndExpr] : 18
 State 76
-[T, )] : 14533
-[T, CR, NT, TheRest] : 13685
-[T, ,, NT, MoreThanOneExpr] : 8144
 [T, *, NT, UnaryExpr] : 2864
 [T, /, NT, UnaryExpr] : 2325
-[T, -, NT, MultiplicativeExpr] : 1329
-[T, ]] : 1301
-[T, +, NT, MultiplicativeExpr] : 1036
-[T, CR, NT, MoreThanOneStmt] : 763
-[T, ], NT, Idxs] : 608
-[T, Then, NT, CRStmtCRs, NT, MoreThanZeroElseIf] : 329
-[T, And, NT, EqNeqExpr] : 193
-[T, <, NT, AdditiveExpr] : 124
-[T, <=, NT, AdditiveExpr] : 119
-[T, >, NT, AdditiveExpr] : 107
-[T, To, NT, Expr, NT, OptStep, NT, CRStmtCRs, T, EndFor] : 88
-[T, Step, NT, Expr] : 60
-[T, Or, NT, AndExpr] : 52
-[T, >=, NT, AdditiveExpr] : 43
-[T, =, NT, CompExpr] : 31
-[T, <>, NT, CompExpr] : 8
 State 77
-[T, CR, NT, TheRest] : 19839
-[T, )] : 8622
-[T, ,, NT, MoreThanOneExpr] : 5678
-[T, +, NT, MultiplicativeExpr] : 4509
-[T, CR, NT, MoreThanOneStmt] : 1975
-[T, /, NT, UnaryExpr] : 1910
-[T, *, NT, UnaryExpr] : 1530
-[T, -, NT, MultiplicativeExpr] : 1458
-[T, Then, NT, CRStmtCRs, NT, MoreThanZeroElseIf] : 154
-[T, <, NT, AdditiveExpr] : 97
-[T, ]] : 83
-[T, And, NT, EqNeqExpr] : 61
-[T, Step, NT, Expr] : 49
-[T, ], NT, Idxs] : 39
-[T, To, NT, Expr, NT, OptStep, NT, CRStmtCRs, T, EndFor] : 25
-[T, =, NT, CompExpr] : 24
-[T, >, NT, AdditiveExpr] : 17
-[T, <=, NT, AdditiveExpr] : 8
-[T, <>, NT, CompExpr] : 7
-[T, >=, NT, AdditiveExpr] : 3
-[T, Or, NT, AndExpr] : 1
 State 78
-[T, )] : 6694
-[T, CR, NT, TheRest] : 4987
-[T, ,, NT, MoreThanOneExpr] : 2033
-[T, CR, NT, MoreThanOneStmt] : 1422
-[T, -, NT, MultiplicativeExpr] : 1213
-[T, *, NT, UnaryExpr] : 1002
-[T, +, NT, MultiplicativeExpr] : 890
-[T, /, NT, UnaryExpr] : 137
-[T, Then, NT, CRStmtCRs, NT, MoreThanZeroElseIf] : 76
-[T, And, NT, EqNeqExpr] : 74
-[T, <, NT, AdditiveExpr] : 63
-[T, =, NT, CompExpr] : 25
-[T, ], NT, Idxs] : 13
-[T, ]] : 10
-[T, <=, NT, AdditiveExpr] : 9
-[T, To, NT, Expr, NT, OptStep, NT, CRStmtCRs, T, EndFor] : 9
-[T, >, NT, AdditiveExpr] : 9
-[T, Step, NT, Expr] : 8
-[T, <>, NT, CompExpr] : 7
-[T, Or, NT, AndExpr] : 6
 State 79
 [T, (, NT, Exprs, T, )] : 74070
-[T, CR, NT, TheRest] : 4180
-[T, -, NT, MultiplicativeExpr] : 2738
-[T, =, NT, CompExpr] : 1956
-[T, CR, NT, MoreThanOneStmt] : 1406
-[T, +, NT, MultiplicativeExpr] : 1381
-[T, /, NT, UnaryExpr] : 1268
-[T, )] : 1011
-[T, Then, NT, CRStmtCRs, NT, MoreThanZeroElseIf] : 549
-[T, ,, NT, MoreThanOneExpr] : 387
-[T, >, NT, AdditiveExpr] : 338
-[T, <, NT, AdditiveExpr] : 311
-[T, And, NT, EqNeqExpr] : 296
-[T, *, NT, UnaryExpr] : 179
-[T, >=, NT, AdditiveExpr] : 170
-[T, <=, NT, AdditiveExpr] : 159
-[T, ]] : 73
-[T, <>, NT, CompExpr] : 48
-[T, Or, NT, AndExpr] : 12
-[T, To, NT, Expr, NT, OptStep, NT, CRStmtCRs, T, EndFor] : 12
-[T, ], NT, Idxs] : 8
-[T, Step, NT, Expr] : 8
 State 80
-[T, Then, NT, CRStmtCRs, NT, MoreThanZeroElseIf] : 13362
-[T, ,, NT, MoreThanOneExpr] : 5353
-[T, CR, NT, TheRest] : 4012
-[T, *, NT, UnaryExpr] : 3974
-[T, /, NT, UnaryExpr] : 3511
-[T, )] : 2536
-[T, +, NT, MultiplicativeExpr] : 2088
-[T, And, NT, EqNeqExpr] : 1486
-[T, Or, NT, AndExpr] : 852
-[T, -, NT, MultiplicativeExpr] : 701
-[T, CR, NT, MoreThanOneStmt] : 520
-[T, >=, NT, AdditiveExpr] : 302
-[T, <, NT, AdditiveExpr] : 176
-[T, >, NT, AdditiveExpr] : 109
-[T, To, NT, Expr, NT, OptStep, NT, CRStmtCRs, T, EndFor] : 68
-[T, ]] : 42
-[T, <=, NT, AdditiveExpr] : 40
-[T, ], NT, Idxs] : 28
-[T, =, NT, CompExpr] : 25
-[T, Step, NT, Expr] : 10
-[T, <>, NT, CompExpr] : 4
 State 81
-[T, CR, NT, TheRest] : 87965
-[T, CR, NT, MoreThanOneStmt] : 9392
 State 82
 [T, STR] : 20761
 [T, NUM] : 12240
@@ -750,41 +337,17 @@ State 83
 [T, ID] : 40231
 [T, NUM] : 32276
 [T, STR] : 31274
-[T, )] : 13473
 [T, ID, NT, Idxs] : 11367
 [T, -, NT, Primary] : 1956
 [T, ID, T, ., T, ID, T, (, NT, Exprs, T, )] : 685
 [T, (, NT, Expr, T, )] : 324
 [T, ID, T, ., T, ID] : 242
 State 84
-[T, =, NT, Expr] : 97357
 [T, [, NT, Expr, T, ]] : 50424
-[T, CR, NT, TheRest] : 14231
-[T, )] : 13862
-[T, ,, NT, MoreThanOneExpr] : 12793
 [T, [, NT, Expr, T, ], NT, Idxs] : 12555
-[T, +, NT, MultiplicativeExpr] : 9037
-[T, =, NT, CompExpr] : 8321
-[T, *, NT, UnaryExpr] : 6380
-[T, -, NT, MultiplicativeExpr] : 4344
-[T, Then, NT, CRStmtCRs, NT, MoreThanZeroElseIf] : 2148
-[T, /, NT, UnaryExpr] : 1684
-[T, ]] : 1475
-[T, <, NT, AdditiveExpr] : 1352
-[T, ], NT, Idxs] : 1105
-[T, And, NT, EqNeqExpr] : 941
-[T, >, NT, AdditiveExpr] : 935
-[T, <>, NT, CompExpr] : 930
-[T, <=, NT, AdditiveExpr] : 405
-[T, CR, NT, MoreThanOneStmt] : 281
-[T, >=, NT, AdditiveExpr] : 235
-[T, Or, NT, AndExpr] : 66
-[T, To, NT, Expr, NT, OptStep, NT, CRStmtCRs, T, EndFor] : 47
-[T, Step, NT, Expr] : 32
 State 85
 [T, To, NT, Expr, NT, OptStep, NT, CRStmtCRs, T, EndFor] : 14018
 State 86
-[T, CR, NT, MoreThanOneStmt] : 18432
 State 87
 [T, EndIf] : 28169
 [T, Else, NT, CRStmtCRs, T, EndIf] : 7709
@@ -793,17 +356,10 @@ State 88
 [T, ID, T, =, NT, Expr] : 87168
 [T, ID, NT, Idxs, T, =, NT, Expr] : 80534
 [T, ID, T, ., T, ID, T, (, NT, Exprs, T, )] : 78068
-[T, CR, NT, TheRest] : 52156
-[T, EndIf] : 41165
 [T, If, NT, Expr, T, Then, NT, CRStmtCRs, NT, MoreThanZeroElseIf] : 27675
 [T, ID, T, ., T, ID, T, =, NT, Expr] : 20356
-[T, EndSub] : 18354
 [T, ID, T, (, T, )] : 16821
-[T, ElseIf, NT, Expr, T, Then, NT, CRStmtCRs, NT, MoreThanZeroElseIf] : 16176
-[T, EndFor] : 13997
-[T, Else, NT, CRStmtCRs, T, EndIf] : 8974
 [T, For, T, ID, T, =, NT, Expr, T, To, NT, Expr, NT, OptStep, NT, CRStmtCRs, T, EndFor] : 8811
-[T, EndWhile] : 3561
 [T, Goto, T, ID] : 2331
 [T, While, NT, Expr, NT, CRStmtCRs, T, EndWhile] : 1733
 [T, ID, T, :] : 1027
@@ -813,42 +369,16 @@ State 89
 [T, STR] : 8254
 [T, ID, NT, Idxs] : 7519
 [T, (, NT, Expr, T, )] : 5359
-[T, )] : 5298
 [T, ID, T, ., T, ID, T, (, NT, Exprs, T, )] : 2919
 [T, ID, T, ., T, ID] : 1039
 [T, -, NT, Primary] : 360
 State 90
-[T, CR, NT, TheRest] : 25981
-[T, CR, NT, MoreThanOneStmt] : 19895
 State 91
-[T, )] : 187127
 [T, ,, NT, MoreThanOneExpr] : 156591
 State 92
 [T, )] : 131828
 State 93
-[T, )] : 187127
 State 94
-[T, =, NT, Expr] : 39698
-[T, )] : 4270
-[T, CR, NT, TheRest] : 3987
-[T, ,, NT, MoreThanOneExpr] : 3355
-[T, *, NT, UnaryExpr] : 3119
-[T, =, NT, CompExpr] : 3027
-[T, +, NT, MultiplicativeExpr] : 1834
-[T, -, NT, MultiplicativeExpr] : 613
-[T, ], NT, Idxs] : 455
-[T, /, NT, UnaryExpr] : 429
-[T, Then, NT, CRStmtCRs, NT, MoreThanZeroElseIf] : 418
-[T, <>, NT, CompExpr] : 415
-[T, ]] : 390
-[T, >, NT, AdditiveExpr] : 214
-[T, <=, NT, AdditiveExpr] : 204
-[T, <, NT, AdditiveExpr] : 204
-[T, And, NT, EqNeqExpr] : 172
-[T, >=, NT, AdditiveExpr] : 109
-[T, CR, NT, MoreThanOneStmt] : 53
-[T, Or, NT, AndExpr] : 10
-[T, To, NT, Expr, NT, OptStep, NT, CRStmtCRs, T, EndFor] : 3
 State 95
 [T, NUM] : 6690
 [T, ID] : 5653
@@ -858,11 +388,7 @@ State 95
 [T, -, NT, Primary] : 18
 [T, ID, T, ., T, ID] : 16
 State 96
-[T, CR, NT, TheRest] : 36336
-[T, CR, NT, MoreThanOneStmt] : 5076
 State 97
-[T, CR, NT, TheRest] : 36336
-[T, CR, NT, MoreThanOneStmt] : 5076
 State 98
 [T, ID] : 8537
 [T, (, NT, Expr, T, )] : 3291
@@ -871,17 +397,9 @@ State 98
 [T, ID, T, ., T, ID, T, (, NT, Exprs, T, )] : 379
 [T, NUM] : 274
 State 99
-[T, CR, NT, TheRest] : 28759
-[T, CR, NT, MoreThanOneStmt] : 3625
 State 100
 [T, CR, NT, TheRest] : 9028
 State 101
-[T, EndSub] : 189648
-[T, EndIf] : 139340
-[T, ElseIf, NT, Expr, T, Then, NT, CRStmtCRs, NT, MoreThanZeroElseIf] : 53170
-[T, EndFor] : 53161
-[T, EndWhile] : 22855
-[T, Else, NT, CRStmtCRs, T, EndIf] : 20733
 State 102
 [T, )] : 74070
 State 103
@@ -894,39 +412,14 @@ State 103
 [T, (, NT, Expr, T, )] : 1525
 [T, ID, T, ., T, ID] : 1337
 State 104
-[T, CR, NT, TheRest] : 98835
-[T, CR, NT, MoreThanOneStmt] : 32993
 State 105
-[T, CR, NT, TheRest] : 12462
 [T, Step, NT, Expr] : 1556
 State 106
 [T, Then, NT, CRStmtCRs, NT, MoreThanZeroElseIf] : 16195
 State 107
 [T, EndIf] : 9028
 State 108
-[T, CR, NT, TheRest] : 38993
-[T, CR, NT, MoreThanOneStmt] : 13747
-[T, )] : 5381
-[T, +, NT, MultiplicativeExpr] : 4339
-[T, =, NT, CompExpr] : 2096
-[T, *, NT, UnaryExpr] : 1772
-[T, ,, NT, MoreThanOneExpr] : 1748
-[T, -, NT, MultiplicativeExpr] : 1730
-[T, Then, NT, CRStmtCRs, NT, MoreThanZeroElseIf] : 1245
-[T, /, NT, UnaryExpr] : 920
-[T, >, NT, AdditiveExpr] : 525
-[T, <, NT, AdditiveExpr] : 402
-[T, And, NT, EqNeqExpr] : 289
-[T, ]] : 256
-[T, <>, NT, CompExpr] : 197
-[T, <=, NT, AdditiveExpr] : 144
-[T, Or, NT, AndExpr] : 123
-[T, ], NT, Idxs] : 71
-[T, To, NT, Expr, NT, OptStep, NT, CRStmtCRs, T, EndFor] : 53
-[T, >=, NT, AdditiveExpr] : 23
-[T, Step, NT, Expr] : 16
 State 109
-[T, )] : 156591
 State 110
 [T, CR, NT, TheRest] : 14018
 State 111
@@ -939,19 +432,12 @@ State 111
 State 112
 [T, CR, NT, TheRest] : 16195
 State 113
-[T, CR, NT, TheRest] : 7577
-[T, CR, NT, MoreThanOneStmt] : 1451
 State 114
 [T, EndFor] : 14018
 State 115
-[T, CR, NT, TheRest] : 1556
 State 116
 [T, ElseIf, NT, Expr, T, Then, NT, CRStmtCRs, NT, MoreThanZeroElseIf] : 10661
 [T, EndIf] : 4215
 [T, Else, NT, CRStmtCRs, T, EndIf] : 1319
 State 117
-[T, CR, NT, TheRest] : 11954
-[T, CR, NT, MoreThanOneStmt] : 2064
 State 118
-[T, CR, NT, TheRest] : 15308
-[T, CR, NT, MoreThanOneStmt] : 887
