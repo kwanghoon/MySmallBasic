@@ -26,6 +26,7 @@ import com.coducation.smallbasic.yapbconfig.*;
 public class SocketCommunication {
 	private static final int PORT = 50000;
 	
+	private static boolean TURNOFFREALTIME = false;
 	private static String frontMessage;  // socket 전송 메세지
 	private static String backMessage;  // socket 전송 메세지
 	private static Socket link = null;
@@ -48,8 +49,8 @@ public class SocketCommunication {
 	
 	static {
 		try {
-			// smallbasic-program-list-yapb-data-colletion_results.txt 경로 파라미터로 전달/resource/GUI/open.png
-			syntaxManager = new SyntaxCompletionDataManager(System.getProperty("user.dir") + "/data/smallbasic-program-list-yapb-data-colletion_results.txt"); // 경로 넣어줘야 함
+			// smallbasic-program-list-yapb-data-colletion_results.txt 경로 파라미터로 전달/resource/GUI/open.png        ///data/c11-data-collection.txt
+			syntaxManager = new SyntaxCompletionDataManager(System.getProperty("user.dir") + "/data/smallbasic-program-list-yapb-data-colletion_results.txt"); // 경로 넣어줘야 함 ///data/c11-data-collection.txt
 		} catch (IOException e) {
 			System.out.println("Error: Load in SyntaxCompletionDataManager");
 			e.printStackTrace();
@@ -193,11 +194,13 @@ public class SocketCommunication {
 						
 						parsingList = syntaxManager.mapToArray(sortList); // map의 구문후보만을 뽑아서 arraylist로 반환
 						
-						// configFile의 tabstate 값 변경
-						configData = yapbManager.configConversion(configData, "False", "True");
-						
-						accessServer1(host);
-						serverConnect(sendMessage, textArea);
+						if(TURNOFFREALTIME) {
+							// configFile의 tabstate 값 변경
+							configData = yapbManager.configConversion(configData, "False", "True");
+							
+							accessServer1(host);
+							serverConnect(sendMessage, textArea);
+						}
 						
 					}
 					else {
@@ -220,8 +223,10 @@ public class SocketCommunication {
 					// 중복 제거한 구문 후보로 list를 변경한다.
 					list = parsingList;
 					
-					// yapb.config 파일을 원래대로 돌려둔다.
-					configData = yapbManager.configConversion(configData, "True", "False");
+					if(TURNOFFREALTIME) {
+						// yapb.config 파일을 원래대로 돌려둔다.
+						configData = yapbManager.configConversion(configData, "True", "False");
+					}
 				}
 				
 			} catch (IOException e2) {
