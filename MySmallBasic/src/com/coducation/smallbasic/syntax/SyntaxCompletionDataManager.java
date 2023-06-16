@@ -49,67 +49,42 @@ public class SyntaxCompletionDataManager {
       bufferedReader = new BufferedReader(new FileReader(file));
       
       // 상태 번호, 상태에 대한 텍스트에 저장된 문장
-      int state;
+      int state = 0;
       int state_count;
             
       String str;
       String str_arr[];
-      boolean integer = false;
+      String stateWord;
       map = new HashMap<>();
             
       while((str = bufferedReader.readLine()) != null) {
-         // 라인의 첫 문자가 숫자이면 실행
-         integer = Character.isDigit(str.charAt(0));
-               
-         if(integer) {
-            // 공백을 기준으로 split하여 list에 저장
-            str_arr = str.split("\\s");
-            state = Integer.parseInt(str_arr[0]);
-            state_count = Integer.parseInt(str_arr[str_arr.length-1]);
-            ArrayList<String> result = new ArrayList<>();
+    	  // 공백을 기준으로 라인의 첫 단어만 추출
+    	  stateWord = str.split(" ")[0];
+         
+          // 라인의 첫 단어가 State이면 if문 실행, 그렇지 않으면 else문 실행
+    	  if(stateWord.equals("State")) {
+    		  state = Integer.parseInt(str.split("\\s")[1]);
+        	  MAX_STATE = state;
+    	  }
+    	  else {
+            // " : "을 기준으로 split하여 전달받은 구문 구조와 빈도수 저장
+    		state_count = Integer.parseInt(str.split("\\s:\\s")[1]);
+    		String syntaxList = str.split(" : ")[0];
+    		syntaxList = syntaxList.substring(1, syntaxList.length()-1); // 대괄호 문자 삭제 "[", "]"
+            str_arr = syntaxList.split(", ");
             
-            // Terminal, Nonterminal 문자열을 T, NT로 바꿔 저장
-            for(int i = 1; i < str_arr.length - 1; i++) {
-               if(str_arr[i].equals("Terminal")) {
-                  result.add("T");
-               } 
-               else if(str_arr[i].equals("Nonterminal")) {
-                  result.add("NT");
-               } 
-               else {
-                  result.add(str_arr[i]);
-               }
+            ArrayList<String> result = new ArrayList<>();
+            // 나눈 구문 문자열들을 리스트에 저장
+            for(String item : str_arr) { 
+                 result.add(item);
             }
                   
-            // 파싱 상태 값이 map에 존재하지 않으면 추가
+            // 파싱 상태가 map에 존재하지 않으면 새로 생성 후 추가, 존재하면 값 추가
             if(!map.containsKey(state)) {
-               map.put(state, new ArrayList<>());
-               map.get(state).add(new Pair(result, state_count));
-               
-               MAX_STATE = MAX_STATE < state ? state : MAX_STATE;
-            }
-            // 존재하는 경우 해당 state의 list에 result가 존재하는지 확인
-            else {
-               // result가 존재하면 value값을 state_count만큼 증가 및 내림차순 정렬
-               boolean flag = false;
-               Iterator<Pair> keys = map.get(state).iterator();
-                     
-               while(keys.hasNext()) {
-                  Pair key = keys.next();
-                  if(key.getFirst().equals(result)) {
-                     int count = key.getSecond();
-                     key.setSecond(count + state_count);
-                     map.get(state).sort(null);
-                     flag = true;
-                     break;
-                  }
-               }
-                     
-               // result가 존재하지 않으면 추가 및 내림차순 정렬
-               if(!flag) {
-                  map.get(state).add(new Pair(result, state_count));
-                  map.get(state).sort(null);
-               }
+            	map.put(state, new ArrayList<>());
+            	map.get(state).add(new Pair(result, state_count));
+            } else {
+            	 map.get(state).add(new Pair(result, state_count));
             }
          }
       }
