@@ -49,8 +49,8 @@ public class SocketCommunication {
 	
 	static {
 		try {
-			// smallbasic-program-list-yapb-data-colletion_results.txt 경로 파라미터로 전달/resource/GUI/open.png        ///data/c11-data-collection.txt
-			syntaxManager = new SyntaxCompletionDataManager(System.getProperty("user.dir") + "/data/smallbasic-program-list-yapb-data-colletion_results.txt"); // 경로 넣어줘야 함 ///data/c11-data-collection.txt
+			// smallbasic-program-list-yapb-data-colletion_results.txt 경로 파라미터로 전달/resource/GUI/open.png        ///data/c11-data-collection.txt System.getProperty("user.dir") + 
+			syntaxManager = new SyntaxCompletionDataManager(System.getProperty("user.dir") + "/data/smallbasic-syntax-completion-candidates-results.txt"); // 경로 넣어줘야 함 ///data/smallbasic-program-list-yapb-data-colletion_results.txt
 		} catch (IOException e) {
 			System.out.println("Error: Load in SyntaxCompletionDataManager");
 			e.printStackTrace();
@@ -197,6 +197,7 @@ public class SocketCommunication {
 						if(TURNOFFREALTIME) {
 							// configFile의 tabstate 값 변경
 							configData = yapbManager.configConversion(configData, "False", "True");
+							// String configData, String tabFlag, String displayFlag
 							
 							accessServer1(host);
 							serverConnect(sendMessage, textArea);
