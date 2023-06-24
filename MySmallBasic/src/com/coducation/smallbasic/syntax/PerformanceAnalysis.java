@@ -8,7 +8,8 @@ import java.util.Arrays;
 
 public class PerformanceAnalysis {
 	private static BufferedReader bufferedReader;
-	private static SyntaxCompletionDataManager dataManager;
+	//private static SyntaxCompletionDataManager dataManager;
+	private static RawDataToStateDataManager dataManager;
 	private static ArrayList<String> searchList;
 	private static File file;
 	
@@ -62,7 +63,7 @@ public class PerformanceAnalysis {
 	
 	public static void searchForSyntax(ArrayList<String> list, String path) throws IOException {
 		// 저장한 list 검색 및 존재 여부 출력
-		dataManager = new SyntaxCompletionDataManager(path);
+		dataManager = new RawDataToStateDataManager(path);
 		int total = 0, not = 0;
 		
 		boolean flag;
