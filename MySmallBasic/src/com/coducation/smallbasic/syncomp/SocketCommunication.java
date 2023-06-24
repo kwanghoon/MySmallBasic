@@ -34,7 +34,7 @@ public class SocketCommunication {
 	private static PrintWriter output = null;
 	private static InetAddress host = null;
 	private static SyntaxCompletionDataManager syntaxManager;
-	private static YapbConfigManager yapbManager;
+	private static YapbConfigManager yapbManager; //loadConfig configConversion
 	
 	private static ArrayList<String> list = null;
 	private static ArrayList<String> parsingList = null;
@@ -49,8 +49,8 @@ public class SocketCommunication {
 	
 	static {
 		try {
-			// smallbasic-program-list-yapb-data-colletion_results.txt 경로 파라미터로 전달/resource/GUI/open.png        ///data/c11-data-collection.txt System.getProperty("user.dir") + 
-			syntaxManager = new SyntaxCompletionDataManager(System.getProperty("user.dir") + "/data/smallbasic-syntax-completion-candidates-results.txt"); // 경로 넣어줘야 함 ///data/smallbasic-program-list-yapb-data-colletion_results.txt
+			// smallbasic-program-list-yapb-data-colletion_results.txt 경로 파라미터로 전달/resource/GUI/open.png        ///data/c11/c11-data-collection.txt System.getProperty("user.dir") + 
+			syntaxManager = new SyntaxCompletionDataManager(System.getProperty("user.dir") + "/data/sbparser/smallbasic-state/smallbasic-syntax-completion-candidates-results.txt"); // 경로 넣어줘야 함 ///data/smallbasic-program/smallbasic-program-list-yapb-data-colletion_results.txt
 		} catch (IOException e) {
 			System.out.println("Error: Load in SyntaxCompletionDataManager");
 			e.printStackTrace();
@@ -102,10 +102,14 @@ public class SocketCommunication {
 			JOptionPane.showMessageDialog(null, "Host ID not found!", "ERROR_MESSAGE", JOptionPane.ERROR_MESSAGE);
 		}
 		
-		// config 파일의 데이터를 가져온다.
+		// yapb.config 파일을 생성한다. 
 		yapbManager = new YapbConfigManager();
-		configData = yapbManager.getConfigFile(input); // config파일 데이터를 문자열로 저장
-			
+		try {
+			yapbManager.loadConfig();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
 			// tab 키가 눌리면 서버 접속
 			accessServer1(host);
 			
@@ -196,7 +200,8 @@ public class SocketCommunication {
 						
 						if(TURNOFFREALTIME) {
 							// configFile의 tabstate 값 변경
-							configData = yapbManager.configConversion(configData, "False", "True");
+							// 원래 tabFlag, 수정할 tabFlag, 원래 displayFlag, 수정할 displayFlag
+							yapbManager.configConversion("True", "False", "False" , "True");
 							// String configData, String tabFlag, String displayFlag
 							
 							accessServer1(host);
@@ -226,7 +231,8 @@ public class SocketCommunication {
 					
 					if(TURNOFFREALTIME) {
 						// yapb.config 파일을 원래대로 돌려둔다.
-						configData = yapbManager.configConversion(configData, "True", "False");
+						// 원래 tabFlag, 수정할 tabFlag, 원래 displayFlag, 수정할 displayFlag
+						yapbManager.configConversion("False", "True", "True", "False");
 					}
 				}
 				
