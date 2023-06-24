@@ -1,0 +1,737 @@
+./examples/Sample/15_Rectangle.sb
+args:
+./examples/Sample/15_Rectangle.sb
+Parsing...
+parse time:   0.04s
+0 Terminal ID Terminal . Terminal ID Terminal = Nonterminal Expr 1
+3 Terminal CR Nonterminal MoreThanOneStmt 5
+6 Terminal . Terminal ID Terminal ( Nonterminal Exprs Terminal ) 2
+6 Terminal . Terminal ID Terminal = Nonterminal Expr 4
+11 Terminal ID Terminal . Terminal ID Terminal ( Nonterminal Exprs Terminal ) 2
+11 Terminal ID Terminal . Terminal ID Terminal = Nonterminal Expr 3
+30 Terminal ID Terminal ( Nonterminal Exprs Terminal ) 2
+30 Terminal ID Terminal = Nonterminal Expr 4
+58 Terminal ( Nonterminal Exprs Terminal ) 2
+58 Terminal = Nonterminal Expr 4
+82 Terminal NUM 2
+82 Terminal STR 2
+83 Terminal NUM 2
+91 Terminal , Nonterminal MoreThanOneExpr 6
+92 Terminal ) 2
+103 Terminal NUM 6
+./examples/Sample/08_ForStep.sb
+args:
+./examples/Sample/08_ForStep.sb
+Parsing...
+parse time:   0.02s
+0 Terminal For Terminal ID Terminal = Nonterminal Expr Terminal To Nonterminal Expr Nonterminal OptStep Nonterminal CRStmtCRs Terminal EndFor 1
+6 Terminal . Terminal ID Terminal ( Nonterminal Exprs Terminal ) 1
+8 Terminal ID Terminal = Nonterminal Expr Terminal To Nonterminal Expr Nonterminal OptStep Nonterminal CRStmtCRs Terminal EndFor 1
+24 Terminal NUM 1
+30 Terminal ID Terminal ( Nonterminal Exprs Terminal ) 1
+34 Terminal = Nonterminal Expr Terminal To Nonterminal Expr Nonterminal OptStep Nonterminal CRStmtCRs Terminal EndFor 1
+39 Terminal ID Terminal . Terminal ID Terminal ( Nonterminal Exprs Terminal ) 1
+58 Terminal ( Nonterminal Exprs Terminal ) 1
+61 Terminal NUM 1
+65 Terminal CR Nonterminal TheRest 1
+83 Terminal ID 1
+85 Terminal To Nonterminal Expr Nonterminal OptStep Nonterminal CRStmtCRs Terminal EndFor 1
+92 Terminal ) 1
+95 Terminal NUM 1
+105 Terminal Step Nonterminal Expr 1
+110 Terminal CR Nonterminal TheRest 1
+111 Terminal - Nonterminal Primary 1
+114 Terminal EndFor 1
+./examples/Sample/01_HelloWorld.sb
+args:
+./examples/Sample/01_HelloWorld.sb
+Parsing...
+parse time:   0.01s
+0 Terminal ID Terminal . Terminal ID Terminal ( Nonterminal Exprs Terminal ) 1
+6 Terminal . Terminal ID Terminal ( Nonterminal Exprs Terminal ) 1
+30 Terminal ID Terminal ( Nonterminal Exprs Terminal ) 1
+58 Terminal ( Nonterminal Exprs Terminal ) 1
+83 Terminal STR 1
+92 Terminal ) 1
+./examples/Sample/07_For.sb
+args:
+./examples/Sample/07_For.sb
+Parsing...
+parse time:   0.02s
+0 Terminal For Terminal ID Terminal = Nonterminal Expr Terminal To Nonterminal Expr Nonterminal OptStep Nonterminal CRStmtCRs Terminal EndFor 1
+6 Terminal . Terminal ID Terminal ( Nonterminal Exprs Terminal ) 1
+8 Terminal ID Terminal = Nonterminal Expr Terminal To Nonterminal Expr Nonterminal OptStep Nonterminal CRStmtCRs Terminal EndFor 1
+30 Terminal ID Terminal ( Nonterminal Exprs Terminal ) 1
+34 Terminal = Nonterminal Expr Terminal To Nonterminal Expr Nonterminal OptStep Nonterminal CRStmtCRs Terminal EndFor 1
+39 Terminal ID Terminal . Terminal ID Terminal ( Nonterminal Exprs Terminal ) 1
+58 Terminal ( Nonterminal Exprs Terminal ) 1
+61 Terminal NUM 1
+65 Terminal CR Nonterminal TheRest 1
+83 Terminal ID 1
+85 Terminal To Nonterminal Expr Nonterminal OptStep Nonterminal CRStmtCRs Terminal EndFor 1
+92 Terminal ) 1
+95 Terminal NUM 1
+110 Terminal CR Nonterminal TheRest 1
+114 Terminal EndFor 1
+./examples/Sample/24_Event.sb
+args:
+./examples/Sample/24_Event.sb
+Parsing...
+parse time:   0.04s
+0 Terminal ID Terminal . Terminal ID Terminal = Nonterminal Expr 1
+3 Terminal CR Nonterminal MoreThanOneStmt 2
+6 Terminal . Terminal ID Terminal ( Nonterminal Exprs Terminal ) 1
+6 Terminal . Terminal ID Terminal = Nonterminal Expr 2
+6 Terminal = Nonterminal Expr 2
+9 Terminal ID Nonterminal CRStmtCRs Terminal EndSub 1
+11 Terminal ID Terminal . Terminal ID Terminal = Nonterminal Expr 1
+11 Terminal Sub Terminal ID Nonterminal CRStmtCRs Terminal EndSub 1
+18 Terminal - Nonterminal MultiplicativeExpr 2
+22 Terminal . Terminal ID 2
+29 Terminal ID Terminal . Terminal ID 2
+30 Terminal ID Terminal ( Nonterminal Exprs Terminal ) 1
+30 Terminal ID Terminal = Nonterminal Expr 2
+35 Terminal CR Nonterminal TheRest 1
+39 Terminal ID Terminal = Nonterminal Expr 1
+49 Terminal NUM 2
+53 Terminal ID 2
+58 Terminal ( Nonterminal Exprs Terminal ) 1
+58 Terminal = Nonterminal Expr 2
+62 Terminal EndSub 1
+65 Terminal CR Nonterminal TheRest 3
+82 Terminal ID 1
+82 Terminal STR 1
+83 Terminal ID 1
+88 Terminal ID Terminal . Terminal ID Terminal ( Nonterminal Exprs Terminal ) 1
+88 Terminal ID Terminal = Nonterminal Expr 1
+91 Terminal , Nonterminal MoreThanOneExpr 3
+92 Terminal ) 1
+103 Terminal ID 1
+103 Terminal NUM 2
+./examples/Sample/22_ArrayIndex.sb
+args:
+./examples/Sample/22_ArrayIndex.sb
+Parsing...
+parse time:   0.09s
+0 Terminal ID Terminal . Terminal ID Terminal ( Nonterminal Exprs Terminal ) 1
+3 Terminal CR Nonterminal MoreThanOneStmt 10
+6 Terminal . Terminal ID Terminal ( Nonterminal Exprs Terminal ) 6
+6 Terminal = Nonterminal Expr 1
+6 Terminal [ Nonterminal Expr Terminal ] 4
+11 Terminal ID Terminal . Terminal ID Terminal ( Nonterminal Exprs Terminal ) 5
+11 Terminal ID Terminal = Nonterminal Expr 1
+11 Terminal ID Nonterminal Idxs Terminal = Nonterminal Expr 4
+18 Terminal + Nonterminal MultiplicativeExpr 2
+22 Terminal . Terminal ID Terminal ( Nonterminal Exprs Terminal ) 5
+22 Terminal [ Nonterminal Expr Terminal ] 1
+27 Terminal = Nonterminal Expr 4
+29 Terminal ID Terminal . Terminal ID Terminal ( Nonterminal Exprs Terminal ) 1
+30 Terminal ID Terminal ( Nonterminal Exprs Terminal ) 6
+32 Terminal ID 1
+32 Terminal STR 4
+48 Terminal ID Nonterminal Idxs 1
+48 Terminal STR 1
+53 Terminal ID Terminal ( Nonterminal Exprs Terminal ) 5
+56 Terminal ID Terminal . Terminal ID Terminal ( Nonterminal Exprs Terminal ) 4
+58 Terminal ( Nonterminal Exprs Terminal ) 6
+60 Terminal ] 5
+79 Terminal ( Nonterminal Exprs Terminal ) 5
+83 Terminal ID 1
+83 Terminal STR 5
+92 Terminal ) 6
+102 Terminal ) 5
+./examples/Sample/09_While.sb
+args:
+./examples/Sample/09_While.sb
+Parsing...
+parse time:   0.02s
+0 Terminal ID Terminal = Nonterminal Expr 1
+3 Terminal CR Nonterminal MoreThanOneStmt 1
+5 Terminal ( Nonterminal Expr Terminal ) 1
+6 Terminal . Terminal ID Terminal ( Nonterminal Exprs Terminal ) 1
+6 Terminal = Nonterminal Expr 2
+11 Terminal While Nonterminal Expr Nonterminal CRStmtCRs Terminal EndWhile 1
+12 Terminal CR Nonterminal TheRest 1
+17 Terminal > Nonterminal AdditiveExpr 1
+19 Terminal / Nonterminal UnaryExpr 1
+23 Terminal ID 1
+29 Terminal ID 1
+29 Terminal NUM 1
+30 Terminal ID Terminal ( Nonterminal Exprs Terminal ) 1
+38 Terminal EndWhile 1
+39 Terminal ID Terminal . Terminal ID Terminal ( Nonterminal Exprs Terminal ) 1
+46 Terminal NUM 1
+51 Terminal NUM 1
+54 Terminal ) 1
+58 Terminal ( Nonterminal Exprs Terminal ) 1
+65 Terminal CR Nonterminal TheRest 2
+83 Terminal ID 1
+88 Terminal ID Terminal = Nonterminal Expr 1
+92 Terminal ) 1
+./examples/Sample/03_Variables.sb
+args:
+./examples/Sample/03_Variables.sb
+Parsing...
+parse time:   0.02s
+0 Terminal ID Terminal . Terminal ID Terminal ( Nonterminal Exprs Terminal ) 1
+3 Terminal CR Nonterminal MoreThanOneStmt 2
+6 Terminal . Terminal ID Terminal ( Nonterminal Exprs Terminal ) 2
+6 Terminal = Nonterminal Expr 1
+11 Terminal ID Terminal . Terminal ID Terminal ( Nonterminal Exprs Terminal ) 1
+11 Terminal ID Terminal = Nonterminal Expr 1
+18 Terminal + Nonterminal MultiplicativeExpr 1
+22 Terminal . Terminal ID Terminal ( Nonterminal Exprs Terminal ) 1
+29 Terminal ID Terminal . Terminal ID Terminal ( Nonterminal Exprs Terminal ) 1
+30 Terminal ID Terminal ( Nonterminal Exprs Terminal ) 2
+48 Terminal ID 1
+53 Terminal ID Terminal ( Nonterminal Exprs Terminal ) 1
+58 Terminal ( Nonterminal Exprs Terminal ) 2
+79 Terminal ( Nonterminal Exprs Terminal ) 1
+83 Terminal STR 2
+92 Terminal ) 2
+102 Terminal ) 1
+./examples/Sample/21_Array.sb
+args:
+./examples/Sample/21_Array.sb
+Parsing...
+parse time:   0.06s
+0 Terminal For Terminal ID Terminal = Nonterminal Expr Terminal To Nonterminal Expr Nonterminal OptStep Nonterminal CRStmtCRs Terminal EndFor 1
+3 Terminal CR Nonterminal MoreThanOneStmt 3
+6 Terminal . Terminal ID Terminal ( Nonterminal Exprs Terminal ) 4
+6 Terminal [ Nonterminal Expr Terminal ] 1
+8 Terminal ID Terminal = Nonterminal Expr Terminal To Nonterminal Expr Nonterminal OptStep Nonterminal CRStmtCRs Terminal EndFor 2
+11 Terminal For Terminal ID Terminal = Nonterminal Expr Terminal To Nonterminal Expr Nonterminal OptStep Nonterminal CRStmtCRs Terminal EndFor 1
+11 Terminal ID Terminal . Terminal ID Terminal ( Nonterminal Exprs Terminal ) 2
+18 Terminal + Nonterminal MultiplicativeExpr 3
+22 Terminal [ Nonterminal Expr Terminal ] 1
+27 Terminal = Nonterminal Expr 1
+30 Terminal ID Terminal ( Nonterminal Exprs Terminal ) 4
+32 Terminal ID 2
+34 Terminal = Nonterminal Expr Terminal To Nonterminal Expr Nonterminal OptStep Nonterminal CRStmtCRs Terminal EndFor 2
+39 Terminal ID Terminal . Terminal ID Terminal ( Nonterminal Exprs Terminal ) 2
+48 Terminal ID 1
+48 Terminal STR 2
+56 Terminal ID 1
+58 Terminal ( Nonterminal Exprs Terminal ) 4
+60 Terminal ] 2
+61 Terminal NUM 2
+65 Terminal CR Nonterminal TheRest 3
+83 Terminal ID Nonterminal Idxs 1
+83 Terminal STR 3
+85 Terminal To Nonterminal Expr Nonterminal OptStep Nonterminal CRStmtCRs Terminal EndFor 2
+88 Terminal ID Nonterminal Idxs Terminal = Nonterminal Expr 1
+92 Terminal ) 4
+95 Terminal NUM 2
+110 Terminal CR Nonterminal TheRest 2
+114 Terminal EndFor 2
+./examples/Sample/14_LineThickness.sb
+args:
+./examples/Sample/14_LineThickness.sb
+Parsing...
+parse time:   0.05s
+0 Terminal ID Terminal . Terminal ID Terminal = Nonterminal Expr 1
+3 Terminal CR Nonterminal MoreThanOneStmt 6
+6 Terminal . Terminal ID Terminal ( Nonterminal Exprs Terminal ) 2
+6 Terminal . Terminal ID Terminal = Nonterminal Expr 5
+11 Terminal ID Terminal . Terminal ID Terminal ( Nonterminal Exprs Terminal ) 2
+11 Terminal ID Terminal . Terminal ID Terminal = Nonterminal Expr 4
+30 Terminal ID Terminal ( Nonterminal Exprs Terminal ) 2
+30 Terminal ID Terminal = Nonterminal Expr 5
+58 Terminal ( Nonterminal Exprs Terminal ) 2
+58 Terminal = Nonterminal Expr 5
+82 Terminal NUM 3
+82 Terminal STR 2
+83 Terminal NUM 2
+91 Terminal , Nonterminal MoreThanOneExpr 6
+92 Terminal ) 2
+103 Terminal NUM 6
+./examples/Sample/27_FlickrRepeat.sb
+args:
+./examples/Sample/27_FlickrRepeat.sb
+Parsing...
+parse time:   0.03s
+0 Terminal For Terminal ID Terminal = Nonterminal Expr Terminal To Nonterminal Expr Nonterminal OptStep Nonterminal CRStmtCRs Terminal EndFor 1
+6 Terminal . Terminal ID Terminal ( Nonterminal Exprs Terminal ) 1
+6 Terminal = Nonterminal Expr 1
+8 Terminal ID Terminal = Nonterminal Expr Terminal To Nonterminal Expr Nonterminal OptStep Nonterminal CRStmtCRs Terminal EndFor 1
+22 Terminal . Terminal ID Terminal ( Nonterminal Exprs Terminal ) 1
+29 Terminal ID Terminal . Terminal ID Terminal ( Nonterminal Exprs Terminal ) 1
+30 Terminal ID Terminal ( Nonterminal Exprs Terminal ) 1
+34 Terminal = Nonterminal Expr Terminal To Nonterminal Expr Nonterminal OptStep Nonterminal CRStmtCRs Terminal EndFor 1
+39 Terminal ID Terminal = Nonterminal Expr 1
+53 Terminal ID Terminal ( Nonterminal Exprs Terminal ) 1
+58 Terminal ( Nonterminal Exprs Terminal ) 1
+61 Terminal NUM 1
+65 Terminal CR Nonterminal TheRest 2
+79 Terminal ( Nonterminal Exprs Terminal ) 1
+83 Terminal ID 1
+85 Terminal To Nonterminal Expr Nonterminal OptStep Nonterminal CRStmtCRs Terminal EndFor 1
+88 Terminal ID Terminal . Terminal ID Terminal ( Nonterminal Exprs Terminal ) 1
+89 Terminal STR 1
+91 Terminal , Nonterminal MoreThanOneExpr 4
+92 Terminal ) 1
+95 Terminal NUM 1
+102 Terminal ) 1
+103 Terminal NUM 4
+110 Terminal CR Nonterminal TheRest 1
+114 Terminal EndFor 1
+./examples/Sample/05_If.sb
+args:
+./examples/Sample/05_If.sb
+Parsing...
+parse time:   0.03s
+0 Terminal If Nonterminal Expr Terminal Then Nonterminal CRStmtCRs Nonterminal MoreThanZeroElseIf 1
+3 Terminal CR Nonterminal MoreThanOneStmt 1
+6 Terminal . Terminal ID Terminal ( Nonterminal Exprs Terminal ) 2
+10 Terminal ( Nonterminal Expr Terminal ) 2
+11 Terminal If Nonterminal Expr Terminal Then Nonterminal CRStmtCRs Nonterminal MoreThanZeroElseIf 1
+17 Terminal < Nonterminal AdditiveExpr 1
+17 Terminal >= Nonterminal AdditiveExpr 1
+22 Terminal . Terminal ID 2
+23 Terminal ID Terminal . Terminal ID 2
+30 Terminal ID Terminal ( Nonterminal Exprs Terminal ) 2
+36 Terminal Then Nonterminal CRStmtCRs Nonterminal MoreThanZeroElseIf 2
+39 Terminal ID Terminal . Terminal ID Terminal ( Nonterminal Exprs Terminal ) 2
+44 Terminal NUM 1
+47 Terminal NUM 1
+53 Terminal ID 2
+54 Terminal ) 2
+58 Terminal ( Nonterminal Exprs Terminal ) 2
+63 Terminal CR Nonterminal TheRest 2
+65 Terminal CR Nonterminal TheRest 2
+83 Terminal STR 2
+87 Terminal EndIf 2
+92 Terminal ) 2
+./examples/Sample/13_LineColor.sb
+args:
+./examples/Sample/13_LineColor.sb
+Parsing...
+parse time:   0.07s
+0 Terminal ID Terminal . Terminal ID Terminal = Nonterminal Expr 1
+3 Terminal CR Nonterminal MoreThanOneStmt 5
+6 Terminal . Terminal ID Terminal ( Nonterminal Exprs Terminal ) 2
+6 Terminal . Terminal ID Terminal = Nonterminal Expr 4
+11 Terminal ID Terminal . Terminal ID Terminal ( Nonterminal Exprs Terminal ) 2
+11 Terminal ID Terminal . Terminal ID Terminal = Nonterminal Expr 3
+30 Terminal ID Terminal ( Nonterminal Exprs Terminal ) 2
+30 Terminal ID Terminal = Nonterminal Expr 4
+58 Terminal ( Nonterminal Exprs Terminal ) 2
+58 Terminal = Nonterminal Expr 4
+82 Terminal NUM 2
+82 Terminal STR 2
+83 Terminal NUM 2
+91 Terminal , Nonterminal MoreThanOneExpr 6
+92 Terminal ) 2
+103 Terminal NUM 6
+./examples/Sample/17_Circle.sb
+args:
+./examples/Sample/17_Circle.sb
+Parsing...
+parse time:   0.04s
+0 Terminal ID Terminal . Terminal ID Terminal = Nonterminal Expr 1
+3 Terminal CR Nonterminal MoreThanOneStmt 5
+6 Terminal . Terminal ID Terminal ( Nonterminal Exprs Terminal ) 2
+6 Terminal . Terminal ID Terminal = Nonterminal Expr 4
+11 Terminal ID Terminal . Terminal ID Terminal ( Nonterminal Exprs Terminal ) 2
+11 Terminal ID Terminal . Terminal ID Terminal = Nonterminal Expr 3
+30 Terminal ID Terminal ( Nonterminal Exprs Terminal ) 2
+30 Terminal ID Terminal = Nonterminal Expr 4
+58 Terminal ( Nonterminal Exprs Terminal ) 2
+58 Terminal = Nonterminal Expr 4
+82 Terminal NUM 2
+82 Terminal STR 2
+83 Terminal NUM 2
+91 Terminal , Nonterminal MoreThanOneExpr 6
+92 Terminal ) 2
+103 Terminal NUM 6
+./examples/Sample/10_GraphicWindow.sb
+args:
+./examples/Sample/10_GraphicWindow.sb
+Parsing...
+parse time:   0.01s
+0 Terminal ID Terminal . Terminal ID Terminal ( Nonterminal Exprs Terminal ) 1
+6 Terminal . Terminal ID Terminal ( Nonterminal Exprs Terminal ) 1
+30 Terminal ID Terminal ( Nonterminal Exprs Terminal ) 1
+58 Terminal ( Nonterminal Exprs Terminal ) 1
+92 Terminal ) 1
+./examples/Sample/06_Goto.sb
+args:
+./examples/Sample/06_Goto.sb
+Parsing...
+parse time:   0.05s
+0 Terminal ID Terminal : 1
+3 Terminal CR Nonterminal MoreThanOneStmt 5
+6 Terminal . Terminal ID Terminal ( Nonterminal Exprs Terminal ) 3
+6 Terminal : 1
+6 Terminal = Nonterminal Expr 2
+7 Terminal ID 1
+10 Terminal ( Nonterminal Expr Terminal ) 1
+11 Terminal Goto Terminal ID 1
+11 Terminal ID Terminal . Terminal ID Terminal ( Nonterminal Exprs Terminal ) 1
+11 Terminal ID Terminal = Nonterminal Expr 2
+11 Terminal If Nonterminal Expr Terminal Then Nonterminal CRStmtCRs Nonterminal MoreThanZeroElseIf 1
+16 Terminal = Nonterminal CompExpr 1
+22 Terminal . Terminal ID Terminal ( Nonterminal Exprs Terminal ) 2
+23 Terminal ID 1
+29 Terminal ID Terminal . Terminal ID Terminal ( Nonterminal Exprs Terminal ) 2
+30 Terminal ID Terminal ( Nonterminal Exprs Terminal ) 3
+36 Terminal Then Nonterminal CRStmtCRs Nonterminal MoreThanZeroElseIf 1
+39 Terminal ID Terminal . Terminal ID Terminal ( Nonterminal Exprs Terminal ) 2
+42 Terminal NUM 1
+53 Terminal ID Terminal ( Nonterminal Exprs Terminal ) 2
+54 Terminal ) 1
+58 Terminal ( Nonterminal Exprs Terminal ) 3
+63 Terminal CR Nonterminal TheRest 1
+65 Terminal CR Nonterminal TheRest 2
+79 Terminal ( Nonterminal Exprs Terminal ) 2
+83 Terminal STR 3
+87 Terminal Else Nonterminal CRStmtCRs Terminal EndIf 1
+89 Terminal ID 1
+91 Terminal , Nonterminal MoreThanOneExpr 1
+92 Terminal ) 3
+100 Terminal CR Nonterminal TheRest 1
+102 Terminal ) 2
+103 Terminal NUM 1
+107 Terminal EndIf 1
+./examples/Sample/26_Flickr.sb
+args:
+./examples/Sample/26_Flickr.sb
+Parsing...
+parse time:   0.04s
+0 Terminal ID Terminal . Terminal ID Terminal = Nonterminal Expr 1
+3 Terminal CR Nonterminal MoreThanOneStmt 2
+6 Terminal . Terminal ID Terminal ( Nonterminal Exprs Terminal ) 1
+6 Terminal . Terminal ID Terminal = Nonterminal Expr 2
+6 Terminal = Nonterminal Expr 1
+9 Terminal ID Nonterminal CRStmtCRs Terminal EndSub 1
+11 Terminal ID Terminal . Terminal ID Terminal = Nonterminal Expr 1
+11 Terminal Sub Terminal ID Nonterminal CRStmtCRs Terminal EndSub 1
+22 Terminal . Terminal ID Terminal ( Nonterminal Exprs Terminal ) 1
+29 Terminal ID Terminal . Terminal ID Terminal ( Nonterminal Exprs Terminal ) 1
+30 Terminal ID Terminal ( Nonterminal Exprs Terminal ) 1
+30 Terminal ID Terminal = Nonterminal Expr 2
+35 Terminal CR Nonterminal TheRest 1
+39 Terminal ID Terminal = Nonterminal Expr 1
+53 Terminal ID Terminal ( Nonterminal Exprs Terminal ) 1
+58 Terminal ( Nonterminal Exprs Terminal ) 1
+58 Terminal = Nonterminal Expr 2
+62 Terminal EndSub 1
+65 Terminal CR Nonterminal TheRest 2
+79 Terminal ( Nonterminal Exprs Terminal ) 1
+82 Terminal ID 1
+82 Terminal STR 1
+83 Terminal ID 1
+88 Terminal ID Terminal . Terminal ID Terminal ( Nonterminal Exprs Terminal ) 1
+89 Terminal STR 1
+91 Terminal , Nonterminal MoreThanOneExpr 4
+92 Terminal ) 1
+102 Terminal ) 1
+103 Terminal NUM 4
+./examples/Sample/11_GraphicWindowConfig.sb
+args:
+./examples/Sample/11_GraphicWindowConfig.sb
+Parsing...
+parse time:   0.03s
+0 Terminal ID Terminal . Terminal ID Terminal = Nonterminal Expr 1
+3 Terminal CR Nonterminal MoreThanOneStmt 4
+6 Terminal . Terminal ID Terminal ( Nonterminal Exprs Terminal ) 1
+6 Terminal . Terminal ID Terminal = Nonterminal Expr 4
+11 Terminal ID Terminal . Terminal ID Terminal ( Nonterminal Exprs Terminal ) 1
+11 Terminal ID Terminal . Terminal ID Terminal = Nonterminal Expr 3
+30 Terminal ID Terminal ( Nonterminal Exprs Terminal ) 1
+30 Terminal ID Terminal = Nonterminal Expr 4
+58 Terminal ( Nonterminal Exprs Terminal ) 1
+58 Terminal = Nonterminal Expr 4
+82 Terminal NUM 2
+82 Terminal STR 2
+92 Terminal ) 1
+./examples/Sample/04_Temperature.sb
+args:
+./examples/Sample/04_Temperature.sb
+Parsing...
+parse time:   0.03s
+0 Terminal ID Terminal . Terminal ID Terminal ( Nonterminal Exprs Terminal ) 1
+3 Terminal CR Nonterminal MoreThanOneStmt 3
+6 Terminal . Terminal ID Terminal ( Nonterminal Exprs Terminal ) 2
+6 Terminal = Nonterminal Expr 2
+11 Terminal ID Terminal . Terminal ID Terminal ( Nonterminal Exprs Terminal ) 1
+11 Terminal ID Terminal = Nonterminal Expr 2
+18 Terminal + Nonterminal MultiplicativeExpr 1
+18 Terminal - Nonterminal MultiplicativeExpr 1
+19 Terminal * Nonterminal UnaryExpr 1
+19 Terminal / Nonterminal UnaryExpr 1
+22 Terminal . Terminal ID Terminal ( Nonterminal Exprs Terminal ) 1
+23 Terminal ID 1
+29 Terminal ID Terminal . Terminal ID Terminal ( Nonterminal Exprs Terminal ) 1
+29 Terminal NUM 1
+30 Terminal ID Terminal ( Nonterminal Exprs Terminal ) 2
+48 Terminal ID 1
+49 Terminal NUM 1
+50 Terminal ( Nonterminal Expr Terminal ) 1
+51 Terminal NUM 1
+53 Terminal ID Terminal ( Nonterminal Exprs Terminal ) 1
+54 Terminal ) 1
+58 Terminal ( Nonterminal Exprs Terminal ) 2
+79 Terminal ( Nonterminal Exprs Terminal ) 1
+83 Terminal STR 2
+92 Terminal ) 2
+102 Terminal ) 1
+./examples/Sample/23_MultiDimArray.sb
+args:
+./examples/Sample/23_MultiDimArray.sb
+Parsing...
+parse time:   0.08s
+0 Terminal ID Nonterminal Idxs Terminal = Nonterminal Expr 1
+3 Terminal CR Nonterminal MoreThanOneStmt 13
+6 Terminal . Terminal ID Terminal ( Nonterminal Exprs Terminal ) 3
+6 Terminal = Nonterminal Expr 1
+6 Terminal [ Nonterminal Expr Terminal ] Nonterminal Idxs 6
+11 Terminal ID Terminal . Terminal ID Terminal ( Nonterminal Exprs Terminal ) 3
+11 Terminal ID Terminal = Nonterminal Expr 1
+11 Terminal ID Nonterminal Idxs Terminal = Nonterminal Expr 5
+18 Terminal + Nonterminal MultiplicativeExpr 2
+22 Terminal . Terminal ID Terminal ( Nonterminal Exprs Terminal ) 1
+22 Terminal [ Nonterminal Expr Terminal ] Nonterminal Idxs 2
+27 Terminal = Nonterminal Expr 6
+29 Terminal ID Terminal . Terminal ID Terminal ( Nonterminal Exprs Terminal ) 1
+30 Terminal ID Terminal ( Nonterminal Exprs Terminal ) 3
+32 Terminal ID 2
+32 Terminal STR 14
+48 Terminal ID Nonterminal Idxs 2
+53 Terminal ID Terminal ( Nonterminal Exprs Terminal ) 1
+56 Terminal STR 6
+58 Terminal ( Nonterminal Exprs Terminal ) 3
+60 Terminal ] 8
+60 Terminal ] Nonterminal Idxs 8
+79 Terminal ( Nonterminal Exprs Terminal ) 1
+83 Terminal STR 3
+84 Terminal [ Nonterminal Expr Terminal ] 8
+92 Terminal ) 3
+102 Terminal ) 1
+./examples/Sample/02_FontYellowColor.sb
+args:
+./examples/Sample/02_FontYellowColor.sb
+Parsing...
+parse time:   0.01s
+0 Terminal ID Terminal . Terminal ID Terminal = Nonterminal Expr 1
+3 Terminal CR Nonterminal MoreThanOneStmt 1
+6 Terminal . Terminal ID Terminal ( Nonterminal Exprs Terminal ) 1
+6 Terminal . Terminal ID Terminal = Nonterminal Expr 1
+11 Terminal ID Terminal . Terminal ID Terminal ( Nonterminal Exprs Terminal ) 1
+30 Terminal ID Terminal ( Nonterminal Exprs Terminal ) 1
+30 Terminal ID Terminal = Nonterminal Expr 1
+58 Terminal ( Nonterminal Exprs Terminal ) 1
+58 Terminal = Nonterminal Expr 1
+82 Terminal STR 1
+83 Terminal STR 1
+92 Terminal ) 1
+./examples/Sample/16_Ellipse.sb
+args:
+./examples/Sample/16_Ellipse.sb
+Parsing...
+parse time:   0.04s
+0 Terminal ID Terminal . Terminal ID Terminal = Nonterminal Expr 1
+3 Terminal CR Nonterminal MoreThanOneStmt 5
+6 Terminal . Terminal ID Terminal ( Nonterminal Exprs Terminal ) 2
+6 Terminal . Terminal ID Terminal = Nonterminal Expr 4
+11 Terminal ID Terminal . Terminal ID Terminal ( Nonterminal Exprs Terminal ) 2
+11 Terminal ID Terminal . Terminal ID Terminal = Nonterminal Expr 3
+30 Terminal ID Terminal ( Nonterminal Exprs Terminal ) 2
+30 Terminal ID Terminal = Nonterminal Expr 4
+58 Terminal ( Nonterminal Exprs Terminal ) 2
+58 Terminal = Nonterminal Expr 4
+82 Terminal NUM 2
+82 Terminal STR 2
+83 Terminal NUM 2
+91 Terminal , Nonterminal MoreThanOneExpr 6
+92 Terminal ) 2
+103 Terminal NUM 6
+./examples/Sample/25_Events.sb
+args:
+./examples/Sample/25_Events.sb
+Parsing...
+parse time:   0.07s
+0 Terminal ID Terminal . Terminal ID Terminal = Nonterminal Expr 1
+3 Terminal CR Nonterminal MoreThanOneStmt 6
+6 Terminal . Terminal ID Terminal ( Nonterminal Exprs Terminal ) 1
+6 Terminal . Terminal ID Terminal = Nonterminal Expr 4
+6 Terminal = Nonterminal Expr 2
+9 Terminal ID Nonterminal CRStmtCRs Terminal EndSub 2
+11 Terminal ID Terminal . Terminal ID Terminal = Nonterminal Expr 2
+11 Terminal Sub Terminal ID Nonterminal CRStmtCRs Terminal EndSub 2
+18 Terminal - Nonterminal MultiplicativeExpr 2
+22 Terminal . Terminal ID 2
+22 Terminal . Terminal ID Terminal ( Nonterminal Exprs Terminal ) 1
+29 Terminal ID Terminal . Terminal ID 2
+30 Terminal ID Terminal ( Nonterminal Exprs Terminal ) 1
+30 Terminal ID Terminal = Nonterminal Expr 4
+35 Terminal CR Nonterminal TheRest 2
+39 Terminal ID Terminal . Terminal ID Terminal = Nonterminal Expr 1
+39 Terminal ID Terminal = Nonterminal Expr 1
+49 Terminal NUM 2
+53 Terminal ID 2
+53 Terminal ID Terminal ( Nonterminal Exprs Terminal ) 1
+58 Terminal ( Nonterminal Exprs Terminal ) 1
+58 Terminal = Nonterminal Expr 4
+62 Terminal EndSub 2
+65 Terminal CR Nonterminal TheRest 4
+79 Terminal ( Nonterminal Exprs Terminal ) 1
+82 Terminal ID 2
+82 Terminal ID Terminal . Terminal ID Terminal ( Nonterminal Exprs Terminal ) 1
+82 Terminal STR 1
+83 Terminal ID 1
+88 Terminal ID Terminal . Terminal ID Terminal ( Nonterminal Exprs Terminal ) 1
+88 Terminal ID Terminal = Nonterminal Expr 1
+91 Terminal , Nonterminal MoreThanOneExpr 3
+92 Terminal ) 1
+102 Terminal ) 1
+103 Terminal ID 1
+103 Terminal NUM 2
+./examples/Sample/20_Subroutine.sb
+args:
+./examples/Sample/20_Subroutine.sb
+Parsing...
+parse time:   0.04s
+0 Terminal ID Terminal ( Terminal ) 1
+3 Terminal CR Nonterminal MoreThanOneStmt 5
+6 Terminal ( Terminal ) 2
+6 Terminal . Terminal ID Terminal ( Nonterminal Exprs Terminal ) 3
+6 Terminal = Nonterminal Expr 1
+9 Terminal ID Nonterminal CRStmtCRs Terminal EndSub 1
+11 Terminal ID Terminal ( Terminal ) 1
+11 Terminal ID Terminal . Terminal ID Terminal ( Nonterminal Exprs Terminal ) 2
+11 Terminal ID Terminal = Nonterminal Expr 1
+11 Terminal Sub Terminal ID Nonterminal CRStmtCRs Terminal EndSub 1
+18 Terminal + Nonterminal MultiplicativeExpr 1
+22 Terminal . Terminal ID 1
+22 Terminal . Terminal ID Terminal ( Nonterminal Exprs Terminal ) 1
+29 Terminal ID Terminal . Terminal ID Terminal ( Nonterminal Exprs Terminal ) 1
+30 Terminal ID Terminal ( Nonterminal Exprs Terminal ) 3
+31 Terminal ) 2
+35 Terminal CR Nonterminal TheRest 1
+39 Terminal ID Terminal . Terminal ID Terminal ( Nonterminal Exprs Terminal ) 1
+48 Terminal STR 1
+53 Terminal ID 1
+53 Terminal ID Terminal ( Nonterminal Exprs Terminal ) 1
+58 Terminal ( Nonterminal Exprs Terminal ) 3
+62 Terminal EndSub 1
+65 Terminal CR Nonterminal TheRest 1
+79 Terminal ( Nonterminal Exprs Terminal ) 1
+83 Terminal ID 1
+83 Terminal ID Terminal . Terminal ID 1
+83 Terminal STR 1
+92 Terminal ) 3
+102 Terminal ) 1
+./examples/Sample/18_Random.sb
+args:
+./examples/Sample/18_Random.sb
+Parsing...
+parse time:   0.05s
+0 Terminal ID Terminal . Terminal ID Terminal = Nonterminal Expr 1
+3 Terminal CR Nonterminal MoreThanOneStmt 1
+6 Terminal . Terminal ID Terminal ( Nonterminal Exprs Terminal ) 1
+6 Terminal . Terminal ID Terminal = Nonterminal Expr 2
+6 Terminal = Nonterminal Expr 2
+8 Terminal ID Terminal = Nonterminal Expr Terminal To Nonterminal Expr Nonterminal OptStep Nonterminal CRStmtCRs Terminal EndFor 1
+11 Terminal For Terminal ID Terminal = Nonterminal Expr Terminal To Nonterminal Expr Nonterminal OptStep Nonterminal CRStmtCRs Terminal EndFor 1
+22 Terminal . Terminal ID Terminal ( Nonterminal Exprs Terminal ) 3
+29 Terminal ID Terminal . Terminal ID Terminal ( Nonterminal Exprs Terminal ) 2
+30 Terminal ID Terminal ( Nonterminal Exprs Terminal ) 1
+30 Terminal ID Terminal = Nonterminal Expr 2
+34 Terminal = Nonterminal Expr Terminal To Nonterminal Expr Nonterminal OptStep Nonterminal CRStmtCRs Terminal EndFor 1
+39 Terminal ID Terminal . Terminal ID Terminal = Nonterminal Expr 1
+53 Terminal ID Terminal ( Nonterminal Exprs Terminal ) 3
+58 Terminal ( Nonterminal Exprs Terminal ) 1
+58 Terminal = Nonterminal Expr 2
+61 Terminal NUM 1
+65 Terminal CR Nonterminal TheRest 4
+79 Terminal ( Nonterminal Exprs Terminal ) 3
+82 Terminal ID Terminal . Terminal ID Terminal ( Nonterminal Exprs Terminal ) 1
+82 Terminal STR 1
+83 Terminal ID 1
+85 Terminal To Nonterminal Expr Nonterminal OptStep Nonterminal CRStmtCRs Terminal EndFor 1
+88 Terminal ID Terminal . Terminal ID Terminal ( Nonterminal Exprs Terminal ) 1
+88 Terminal ID Terminal = Nonterminal Expr 2
+89 Terminal NUM 2
+91 Terminal , Nonterminal MoreThanOneExpr 3
+92 Terminal ) 1
+95 Terminal NUM 1
+102 Terminal ) 3
+103 Terminal ID 1
+103 Terminal NUM 2
+110 Terminal CR Nonterminal TheRest 1
+114 Terminal EndFor 1
+./examples/Sample/19_Fractal.sb
+args:
+./examples/Sample/19_Fractal.sb
+Parsing...
+parse time:   0.11s
+0 Terminal ID Terminal . Terminal ID Terminal = Nonterminal Expr 1
+3 Terminal CR Nonterminal MoreThanOneStmt 4
+6 Terminal . Terminal ID Terminal ( Nonterminal Exprs Terminal ) 1
+6 Terminal . Terminal ID Terminal = Nonterminal Expr 1
+6 Terminal = Nonterminal Expr 11
+8 Terminal ID Terminal = Nonterminal Expr Terminal To Nonterminal Expr Nonterminal OptStep Nonterminal CRStmtCRs Terminal EndFor 1
+10 Terminal ( Nonterminal Expr Terminal ) 2
+11 Terminal For Terminal ID Terminal = Nonterminal Expr Terminal To Nonterminal Expr Nonterminal OptStep Nonterminal CRStmtCRs Terminal EndFor 1
+11 Terminal ID Terminal = Nonterminal Expr 2
+16 Terminal = Nonterminal CompExpr 2
+18 Terminal + Nonterminal MultiplicativeExpr 2
+19 Terminal / Nonterminal UnaryExpr 2
+22 Terminal . Terminal ID Terminal ( Nonterminal Exprs Terminal ) 1
+23 Terminal ID 4
+29 Terminal ( Nonterminal Expr Terminal ) 2
+29 Terminal ID Terminal . Terminal ID Terminal ( Nonterminal Exprs Terminal ) 1
+29 Terminal NUM 8
+30 Terminal ID Terminal ( Nonterminal Exprs Terminal ) 1
+30 Terminal ID Terminal = Nonterminal Expr 1
+34 Terminal = Nonterminal Expr Terminal To Nonterminal Expr Nonterminal OptStep Nonterminal CRStmtCRs Terminal EndFor 1
+36 Terminal Then Nonterminal CRStmtCRs Nonterminal MoreThanZeroElseIf 2
+39 Terminal ID Terminal = Nonterminal Expr 3
+42 Terminal NUM 2
+48 Terminal ID 2
+51 Terminal NUM 2
+53 Terminal ID Terminal ( Nonterminal Exprs Terminal ) 1
+54 Terminal ) 4
+58 Terminal ( Nonterminal Exprs Terminal ) 1
+58 Terminal = Nonterminal Expr 1
+61 Terminal NUM 1
+63 Terminal CR Nonterminal TheRest 2
+65 Terminal CR Nonterminal TheRest 15
+79 Terminal ( Nonterminal Exprs Terminal ) 1
+82 Terminal STR 1
+83 Terminal ID 1
+85 Terminal To Nonterminal Expr Nonterminal OptStep Nonterminal CRStmtCRs Terminal EndFor 1
+87 Terminal EndIf 2
+88 Terminal ID Terminal . Terminal ID Terminal ( Nonterminal Exprs Terminal ) 1
+88 Terminal ID Terminal = Nonterminal Expr 6
+88 Terminal If Nonterminal Expr Terminal Then Nonterminal CRStmtCRs Nonterminal MoreThanZeroElseIf 2
+89 Terminal NUM 1
+91 Terminal , Nonterminal MoreThanOneExpr 2
+92 Terminal ) 1
+95 Terminal NUM 1
+102 Terminal ) 1
+103 Terminal ID 1
+103 Terminal STR 1
+110 Terminal CR Nonterminal TheRest 1
+114 Terminal EndFor 1
+./examples/Sample/12_DrawLine.sb
+args:
+./examples/Sample/12_DrawLine.sb
+Parsing...
+parse time:   0.03s
+0 Terminal ID Terminal . Terminal ID Terminal = Nonterminal Expr 1
+3 Terminal CR Nonterminal MoreThanOneStmt 3
+6 Terminal . Terminal ID Terminal ( Nonterminal Exprs Terminal ) 2
+6 Terminal . Terminal ID Terminal = Nonterminal Expr 2
+11 Terminal ID Terminal . Terminal ID Terminal ( Nonterminal Exprs Terminal ) 2
+11 Terminal ID Terminal . Terminal ID Terminal = Nonterminal Expr 1
+30 Terminal ID Terminal ( Nonterminal Exprs Terminal ) 2
+30 Terminal ID Terminal = Nonterminal Expr 2
+58 Terminal ( Nonterminal Exprs Terminal ) 2
+58 Terminal = Nonterminal Expr 2
+82 Terminal NUM 2
+83 Terminal NUM 2
+91 Terminal , Nonterminal MoreThanOneExpr 6
+92 Terminal ) 2
+103 Terminal NUM 6
