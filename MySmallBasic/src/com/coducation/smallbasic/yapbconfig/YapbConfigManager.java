@@ -15,6 +15,7 @@ import java.util.Map.Entry;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.prefs.Preferences;
 
 // YAPB configuation (파일에 작성된) 내용을 문자열로 읽고 쓰는 프로그램
 // yapb.config 파일을 열고 닫는 코드를 추가해야 함
@@ -22,7 +23,9 @@ public class YapbConfigManager {
 
 	// token 토큰 : 더이상 쪼갤수 없는 단어 
 	// delimeters 토큰 구분 문자: 열기/닫기 중괄호, 이퀄, 콤마, 각종 공백
-	private final static String delimeters = "{}=, \t\n";  
+	private final static String delimeters = "{}=, \t\n"; 
+	private static final String CONFIG_FILE_PATH = System.getProperty("user.dir") + "/sbparser/yapb.config"; // sbparser.exe가 있는 위치에 생성
+	private Preferences preferences;
 	String Path = System.getProperty("user.dir") + "/sbparser/yapb.config"; // 현재 프로젝트 경로 가져오기
 
 	public static void main(String[] args) {
@@ -38,6 +41,10 @@ public class YapbConfigManager {
 		}
 		else test1();
 	}
+	
+	public YapbConfigManager() {
+        preferences = Preferences.userRoot().node(getClass().getName());
+    }
 
 	// YAPB Configuration 토큰들을 추출하는 함수
 	public static ArrayList<String> lex( Scanner scanner ) {
@@ -155,13 +162,50 @@ public class YapbConfigManager {
 		return sb.toString();
 	}
 	
+	public void loadConfig() throws IOException {
+		YapbConfigManager config = new YapbConfigManager();
+
+		config.setConfigData(yapbconfigData);
+	}
+	
+	public void saveConfig() throws IOException {
+        String configData = preferences.get("config", "");
+        try (FileWriter writer = new FileWriter(CONFIG_FILE_PATH)) {
+            writer.write(configData);
+        }
+    }
+	
+	 public String getConfigData() {
+	        return preferences.get("config", "");
+	    }
+	
+	public void setConfigData(String configData) {
+	    preferences.put("config", configData);
+	    try {
+	        saveConfig();
+	    } catch (IOException e) {
+	        e.printStackTrace();
+	    }
+	}
+	
+	public void setConfigData(String configData, String configName, String OriginFlag, String flag) {
+	    String updatedConfigData = configData.replace(configName + " = " + OriginFlag , configName + " = " + flag);
+	    preferences.put("config", updatedConfigData);
+	    try {
+	        saveConfig();
+	    } catch (IOException e) {
+	        e.printStackTrace();
+	    }
+	}
+	
 	// YAPB Configuration 속성을 바꾸는 함수 
 	public void set(YapbConfiguration yapbConfig, String key, String value) {
 		yapbConfig.keyValueMap.put(key, value);
 	}
 	
-	// yapb.config 파일을 불러와서 내부 데이터(문자열)을 뽑아오는 함수
-	public String getConfigFile(BufferedReader br) {
+	//yapb.config 파일을 불러와서 내부 데이터(문자열)을 뽑아오는 함수
+	public String getConfigFile(BufferedReader br) throws IOException {
+		loadConfig();
 		File configFile = new File(Path);
 		String configData = "";
 		
@@ -182,6 +226,7 @@ public class YapbConfigManager {
 	
 	// yapb.config 파일에 write하는 함수
 	public void printConfigFile(String configData) {
+		preferences.put("config", configData);
 		 BufferedWriter writer; // FileWriter 선언
 
 		try {
@@ -194,20 +239,26 @@ public class YapbConfigManager {
 	}
 	
 	// yapb.config의 config_TABSTATE 값 변경 후 저장하는 함수
-	public String configConversion(String configData, String tabFlag, String displayFlag) {
-		ArrayList<String> tokens;
-		tokens = lex(new Scanner(configData)); // 토큰 추출
-		YapbConfiguration yapbConfig = parse(tokens); // YapbConfiguration 객체를 만듦
-		
+	public void configConversion(String OriginTabFlag, String tabFlag, String OriginDisplayFlag, String displayFlag) {
+//		ArrayList<String> tokens;
+//		tokens = lex(new Scanner(configData)); // 토큰 추출
+//		YapbConfiguration yapbConfig = parse(tokens); // YapbConfiguration 객체를 만듦
+//		
 		// 객체에서 config_TABSTATE의 value를 변경
-		set(yapbConfig, "config_TABSTATE", tabFlag);
-		set(yapbConfig, "config_DISPLAY", displayFlag);
+		String configData = getConfigData();
+		setConfigData(configData, "config_DISPLAY", OriginDisplayFlag, displayFlag);
+		configData = getConfigData();
+		setConfigData(configData, "config_TABSTATE", OriginTabFlag, tabFlag);
+		
+		//set(yapbConfig, "config_TABSTATE", tabFlag);
+		//set(yapbConfig, "config_DISPLAY", displayFlag);
 		
 		// config 객체를 문자열로 변환 후 파일에 저장
-		String modifiedConfig = prettyPrint(yapbConfig);
-		printConfigFile(modifiedConfig);
+		//String modifiedConfig = prettyPrint(yapbConfig);
+		//printConfigFile(modifiedConfig);
 		
-		return modifiedConfig;
+		//return modifiedConfig
+		
 	}
 	
 	// yapb.config 파일의 속성 순서
@@ -216,22 +267,21 @@ public class YapbConfigManager {
 					"config_GS_LEVEL", "config_DEBUG", "config_DISPLAY", "config_PRESENTATION",
 					"config_ALGORITHM", "config_COLLECT", "config_TABSTATE"));
 
-	// 테스트 케이스
-	private final static String testcase1 = "Configuration {\n"
-			+ "  config_SIMPLE   = True,\n"
-			+ "  config_R_LEVEL  = 1,\n"
+	private final static String yapbconfigData = "Configuration {\n"
+			+ "  config_SIMPLE = True,\n"
+			+ "  config_R_LEVEL = 1,\n"
 			+ "  config_GS_LEVEL = 9, \n"
-			+ "  config_DEBUG    = False, \n"
-			+ "  config_DISPLAY  = False,\n"
+			+ "  config_DEBUG = False, \n"
+			+ "  config_DISPLAY = False,\n"
 			+ "  config_PRESENTATION = 0,\n"
 			+ "  config_ALGORITHM = 3,\n"
 			+ "  config_COLLECT = False,\n"
-			+ "  config_TABSTATE = False\n"
+			+ "  config_TABSTATE = True\n"
 			+ "}";
 
 	public static void test1() {
 		ArrayList<String> tokens;
-		tokens = lex(new Scanner(testcase1));
+		tokens = lex(new Scanner(yapbconfigData));
 		YapbConfiguration yapbConfig = parse( tokens );
 		System.out.println( prettyPrint(yapbConfig) );
 	}
