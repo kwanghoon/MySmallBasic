@@ -6,6 +6,10 @@ MySmallBasic is the first open-source software for Small Basic coding environmen
 ## Video Demo
 - <a href="https://youtu.be/5GE5OvxxhKA">MySmallBasic in action with a series of demo programs</a>
 
+## Presentation Slides(In Korean)
+- [Introduction to MySmallBasic](https://github.com/kwanghoon/oss_final.pdf)
+
+
 ## Features
 - All features of Small Basic (SB) and the standard library	
 - Easy to extend with new SB language features and easy to develop new SB libraries		
